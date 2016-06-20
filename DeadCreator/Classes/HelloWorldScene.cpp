@@ -1,15 +1,30 @@
+#include <fstream>
+using namespace std;
+
 #include "HelloWorldScene.h"
 #include "CCImGui.h"
-USING_NS_CC;
+using namespace cocos2d;
+
+
+HelloWorld::HelloWorld() :
+_workSpaceSize(Size::ZERO),
+_tileWidth(128),
+_tileHeight(128)
+{
+}
+
 
 bool HelloWorld::init()
 {
-    if ( !Layer::init() )
+    if ( !LayerColor::initWithColor(Color4B::BLACK) )
     {
         return false;
     }
-
-    CCIMGUI->addImGUI([=](){
+    
+    _firstDisplaySize.setSize(_director->getVisibleSize().width, _director->getVisibleSize().height);
+    _minimapSize.setSize(_firstDisplaySize.width * 0.15f, _firstDisplaySize.width * 0.15f);
+    
+    CCIMGUI->addImGUI([this](){
         
         if (ImGui::BeginMainMenuBar())
         {
@@ -110,13 +125,13 @@ bool HelloWorld::init()
     }, "main_menu_bar");
     
     
-    CCIMGUI->addImGUI([=]{
+    CCIMGUI->addImGUI([this]{
         
-        ImGuiIO io = ImGui::GetIO();
-        ImGuiStyle style = ImGui::GetStyle();
+        ImGuiIO& io = ImGui::GetIO();
+        ImGuiStyle& style = ImGui::GetStyle();
         
-        ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - ImGui::GetWindowFontSize() - style.FramePadding.y * 4.0f));
-        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, ImGui::GetWindowFontSize() + style.FramePadding.y));
+        ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - ImGui::GetWindowFontSize() - style.FramePadding.y * 3.0f));
+        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, ImGui::GetWindowFontSize() + style.FramePadding.y * 3.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::Begin("##BottomMenuBar", NULL,
                      ImGuiWindowFlags_NoTitleBar |
@@ -152,13 +167,14 @@ bool HelloWorld::init()
         
     }, "bottom_menu_bar");
     
-    CCIMGUI->addImGUI([=]{
+    CCIMGUI->addImGUI([this]{
         
-        ImGuiIO io = ImGui::GetIO();
-        ImGuiStyle style = ImGui::GetStyle();
+        ImGuiIO& io = ImGui::GetIO();
+        ImGuiStyle& style = ImGui::GetStyle();
         
-        ImGui::SetNextWindowPos(ImVec2(5.0f, 210 + ImGui::GetWindowFontSize() + style.FramePadding.y * 2.0f));
-        ImGui::SetNextWindowSize(ImVec2(200, io.DisplaySize.y - 220 - ImGui::GetWindowFontSize() * 2 - style.FramePadding.y * 4.0f));
+        ImGui::SetNextWindowPos(ImVec2(WINDOW_PADDING, ImGui::GetWindowFontSize() + style.FramePadding.y * 2.0f + _minimapSize.height + WINDOW_PADDING * 2));
+        ImGui::SetNextWindowSize(ImVec2(_minimapSize.width,
+                                        io.DisplaySize.y - (ImGui::GetWindowFontSize() + style.FramePadding.y * 2.0f + _minimapSize.height + WINDOW_PADDING * 2) - (ImGui::GetWindowFontSize() + style.FramePadding.y * 3.0f) - WINDOW_PADDING));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         if (ImGui::Begin(" Entities", NULL,
                          ImGuiWindowFlags_NoResize |
@@ -166,14 +182,13 @@ bool HelloWorld::init()
                          ImGuiWindowFlags_NoBringToFrontOnFocus |
                          ImGuiWindowFlags_NoMove))
         {
-            // left
             static int selected = 0;
-            ImGui::BeginChild("left pane", ImVec2(180, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
+            ImGui::BeginChild("##ObjectList", ImVec2(_minimapSize.width - style.WindowPadding.x * 2, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
             for (int i = 0; i < 1; i++)
             {
-                char label[128];
-                sprintf(label, "MyObject %d", i);
-                if (ImGui::Selectable(label, selected == i))
+                std::string label;
+                label = "My Object " + std::to_string(i);
+                if (ImGui::Selectable(label.c_str(), selected == i))
                     selected = i;
             }
             ImGui::EndChild();
@@ -184,12 +199,12 @@ bool HelloWorld::init()
     }, "property_menu");
     
     
-    CCIMGUI->addImGUI([=]{
+    CCIMGUI->addImGUI([this]{
         
-        ImGuiStyle style = ImGui::GetStyle();
+        ImGuiStyle& style = ImGui::GetStyle();
         
-        ImGui::SetNextWindowPos(ImVec2(5, ImGui::GetWindowFontSize() + style.FramePadding.y * 2.0f + 5));
-        ImGui::SetNextWindowSize(ImVec2(200, 200));
+        ImGui::SetNextWindowPos(ImVec2(WINDOW_PADDING, ImGui::GetWindowFontSize() + style.FramePadding.y * 2.0f + WINDOW_PADDING));
+        ImGui::SetNextWindowSize(ImVec2(_minimapSize.width, _minimapSize.height));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::Begin("##Minimap", NULL,
                      ImGuiWindowFlags_NoResize |
@@ -201,7 +216,7 @@ bool HelloWorld::init()
         
     }, "mini_map");
     
-    CCIMGUI->addImGUI([=]{
+    CCIMGUI->addImGUI([this]{
     
         ImGui::SetNextWindowPos(ImVec2(750, 100), ImGuiWindowFlags_NoResize);
         ImGui::SetNextWindowSize(ImVec2(200,300));
@@ -212,24 +227,25 @@ bool HelloWorld::init()
         
     }, "palette_window");
     
-    CCIMGUI->addImGUI([=]{
+    CCIMGUI->addImGUI([this]{
         
         static bool isShowDemo = true;
         ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
         ImGui::ShowTestWindow(&isShowDemo);
         
-        ImGui::SetNextWindowPos(ImVec2(300, 300), ImGuiSetCond_FirstUseEver);
-        ImGui::Begin("##Button", NULL, ImVec2(300,300), 0.0f);
-        CCIMGUI->imageButton("CloseNormal.png");
-        ImGui::End();
+//        ImGui::SetNextWindowPos(ImVec2(300, 300), ImGuiSetCond_FirstUseEver);
+//        ImGui::Begin("##Button", NULL, ImVec2(300,300), 0.0f, ImGuiWindowFlags_NoTitleBar);
+//        CCIMGUI->imageButton("CloseNormal.png");
+//        ImGui::End();
 
-        
     }, "test_window");
 
     
     auto spr = Sprite::create("HelloWorld.png");
     spr->setPosition(Vec2(568,320));
     addChild(spr);
+    
+    loadMap("testmap");
     
     this->scheduleUpdate();
     
@@ -240,6 +256,56 @@ bool HelloWorld::init()
 void HelloWorld::update(float dt)
 {
     // log("%f %f", _director->getVisibleSize().width, _director->getVisibleSize().height);
+}
+
+
+void HelloWorld::loadMap(const std::string& fileName)
+{
+//    ifstream fin(fileName);
+//    int x, y;
+//    fin >> x >> y;
+//    log("%d %d", x, y);
+//    fin.close();
+    
+    _tileRoot = ClippingRectangleNode::create(Rect(0, 0, 500, 500));
+    _tileRoot->setPosition(Vec2(_minimapSize.width + WINDOW_PADDING * 2, ImGui::GetWindowFontSize() + ImGui::GetStyle().FramePadding.y * 3.0f + WINDOW_PADDING));
+    addChild(_tileRoot); 
+    
+    _tileHeight = 10;
+    _tileWidth = 5;
+    
+    _tileImages.resize(_tileHeight);
+    for(int i = 0 ; i < _tileHeight ; ++ i)
+    {
+        _tileImages[i].resize(_tileWidth);
+    }
+    
+    _workSpaceSize = Size(_tileWidth * 128, _tileHeight * 128);
+    for(int i = 0 ; i < _tileHeight ; ++ i)
+    {
+        for(int j = 0 ; j < _tileWidth ; ++ j)
+        {
+            Vec2 tilePosition;
+            if ( i % 2 == 0)
+            {
+                tilePosition.setPoint(j * 128, i * 64);
+            }
+            else
+            {
+                tilePosition.setPoint(64 + j * 128, i * 64);
+            }
+            if ( rand() % 2  == 0)
+            {
+                _tileImages[i][j] = Sprite::create("dirt.png");
+            }
+            else
+            {
+                _tileImages[i][j] = Sprite::create("grass.png");
+            }
+            _tileImages[i][j]->setPosition(tilePosition);
+            _tileRoot->addChild(_tileImages[i][j]);
+        }
+    }
 }
 
 

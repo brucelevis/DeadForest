@@ -19,10 +19,19 @@ bool HelloWorld::init()
     if ( !LayerColor::initWithColor(Color4B::BLACK) )
     {
         return false;
+    
     }
     
+    // init();
+    CCImGui::getInstance();
+    
+    ImGuiStyle& style = ImGui::GetStyle();
+    
+    float fontBaseSize = 25.0f;
     _firstDisplaySize.setSize(_director->getVisibleSize().width, _director->getVisibleSize().height);
     _minimapSize.setSize(_firstDisplaySize.width * 0.15f, _firstDisplaySize.width * 0.15f);
+    _menuBarHeight = fontBaseSize;
+    _statusBarHeight = fontBaseSize + style.FramePadding.y * 2.0f;
     
     CCIMGUI->addImGUI([this](){
         
@@ -128,10 +137,9 @@ bool HelloWorld::init()
     CCIMGUI->addImGUI([this]{
         
         ImGuiIO& io = ImGui::GetIO();
-        ImGuiStyle& style = ImGui::GetStyle();
         
-        ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - ImGui::GetWindowFontSize() - style.FramePadding.y * 3.0f));
-        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, ImGui::GetWindowFontSize() + style.FramePadding.y * 3.0f));
+        ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - _statusBarHeight));
+        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, _statusBarHeight));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::Begin("##BottomMenuBar", NULL,
                      ImGuiWindowFlags_NoTitleBar |
@@ -172,9 +180,8 @@ bool HelloWorld::init()
         ImGuiIO& io = ImGui::GetIO();
         ImGuiStyle& style = ImGui::GetStyle();
         
-        ImGui::SetNextWindowPos(ImVec2(WINDOW_PADDING, ImGui::GetWindowFontSize() + style.FramePadding.y * 2.0f + _minimapSize.height + WINDOW_PADDING * 2));
-        ImGui::SetNextWindowSize(ImVec2(_minimapSize.width,
-                                        io.DisplaySize.y - (ImGui::GetWindowFontSize() + style.FramePadding.y * 2.0f + _minimapSize.height + WINDOW_PADDING * 2) - (ImGui::GetWindowFontSize() + style.FramePadding.y * 3.0f) - WINDOW_PADDING));
+        ImGui::SetNextWindowPos(ImVec2(WINDOW_PADDING, _menuBarHeight + _minimapSize.height + WINDOW_PADDING * 2));
+        ImGui::SetNextWindowSize(ImVec2(_minimapSize.width, io.DisplaySize.y - (_menuBarHeight + _minimapSize.height + _statusBarHeight + WINDOW_PADDING * 3)));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         if (ImGui::Begin(" Entities", NULL,
                          ImGuiWindowFlags_NoResize |
@@ -201,9 +208,7 @@ bool HelloWorld::init()
     
     CCIMGUI->addImGUI([this]{
         
-        ImGuiStyle& style = ImGui::GetStyle();
-        
-        ImGui::SetNextWindowPos(ImVec2(WINDOW_PADDING, ImGui::GetWindowFontSize() + style.FramePadding.y * 2.0f + WINDOW_PADDING));
+        ImGui::SetNextWindowPos(ImVec2(WINDOW_PADDING, _menuBarHeight + WINDOW_PADDING));
         ImGui::SetNextWindowSize(ImVec2(_minimapSize.width, _minimapSize.height));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::Begin("##Minimap", NULL,
@@ -268,8 +273,8 @@ void HelloWorld::loadMap(const std::string& fileName)
 //    fin.close();
     
     _tileRoot = ClippingRectangleNode::create(Rect(0, 0, 500, 500));
-    _tileRoot->setPosition(Vec2(_minimapSize.width + WINDOW_PADDING * 2, ImGui::GetWindowFontSize() + ImGui::GetStyle().FramePadding.y * 3.0f + WINDOW_PADDING));
-    addChild(_tileRoot); 
+    _tileRoot->setPosition(Vec2(_minimapSize.width + WINDOW_PADDING * 2, _statusBarHeight + WINDOW_PADDING));
+    addChild(_tileRoot);
     
     _tileHeight = 10;
     _tileWidth = 5;

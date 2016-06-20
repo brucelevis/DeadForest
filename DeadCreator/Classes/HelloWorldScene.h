@@ -28,6 +28,10 @@ private:
     
     cocos2d::Size _minimapSize;
     
+    float _menuBarHeight;
+    
+    float _statusBarHeight;
+    
     int _tileWidth;
     
     int _tileHeight;

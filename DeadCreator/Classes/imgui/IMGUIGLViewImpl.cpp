@@ -99,13 +99,17 @@ public:
     static void onGLFWWindowPosCallback(GLFWwindow* windows, int x, int y)
     {
         if (_view)
+        {
             _view->onGLFWWindowPosCallback(windows, x, y);
+        }
     }
 
-    static void onGLFWframebuffersize(GLFWwindow* window, int w, int h)
+    static void onGLFWframebuffersize(GLFWwindow* window, int width, int height)
     {
         if (_view)
-            _view->onGLFWframebuffersize(window, w, h);
+        {
+            _view->onGLFWframebuffersize(window, width, height);
+        }
     }
 
     static void onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int height)
@@ -127,12 +131,15 @@ public:
         }
     }
 
-    static void onWindowResizeCallback(GLFWwindow* window, int w, int h)
+    static void onWindowResizeCallback(GLFWwindow* window, int width, int height)
     {
         if (_view)
         {
-            _view->setFrameSize(w, h);
-            _view->setDesignResolutionSize(w, h, ResolutionPolicy::SHOW_ALL);
+            if ( width < 1024) width = 1024;
+            if ( height < 768 ) height = 768;
+            
+            _view->setFrameSize(width, height);
+            _view->setDesignResolutionSize(width, height, ResolutionPolicy::SHOW_ALL);
         }
     }
 

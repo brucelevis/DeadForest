@@ -22,7 +22,11 @@ public:
     
 private:
 
+    cocos2d::Size _oldWindowSize;
+    
     const float WINDOW_PADDING = 10.0f;
+    
+    const float SCROLL_BAR_HEIGHT = 20.0f;
     
     cocos2d::Size _firstDisplaySize;
     
@@ -43,6 +47,10 @@ private:
     std::vector<std::vector<std::string>> _tileInfo;
     
     std::vector<std::vector<cocos2d::Sprite*>> _tileImages;
+    
+    cocos2d::DrawNode* _scrollBarRenderer;
+    
+    cocos2d::Vec2 _scollBarParams;
     
 };
 

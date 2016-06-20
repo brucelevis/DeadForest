@@ -22,6 +22,8 @@ bool HelloWorld::init()
     
     }
     
+    _oldWindowSize = Director::getInstance()->getVisibleSize();
+    
     // init();
     CCImGui::getInstance();
     
@@ -224,31 +226,66 @@ bool HelloWorld::init()
     CCIMGUI->addImGUI([this]{
     
         ImGui::SetNextWindowPos(ImVec2(750, 100), ImGuiWindowFlags_NoResize);
-        ImGui::SetNextWindowSize(ImVec2(200,300));
-        ImGui::Begin("Palette", NULL);
+        ImGui::SetNextWindowSize(ImVec2(200, 300));
+        
+        static bool open = true;
+        ImGui::Begin("Palette", &open, ImGuiWindowFlags_NoCollapse);
+       
+        
         static int item = 0;
-        ImGui::Combo("type", &item, "tile\0entity\0doodad");
+        ImGui::Combo("type", &item, "tile\0entity\0item\0doodad");
+        
+        ImGui::Separator();
+        
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
+        if ( item == 0)
+        {
+            CCIMGUI->imageButton("dirt.png", 50, 50); ImGui::SameLine();
+            CCIMGUI->imageButton("grass.png", 50, 50); ImGui::SameLine();
+            CCIMGUI->imageButton("water.png", 50, 50);
+            
+            CCIMGUI->imageButton("hill.png", 50, 50);
+        }
+        
+        else if ( item == 1)
+        {
+            CCIMGUI->imageButton("human.png", 50, 50);
+        }
+        
+        else if ( item == 2)
+        {
+            CCIMGUI->imageButton("5_56mm.png", 50, 50); ImGui::SameLine();
+            CCIMGUI->imageButton("9mm.png", 50, 50); ImGui::SameLine();
+            CCIMGUI->imageButton("Shell.png", 50, 50);
+           
+            CCIMGUI->imageButton("Axe.png", 50, 50); ImGui::SameLine();
+            CCIMGUI->imageButton("Glock17.png", 50, 50); ImGui::SameLine();
+            CCIMGUI->imageButton("M16A2.png", 50, 50);
+            
+            CCIMGUI->imageButton("M1897.png", 50, 50); ImGui::SameLine();
+            CCIMGUI->imageButton("MeatCan.png", 50, 50); ImGui::SameLine();
+            CCIMGUI->imageButton("Bandage.png", 50, 50);
+        }
+        ImGui::PopStyleColor(3);
+        
         ImGui::End();
         
     }, "palette_window");
+    
     
     CCIMGUI->addImGUI([this]{
         
         static bool isShowDemo = true;
         ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
         ImGui::ShowTestWindow(&isShowDemo);
-        
-//        ImGui::SetNextWindowPos(ImVec2(300, 300), ImGuiSetCond_FirstUseEver);
-//        ImGui::Begin("##Button", NULL, ImVec2(300,300), 0.0f, ImGuiWindowFlags_NoTitleBar);
-//        CCIMGUI->imageButton("CloseNormal.png");
-//        ImGui::End();
 
     }, "test_window");
 
     
-    auto spr = Sprite::create("HelloWorld.png");
-    spr->setPosition(Vec2(568,320));
-    addChild(spr);
+    _scrollBarRenderer = DrawNode::create();
+    addChild(_scrollBarRenderer);
     
     loadMap("testmap");
     
@@ -260,7 +297,24 @@ bool HelloWorld::init()
 
 void HelloWorld::update(float dt)
 {
-    // log("%f %f", _director->getVisibleSize().width, _director->getVisibleSize().height);
+    static auto director = Director::getInstance();
+    Size currSize = director->getVisibleSize();
+    if ( _oldWindowSize.width != currSize.width || _oldWindowSize.height != currSize.height)
+    {
+        // resize
+        _tileRoot->setClippingRegion(Rect(0, 0, currSize.width - (WINDOW_PADDING * 3 + _minimapSize.width + SCROLL_BAR_HEIGHT), currSize.height - (_menuBarHeight + _statusBarHeight + WINDOW_PADDING * 2 + SCROLL_BAR_HEIGHT)));
+    }
+    
+    _scrollBarRenderer->clear();
+    _scrollBarRenderer->drawRect(Vec2(_minimapSize.width + WINDOW_PADDING * 2, _statusBarHeight + WINDOW_PADDING),
+                         Vec2(_oldWindowSize.width - WINDOW_PADDING - SCROLL_BAR_HEIGHT, _statusBarHeight + WINDOW_PADDING + SCROLL_BAR_HEIGHT),
+                         Color4F(0.5, 0.5, 0.5, 0.4));
+    
+    _scrollBarRenderer->drawRect(Vec2(_oldWindowSize.width - (WINDOW_PADDING + SCROLL_BAR_HEIGHT), _statusBarHeight + WINDOW_PADDING + SCROLL_BAR_HEIGHT),
+                         Vec2(_oldWindowSize.width - WINDOW_PADDING, _oldWindowSize.height - (_menuBarHeight + WINDOW_PADDING)),
+                         Color4F(0.5, 0.5, 0.5, 0.4));
+    
+    _oldWindowSize = director->getVisibleSize();
 }
 
 
@@ -272,12 +326,14 @@ void HelloWorld::loadMap(const std::string& fileName)
 //    log("%d %d", x, y);
 //    fin.close();
     
-    _tileRoot = ClippingRectangleNode::create(Rect(0, 0, 500, 500));
-    _tileRoot->setPosition(Vec2(_minimapSize.width + WINDOW_PADDING * 2, _statusBarHeight + WINDOW_PADDING));
+    Size currSize = Director::getInstance()->getVisibleSize();
+    
+    _tileRoot = ClippingRectangleNode::create(Rect(0, 0, currSize.width - (WINDOW_PADDING * 3 + _minimapSize.width + SCROLL_BAR_HEIGHT), currSize.height - (_menuBarHeight + _statusBarHeight + WINDOW_PADDING * 2 + SCROLL_BAR_HEIGHT)));
+    _tileRoot->setPosition(Vec2(_minimapSize.width + WINDOW_PADDING * 2, _statusBarHeight + WINDOW_PADDING + SCROLL_BAR_HEIGHT));
     addChild(_tileRoot);
     
-    _tileHeight = 10;
-    _tileWidth = 5;
+    _tileHeight = 60;
+    _tileWidth = 30;
     
     _tileImages.resize(_tileHeight);
     for(int i = 0 ; i < _tileHeight ; ++ i)

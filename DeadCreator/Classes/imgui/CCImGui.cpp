@@ -97,35 +97,19 @@ bool CCImGui::removeImGUI(std::string name)
     return false;
 }
 
-void CCImGui::setValue(bool value, std::string uid)
+void CCImGui::setValue(boost::any v, std::string uid)
 {
-	CCImGuiValue* v = new (std::nothrow)CCImGuiValue();
-	v->value = (void*)value;
-	_values[uid] = v;
+    _values[uid] = v;
 }
 
-void CCImGui::setValue(long long value, std::string uid)
-{
-	CCImGuiValue* v = new (std::nothrow)CCImGuiValue();
-	v->value = (void*)value;
-	_values[uid] = v;
-}
-
-CCImGuiValue* CCImGui::getValue(std::string uid) const
+ boost::any CCImGui::getValue(std::string uid) const
 {
 	return _values.at(uid);
 }
 
-bool CCImGui::removeValue(std::string uid)
+void CCImGui::removeValue(std::string uid)
 {
-    auto del = getValue(uid);
-    if ( del )
-    {
-        CC_SAFE_DELETE(del);
-        _values.erase(uid);
-        return true;
-    }
-    return false;
+    _values.erase(uid);
 }
 
 #include <tuple>

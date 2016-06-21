@@ -2,6 +2,7 @@
 using namespace std;
 
 #include <boost/filesystem.hpp>
+#include <boost/any.hpp>
 
 #include "HelloWorldScene.h"
 #include "GMXLayer.hpp"
@@ -44,10 +45,14 @@ bool HelloWorld::init()
     ImGuiStyle& style = ImGui::GetStyle();
     
     float fontBaseSize = 25.0f;
-    _firstDisplaySize.setSize(_director->getVisibleSize().width, _director->getVisibleSize().height);
-    _minimapSize.setSize(_firstDisplaySize.width * 0.15f, _firstDisplaySize.width * 0.15f);
+    _minimapSize.setSize(_director->getVisibleSize().width * 0.15f, _director->getVisibleSize().width * 0.15f);
     _menuBarHeight = fontBaseSize;
     _statusBarHeight = fontBaseSize + style.FramePadding.y * 2.0f;
+    
+    CCIMGUI->setValue(fontBaseSize, "fontSize");
+    CCIMGUI->setValue(_menuBarHeight, "menuBarHeight");
+    CCIMGUI->setValue(_statusBarHeight, "statusBarHeight");
+    CCIMGUI->setValue(WINDOW_PADDING, "windowPadding");
     
     CCIMGUI->addImGUI([this](){
         
@@ -285,39 +290,27 @@ bool HelloWorld::init()
     
     _gmxLayer = GMXLayer::create("test.txt");
     _gmxLayer->setPosition(Vec2(_minimapSize.width + WINDOW_PADDING * 2, _statusBarHeight + WINDOW_PADDING));
+    _gmxLayer->setClippingRegion(Rect(0, 0,
+                                      _director->getVisibleSize().width - _minimapSize.width - WINDOW_PADDING * 3,
+                                      _director->getVisibleSize().height - _menuBarHeight - _statusBarHeight - WINDOW_PADDING * 2));
     addChild(_gmxLayer);
+    
+    _minimapLayer = MinimapLayer::create(_minimapSize);
+    _minimapLayer->setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - _menuBarHeight - _minimapSize.height - WINDOW_PADDING));
+    addChild(_minimapLayer);
+    
+    _minimapLayer->setGMXLayer(_gmxLayer);
+    _gmxLayer->setMinimapPtr(_minimapLayer);
     
     _workSpaceSize = _gmxLayer->getWorldSize();
     
     _viewSpaceSize.setSize(_director->getVisibleSize().width - _minimapSize.width - WINDOW_PADDING * 3, _director->getVisibleSize().height - _menuBarHeight - WINDOW_PADDING * 2 - _statusBarHeight);
+    
     _centerPosition = _viewSpaceSize / 2;
     _viewSpaceParams.setPoint((_centerPosition.x - _viewSpaceSize.width / 2) / (_workSpaceSize.width - _viewSpaceSize.width),
                               (_centerPosition.y - _viewSpaceSize.height / 2) / (_workSpaceSize.height - _viewSpaceSize.height));
 
-    _minimapFocusWindowSize.setSize(_minimapSize.width * (_viewSpaceSize.width/_workSpaceSize.width), _minimapSize.height * (_viewSpaceSize.height / _workSpaceSize.height));
-    
-    _minimapRoot = Node::create();
-    _minimapRoot->setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - _menuBarHeight - WINDOW_PADDING - _minimapSize.height));
-    addChild(_minimapRoot);
-    
-    _minimapBG = Sprite::create("bg.png");
-    _minimapBG->setAnchorPoint(Vec2::ZERO);
-    _minimapBG->setScale(_minimapSize.width / _minimapBG->getContentSize().width, _minimapSize.height / _minimapBG->getContentSize().height);
-    _minimapRoot->addChild(_minimapBG);
-    
-    _minimapFocusWindow = DrawNode::create();
-    _minimapFocusWindow->drawRect(Vec2(-_minimapFocusWindowSize.width / 2, -_minimapFocusWindowSize.height / 2),
-                                  Vec2(_minimapFocusWindowSize.width/2, _minimapFocusWindowSize.height/2),
-                                  Color4F::WHITE);
-    _minimapRoot->addChild(_minimapFocusWindow);
-    
     this->scheduleUpdate();
-    
-//    GMXFile* file = new GMXFile;
-//    GMXFileManager manager(file);
-//    if ( manager.loadGMXFile("test.txt") ) log("suc");
-//    else log("fail");
-    
     
     return true;
 }
@@ -331,46 +324,47 @@ void HelloWorld::update(float dt)
     {
         // resize
         _viewSpaceSize.setSize(currSize.width - _minimapSize.width - WINDOW_PADDING * 3, currSize.height - _menuBarHeight - WINDOW_PADDING * 2 - _statusBarHeight);
-        _minimapRoot->setPosition(Vec2(WINDOW_PADDING, currSize.height - _menuBarHeight - WINDOW_PADDING - _minimapSize.height));
-        _minimapBG->setScale(_minimapSize.width / _minimapBG->getContentSize().width, _minimapSize.height / _minimapBG->getContentSize().height);
-        _minimapFocusWindowSize.setSize(_minimapSize.width * (_viewSpaceSize.width/_workSpaceSize.width), _minimapSize.height * (_viewSpaceSize.height / _workSpaceSize.height));
         
-        _minimapFocusWindow->clear();
-        _minimapFocusWindow->drawRect(Vec2(-_minimapFocusWindowSize.width / 2, -_minimapFocusWindowSize.height / 2),
-                                      Vec2(_minimapFocusWindowSize.width/2, _minimapFocusWindowSize.height/2),
-                                      Color4F::WHITE);
+        if ( _gmxLayer ) _gmxLayer->onResize();
+        if ( _minimapLayer ) _minimapLayer->onResize();
     }
-    
-    _minimapFocusWindow->setPosition(Vec2(_minimapFocusWindowSize.width / 2 +  _viewSpaceParams.x * (_minimapSize.width - _minimapFocusWindowSize.width),
-                                          _minimapFocusWindowSize.height / 2 + _viewSpaceParams.y * (_minimapSize.height - _minimapFocusWindowSize.height)));
     
     _oldWindowSize = director->getVisibleSize();
     
     if ( _isKeyPressed[static_cast<int>(EventKeyboard::KeyCode::KEY_LEFT_ARROW)] == true )
     {
-        _viewSpaceParams.x = _viewSpaceParams.x - (1000/_workSpaceSize.width) * dt;
+        _viewSpaceParams.x = _viewSpaceParams.x - (10000/_workSpaceSize.width) * dt;
         _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0f, 1.0f);
+        
+        _minimapLayer->centerView(_viewSpaceParams);
+        _gmxLayer->centerView(_viewSpaceParams);
     }
     else if ( _isKeyPressed[static_cast<int>(EventKeyboard::KeyCode::KEY_RIGHT_ARROW)] == true )
     {
-        _viewSpaceParams.x = _viewSpaceParams.x + (1000/_workSpaceSize.height) * dt;
+        _viewSpaceParams.x = _viewSpaceParams.x + (10000/_workSpaceSize.height) * dt;
         _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0f, 1.0f);
+        
+        _minimapLayer->centerView(_viewSpaceParams);
+        _gmxLayer->centerView(_viewSpaceParams);
     }
     
     if ( _isKeyPressed[static_cast<int>(EventKeyboard::KeyCode::KEY_DOWN_ARROW)] == true )
     {
-        _viewSpaceParams.y = _viewSpaceParams.y - (1000/_workSpaceSize.width) * dt;
+        _viewSpaceParams.y = _viewSpaceParams.y - (10000/_workSpaceSize.width) * dt;
         _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0f, 1.0f);
+        
+        _minimapLayer->centerView(_viewSpaceParams);
+        _gmxLayer->centerView(_viewSpaceParams);
     }
     else if ( _isKeyPressed[static_cast<int>(EventKeyboard::KeyCode::KEY_UP_ARROW)] == true )
     {
-        _viewSpaceParams.y = _viewSpaceParams.y + (1000/_workSpaceSize.height) * dt;
+        _viewSpaceParams.y = _viewSpaceParams.y + (10000/_workSpaceSize.height) * dt;
         _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0f, 1.0f);
+        
+        _minimapLayer->centerView(_viewSpaceParams);
+        _gmxLayer->centerView(_viewSpaceParams);
     }
-
-//    _tileRoot->setPosition(Vec2(-(_workSpaceSize.width - _viewSpaceSize.width) * _viewSpaceParams.x, -(_workSpaceSize.height - _viewSpaceSize.height) * _viewSpaceParams.y));
 }
-
 
 
 void HelloWorld::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
@@ -378,10 +372,12 @@ void HelloWorld::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
     _isKeyPressed[static_cast<int>(keyCode)] = true;
 }
 
+
 void HelloWorld::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
 {
     _isKeyPressed[static_cast<int>(keyCode)] = false;
 }
+
 
 void HelloWorld::onMouseDown(cocos2d::Event* event)
 {
@@ -389,19 +385,8 @@ void HelloWorld::onMouseDown(cocos2d::Event* event)
     
     auto mouseEvent = static_cast<EventMouse*>(event);
     _mousePosition.setPoint(mouseEvent->getCursorX(), mouseEvent->getCursorY());
-
-    Rect minimapRect(_minimapRoot->getPosition().x, _minimapRoot->getPosition().y, _minimapSize.width, _minimapSize.height);
-    
-    if ( minimapRect.containsPoint(_mousePosition) )
-    {
-        Vec2 innerPosition = _mousePosition - _minimapRoot->getPosition();
-        _viewSpaceParams.setPoint((innerPosition.x - _minimapFocusWindowSize.width / 2) / (_minimapSize.width - _minimapFocusWindowSize.width),
-                                  (innerPosition.y - _minimapFocusWindowSize.height / 2) / (_minimapSize.height - _minimapFocusWindowSize.height));
-        
-        _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0, 1.0);
-        _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0, 1.0);
-    }
 }
+
 
 void HelloWorld::onMouseMove(cocos2d::Event* event)
 {
@@ -409,20 +394,9 @@ void HelloWorld::onMouseMove(cocos2d::Event* event)
     {
         auto mouseEvent = static_cast<EventMouse*>(event);
         _mousePosition.setPoint(mouseEvent->getCursorX(), mouseEvent->getCursorY());
-        
-        Rect minimapRect(_minimapRoot->getPosition().x, _minimapRoot->getPosition().y, _minimapSize.width, _minimapSize.height);
-        
-        if ( minimapRect.containsPoint(_mousePosition) )
-        {
-            Vec2 innerPosition = _mousePosition - _minimapRoot->getPosition();
-            _viewSpaceParams.setPoint((innerPosition.x - _minimapFocusWindowSize.width / 2) / (_minimapSize.width - _minimapFocusWindowSize.width),
-                                      (innerPosition.y - _minimapFocusWindowSize.height / 2) / (_minimapSize.height - _minimapFocusWindowSize.height));
-            
-            _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0, 1.0);
-            _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0, 1.0);
-        }
     }
 }
+
 
 void HelloWorld::onMouseUp(cocos2d::Event* event)
 {

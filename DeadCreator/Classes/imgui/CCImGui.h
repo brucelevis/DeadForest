@@ -4,15 +4,11 @@
 #include "cocos2d.h"
 #include "imgui.h"
 
+#include <boost/any.hpp>
+
+
 USING_NS_CC;
 
-class CCImGuiValue
-{
-public:
-	void* value = nullptr;
-	bool getBool() { return (bool)value; };
-    long long getInt() { return (long long)value; };
-};
 
 #define CCIMGUI CCImGui::getInstance()
 
@@ -36,10 +32,9 @@ public:
 	bool removeImGUI(std::string name);
     
 	//-------------------------------------------------------
-	void setValue(bool value, std::string uid);
-	void setValue(long long value, std::string uid);
-	CCImGuiValue* getValue(std::string uid) const;
-	bool removeValue(std::string uid);
+	void setValue(boost::any value, std::string uid);
+    boost::any getValue(std::string uid) const;
+	void removeValue(std::string uid);
     
     //-------------------------------------------------------
     void image(const std::string& fn, int w = -1, int h = -1);
@@ -64,7 +59,7 @@ private:
     
     //-------------------------------------------------------
     std::map<std::string, std::function<void()>> _callPiplines;
-    std::map<std::string, CCImGuiValue*> _values;
+    std::map<std::string,  boost::any> _values;
     std::unordered_map<unsigned int, int> _usedTextureIdMap;
     
     //-------------------------------------------------------

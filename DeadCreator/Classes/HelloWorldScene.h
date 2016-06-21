@@ -5,6 +5,7 @@
 #include "ui/CocosGUI.h"
 
 class GMXLayer;
+class MinimapLayer;
 
 class HelloWorld : public cocos2d::LayerColor
 {
@@ -39,8 +40,6 @@ private:
     
     const float WINDOW_PADDING = 10.0f;
     
-    cocos2d::Size _firstDisplaySize;
-    
     cocos2d::Size _minimapSize;
     
     float _menuBarHeight;
@@ -51,15 +50,7 @@ private:
     
     GMXLayer* _gmxLayer;
     
-    //
-    
-    cocos2d::Node* _minimapRoot;
-    
-    cocos2d::Sprite* _minimapBG;
-    
-    cocos2d::DrawNode* _minimapFocusWindow;
-    
-    cocos2d::Size _minimapFocusWindowSize;
+    MinimapLayer* _minimapLayer;
     
     //
     

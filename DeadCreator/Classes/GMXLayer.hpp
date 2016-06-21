@@ -11,6 +11,7 @@
 
 #include "cocos2d.h"
 #include "GMXFile.hpp"
+#include "MinimapLayer.hpp"
 
 class GMXFileManager;
 class EntityBase;
@@ -47,8 +48,17 @@ public:
     
     void centerView(float x, float y) { centerView(cocos2d::Vec2(x,y)); }
     
-    void centerView(const cocos2d::Vec2& params) {}
-
+    void centerView(const cocos2d::Vec2& params);
+    
+    cocos2d::Rect getClippingRegion() const { return _clipNode->getClippingRegion(); }
+    
+    void setClippingRegion(const cocos2d::Rect& rect) { _clipNode->setClippingRegion(rect); }
+    
+    cocos2d::Vec2 getCenterViewParams() const { return _centerViewParams; }
+    
+    void setMinimapPtr(MinimapLayer* minimap) { _minimap = minimap; }
+    
+    void onResize();
     
 private:
     
@@ -56,11 +66,15 @@ private:
     
     GMXFileManager* _gmxFileManager;
     
+    MinimapLayer* _minimap;
+    
     cocos2d::ClippingRectangleNode* _clipNode;
     
     cocos2d::Node* _tileRoot;
     
     std::vector<std::vector<cocos2d::Sprite*>> _tileImages;
+    
+    cocos2d::Vec2 _centerViewParams;
     
 };
 

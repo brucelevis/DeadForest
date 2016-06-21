@@ -6,12 +6,18 @@
 //
 //
 
+#include <boost/any.hpp>
+
 #include "GMXLayer.hpp"
 #include "GMXFileManager.hpp"
+#include "MinimapLayer.hpp"
 using namespace cocos2d;
 
+#include "CCImGui.h"
 
-GMXLayer::GMXLayer()
+
+GMXLayer::GMXLayer() :
+_centerViewParams(Vec2::ZERO)
 {
 }
 
@@ -46,7 +52,7 @@ bool GMXLayer::init(const std::string& fileName)
         return false;
     }
     
-    _clipNode = ClippingRectangleNode::create(Rect(0, 0, 30, 30));
+    _clipNode = ClippingRectangleNode::create(Rect(0, 0, 0, 0));
     addChild(_clipNode);
     
     _tileRoot = Node::create();
@@ -87,6 +93,29 @@ bool GMXLayer::init(const std::string& fileName)
     return true;
 }
 
+
+void GMXLayer::centerView(const cocos2d::Vec2& params)
+{
+    // todo
+    _tileRoot->setPosition(-Vec2(params.x * (_file.worldSize.width - _clipNode->getClippingRegion().size.width),
+                                 params.y * (_file.worldSize.height - _clipNode->getClippingRegion().size.height)));
+    
+}
+
+
+void GMXLayer::onResize()
+{
+    float padding = boost::any_cast<float>(CCIMGUI->getValue("windowPadding"));
+    float statusBarHeight = boost::any_cast<float>(CCIMGUI->getValue("statusBarHeight"));
+    float menuBarHeight = boost::any_cast<float>(CCIMGUI->getValue("menuBarHeight"));
+    auto visibleSize = _director->getVisibleSize();
+    
+    Rect clipRect = Rect(0, 0,
+                         visibleSize.width - _minimap->getLayerSize().width - padding * 3,
+                         visibleSize.height - menuBarHeight - statusBarHeight - padding * 2);
+    
+    setClippingRegion(clipRect);
+}
 
 
 

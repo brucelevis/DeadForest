@@ -16,8 +16,7 @@ using namespace cocos2d;
 #include "CCImGui.h"
 
 
-GMXLayer::GMXLayer() :
-_centerViewParams(Vec2::ZERO)
+GMXLayer::GMXLayer()
 {
 }
 

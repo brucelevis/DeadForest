@@ -36,6 +36,8 @@ public:
     
     void setFocusWindowSize(const cocos2d::Size focusWindowSize) { _focusWindowSize = focusWindowSize; }
     
+    cocos2d::Size getFocusWindowSize() const { return _focusWindowSize; }
+    
     void centerView(float x, float y) { centerView(cocos2d::Vec2(x,y)); }
     
     void centerView(const cocos2d::Vec2& params);

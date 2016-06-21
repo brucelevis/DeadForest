@@ -34,6 +34,10 @@ private:
     
     void onMouseUp(cocos2d::Event* event);
     
+    void onCenterView();
+    
+    void onResize();
+    
 private:
 
     cocos2d::Size _oldWindowSize;
@@ -51,10 +55,6 @@ private:
     GMXLayer* _gmxLayer;
     
     MinimapLayer* _minimapLayer;
-    
-    //
-    
-    cocos2d::Size _viewSpaceSize;
     
     cocos2d::Vec2 _centerPosition;
     

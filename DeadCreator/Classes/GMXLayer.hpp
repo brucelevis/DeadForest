@@ -32,6 +32,18 @@ public:
     
     cocos2d::Size getWorldSize() const { return _file.worldSize; }
     
+    void centerView(float x, float y) { centerView(cocos2d::Vec2(x,y)); }
+    
+    void centerView(const cocos2d::Vec2& params);
+    
+    cocos2d::Rect getClippingRegion() const { return _clipNode->getClippingRegion(); }
+    
+    void setClippingRegion(const cocos2d::Rect& rect) { _clipNode->setClippingRegion(rect); }
+
+    void setMinimapPtr(MinimapLayer* minimap) { _minimap = minimap; }
+    
+    void onResize();
+    
     // todo list
     
     int getFocusedTileIndex(float mouseX, float mouseY) const  { return getFocusedTileIndex(cocos2d::Vec2(mouseX, mouseY)); }
@@ -43,22 +55,6 @@ public:
     void addEntity(EntityBase* entity) {}
     
     void addLocation(const cocos2d::Rect& rect, const std::string name) {}
-    
-    void setViewRect(const cocos2d::Rect& rect) {}
-    
-    void centerView(float x, float y) { centerView(cocos2d::Vec2(x,y)); }
-    
-    void centerView(const cocos2d::Vec2& params);
-    
-    cocos2d::Rect getClippingRegion() const { return _clipNode->getClippingRegion(); }
-    
-    void setClippingRegion(const cocos2d::Rect& rect) { _clipNode->setClippingRegion(rect); }
-    
-    cocos2d::Vec2 getCenterViewParams() const { return _centerViewParams; }
-    
-    void setMinimapPtr(MinimapLayer* minimap) { _minimap = minimap; }
-    
-    void onResize();
     
 private:
     
@@ -73,8 +69,6 @@ private:
     cocos2d::Node* _tileRoot;
     
     std::vector<std::vector<cocos2d::Sprite*>> _tileImages;
-    
-    cocos2d::Vec2 _centerViewParams;
     
 };
 

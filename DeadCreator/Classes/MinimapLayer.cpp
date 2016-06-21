@@ -90,8 +90,7 @@ void MinimapLayer::setGMXLayer(GMXLayer *layer)
     _focusWindowRenderer->drawRect(-Vec2(_focusWindowSize.width / 2, _focusWindowSize.height / 2),
                                    Vec2(_focusWindowSize.width /2, _focusWindowSize.height / 2), Color4F::WHITE);
     
-    _focusWindowRenderer->setPosition(Vec2(_focusWindowSize.width / 2 + _gmxLayer->getCenterViewParams().x * (_layerSize.width - _focusWindowSize.width),
-                                           _focusWindowSize.height / 2 + _gmxLayer->getCenterViewParams().y * (_layerSize.height - _focusWindowSize.height)));
+    _focusWindowRenderer->setPosition(Vec2(_focusWindowSize.width / 2, _focusWindowSize.height / 2));
 }
 
 void MinimapLayer::onResize()

@@ -1,15 +1,16 @@
 #include <fstream>
 using namespace std;
 
+#include <boost/filesystem.hpp>
+
 #include "HelloWorldScene.h"
+#include "GMXLayer.hpp"
 #include "CCImGui.h"
 using namespace cocos2d;
 
 
 HelloWorld::HelloWorld() :
-_workSpaceSize(Size::ZERO),
-_tileWidth(128),
-_tileHeight(128)
+_workSpaceSize(Size::ZERO)
 {
 }
 
@@ -19,8 +20,21 @@ bool HelloWorld::init()
     if ( !LayerColor::initWithColor(Color4B::BLACK) )
     {
         return false;
-    
     }
+    
+    for(int i = 0 ; i < 256 ; ++ i) _isKeyPressed[i] = false;
+    _isMousePressed = false;
+    
+    auto keylistener = EventListenerKeyboard::create();
+    keylistener->onKeyPressed = CC_CALLBACK_2(HelloWorld::onKeyPressed, this);
+    keylistener->onKeyReleased = CC_CALLBACK_2(HelloWorld::onKeyReleased, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(keylistener, this);
+    
+    auto mouselistener = EventListenerMouse::create();
+    mouselistener->onMouseDown = CC_CALLBACK_1(HelloWorld::onMouseDown, this);
+    mouselistener->onMouseUp = CC_CALLBACK_1(HelloWorld::onMouseUp, this);
+    mouselistener->onMouseMove = CC_CALLBACK_1(HelloWorld::onMouseMove, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouselistener, this);
     
     _oldWindowSize = Director::getInstance()->getVisibleSize();
     
@@ -209,21 +223,6 @@ bool HelloWorld::init()
     
     
     CCIMGUI->addImGUI([this]{
-        
-        ImGui::SetNextWindowPos(ImVec2(WINDOW_PADDING, _menuBarHeight + WINDOW_PADDING));
-        ImGui::SetNextWindowSize(ImVec2(_minimapSize.width, _minimapSize.height));
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::Begin("##Minimap", NULL,
-                     ImGuiWindowFlags_NoResize |
-                     ImGuiWindowFlags_NoTitleBar |
-                     ImGuiWindowFlags_NoBringToFrontOnFocus |
-                     ImGuiWindowFlags_NoMove);
-        ImGui::End();
-        ImGui::PopStyleVar(1);
-        
-    }, "mini_map");
-    
-    CCIMGUI->addImGUI([this]{
     
         ImGui::SetNextWindowPos(ImVec2(750, 100), ImGuiWindowFlags_NoResize);
         ImGui::SetNextWindowSize(ImVec2(200, 300));
@@ -282,14 +281,43 @@ bool HelloWorld::init()
         ImGui::ShowTestWindow(&isShowDemo);
 
     }, "test_window");
+    
+    
+    _gmxLayer = GMXLayer::create("test.txt");
+    _gmxLayer->setPosition(Vec2(_minimapSize.width + WINDOW_PADDING * 2, _statusBarHeight + WINDOW_PADDING));
+    addChild(_gmxLayer);
+    
+    _workSpaceSize = _gmxLayer->getWorldSize();
+    
+    _viewSpaceSize.setSize(_director->getVisibleSize().width - _minimapSize.width - WINDOW_PADDING * 3, _director->getVisibleSize().height - _menuBarHeight - WINDOW_PADDING * 2 - _statusBarHeight);
+    _centerPosition = _viewSpaceSize / 2;
+    _viewSpaceParams.setPoint((_centerPosition.x - _viewSpaceSize.width / 2) / (_workSpaceSize.width - _viewSpaceSize.width),
+                              (_centerPosition.y - _viewSpaceSize.height / 2) / (_workSpaceSize.height - _viewSpaceSize.height));
 
+    _minimapFocusWindowSize.setSize(_minimapSize.width * (_viewSpaceSize.width/_workSpaceSize.width), _minimapSize.height * (_viewSpaceSize.height / _workSpaceSize.height));
     
-    _scrollBarRenderer = DrawNode::create();
-    addChild(_scrollBarRenderer);
+    _minimapRoot = Node::create();
+    _minimapRoot->setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - _menuBarHeight - WINDOW_PADDING - _minimapSize.height));
+    addChild(_minimapRoot);
     
-    loadMap("testmap");
+    _minimapBG = Sprite::create("bg.png");
+    _minimapBG->setAnchorPoint(Vec2::ZERO);
+    _minimapBG->setScale(_minimapSize.width / _minimapBG->getContentSize().width, _minimapSize.height / _minimapBG->getContentSize().height);
+    _minimapRoot->addChild(_minimapBG);
+    
+    _minimapFocusWindow = DrawNode::create();
+    _minimapFocusWindow->drawRect(Vec2(-_minimapFocusWindowSize.width / 2, -_minimapFocusWindowSize.height / 2),
+                                  Vec2(_minimapFocusWindowSize.width/2, _minimapFocusWindowSize.height/2),
+                                  Color4F::WHITE);
+    _minimapRoot->addChild(_minimapFocusWindow);
     
     this->scheduleUpdate();
+    
+//    GMXFile* file = new GMXFile;
+//    GMXFileManager manager(file);
+//    if ( manager.loadGMXFile("test.txt") ) log("suc");
+//    else log("fail");
+    
     
     return true;
 }
@@ -302,72 +330,109 @@ void HelloWorld::update(float dt)
     if ( _oldWindowSize.width != currSize.width || _oldWindowSize.height != currSize.height)
     {
         // resize
-        _tileRoot->setClippingRegion(Rect(0, 0, currSize.width - (WINDOW_PADDING * 3 + _minimapSize.width + SCROLL_BAR_HEIGHT), currSize.height - (_menuBarHeight + _statusBarHeight + WINDOW_PADDING * 2 + SCROLL_BAR_HEIGHT)));
+        _viewSpaceSize.setSize(currSize.width - _minimapSize.width - WINDOW_PADDING * 3, currSize.height - _menuBarHeight - WINDOW_PADDING * 2 - _statusBarHeight);
+        _minimapRoot->setPosition(Vec2(WINDOW_PADDING, currSize.height - _menuBarHeight - WINDOW_PADDING - _minimapSize.height));
+        _minimapBG->setScale(_minimapSize.width / _minimapBG->getContentSize().width, _minimapSize.height / _minimapBG->getContentSize().height);
+        _minimapFocusWindowSize.setSize(_minimapSize.width * (_viewSpaceSize.width/_workSpaceSize.width), _minimapSize.height * (_viewSpaceSize.height / _workSpaceSize.height));
+        
+        _minimapFocusWindow->clear();
+        _minimapFocusWindow->drawRect(Vec2(-_minimapFocusWindowSize.width / 2, -_minimapFocusWindowSize.height / 2),
+                                      Vec2(_minimapFocusWindowSize.width/2, _minimapFocusWindowSize.height/2),
+                                      Color4F::WHITE);
     }
     
-    _scrollBarRenderer->clear();
-    _scrollBarRenderer->drawRect(Vec2(_minimapSize.width + WINDOW_PADDING * 2, _statusBarHeight + WINDOW_PADDING),
-                         Vec2(_oldWindowSize.width - WINDOW_PADDING - SCROLL_BAR_HEIGHT, _statusBarHeight + WINDOW_PADDING + SCROLL_BAR_HEIGHT),
-                         Color4F(0.5, 0.5, 0.5, 0.4));
-    
-    _scrollBarRenderer->drawRect(Vec2(_oldWindowSize.width - (WINDOW_PADDING + SCROLL_BAR_HEIGHT), _statusBarHeight + WINDOW_PADDING + SCROLL_BAR_HEIGHT),
-                         Vec2(_oldWindowSize.width - WINDOW_PADDING, _oldWindowSize.height - (_menuBarHeight + WINDOW_PADDING)),
-                         Color4F(0.5, 0.5, 0.5, 0.4));
+    _minimapFocusWindow->setPosition(Vec2(_minimapFocusWindowSize.width / 2 +  _viewSpaceParams.x * (_minimapSize.width - _minimapFocusWindowSize.width),
+                                          _minimapFocusWindowSize.height / 2 + _viewSpaceParams.y * (_minimapSize.height - _minimapFocusWindowSize.height)));
     
     _oldWindowSize = director->getVisibleSize();
+    
+    if ( _isKeyPressed[static_cast<int>(EventKeyboard::KeyCode::KEY_LEFT_ARROW)] == true )
+    {
+        _viewSpaceParams.x = _viewSpaceParams.x - (1000/_workSpaceSize.width) * dt;
+        _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0f, 1.0f);
+    }
+    else if ( _isKeyPressed[static_cast<int>(EventKeyboard::KeyCode::KEY_RIGHT_ARROW)] == true )
+    {
+        _viewSpaceParams.x = _viewSpaceParams.x + (1000/_workSpaceSize.height) * dt;
+        _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0f, 1.0f);
+    }
+    
+    if ( _isKeyPressed[static_cast<int>(EventKeyboard::KeyCode::KEY_DOWN_ARROW)] == true )
+    {
+        _viewSpaceParams.y = _viewSpaceParams.y - (1000/_workSpaceSize.width) * dt;
+        _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0f, 1.0f);
+    }
+    else if ( _isKeyPressed[static_cast<int>(EventKeyboard::KeyCode::KEY_UP_ARROW)] == true )
+    {
+        _viewSpaceParams.y = _viewSpaceParams.y + (1000/_workSpaceSize.height) * dt;
+        _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0f, 1.0f);
+    }
+
+//    _tileRoot->setPosition(Vec2(-(_workSpaceSize.width - _viewSpaceSize.width) * _viewSpaceParams.x, -(_workSpaceSize.height - _viewSpaceSize.height) * _viewSpaceParams.y));
 }
 
 
-void HelloWorld::loadMap(const std::string& fileName)
+
+void HelloWorld::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
 {
-//    ifstream fin(fileName);
-//    int x, y;
-//    fin >> x >> y;
-//    log("%d %d", x, y);
-//    fin.close();
+    _isKeyPressed[static_cast<int>(keyCode)] = true;
+}
+
+void HelloWorld::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
+{
+    _isKeyPressed[static_cast<int>(keyCode)] = false;
+}
+
+void HelloWorld::onMouseDown(cocos2d::Event* event)
+{
+    _isMousePressed = true;
     
-    Size currSize = Director::getInstance()->getVisibleSize();
+    auto mouseEvent = static_cast<EventMouse*>(event);
+    _mousePosition.setPoint(mouseEvent->getCursorX(), mouseEvent->getCursorY());
+
+    Rect minimapRect(_minimapRoot->getPosition().x, _minimapRoot->getPosition().y, _minimapSize.width, _minimapSize.height);
     
-    _tileRoot = ClippingRectangleNode::create(Rect(0, 0, currSize.width - (WINDOW_PADDING * 3 + _minimapSize.width + SCROLL_BAR_HEIGHT), currSize.height - (_menuBarHeight + _statusBarHeight + WINDOW_PADDING * 2 + SCROLL_BAR_HEIGHT)));
-    _tileRoot->setPosition(Vec2(_minimapSize.width + WINDOW_PADDING * 2, _statusBarHeight + WINDOW_PADDING + SCROLL_BAR_HEIGHT));
-    addChild(_tileRoot);
-    
-    _tileHeight = 60;
-    _tileWidth = 30;
-    
-    _tileImages.resize(_tileHeight);
-    for(int i = 0 ; i < _tileHeight ; ++ i)
+    if ( minimapRect.containsPoint(_mousePosition) )
     {
-        _tileImages[i].resize(_tileWidth);
+        Vec2 innerPosition = _mousePosition - _minimapRoot->getPosition();
+        _viewSpaceParams.setPoint((innerPosition.x - _minimapFocusWindowSize.width / 2) / (_minimapSize.width - _minimapFocusWindowSize.width),
+                                  (innerPosition.y - _minimapFocusWindowSize.height / 2) / (_minimapSize.height - _minimapFocusWindowSize.height));
+        
+        _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0, 1.0);
+        _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0, 1.0);
     }
-    
-    _workSpaceSize = Size(_tileWidth * 128, _tileHeight * 128);
-    for(int i = 0 ; i < _tileHeight ; ++ i)
+}
+
+void HelloWorld::onMouseMove(cocos2d::Event* event)
+{
+    if ( _isMousePressed )
     {
-        for(int j = 0 ; j < _tileWidth ; ++ j)
+        auto mouseEvent = static_cast<EventMouse*>(event);
+        _mousePosition.setPoint(mouseEvent->getCursorX(), mouseEvent->getCursorY());
+        
+        Rect minimapRect(_minimapRoot->getPosition().x, _minimapRoot->getPosition().y, _minimapSize.width, _minimapSize.height);
+        
+        if ( minimapRect.containsPoint(_mousePosition) )
         {
-            Vec2 tilePosition;
-            if ( i % 2 == 0)
-            {
-                tilePosition.setPoint(j * 128, i * 64);
-            }
-            else
-            {
-                tilePosition.setPoint(64 + j * 128, i * 64);
-            }
-            if ( rand() % 2  == 0)
-            {
-                _tileImages[i][j] = Sprite::create("dirt.png");
-            }
-            else
-            {
-                _tileImages[i][j] = Sprite::create("grass.png");
-            }
-            _tileImages[i][j]->setPosition(tilePosition);
-            _tileRoot->addChild(_tileImages[i][j]);
+            Vec2 innerPosition = _mousePosition - _minimapRoot->getPosition();
+            _viewSpaceParams.setPoint((innerPosition.x - _minimapFocusWindowSize.width / 2) / (_minimapSize.width - _minimapFocusWindowSize.width),
+                                      (innerPosition.y - _minimapFocusWindowSize.height / 2) / (_minimapSize.height - _minimapFocusWindowSize.height));
+            
+            _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0, 1.0);
+            _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0, 1.0);
         }
     }
 }
+
+void HelloWorld::onMouseUp(cocos2d::Event* event)
+{
+    _isMousePressed = false;
+}
+
+
+
+
+
 
 
 

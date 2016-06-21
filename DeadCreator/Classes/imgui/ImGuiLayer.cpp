@@ -25,7 +25,7 @@ bool ImGuiLayer::init()
         
         bool inImGuiWidgets = ImGui::IsPosHoveringAnyWindow(ImVec2(touch->getLocationInView().x,
                                                                    touch->getLocationInView().y));
-        log("touch in ImGui widgets %s", inImGuiWidgets ? "yes" : "no");
+//        log("touch in ImGui widgets %s", inImGuiWidgets ? "yes" : "no");
         return inImGuiWidgets;
         
     };

@@ -2,6 +2,9 @@
 #define __HELLOWORLD_SCENE_H__
 
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
+
+class GMXLayer;
 
 class HelloWorld : public cocos2d::LayerColor
 {
@@ -18,15 +21,23 @@ public:
     
     CREATE_FUNC(HelloWorld);
     
-    void loadMap(const std::string& fileName);
+private:
+    
+    virtual void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) override;
+    
+    virtual void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) override;
+    
+    void onMouseDown(cocos2d::Event* event);
+    
+    void onMouseMove(cocos2d::Event* event);
+    
+    void onMouseUp(cocos2d::Event* event);
     
 private:
 
     cocos2d::Size _oldWindowSize;
     
     const float WINDOW_PADDING = 10.0f;
-    
-    const float SCROLL_BAR_HEIGHT = 20.0f;
     
     cocos2d::Size _firstDisplaySize;
     
@@ -36,21 +47,33 @@ private:
     
     float _statusBarHeight;
     
-    int _tileWidth;
-    
-    int _tileHeight;
-    
     cocos2d::Size _workSpaceSize;
     
-    cocos2d::ClippingRectangleNode* _tileRoot;
+    GMXLayer* _gmxLayer;
     
-    std::vector<std::vector<std::string>> _tileInfo;
+    //
     
-    std::vector<std::vector<cocos2d::Sprite*>> _tileImages;
+    cocos2d::Node* _minimapRoot;
     
-    cocos2d::DrawNode* _scrollBarRenderer;
+    cocos2d::Sprite* _minimapBG;
     
-    cocos2d::Vec2 _scollBarParams;
+    cocos2d::DrawNode* _minimapFocusWindow;
+    
+    cocos2d::Size _minimapFocusWindowSize;
+    
+    //
+    
+    cocos2d::Size _viewSpaceSize;
+    
+    cocos2d::Vec2 _centerPosition;
+    
+    cocos2d::Vec2 _viewSpaceParams;
+    
+    bool _isKeyPressed[256];
+    
+    cocos2d::Vec2 _mousePosition;
+    
+    bool _isMousePressed;
     
 };
 

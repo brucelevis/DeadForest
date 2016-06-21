@@ -72,11 +72,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
     director->getScheduler()->schedule([=](float dt)
                                        {
-                                           if(director->getRunningScene()->getChildByName("ImGUILayer") == NULL)
+                                           if(director->getRunningScene()->getChildByName("ImGuiLayer") == NULL)
                                            {
-                                               scene->addChild(ImGuiLayer::create(), INT_MAX, "ImGUILayer");
+                                               auto layer = ImGuiLayer::create();
+                                               layer->setGlobalZOrder(9);
+                                               scene->addChild(layer, INT_MAX, "ImGuiLayer");
                                            }
-                                       }, this, 0, false, "checkImGUI");
+                                       }, this, 0, false, "checkImGui");
 #endif
     return true;
 }

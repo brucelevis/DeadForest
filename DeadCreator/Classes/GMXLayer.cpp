@@ -6,17 +6,17 @@
 //
 //
 
-#include <boost/any.hpp>
-
 #include "GMXLayer.hpp"
-#include "GMXFileManager.hpp"
+#include "GMXLayerManager.hpp"
 #include "MinimapLayer.hpp"
+#include "SizeProtocol.h"
 using namespace cocos2d;
 
 #include "CCImGui.h"
 
 
-GMXLayer::GMXLayer()
+GMXLayer::GMXLayer() :
+_isOpened(false)
 {
 }
 
@@ -26,10 +26,10 @@ GMXLayer::~GMXLayer()
 }
 
 
-GMXLayer* GMXLayer::create(const std::string& fileName)
+GMXLayer* GMXLayer::create()
 {
     auto ret = new (std::nothrow) GMXLayer();
-    if ( ret && ret->init(fileName) )
+    if ( ret && ret->init() )
     {
         ret->autorelease();
         return ret;
@@ -39,17 +39,10 @@ GMXLayer* GMXLayer::create(const std::string& fileName)
 }
 
 
-bool GMXLayer::init(const std::string& fileName)
+bool GMXLayer::init()
 {
     if ( !Node::init() )
         return false;
-    
-    _gmxFileManager = new (std::nothrow) GMXFileManager(&_file);
-    if ( !_gmxFileManager || !_gmxFileManager->loadGMXFile(fileName) )
-    {
-        CC_SAFE_FREE(_gmxFileManager);
-        return false;
-    }
     
     _clipNode = ClippingRectangleNode::create(Rect(0, 0, 0, 0));
     addChild(_clipNode);
@@ -57,15 +50,24 @@ bool GMXLayer::init(const std::string& fileName)
     _tileRoot = Node::create();
     _clipNode->addChild(_tileRoot);
     
-    _tileImages.resize(_file.numOfTileY);
-    for(int i = 0 ; i < _file.numOfTileY ; ++ i)
+    return true;
+}
+
+
+void GMXLayer::openFile(GMXFile* file)
+{
+    _isOpened = true;
+    _file = file;
+    
+    _tileImages.resize(file->numOfTileY);
+    for(int i = 0 ; i < file->numOfTileY ; ++ i)
     {
-        _tileImages[i].resize(_file.numOfTileX);
+        _tileImages[i].resize(file->numOfTileX);
     }
     
-    for(int i = 0 ; i < _file.numOfTileY ; ++ i)
+    for(int i = 0 ; i < file->numOfTileY ; ++ i)
     {
-        for(int j = 0 ; j < _file.numOfTileX ; ++ j)
+        for(int j = 0 ; j < file->numOfTileX ; ++ j)
         {
             Vec2 tilePosition;
             if ( i % 2 == 0)
@@ -88,30 +90,26 @@ bool GMXLayer::init(const std::string& fileName)
             _tileRoot->addChild(_tileImages[i][j]);
         }
     }
-    
-    return true;
 }
 
 
 void GMXLayer::centerView(const cocos2d::Vec2& params)
 {
     // todo
-    _tileRoot->setPosition(-Vec2(params.x * (_file.worldSize.width - _clipNode->getClippingRegion().size.width),
-                                 params.y * (_file.worldSize.height - _clipNode->getClippingRegion().size.height)));
+    if ( !isOpened() ) return ;
+    
+    _tileRoot->setPosition(-Vec2(params.x * (_file->worldSize.width - _clipNode->getClippingRegion().size.width),
+                                 params.y * (_file->worldSize.height - _clipNode->getClippingRegion().size.height)));
     
 }
 
 
 void GMXLayer::onResize()
 {
-    float padding = boost::any_cast<float>(CCIMGUI->getValue("windowPadding"));
-    float statusBarHeight = boost::any_cast<float>(CCIMGUI->getValue("statusBarHeight"));
-    float menuBarHeight = boost::any_cast<float>(CCIMGUI->getValue("menuBarHeight"));
     auto visibleSize = _director->getVisibleSize();
-    
     Rect clipRect = Rect(0, 0,
-                         visibleSize.width - _minimap->getLayerSize().width - padding * 3,
-                         visibleSize.height - menuBarHeight - statusBarHeight - padding * 2);
+                         visibleSize.width - MINIMAP_SIZE - WINDOW_PADDING * 3,
+                         visibleSize.height - MENUBAR_HEIGHT - STATUSBAR_HEIGHT - WINDOW_PADDING * 2);
     
     setClippingRegion(clipRect);
 }

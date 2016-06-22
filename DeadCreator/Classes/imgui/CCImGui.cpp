@@ -97,20 +97,6 @@ bool CCImGui::removeImGUI(std::string name)
     return false;
 }
 
-void CCImGui::setValue(boost::any v, std::string uid)
-{
-    _values[uid] = v;
-}
-
- boost::any CCImGui::getValue(std::string uid) const
-{
-	return _values.at(uid);
-}
-
-void CCImGui::removeValue(std::string uid)
-{
-    _values.erase(uid);
-}
 
 #include <tuple>
 static std::tuple<Texture2D*, ImVec2, ImVec2, ImVec2> getTextureInfo(const std::string& fn, int w = -1, int h = -1) {

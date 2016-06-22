@@ -9,9 +9,8 @@
 #include "CCImGui.h"
 #include "MinimapLayer.hpp"
 #include "GMXLayer.hpp"
+#include "SizeProtocol.h"
 using namespace cocos2d;
-
-#include <boost/any.hpp>
 
 MinimapLayer::MinimapLayer()
 {
@@ -95,10 +94,8 @@ void MinimapLayer::setGMXLayer(GMXLayer *layer)
 
 void MinimapLayer::onResize()
 {
-    float padding = boost::any_cast<float>(CCIMGUI->getValue("windowPadding"));
-    float menuBarHeight = boost::any_cast<float>(CCIMGUI->getValue("menuBarHeight"));
+    setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - MENUBAR_HEIGHT - _layerSize.height - WINDOW_PADDING));
     
-    setPosition(Vec2(padding, _director->getVisibleSize().height - menuBarHeight - _layerSize.height - padding));
     _focusWindowRenderer->clear();
     _focusWindowSize = Size(_layerSize.width * (_gmxLayer->getClippingRegion().size.width / _worldSize.width),
                             _layerSize.height * (_gmxLayer->getClippingRegion().size.height / _worldSize.height));
@@ -107,6 +104,8 @@ void MinimapLayer::onResize()
                                    Vec2(_focusWindowSize.width /2, _focusWindowSize.height / 2), Color4F::WHITE);
 
 }
+
+
 
 
 

@@ -7,6 +7,7 @@ using namespace std;
 #include "HelloWorldScene.h"
 #include "GMXLayer.hpp"
 #include "CCImGui.h"
+#include "SizeProtocol.h"
 using namespace cocos2d;
 
 
@@ -42,18 +43,6 @@ bool HelloWorld::init()
     // init();
     CCImGui::getInstance();
     
-    ImGuiStyle& style = ImGui::GetStyle();
-    
-    float fontBaseSize = 25.0f;
-    _minimapSize.setSize(_director->getVisibleSize().width * 0.15f, _director->getVisibleSize().width * 0.15f);
-    _menuBarHeight = fontBaseSize;
-    _statusBarHeight = fontBaseSize + style.FramePadding.y * 2.0f;
-    
-    CCIMGUI->setValue(fontBaseSize, "fontSize");
-    CCIMGUI->setValue(_menuBarHeight, "menuBarHeight");
-    CCIMGUI->setValue(_statusBarHeight, "statusBarHeight");
-    CCIMGUI->setValue(WINDOW_PADDING, "windowPadding");
-    
     CCIMGUI->addImGUI([this](){
         
         if (ImGui::BeginMainMenuBar())
@@ -61,7 +50,12 @@ bool HelloWorld::init()
             if (ImGui::BeginMenu("File"))
             {
                 ImGui::MenuItem("(dummy menu)", NULL, false, false);
-                if (ImGui::MenuItem("New")) {}
+                if (ImGui::MenuItem("New"))
+                {
+                    GMXFile* file = new GMXFile();
+                    if ( _gmxManager.loadGMXFile(file, "test.txt") ) log("suc"); else log("fail");
+                    createGMXLayer(file);
+                }
                 if (ImGui::MenuItem("Open", "Ctrl+O")) {}
                 if (ImGui::BeginMenu("Open Recent"))
                 {
@@ -139,6 +133,11 @@ bool HelloWorld::init()
             {
                 if (ImGui::MenuItem("Trigger Editor", "SHIFT+T")) {}
                 if (ImGui::MenuItem("Palette Window", "SHIFT+P")) {}
+                ImGui::Separator();
+                if (ImGui::MenuItem("test.gmx")) {}
+                if (ImGui::MenuItem("test1.gmx")) {}
+                if (ImGui::MenuItem("test2.gmx")) {}
+                
                 ImGui::EndMenu();
             }
             
@@ -159,8 +158,8 @@ bool HelloWorld::init()
         
         ImGuiIO& io = ImGui::GetIO();
         
-        ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - _statusBarHeight));
-        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, _statusBarHeight));
+        ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - STATUSBAR_HEIGHT));
+        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, STATUSBAR_HEIGHT));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::Begin("##BottomMenuBar", NULL,
                      ImGuiWindowFlags_NoTitleBar |
@@ -201,8 +200,8 @@ bool HelloWorld::init()
         ImGuiIO& io = ImGui::GetIO();
         ImGuiStyle& style = ImGui::GetStyle();
         
-        ImGui::SetNextWindowPos(ImVec2(WINDOW_PADDING, _menuBarHeight + _minimapSize.height + WINDOW_PADDING * 2));
-        ImGui::SetNextWindowSize(ImVec2(_minimapSize.width, io.DisplaySize.y - (_menuBarHeight + _minimapSize.height + _statusBarHeight + WINDOW_PADDING * 3)));
+        ImGui::SetNextWindowPos(ImVec2(WINDOW_PADDING, MENUBAR_HEIGHT + MINIMAP_SIZE + WINDOW_PADDING * 2));
+        ImGui::SetNextWindowSize(ImVec2(MINIMAP_SIZE, io.DisplaySize.y - (MENUBAR_HEIGHT + MINIMAP_SIZE + STATUSBAR_HEIGHT + WINDOW_PADDING * 3)));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         if (ImGui::Begin(" Entities", NULL,
                          ImGuiWindowFlags_NoResize |
@@ -211,7 +210,7 @@ bool HelloWorld::init()
                          ImGuiWindowFlags_NoMove))
         {
             static int selected = 0;
-            ImGui::BeginChild("##ObjectList", ImVec2(_minimapSize.width - style.WindowPadding.x * 2, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
+            ImGui::BeginChild("##ObjectList", ImVec2(MINIMAP_SIZE - style.WindowPadding.x * 2, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
             for (int i = 0; i < 1; i++)
             {
                 std::string label;
@@ -288,21 +287,16 @@ bool HelloWorld::init()
     }, "test_window");
     
     
-    _gmxLayer = GMXLayer::create("test.txt");
-    _gmxLayer->setPosition(Vec2(_minimapSize.width + WINDOW_PADDING * 2, _statusBarHeight + WINDOW_PADDING));
+    _gmxLayer = GMXLayer::create();
+    _gmxLayer->setPosition(Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
     _gmxLayer->setClippingRegion(Rect(0, 0,
-                                      _director->getVisibleSize().width - _minimapSize.width - WINDOW_PADDING * 3,
-                                      _director->getVisibleSize().height - _menuBarHeight - _statusBarHeight - WINDOW_PADDING * 2));
+                                      _director->getVisibleSize().width - MINIMAP_SIZE - WINDOW_PADDING * 3,
+                                      _director->getVisibleSize().height - MENUBAR_HEIGHT - STATUSBAR_HEIGHT - WINDOW_PADDING * 2));
     addChild(_gmxLayer);
     
-    _minimapLayer = MinimapLayer::create(_minimapSize);
-    _minimapLayer->setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - _menuBarHeight - _minimapSize.height - WINDOW_PADDING));
+    _minimapLayer = MinimapLayer::create(Size(MINIMAP_SIZE,MINIMAP_SIZE));
+    _minimapLayer->setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - MENUBAR_HEIGHT - MINIMAP_SIZE - WINDOW_PADDING));
     addChild(_minimapLayer);
-    
-    _minimapLayer->setGMXLayer(_gmxLayer);
-    _gmxLayer->setMinimapPtr(_minimapLayer);
-    
-    _workSpaceSize = _gmxLayer->getWorldSize();
     
     this->scheduleUpdate();
     
@@ -373,13 +367,13 @@ void HelloWorld::onMouseDown(cocos2d::Event* event)
     auto mouseEvent = static_cast<EventMouse*>(event);
     _mousePosition.setPoint(mouseEvent->getCursorX(), mouseEvent->getCursorY());
     
-    Rect minimapRect(_minimapLayer->getPosition().x, _minimapLayer->getPosition().y, _minimapSize.width, _minimapSize.height);
+    Rect minimapRect(_minimapLayer->getPosition().x, _minimapLayer->getPosition().y, MINIMAP_SIZE, MINIMAP_SIZE);
     if ( minimapRect.containsPoint(_mousePosition) )
     {
         Size focusWindowSize = _minimapLayer->getFocusWindowSize();
         Vec2 innerPosition = _mousePosition - _minimapLayer->getPosition();
-        _viewSpaceParams.setPoint((innerPosition.x - focusWindowSize.width / 2) / (_minimapSize.width - focusWindowSize.width),
-                                  (innerPosition.y - focusWindowSize.height / 2) / (_minimapSize.height - focusWindowSize.height));
+        _viewSpaceParams.setPoint((innerPosition.x - focusWindowSize.width / 2) / (MINIMAP_SIZE - focusWindowSize.width),
+                                  (innerPosition.y - focusWindowSize.height / 2) / (MINIMAP_SIZE - focusWindowSize.height));
         
         _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0, 1.0);
         _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0, 1.0);
@@ -396,13 +390,13 @@ void HelloWorld::onMouseMove(cocos2d::Event* event)
         auto mouseEvent = static_cast<EventMouse*>(event);
         _mousePosition.setPoint(mouseEvent->getCursorX(), mouseEvent->getCursorY());
         
-        Rect minimapRect(_minimapLayer->getPosition().x, _minimapLayer->getPosition().y, _minimapSize.width, _minimapSize.height);
+        Rect minimapRect(_minimapLayer->getPosition().x, _minimapLayer->getPosition().y, MINIMAP_SIZE, MINIMAP_SIZE);
         if ( minimapRect.containsPoint(_mousePosition) )
         {
             Size focusWindowSize = _minimapLayer->getFocusWindowSize();
             Vec2 innerPosition = _mousePosition - _minimapLayer->getPosition();
-            _viewSpaceParams.setPoint((innerPosition.x - focusWindowSize.width / 2) / (_minimapSize.width - focusWindowSize.width),
-                                      (innerPosition.y - focusWindowSize.height / 2) / (_minimapSize.height - focusWindowSize.height));
+            _viewSpaceParams.setPoint((innerPosition.x - focusWindowSize.width / 2) / (MINIMAP_SIZE - focusWindowSize.width),
+                                      (innerPosition.y - focusWindowSize.height / 2) / (MINIMAP_SIZE - focusWindowSize.height));
             
             _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0, 1.0);
             _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0, 1.0);
@@ -421,9 +415,8 @@ void HelloWorld::onMouseUp(cocos2d::Event* event)
 
 void HelloWorld::onCenterView()
 {
-    
-    _minimapLayer->centerView(_viewSpaceParams);
-    _gmxLayer->centerView(_viewSpaceParams);
+    if ( _minimapLayer ) _minimapLayer->centerView(_viewSpaceParams);
+    if ( _gmxLayer ) _gmxLayer->centerView(_viewSpaceParams);
 }
 
 
@@ -434,7 +427,25 @@ void HelloWorld::onResize()
 }
 
 
+void HelloWorld::createGMXLayer(GMXFile* file)
+{
+    _gmxLayer->openFile(file);
+    
+    _minimapLayer->setGMXLayer(_gmxLayer);
+    _gmxLayer->setMinimapPtr(_minimapLayer);
+    
+    _workSpaceSize = _gmxLayer->getWorldSize();
+}
 
+
+void HelloWorld::saveGMXLayer(GMXFile* file, const std::string fileName)
+{
+}
+
+
+void HelloWorld::loadGMXLayer(GMXFile* file, const std::string fileName)
+{
+}
 
 
 

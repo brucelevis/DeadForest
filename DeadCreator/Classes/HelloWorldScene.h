@@ -4,7 +4,11 @@
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 
+#include "GMXLayerManager.hpp"
+
+class GMXFile;
 class GMXLayer;
+class GMXLayerManager;
 class MinimapLayer;
 
 class HelloWorld : public cocos2d::LayerColor
@@ -38,19 +42,19 @@ private:
     
     void onResize();
     
+    void createGMXLayer(GMXFile* file);
+    
+    void saveGMXLayer(GMXFile* file, const std::string fileName);
+    
+    void loadGMXLayer(GMXFile* file, const std::string fileName);
+    
 private:
 
     cocos2d::Size _oldWindowSize;
     
-    const float WINDOW_PADDING = 10.0f;
-    
-    cocos2d::Size _minimapSize;
-    
-    float _menuBarHeight;
-    
-    float _statusBarHeight;
-    
     cocos2d::Size _workSpaceSize;
+    
+    GMXLayerManager _gmxManager;
     
     GMXLayer* _gmxLayer;
     

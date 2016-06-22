@@ -4,9 +4,6 @@
 #include "cocos2d.h"
 #include "imgui.h"
 
-#include <boost/any.hpp>
-
-
 USING_NS_CC;
 
 
@@ -31,11 +28,6 @@ public:
 	void addImGUI(std::function<void()> imGUICall, std::string name) { _callPiplines[name] = imGUICall; };
 	bool removeImGUI(std::string name);
     
-	//-------------------------------------------------------
-	void setValue(boost::any value, std::string uid);
-    boost::any getValue(std::string uid) const;
-	void removeValue(std::string uid);
-    
     //-------------------------------------------------------
     void image(const std::string& fn, int w = -1, int h = -1);
     bool imageButton(const std::string& fn, int w = -1, int h = -1);
@@ -59,7 +51,6 @@ private:
     
     //-------------------------------------------------------
     std::map<std::string, std::function<void()>> _callPiplines;
-    std::map<std::string,  boost::any> _values;
     std::unordered_map<unsigned int, int> _usedTextureIdMap;
     
     //-------------------------------------------------------

@@ -13,9 +13,9 @@
 #include "GMXFile.hpp"
 #include "MinimapLayer.hpp"
 
-class GMXFileManager;
 class EntityBase;
 class Location;
+class Task;
 
 class GMXLayer : public cocos2d::Node
 {
@@ -26,11 +26,11 @@ public:
     
     virtual ~GMXLayer();
     
-    static GMXLayer* create(const std::string& fileName);
+    static GMXLayer* create();
     
-    bool init(const std::string& fileName);
+    virtual bool init() override;
     
-    cocos2d::Size getWorldSize() const { return _file.worldSize; }
+    cocos2d::Size getWorldSize() const { if ( _file ) return _file->worldSize; return cocos2d::Size::ZERO; }
     
     void centerView(float x, float y) { centerView(cocos2d::Vec2(x,y)); }
     
@@ -43,6 +43,10 @@ public:
     void setMinimapPtr(MinimapLayer* minimap) { _minimap = minimap; }
     
     void onResize();
+    
+    void openFile(GMXFile* file);
+    
+    bool isOpened() const { return _isOpened; }
     
     // todo list
     
@@ -58,9 +62,7 @@ public:
     
 private:
     
-    GMXFile _file;
-    
-    GMXFileManager* _gmxFileManager;
+    GMXFile* _file;
     
     MinimapLayer* _minimap;
     
@@ -69,6 +71,14 @@ private:
     cocos2d::Node* _tileRoot;
     
     std::vector<std::vector<cocos2d::Sprite*>> _tileImages;
+    
+    bool _isOpened;
+    
+    // todo
+    
+    std::vector<Task*> _taskHistory;
+    
+    bool _isChanged;
     
 };
 

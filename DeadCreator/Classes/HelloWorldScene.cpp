@@ -57,10 +57,7 @@ bool HelloWorld::init()
                 _isMenuSelected = true;
                 
                 if (ImGui::MenuItem("New", NULL, &_showNewMap))
-                {
-                }
-                
-                if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+                    if (ImGui::MenuItem("Open", "Ctrl+O")) {}
                 if (ImGui::BeginMenu("Open Recent"))
                 {
                     ImGui::MenuItem("fish_hat.c");
@@ -414,7 +411,7 @@ void HelloWorld::showNewMapWindow(bool* opened)
     
     ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
     ImGui::BeginChild("##Number Of Tiles", ImVec2(0,60), true);
-
+    
     ImGui::Text("Number Of Tiles");
     ImGui::Columns(2, "##col2", false);
     
@@ -438,7 +435,7 @@ void HelloWorld::showNewMapWindow(bool* opened)
     
     ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
     ImGui::BeginChild("##Default Tile", ImVec2(0,180), true);
-
+    
     ImGui::Text("Default Tile");
     
     const char* tiles[] = { "Dirt", "Grass", "Water", "Hill" };
@@ -453,6 +450,7 @@ void HelloWorld::showNewMapWindow(bool* opened)
         // create map
         
         GMXFile* file = new GMXFile();
+        
         static int nextNumber = 0;
         file->fileName = "untitled_map_" + to_string(nextNumber++);
         file->tileWidth = atoi(items1[tileSizeXItem]);
@@ -460,6 +458,31 @@ void HelloWorld::showNewMapWindow(bool* opened)
         file->numOfTileX = atoi(items3[numOfTileX]);
         file->numOfTileY = atoi(items4[numOfTileY]);
         file->worldSize = Size(file->tileWidth * file->numOfTileX, file->tileHeight * file->numOfTileY);
+        
+        int x = file->numOfTileX + DUMMY_TILE_SIZE * 2;
+        int y = file->numOfTileY * 2 + DUMMY_TILE_SIZE * 4;
+        
+        file->tileInfos.resize(y);
+        for(int i = 0 ; i < y ; ++ i)
+        {
+            file->tileInfos[i].resize(x);
+        }
+        
+        for(int i = 0 ; i < y; ++ i)
+        {
+            for(int j = 0 ; j < x ; ++ j)
+            {
+                std::string tileName;
+                
+                if ( currentTile == TileType::DIRT) tileName = "1_" + std::to_string(random(1, 3)) + "_1234.png";
+                else if ( currentTile == TileType::GRASS) tileName = "2_" + std::to_string(random(1, 3)) + "_1234.png";
+                else if ( currentTile == TileType::WATER) tileName = "3_" + std::to_string(random(1, 3)) + "_1234.png";
+                else if ( currentTile == TileType::HILL) tileName = "5_" + std::to_string(random(1, 3)) + "_1234.png";
+                
+                file->tileInfos[i][j] = tileName;
+            }
+        }
+        
         createGMXLayer(file);
         
         _isEditEnable = true;
@@ -484,7 +507,6 @@ void HelloWorld::showNewMapWindow(bool* opened)
         currentTile = 0;
         *opened = false;
     }
-
     
     ImGui::End();
 }
@@ -509,11 +531,10 @@ void HelloWorld::showPaletteWindow(bool* opened)
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
     if ( item == 0)
     {
-        CCIMGUI->imageButton("dirt.png", 50, 50); ImGui::SameLine();
-        CCIMGUI->imageButton("grass.png", 50, 50); ImGui::SameLine();
-        CCIMGUI->imageButton("water.png", 50, 50);
-        
-        CCIMGUI->imageButton("hill.png", 50, 50);
+        CCIMGUI->imageButton("1_1_1234.png", 50, 50); ImGui::SameLine();
+        CCIMGUI->imageButton("2_1_1234.png", 50, 50); ImGui::SameLine();
+        CCIMGUI->imageButton("3_1_1234.png", 50, 50);
+        CCIMGUI->imageButton("5_1_1234.png", 50, 50);
     }
     
     else if ( item == 1)

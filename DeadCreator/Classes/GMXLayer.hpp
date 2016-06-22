@@ -13,6 +13,8 @@
 #include "GMXFile.hpp"
 #include "MinimapLayer.hpp"
 
+#define DUMMY_TILE_SIZE 4
+
 class EntityBase;
 class Location;
 class Task;
@@ -54,7 +56,7 @@ public:
     
     int getFocusedTileIndex(const cocos2d::Vec2& mousePos) const { return 0; }
     
-    void putTile(int type, int index) {}
+    void putTile(int type, int index);
     
     void addEntity(EntityBase* entity) {}
     
@@ -69,6 +71,8 @@ private:
     cocos2d::ClippingRectangleNode* _clipNode;
     
     cocos2d::Node* _tileRoot;
+    
+    std::vector<std::vector<std::string>> _tileName;
     
     std::vector<std::vector<cocos2d::Sprite*>> _tileImages;
     

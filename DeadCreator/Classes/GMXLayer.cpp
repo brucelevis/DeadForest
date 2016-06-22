@@ -62,9 +62,8 @@ void GMXLayer::openFile(GMXFile* file)
     _isOpened = true;
     _file = file;
     
-    int x = file->numOfTileX;
-    int y = file->numOfTileY * 2;
-    
+    int x = file->numOfTileX + DUMMY_TILE_SIZE * 2;
+    int y = file->numOfTileY * 2 + DUMMY_TILE_SIZE * 4;
     
     _tileImages.resize(y);
     for(int i = 0 ; i < y ; ++ i)
@@ -79,20 +78,14 @@ void GMXLayer::openFile(GMXFile* file)
             Vec2 tilePosition;
             if ( i % 2 == 0)
             {
-                tilePosition.setPoint(j * 128, i * 64);
+                tilePosition.setPoint(j * 128 - (128 * DUMMY_TILE_SIZE), i * 64 - (128 * DUMMY_TILE_SIZE));
             }
             else
             {
-                tilePosition.setPoint(64 + j * 128, i * 64);
+                tilePosition.setPoint(64 + j * 128 - (128 * DUMMY_TILE_SIZE), i * 64 - (128 * DUMMY_TILE_SIZE));
             }
-            if ( rand() % 2  == 0)
-            {
-                _tileImages[i][j] = Sprite::create("dirt.png");
-            }
-            else
-            {
-                _tileImages[i][j] = Sprite::create("grass.png");
-            }
+            
+            _tileImages[i][j] = Sprite::create(file->tileInfos[i][j]);
             _tileImages[i][j]->setPosition(tilePosition);
             _tileRoot->addChild(_tileImages[i][j]);
         }
@@ -120,6 +113,13 @@ void GMXLayer::onResize()
     
     setClippingRegion(clipRect);
 }
+
+
+void GMXLayer::putTile(int type, int index)
+{
+    
+}
+
 
 
 

@@ -16,7 +16,8 @@ using namespace cocos2d;
 #include "CCImGui.h"
 
 
-GMXLayer::GMXLayer()
+GMXLayer::GMXLayer() :
+_oldSelectedTileType(TileType::DIRT)
 {
 }
 
@@ -55,6 +56,9 @@ bool GMXLayer::init()
     
     _selectRegion = DrawNode::create();
     _tileRoot->addChild(_selectRegion , 10);
+    
+    _selectTileRoot = Node::create();
+    _tileRoot->addChild(_selectTileRoot, 8);
     
     _centerViewPosition = Vec2(_clipNode->getClippingRegion().size / 2);
     
@@ -98,6 +102,35 @@ void GMXLayer::openFile(GMXFile* file)
 //            indices->setString("(" + std::to_string(j) + "," + std::to_string(i) + ")");
 //            _tileImages[i][j]->addChild(indices);
         }
+    }
+    
+    
+    _selectTileRoot->setPosition(Vec2(file->tileWidth / 2, file->tileHeight / 2));
+    //       3
+    //     2   4
+    //   1   0   5
+    //     8   6
+    //       7
+    Vec2 positions[9]
+    {
+        Vec2::ZERO, // 0
+        Vec2(-file->tileWidth, 0.0f), // 1
+        Vec2(-file->tileWidth / 2, file->tileHeight / 2), // 2
+        Vec2(0, file->tileHeight), // 3
+        Vec2(file->tileWidth / 2, file->tileHeight / 2), // 4
+        Vec2(file->tileWidth, 0), // 5
+        Vec2(file->tileWidth / 2, -file->tileHeight / 2), // 6
+        Vec2(0, -file->tileHeight), // 7
+        Vec2(-file->tileWidth / 2, -file->tileHeight / 2), // 8
+    };
+    _attachedTileImages.resize(9);
+    
+    for(int i = 0 ; i < 9 ; ++ i)
+    {
+        _attachedTileImages[i] = Sprite::create();
+        _attachedTileImages[i]->setPosition(positions[i]);
+        _attachedTileImages[i]->setOpacity(128);
+        _selectTileRoot->addChild(_attachedTileImages[i]);
     }
 }
 
@@ -147,12 +180,6 @@ void GMXLayer::onResize()
                          visibleSize.height - MENUBAR_HEIGHT - STATUSBAR_HEIGHT - WINDOW_PADDING * 2);
     
     setClippingRegion(clipRect);
-}
-
-
-void GMXLayer::putTile(int type, int index)
-{
-    
 }
 
 
@@ -224,9 +251,100 @@ void GMXLayer::drawSelectRegion(int x, int y)
     
     // bottom to left
     _selectRegion->drawSegment(Vec2(center.x, center.y - _file->tileHeight / 2), Vec2(center.x - _file->tileWidth / 2, center.y), 1.0f, Color4F::RED);
+    
+    _selectRegionPosition = center;
+    _selectTileRoot->setPosition(center);
 }
 
 
+void GMXLayer::setSelectTileImage(int tileType)
+{
+    if ( _oldSelectedTileType == tileType )
+        return ;
+    
+    _oldSelectedTileType = tileType;
+    
+    switch (tileType)
+    {
+        case TileType::DIRT:
+        {
+            _attachedTileImages[0]->setTexture("1_1_1234.png");
+            _attachedTileImages[1]->setTexture("empty_image.png");
+            _attachedTileImages[2]->setTexture("empty_image.png");
+            _attachedTileImages[3]->setTexture("empty_image.png");
+            _attachedTileImages[4]->setTexture("empty_image.png");
+            _attachedTileImages[5]->setTexture("empty_image.png");
+            _attachedTileImages[6]->setTexture("empty_image.png");
+            _attachedTileImages[7]->setTexture("empty_image.png");
+            _attachedTileImages[8]->setTexture("empty_image.png");
+            break;
+        }
+        case TileType::GRASS:
+        {
+            _attachedTileImages[0]->setTexture("2_1_1234.png");
+            _attachedTileImages[1]->setTexture("2_1_2_s.png");
+            _attachedTileImages[2]->setTexture("2_1_23_s.png");
+            _attachedTileImages[3]->setTexture("2_1_3_s.png");
+            _attachedTileImages[4]->setTexture("2_1_34_s.png");
+            _attachedTileImages[5]->setTexture("2_1_4_s.png");
+            _attachedTileImages[6]->setTexture("2_1_14_s.png");
+            _attachedTileImages[7]->setTexture("2_1_1_s.png");
+            _attachedTileImages[8]->setTexture("2_1_12_s.png");
+            break;
+        }
+        case TileType::WATER:
+        {
+            _attachedTileImages[0]->setTexture("3_1_1234.png");
+            _attachedTileImages[1]->setTexture("3_1_2_s.png");
+            _attachedTileImages[2]->setTexture("3_1_23_s.png");
+            _attachedTileImages[3]->setTexture("3_1_3_s.png");
+            _attachedTileImages[4]->setTexture("3_1_34_s.png");
+            _attachedTileImages[5]->setTexture("3_1_4_s.png");
+            _attachedTileImages[6]->setTexture("3_1_14_s.png");
+            _attachedTileImages[7]->setTexture("3_1_1_s.png");
+            _attachedTileImages[8]->setTexture("3_1_12_s.png");
+            break;
+        }
+        case TileType::HILL:
+        {
+            _attachedTileImages[0]->setTexture("5_1_1234.png");
+            _attachedTileImages[1]->setTexture("5_1_2_s.png");
+            _attachedTileImages[2]->setTexture("5_1_23_s.png");
+            _attachedTileImages[3]->setTexture("5_1_3_s.png");
+            _attachedTileImages[4]->setTexture("5_1_34_s.png");
+            _attachedTileImages[5]->setTexture("5_1_4_s.png");
+            _attachedTileImages[6]->setTexture("5_1_14_s.png");
+            _attachedTileImages[7]->setTexture("5_1_1_s.png");
+            _attachedTileImages[8]->setTexture("5_1_12_s.png");
+            break;
+        }
+        default : break;
+    }
+}
+
+
+void GMXLayer::disableSelectRegion()
+{
+    _selectRegion->clear();
+    for(int i = 0 ; i < 9 ; ++ i)
+    {
+        _attachedTileImages[i]->setTexture("empty_image.png");
+    }
+}
+
+
+void GMXLayer::putTile(int type, int x, int y)
+{
+    std::string center;
+    if ( type == TileType::DIRT) center = "1_" + std::to_string(random(1, 3)) + "_1234";
+    else if ( type == TileType::GRASS) center = "2_" + std::to_string(random(1, 3)) + "_1234";
+    else if ( type == TileType::WATER) center = "3_" + std::to_string(random(1, 3)) + "_1234";
+    else if ( type == TileType::HILL) center = "5_" + std::to_string(random(1, 3)) + "_1234";
+   
+    _file->tileInfos[y][x] = center;
+    _tileImages[y][x]->setTexture(center + ".png");
+    
+}
 
 
 

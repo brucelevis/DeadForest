@@ -70,6 +70,8 @@ void CCImGui::init()
 
 void CCImGui::updateImGUI()
 {
+    _usedTextureIdMap.clear();
+    
     for (auto &d : _callPiplines)
 	{
 		d.second();

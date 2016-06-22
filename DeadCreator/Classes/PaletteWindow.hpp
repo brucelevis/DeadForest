@@ -48,7 +48,7 @@ private:
     
     int _paletteType = 0;
     
-    int _selectedItem = -1;
+    int _selectedItem = 0;
     
 };
 

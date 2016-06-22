@@ -41,7 +41,7 @@ void PaletteWindow::showPaletteWindow(bool* opened)
     
     if (ImGui::Combo("type", &_paletteType, "tile\0entity\0item\0doodad\0"))
     {
-        _selectedItem = -1;
+        _selectedItem = 0;
     }
     
     ImGui::Separator();
@@ -52,18 +52,36 @@ void PaletteWindow::showPaletteWindow(bool* opened)
     
     if ( _paletteType == 0)
     {
-        if (CCIMGUI->imageButton("1_1_1234.png", 50, 50)) _selectedItem = 0;
+        if (CCIMGUI->imageButton("1_1_1234.png", 50, 50))
+        {
+            _selectedItem = 0;
+        }
         ImGui::SameLine();
-        if (CCIMGUI->imageButton("2_1_1234.png", 50, 50)) _selectedItem = 1;
-        ImGui::SameLine();
-        if (CCIMGUI->imageButton("3_1_1234.png", 50, 50)) _selectedItem = 2;
         
-        if (CCIMGUI->imageButton("5_1_1234.png", 50, 50)) _selectedItem = 3;
+        if (CCIMGUI->imageButton("2_1_1234.png", 50, 50))
+        {
+            _selectedItem = 1;
+        }
+        ImGui::SameLine();
+        
+        if (CCIMGUI->imageButton("3_1_1234.png", 50, 50))
+        {
+            _selectedItem = 2;
+        }
+        
+        if (CCIMGUI->imageButton("5_1_1234.png", 50, 50))
+        {
+            _selectedItem = 3;
+        }
     }
     
     else if ( _paletteType == 1)
     {
-        if (CCIMGUI->imageButton("human.png", 50, 50)) _selectedItem = 0;
+        if (CCIMGUI->imageButton("human.png", 50, 50))
+        {
+            log("human");
+            _selectedItem = 0;
+        }
     }
     
     else if ( _paletteType == 2)

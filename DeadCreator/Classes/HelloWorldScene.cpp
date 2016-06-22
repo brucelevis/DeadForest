@@ -308,6 +308,29 @@ void HelloWorld::onMouseDown(cocos2d::Event* event)
         
         onCenterView();
     }
+    
+    auto currLayer = _gmxLayerManager->getCurrentLayer();
+    if ( currLayer )
+    {
+        if ( _palette->getPaletteType() == PaletteType::TILE )
+        {
+            Size clipSize = currLayer->getClippingRegion().size;
+            Vec2 positionInClipRect(_mousePosition - Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
+            
+            bool inImGuiWidgets = ImGui::IsPosHoveringAnyWindow(ImVec2(mouseEvent->getLocationInView().x,
+                                                                       _director->getVisibleSize().height - mouseEvent->getLocationInView().y));
+           
+            if ( !inImGuiWidgets && currLayer->getClippingRegion().containsPoint(positionInClipRect) )
+            {
+                _worldPosition = _gmxLayerManager->getCurrentLayer()->getCenterViewPosition();
+                positionInClipRect -= clipSize / 2;
+                _worldPosition += positionInClipRect;
+                
+                auto indices = currLayer->getFocusedTileIndex(_worldPosition);
+                currLayer->putTile(_palette->getSelectedItem(), indices.first, indices.second);
+            }
+        }
+    }
 }
 
 
@@ -363,6 +386,7 @@ void HelloWorld::onCenterView()
             
             auto indices = currLayer->getFocusedTileIndex(_worldPosition);
             currLayer->drawSelectRegion(indices.first, indices.second);
+            currLayer->setSelectTileImage(_palette->getSelectedItem());
         }
         else if ( _palette->getPaletteType() == PaletteType::ENTITY )
         {
@@ -559,6 +583,7 @@ void HelloWorld::showFileMenuBar(bool* opened)
         // closed
         _showPalette = false;
         _showTrigger = false;
+        _viewSpaceParams.setZero();
         _worldPosition = Vec2::ZERO;
         _minimapLayer->disableFocusWindow();
         _gmxLayerManager->closeLayer();

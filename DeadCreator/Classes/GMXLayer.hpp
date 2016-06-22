@@ -68,11 +68,13 @@ public:
     
     void drawSelectRegion(int x, int y);
     
-    void disableSelectRegion() { _selectRegion->clear(); }
+    void disableSelectRegion();
+    
+    void setSelectTileImage(int tileType);
     
     // todo list
     
-    void putTile(int type, int index);
+    void putTile(int type, int x, int y);
     
     void addEntity(EntityBase* entity) {}
     
@@ -88,6 +90,10 @@ private:
     
     cocos2d::Node* _tileRoot;
     
+    cocos2d::Node* _selectTileRoot;
+    
+    std::vector<cocos2d::Sprite*> _attachedTileImages;
+    
     std::vector<std::vector<cocos2d::Sprite*>> _tileImages;
     
     PaletteWindow* _palette;
@@ -95,6 +101,10 @@ private:
     cocos2d::Vec2 _centerViewPosition;
     
     cocos2d::DrawNode* _selectRegion;
+    
+    cocos2d::Vec2 _selectRegionPosition;
+
+    int _oldSelectedTileType;
     
     // todo
     

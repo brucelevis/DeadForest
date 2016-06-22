@@ -8337,7 +8337,7 @@ bool ImGui::ListBox(const char* label, int* current_item, bool (*items_getter)(v
 bool ImGui::MenuItem(const char* label, const char* shortcut, bool selected, bool enabled)
 {
     ImGuiWindow* window = GetCurrentWindow();
-    if (window->SkipItems)
+    if ( window->SkipItems )
         return false;
 
     ImGuiState& g = *GImGui;

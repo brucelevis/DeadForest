@@ -32,9 +32,9 @@ public:
     
     cocos2d::Size getWorldSize() const { if ( _file ) return _file->worldSize; return cocos2d::Size::ZERO; }
     
-    void centerView(float x, float y) { centerView(cocos2d::Vec2(x,y)); }
+    void onCenterView(float x, float y) { onCenterView(cocos2d::Vec2(x,y)); }
     
-    void centerView(const cocos2d::Vec2& params);
+    void onCenterView(const cocos2d::Vec2& params);
     
     cocos2d::Rect getClippingRegion() const { return _clipNode->getClippingRegion(); }
     

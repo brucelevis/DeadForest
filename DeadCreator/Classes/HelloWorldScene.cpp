@@ -11,8 +11,7 @@ using namespace std;
 using namespace cocos2d;
 
 
-HelloWorld::HelloWorld() :
-_workSpaceSize(Size::ZERO)
+HelloWorld::HelloWorld()
 {
 }
 
@@ -43,19 +42,23 @@ bool HelloWorld::init()
     // init();
     CCImGui::getInstance();
     
+    
     CCIMGUI->addImGUI([this](){
+        
+        if (_showNewMap) showNewMapWindow(&_showNewMap);
+        if (_showPalette) showPaletteWindow(&_showPalette);
         
         if (ImGui::BeginMainMenuBar())
         {
             if (ImGui::BeginMenu("File"))
             {
                 ImGui::MenuItem("(dummy menu)", NULL, false, false);
-                if (ImGui::MenuItem("New"))
+                if (ImGui::MenuItem("New", NULL, &_showNewMap))
                 {
-                    GMXFile* file = new GMXFile();
-                    if ( _gmxManager.loadGMXFile(file, "test.txt") ) log("suc"); else log("fail");
-                    createGMXLayer(file);
+                    if ( _showNewMap ) _isPaletteEnable = true;
+                    else _isPaletteEnable = false;
                 }
+                
                 if (ImGui::MenuItem("Open", "Ctrl+O")) {}
                 if (ImGui::BeginMenu("Open Recent"))
                 {
@@ -131,8 +134,8 @@ bool HelloWorld::init()
             
             if (ImGui::BeginMenu("Windows"))
             {
-                if (ImGui::MenuItem("Trigger Editor", "SHIFT+T")) {}
-                if (ImGui::MenuItem("Palette Window", "SHIFT+P")) {}
+                ImGui::MenuItem("Trigger Editor", "SHIFT+T");
+                ImGui::MenuItem("Palette Window", "SHIFT+P", &_showPalette, _isPaletteEnable);
                 ImGui::Separator();
                 if (ImGui::MenuItem("test.gmx")) {}
                 if (ImGui::MenuItem("test1.gmx")) {}
@@ -227,72 +230,18 @@ bool HelloWorld::init()
     
     
     CCIMGUI->addImGUI([this]{
-    
-        ImGui::SetNextWindowPos(ImVec2(750, 100), ImGuiWindowFlags_NoResize);
-        ImGui::SetNextWindowSize(ImVec2(200, 300));
-        
-        static bool open = true;
-        ImGui::Begin("Palette", &open, ImGuiWindowFlags_NoCollapse);
-       
-        
-        static int item = 0;
-        ImGui::Combo("type", &item, "tile\0entity\0item\0doodad");
-        
-        ImGui::Separator();
-        
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
-        if ( item == 0)
-        {
-            CCIMGUI->imageButton("dirt.png", 50, 50); ImGui::SameLine();
-            CCIMGUI->imageButton("grass.png", 50, 50); ImGui::SameLine();
-            CCIMGUI->imageButton("water.png", 50, 50);
-            
-            CCIMGUI->imageButton("hill.png", 50, 50);
-        }
-        
-        else if ( item == 1)
-        {
-            CCIMGUI->imageButton("human.png", 50, 50);
-        }
-        
-        else if ( item == 2)
-        {
-            CCIMGUI->imageButton("5_56mm.png", 50, 50); ImGui::SameLine();
-            CCIMGUI->imageButton("9mm.png", 50, 50); ImGui::SameLine();
-            CCIMGUI->imageButton("Shell.png", 50, 50);
-           
-            CCIMGUI->imageButton("Axe.png", 50, 50); ImGui::SameLine();
-            CCIMGUI->imageButton("Glock17.png", 50, 50); ImGui::SameLine();
-            CCIMGUI->imageButton("M16A2.png", 50, 50);
-            
-            CCIMGUI->imageButton("M1897.png", 50, 50); ImGui::SameLine();
-            CCIMGUI->imageButton("MeatCan.png", 50, 50); ImGui::SameLine();
-            CCIMGUI->imageButton("Bandage.png", 50, 50);
-        }
-        ImGui::PopStyleColor(3);
-        
-        ImGui::End();
-        
-    }, "palette_window");
-    
-    
-    CCIMGUI->addImGUI([this]{
         
         static bool isShowDemo = true;
         ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
         ImGui::ShowTestWindow(&isShowDemo);
-
+        
     }, "test_window");
     
     
-    _gmxLayer = GMXLayer::create();
-    _gmxLayer->setPosition(Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
-    _gmxLayer->setClippingRegion(Rect(0, 0,
-                                      _director->getVisibleSize().width - MINIMAP_SIZE - WINDOW_PADDING * 3,
-                                      _director->getVisibleSize().height - MENUBAR_HEIGHT - STATUSBAR_HEIGHT - WINDOW_PADDING * 2));
-    addChild(_gmxLayer);
+    _gmxLayerManager = GMXLayerManager::create();
+    _gmxLayerManager->setPosition(Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
+    addChild(_gmxLayerManager);
+    
     
     _minimapLayer = MinimapLayer::create(Size(MINIMAP_SIZE,MINIMAP_SIZE));
     _minimapLayer->setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - MENUBAR_HEIGHT - MINIMAP_SIZE - WINDOW_PADDING));
@@ -316,34 +265,48 @@ void HelloWorld::update(float dt)
     
     _oldWindowSize = director->getVisibleSize();
     
+    GMXLayer* currLayer = _gmxLayerManager->getCurrentLayer();
+    
     if ( _isKeyPressed[static_cast<int>(EventKeyboard::KeyCode::KEY_LEFT_ARROW)] == true )
     {
-        _viewSpaceParams.x = _viewSpaceParams.x - (3000.0f / _workSpaceSize.width) * dt;
-        _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0f, 1.0f);
-        
-        onCenterView();
+        if ( currLayer )
+        {
+            _viewSpaceParams.x = _viewSpaceParams.x - (3000.0f / currLayer->getWorldSize().width) * dt;
+            _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0f, 1.0f);
+            
+            onCenterView();
+        }
     }
     else if ( _isKeyPressed[static_cast<int>(EventKeyboard::KeyCode::KEY_RIGHT_ARROW)] == true )
     {
-        _viewSpaceParams.x = _viewSpaceParams.x + (3000.0f / _workSpaceSize.height) * dt;
-        _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0f, 1.0f);
-        
-        onCenterView();
+        if ( currLayer )
+        {
+            _viewSpaceParams.x = _viewSpaceParams.x + (3000.0f / currLayer->getWorldSize().width) * dt;
+            _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0f, 1.0f);
+            
+            onCenterView();
+        }
     }
     
     if ( _isKeyPressed[static_cast<int>(EventKeyboard::KeyCode::KEY_DOWN_ARROW)] == true )
     {
-        _viewSpaceParams.y = _viewSpaceParams.y - (3000.0f / _workSpaceSize.width) * dt;
-        _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0f, 1.0f);
-        
-        onCenterView();
+        if ( currLayer )
+        {
+            _viewSpaceParams.y = _viewSpaceParams.y - (3000.0f / currLayer->getWorldSize().height) * dt;
+            _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0f, 1.0f);
+            
+            onCenterView();
+        }
     }
     else if ( _isKeyPressed[static_cast<int>(EventKeyboard::KeyCode::KEY_UP_ARROW)] == true )
     {
-        _viewSpaceParams.y = _viewSpaceParams.y + (3000.0f / _workSpaceSize.height) * dt;
-        _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0f, 1.0f);
-        
-        onCenterView();
+        if ( currLayer )
+        {
+            _viewSpaceParams.y = _viewSpaceParams.y + (3000.0f / currLayer->getWorldSize().height) * dt;
+            _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0f, 1.0f);
+            
+            onCenterView();
+        }
     }
 }
 
@@ -379,7 +342,7 @@ void HelloWorld::onMouseDown(cocos2d::Event* event)
         _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0, 1.0);
         
         onCenterView();
-     }
+    }
 }
 
 
@@ -415,26 +378,28 @@ void HelloWorld::onMouseUp(cocos2d::Event* event)
 
 void HelloWorld::onCenterView()
 {
-    if ( _minimapLayer ) _minimapLayer->centerView(_viewSpaceParams);
-    if ( _gmxLayer ) _gmxLayer->centerView(_viewSpaceParams);
+    _gmxLayerManager->onCenterView(_viewSpaceParams.x, _viewSpaceParams.y);
+    
+    if ( _minimapLayer ) _minimapLayer->onCenterView(_viewSpaceParams);
 }
 
 
 void HelloWorld::onResize()
 {
+    _gmxLayerManager->onResize();
+    
     if ( _minimapLayer ) _minimapLayer->onResize();
-    if ( _gmxLayer ) _gmxLayer->onResize();
 }
 
 
 void HelloWorld::createGMXLayer(GMXFile* file)
 {
-    _gmxLayer->openFile(file);
+    GMXLayer* newLayer = GMXLayer::create();
     
-    _minimapLayer->setGMXLayer(_gmxLayer);
-    _gmxLayer->setMinimapPtr(_minimapLayer);
+    newLayer->openFile(file);
+    _gmxLayerManager->addLayer(newLayer);
     
-    _workSpaceSize = _gmxLayer->getWorldSize();
+    _minimapLayer->setGMXLayer(newLayer);
 }
 
 
@@ -446,6 +411,158 @@ void HelloWorld::saveGMXLayer(GMXFile* file, const std::string fileName)
 void HelloWorld::loadGMXLayer(GMXFile* file, const std::string fileName)
 {
 }
+
+
+void HelloWorld::showNewMapWindow(bool* opened)
+{
+    ImGui::SetNextWindowSize(ImVec2(430,430));
+    if (!ImGui::Begin("New Map", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+    {
+        ImGui::End();
+        return;
+    }
+    
+    ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
+    ImGui::BeginChild("##TileSize", ImVec2(0,60), true);
+    ImGui::Text("Tile Size");
+    ImGui::Columns(2, "##col1", false);
+    
+    static int tileSizeXItem = 0;
+    const char* items1[] = {"128"};
+    ImGui::Combo("width", &tileSizeXItem, items1, 1);
+    ImGui::NextColumn();
+    
+    static int tileSizeYItem = 0;
+    const char* items2[] = {"128"};
+    ImGui::Combo("height", &tileSizeYItem, items2, 1);
+    
+    ImGui::EndChild();
+    ImGui::PopStyleVar();
+    
+    ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
+    ImGui::BeginChild("##Number Of Tiles", ImVec2(0,60), true);
+
+    ImGui::Text("Number Of Tiles");
+    ImGui::Columns(2, "##col2", false);
+    
+    static int numOfTileX = 0;
+    const char* items3[] = {"32", "64", "128", "192", "256" };
+    ImGui::Combo("x", &numOfTileX, items3, 5);
+    ImGui::NextColumn();
+    
+    static int numOfTileY = 0;
+    const char* items4[] = {"32", "64", "128", "192", "256" };
+    ImGui::Combo("y", &numOfTileY, items4, 5);
+    
+    ImGui::EndChild();
+    ImGui::PopStyleVar();
+    
+    ImGui::Text("World size is (%d) x (%d)",
+                atoi(items1[tileSizeXItem]) * atoi(items3[numOfTileX]),
+                atoi(items2[tileSizeYItem]) * atoi(items4[numOfTileY]));
+    
+    ImGui::Text("\n");
+    
+    ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
+    ImGui::BeginChild("##Default Tile", ImVec2(0,180), true);
+
+    ImGui::Text("Default Tile");
+    
+    const char* tiles[] = { "Dirt", "Grass", "Water", "Hill" };
+    static int currentTile = 0;
+    ImGui::ListBox("select\ndefault tile", &currentTile, tiles, 4, 6);
+    
+    ImGui::EndChild();
+    ImGui::PopStyleVar();
+    
+    if (ImGui::Button("Create"))
+    {
+        // create map
+        
+        GMXFile* file = new GMXFile();
+        static int nextNumber = 0;
+        file->fileName = "untitled_map_" + to_string(nextNumber++);
+        file->tileWidth = atoi(items1[tileSizeXItem]);
+        file->tileHeight = atoi(items2[tileSizeYItem]);
+        file->numOfTileX = atoi(items3[numOfTileX]);
+        file->numOfTileY = atoi(items4[numOfTileY]);
+        file->worldSize = Size(file->tileWidth * file->numOfTileX, file->tileHeight * file->numOfTileY);
+        createGMXLayer(file);
+        
+        tileSizeXItem = 0;
+        tileSizeYItem = 0;
+        numOfTileX = 0;
+        numOfTileY = 0;
+        currentTile = 0;
+        *opened = false;
+    }
+    ImGui::SameLine();
+    if ( ImGui::Button("Cancel") )
+    {
+        tileSizeXItem = 0;
+        tileSizeYItem = 0;
+        numOfTileX = 0;
+        numOfTileY = 0;
+        currentTile = 0;
+        *opened = false;
+    }
+
+    
+    ImGui::End();
+}
+
+
+void HelloWorld::showPaletteWindow(bool* opened)
+{
+    ImGui::SetNextWindowPos(ImVec2(750, 100), ImGuiWindowFlags_NoResize);
+    ImGui::SetNextWindowSize(ImVec2(200, 300));
+    
+    static bool open = true;
+    ImGui::Begin("Palette", &open, ImGuiWindowFlags_NoCollapse);
+    
+    
+    static int item = 0;
+    ImGui::Combo("type", &item, "tile\0entity\0item\0doodad");
+    
+    ImGui::Separator();
+    
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
+    if ( item == 0)
+    {
+        CCIMGUI->imageButton("dirt.png", 50, 50); ImGui::SameLine();
+        CCIMGUI->imageButton("grass.png", 50, 50); ImGui::SameLine();
+        CCIMGUI->imageButton("water.png", 50, 50);
+        
+        CCIMGUI->imageButton("hill.png", 50, 50);
+    }
+    
+    else if ( item == 1)
+    {
+        CCIMGUI->imageButton("human.png", 50, 50);
+    }
+    
+    else if ( item == 2)
+    {
+        CCIMGUI->imageButton("5_56mm.png", 50, 50); ImGui::SameLine();
+        CCIMGUI->imageButton("9mm.png", 50, 50); ImGui::SameLine();
+        CCIMGUI->imageButton("Shell.png", 50, 50);
+        
+        CCIMGUI->imageButton("Axe.png", 50, 50); ImGui::SameLine();
+        CCIMGUI->imageButton("Glock17.png", 50, 50); ImGui::SameLine();
+        CCIMGUI->imageButton("M16A2.png", 50, 50);
+        
+        CCIMGUI->imageButton("M1897.png", 50, 50); ImGui::SameLine();
+        CCIMGUI->imageButton("MeatCan.png", 50, 50); ImGui::SameLine();
+        CCIMGUI->imageButton("Bandage.png", 50, 50);
+    }
+    ImGui::PopStyleColor(3);
+    
+    ImGui::End();
+}
+
+
 
 
 

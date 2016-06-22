@@ -48,15 +48,15 @@ private:
     
     void loadGMXLayer(GMXFile* file, const std::string fileName);
     
+    void showNewMapWindow(bool* opened);
+    
+    void showPaletteWindow(bool* opened);
+    
 private:
 
     cocos2d::Size _oldWindowSize;
     
-    cocos2d::Size _workSpaceSize;
-    
-    GMXLayerManager _gmxManager;
-    
-    GMXLayer* _gmxLayer;
+    GMXLayerManager* _gmxLayerManager;
     
     MinimapLayer* _minimapLayer;
     
@@ -69,6 +69,10 @@ private:
     cocos2d::Vec2 _mousePosition;
     
     bool _isMousePressed;
+    
+    bool _showNewMap = false;
+    bool _showPalette = false;
+    bool _isPaletteEnable = false;
     
 };
 

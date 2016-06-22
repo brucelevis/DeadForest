@@ -12,36 +12,49 @@
 #include <string>
 #include <list>
 
+#include "cocos2d.h"
+
 #include "tinyxml2/tinyxml2.h"
 
 class GMXFile;
+class GMXLayer;
 
-class GMXLayerManager
+class GMXLayerManager : public cocos2d::Node
 {
     
 public:
     
-    GMXLayerManager() = default;
+    GMXLayerManager();
     
     virtual ~GMXLayerManager() = default;
+    
+    CREATE_FUNC(GMXLayerManager);
     
     bool saveGMXFile(GMXFile* file, const std::string& fileName);
 
     bool loadGMXFile(GMXFile* file, const std::string& fileName);
     
-    void pushFile(GMXFile* file);
+    void addLayer(GMXLayer* layer);
     
-    void openFile(GMXFile* file);
+    void openLayer(GMXLayer* layer);
     
-    void closeFile(GMXFile* file);
+    void closeLayer(GMXLayer* layer);
     
-    void removeFile(GMXFile* file);
+    void removeLayer(GMXLayer* layer);
+    
+    void onResize();
+    
+    void onCenterView(float x, float y);
+    
+    GMXLayer* getCurrentLayer() const { return _currLayer; }
     
 private:
     
     tinyxml2::XMLDocument _document;
     
-    std::list<GMXFile*> _openedFiles;
+    std::list<GMXLayer*> _gmxlayers;
+    
+    GMXLayer* _currLayer;
     
 };
 

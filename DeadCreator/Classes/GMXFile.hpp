@@ -15,6 +15,8 @@
 struct GMXFile
 {
     
+    std::string fileName;
+    
     int tileWidth = -1;
     
     int tileHeight = -1;

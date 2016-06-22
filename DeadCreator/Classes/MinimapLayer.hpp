@@ -38,9 +38,9 @@ public:
     
     cocos2d::Size getFocusWindowSize() const { return _focusWindowSize; }
     
-    void centerView(float x, float y) { centerView(cocos2d::Vec2(x,y)); }
+    void onCenterView(float x, float y) { onCenterView(cocos2d::Vec2(x,y)); }
     
-    void centerView(const cocos2d::Vec2& params);
+    void onCenterView(const cocos2d::Vec2& params);
     
     void setDefaultImage(const std::string& fileName);
     
@@ -57,8 +57,6 @@ private:
     cocos2d::Size _focusWindowSize;
     
     cocos2d::Size _layerSize;
-    
-    cocos2d::Size _worldSize;
     
     cocos2d::Sprite* _defaultImage;
     

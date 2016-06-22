@@ -44,7 +44,10 @@ bool GMXLayer::init()
     if ( !Node::init() )
         return false;
     
-    _clipNode = ClippingRectangleNode::create(Rect(0, 0, 0, 0));
+    auto visibleSize = _director->getVisibleSize();
+    _clipNode = ClippingRectangleNode::create(Rect(0, 0,
+                                                   visibleSize.width - MINIMAP_SIZE - WINDOW_PADDING * 3,
+                                                   visibleSize.height - MENUBAR_HEIGHT - STATUSBAR_HEIGHT - WINDOW_PADDING * 2));
     addChild(_clipNode);
     
     _tileRoot = Node::create();
@@ -59,15 +62,19 @@ void GMXLayer::openFile(GMXFile* file)
     _isOpened = true;
     _file = file;
     
-    _tileImages.resize(file->numOfTileY);
-    for(int i = 0 ; i < file->numOfTileY ; ++ i)
+    int x = file->numOfTileX;
+    int y = file->numOfTileY * 2;
+    
+    
+    _tileImages.resize(y);
+    for(int i = 0 ; i < y ; ++ i)
     {
-        _tileImages[i].resize(file->numOfTileX);
+        _tileImages[i].resize(x);
     }
     
-    for(int i = 0 ; i < file->numOfTileY ; ++ i)
+    for(int i = 0 ; i < y; ++ i)
     {
-        for(int j = 0 ; j < file->numOfTileX ; ++ j)
+        for(int j = 0 ; j < x ; ++ j)
         {
             Vec2 tilePosition;
             if ( i % 2 == 0)
@@ -93,14 +100,14 @@ void GMXLayer::openFile(GMXFile* file)
 }
 
 
-void GMXLayer::centerView(const cocos2d::Vec2& params)
+void GMXLayer::onCenterView(const cocos2d::Vec2& params)
 {
     // todo
-    if ( !isOpened() ) return ;
-    
-    _tileRoot->setPosition(-Vec2(params.x * (_file->worldSize.width - _clipNode->getClippingRegion().size.width),
-                                 params.y * (_file->worldSize.height - _clipNode->getClippingRegion().size.height)));
-    
+    if ( isOpened() )
+    {
+        _tileRoot->setPosition(-Vec2(params.x * (_file->worldSize.width - _clipNode->getClippingRegion().size.width),
+                                     params.y * (_file->worldSize.height - _clipNode->getClippingRegion().size.height)));
+    }
 }
 
 

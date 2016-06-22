@@ -53,7 +53,7 @@ MinimapLayer* MinimapLayer::create(const cocos2d::Size& layerSize)
 }
 
 
-void MinimapLayer::centerView(const cocos2d::Vec2& params)
+void MinimapLayer::onCenterView(const cocos2d::Vec2& params)
 {
     if ( !_gmxLayer ) return ;
     
@@ -81,13 +81,13 @@ void MinimapLayer::setDefaultImage(const std::string& fileName)
 void MinimapLayer::setGMXLayer(GMXLayer *layer)
 {
     _gmxLayer = layer;
-    _worldSize = _gmxLayer->getWorldSize();
+    Size worldSize = _gmxLayer->getWorldSize();
     
-    _focusWindowSize = Size(_layerSize.width * (_gmxLayer->getClippingRegion().size.width / _worldSize.width),
-                            _layerSize.height * (_gmxLayer->getClippingRegion().size.height / _worldSize.height));
+    _focusWindowSize = Size(_layerSize.width * (layer->getClippingRegion().size.width / worldSize.width),
+                            _layerSize.height * (layer->getClippingRegion().size.height / worldSize.height));
     
     _focusWindowRenderer->drawRect(-Vec2(_focusWindowSize.width / 2, _focusWindowSize.height / 2),
-                                   Vec2(_focusWindowSize.width /2, _focusWindowSize.height / 2), Color4F::WHITE);
+                                   Vec2(_focusWindowSize.width / 2, _focusWindowSize.height / 2), Color4F::WHITE);
     
     _focusWindowRenderer->setPosition(Vec2(_focusWindowSize.width / 2, _focusWindowSize.height / 2));
 }
@@ -96,9 +96,10 @@ void MinimapLayer::onResize()
 {
     setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - MENUBAR_HEIGHT - _layerSize.height - WINDOW_PADDING));
     
+    Size worldSize = _gmxLayer->getWorldSize();
     _focusWindowRenderer->clear();
-    _focusWindowSize = Size(_layerSize.width * (_gmxLayer->getClippingRegion().size.width / _worldSize.width),
-                            _layerSize.height * (_gmxLayer->getClippingRegion().size.height / _worldSize.height));
+    _focusWindowSize = Size(_layerSize.width * (_gmxLayer->getClippingRegion().size.width / worldSize.width),
+                            _layerSize.height * (_gmxLayer->getClippingRegion().size.height / worldSize.height));
     
     _focusWindowRenderer->drawRect(-Vec2(_focusWindowSize.width / 2, _focusWindowSize.height / 2),
                                    Vec2(_focusWindowSize.width /2, _focusWindowSize.height / 2), Color4F::WHITE);

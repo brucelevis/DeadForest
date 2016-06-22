@@ -60,9 +60,15 @@ public:
     
     bool isContainPointInDiamond(const cocos2d::Vec2& diamondCenter, const cocos2d::Size& halfLen, const cocos2d::Vec2& p) const;
     
-    std::pair<int,int> getFocusedTileIndex(float mouseX, float mouseY) const  { return getFocusedTileIndex(cocos2d::Vec2(mouseX, mouseY)); }
+    std::pair<int, int> getFocusedTileIndex(float worldPosX, float worldPosY) const  { return getFocusedTileIndex(cocos2d::Vec2(worldPosX, worldPosY)); }
     
-    std::pair<int,int> getFocusedTileIndex(const cocos2d::Vec2& mousePos) const;
+    std::pair<int, int> getFocusedTileIndex(const cocos2d::Vec2& worldPos) const;
+    
+    cocos2d::Vec2 getTilePosition(int x, int y) { return _tileImages[y][x]->getPosition(); }
+    
+    void drawSelectRegion(int x, int y);
+    
+    void disableSelectRegion() { _selectRegion->clear(); }
     
     // todo list
     
@@ -87,6 +93,8 @@ private:
     PaletteWindow* _palette;
     
     cocos2d::Vec2 _centerViewPosition;
+    
+    cocos2d::DrawNode* _selectRegion;
     
     // todo
     

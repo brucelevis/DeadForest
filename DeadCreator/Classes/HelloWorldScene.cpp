@@ -139,9 +139,13 @@ bool HelloWorld::init()
         
         ImGui::Columns(5, "extra_info", false);
         ImGui::SameLine();
-        ImGui::Text("MousePosition (%.0f, %.0f)",
+        ImGui::Text("Mouse Position (%.0f, %.0f)",
                     cocos2d::clampf(ImGui::GetMousePos().x, 0.0f, io.DisplaySize.x),
                     cocos2d::clampf(io.DisplaySize.y - ImGui::GetMousePos().y, 0.0f, io.DisplaySize.y));
+        
+        ImGui::SameLine();
+        ImGui::NextColumn();
+        ImGui::Text("World Position (%.0f, %.0f)", _worldPosition.x, _worldPosition.y);
         
         ImGui::SameLine();
         ImGui::NextColumn();
@@ -150,10 +154,6 @@ bool HelloWorld::init()
         ImGui::SameLine();
         ImGui::NextColumn();
         ImGui::Text("Object 372");
-        
-        ImGui::SameLine();
-        ImGui::NextColumn();
-        ImGui::Text("Position (%.0f, %.0f)", 11314.0f, 3323.0f);
         
         ImGui::SameLine();
         ImGui::NextColumn();
@@ -308,32 +308,16 @@ void HelloWorld::onMouseDown(cocos2d::Event* event)
         
         onCenterView();
     }
-    
-    auto currLayer = _gmxLayerManager->getCurrentLayer();
-    if ( currLayer )
-    {
-        Size clipSize = currLayer->getClippingRegion().size;
-        Vec2 positionInClipRect(_mousePosition - Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
-        positionInClipRect.x = clampf(positionInClipRect.x, 0.0f, clipSize.width);
-        positionInClipRect.y = clampf(positionInClipRect.y, 0.0f, clipSize.height);
-
-        Vec2 centerView = _gmxLayerManager->getCurrentLayer()->getCenterViewPosition();
-        positionInClipRect -= clipSize / 2;
-        centerView += positionInClipRect;
-        
-        // ok
-        auto indices = currLayer->getFocusedTileIndex(centerView);
-    }
 }
 
 
 void HelloWorld::onMouseMove(cocos2d::Event* event)
 {
+    auto mouseEvent = static_cast<EventMouse*>(event);
+    _mousePosition.setPoint(mouseEvent->getCursorX(), mouseEvent->getCursorY());
+    
     if ( _isMousePressed )
     {
-        auto mouseEvent = static_cast<EventMouse*>(event);
-        _mousePosition.setPoint(mouseEvent->getCursorX(), mouseEvent->getCursorY());
-        
         Rect minimapRect(_minimapLayer->getPosition().x, _minimapLayer->getPosition().y, MINIMAP_SIZE, MINIMAP_SIZE);
         if ( minimapRect.containsPoint(_mousePosition) )
         {
@@ -344,10 +328,10 @@ void HelloWorld::onMouseMove(cocos2d::Event* event)
             
             _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0, 1.0);
             _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0, 1.0);
-            
-            onCenterView();
         }
     }
+    
+    onCenterView();
 }
 
 
@@ -362,6 +346,37 @@ void HelloWorld::onCenterView()
     _gmxLayerManager->onCenterView(_viewSpaceParams.x, _viewSpaceParams.y);
     
     if ( _minimapLayer ) _minimapLayer->onCenterView(_viewSpaceParams);
+    
+    auto currLayer = _gmxLayerManager->getCurrentLayer();
+    if ( currLayer )
+    {
+        if ( _palette->getPaletteType() == PaletteType::TILE )
+        {
+            Size clipSize = currLayer->getClippingRegion().size;
+            Vec2 positionInClipRect(_mousePosition - Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
+            positionInClipRect.x = clampf(positionInClipRect.x, 0.0f, clipSize.width);
+            positionInClipRect.y = clampf(positionInClipRect.y, 0.0f, clipSize.height);
+            
+            _worldPosition = _gmxLayerManager->getCurrentLayer()->getCenterViewPosition();
+            positionInClipRect -= clipSize / 2;
+            _worldPosition += positionInClipRect;
+            
+            auto indices = currLayer->getFocusedTileIndex(_worldPosition);
+            currLayer->drawSelectRegion(indices.first, indices.second);
+        }
+        else if ( _palette->getPaletteType() == PaletteType::ENTITY )
+        {
+            currLayer->disableSelectRegion();
+        }
+        else if ( _palette->getPaletteType() == PaletteType::ITEM )
+        {
+            currLayer->disableSelectRegion();
+        }
+        else if ( _palette->getPaletteType() == PaletteType::DOODAD )
+        {
+            currLayer->disableSelectRegion();
+        }
+    }
 }
 
 
@@ -499,6 +514,7 @@ void HelloWorld::showNewMapWindow(bool* opened)
         _isWindowEnable = true;
         _isSaveEnable = true;
         _showFileMenuBar = true;
+        _showPalette = true;
         
         tileSizeXItem = 0;
         tileSizeYItem = 0;
@@ -543,6 +559,8 @@ void HelloWorld::showFileMenuBar(bool* opened)
         // closed
         _showPalette = false;
         _showTrigger = false;
+        _worldPosition = Vec2::ZERO;
+        _minimapLayer->disableFocusWindow();
         _gmxLayerManager->closeLayer();
     }
 }

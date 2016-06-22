@@ -68,6 +68,8 @@ private:
     
     cocos2d::Vec2 _mousePosition;
     
+    cocos2d::Vec2 _worldPosition;
+    
     PaletteWindow* _palette;
     
     TriggerEditor* _triggerEditor;

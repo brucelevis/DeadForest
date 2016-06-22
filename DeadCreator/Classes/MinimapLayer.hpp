@@ -48,6 +48,8 @@ public:
     
     void onResize();
     
+    void disableFocusWindow() { _focusWindowRenderer->clear(); }
+    
 private:
     
     GMXLayer* _gmxLayer;

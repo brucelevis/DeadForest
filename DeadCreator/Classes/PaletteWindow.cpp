@@ -39,7 +39,10 @@ void PaletteWindow::showPaletteWindow(bool* opened)
     
     ImGui::Begin("Palette", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
     
-    ImGui::Combo("type", &_paletteType, "tile\0entity\0item\0doodad\0");
+    if (ImGui::Combo("type", &_paletteType, "tile\0entity\0item\0doodad\0"))
+    {
+        _selectedItem = -1;
+    }
     
     ImGui::Separator();
     

@@ -40,13 +40,13 @@ public:
     
     void setSelectedItem(int item) { _selectedItem = item; }
     
-    PaletteType getPaletteType() const { return _paletteType; }
+    int getPaletteType() const { return _paletteType; }
     
     int getSelectedItem() const { return _selectedItem; }
     
 private:
     
-    int _paletteType = PaletteType::DEFAULT;
+    int _paletteType = 0;
     
     int _selectedItem = -1;
     

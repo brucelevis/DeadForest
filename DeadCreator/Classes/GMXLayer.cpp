@@ -53,6 +53,9 @@ bool GMXLayer::init()
     _tileRoot = Node::create();
     _clipNode->addChild(_tileRoot);
     
+    _selectRegion = DrawNode::create();
+    _tileRoot->addChild(_selectRegion , 10);
+    
     _centerViewPosition = Vec2(_clipNode->getClippingRegion().size / 2);
     
     return true;
@@ -89,6 +92,11 @@ void GMXLayer::openFile(GMXFile* file)
             _tileImages[i][j] = Sprite::create(file->tileInfos[i][j]);
             _tileImages[i][j]->setPosition(tilePosition);
             _tileRoot->addChild(_tileImages[i][j]);
+            
+//            ui::Text* indices = ui::Text::create("", "", 20);
+//            indices->setPosition(Vec2(64, 64));
+//            indices->setString("(" + std::to_string(j) + "," + std::to_string(i) + ")");
+//            _tileImages[i][j]->addChild(indices);
         }
     }
 }
@@ -148,10 +156,10 @@ void GMXLayer::putTile(int type, int index)
 }
 
 
-std::pair<int,int> GMXLayer::getFocusedTileIndex(const cocos2d::Vec2& mousePos) const
+std::pair<int,int> GMXLayer::getFocusedTileIndex(const cocos2d::Vec2& worldPos) const
 {
-    int centerTileIndexX = static_cast<int>((mousePos.x) / _file->tileWidth) + DUMMY_TILE_SIZE;        // not exact index!
-    int centerTileIndexY = static_cast<int>((mousePos.y) / (_file->tileHeight / 2))  + DUMMY_TILE_SIZE * 2;  // not exact index!
+    int centerTileIndexX = static_cast<int>((worldPos.x) / _file->tileWidth) + DUMMY_TILE_SIZE;        // not exact index!
+    int centerTileIndexY = static_cast<int>((worldPos.y) / (_file->tileHeight / 2))  + DUMMY_TILE_SIZE * 2;  // not exact index!
     
     for(int i = centerTileIndexY - 2 ; i < centerTileIndexY + 2 ; ++ i)
     {
@@ -161,7 +169,7 @@ std::pair<int,int> GMXLayer::getFocusedTileIndex(const cocos2d::Vec2& mousePos) 
             if( i % 2 == 0 ) pivot.setPoint(j * 128 - (128 * DUMMY_TILE_SIZE), i * 64 - (128 * DUMMY_TILE_SIZE));
             else pivot.setPoint(64 + j * 128 - (128 * DUMMY_TILE_SIZE), i * 64 - (128 * DUMMY_TILE_SIZE));
             
-            if(isContainPointInDiamond(pivot, Size(_file->tileWidth / 2, _file->tileHeight / 2), mousePos))
+            if(isContainPointInDiamond(pivot, Size(_file->tileWidth / 2, _file->tileHeight / 2), worldPos))
             {
                 centerTileIndexX = j; // exact index!
                 centerTileIndexY = i; // exact index!
@@ -199,6 +207,27 @@ bool GMXLayer::isContainPointInDiamond(const cocos2d::Vec2& diamondCenter, const
     
     return false;
 }
+
+
+void GMXLayer::drawSelectRegion(int x, int y)
+{
+    _selectRegion->clear();
+    Vec2 center = _tileImages[y][x]->getPosition();
+    // left to top
+    _selectRegion->drawSegment(Vec2(center.x - _file->tileWidth / 2, center.y), Vec2(center.x, center.y + _file->tileHeight / 2), 1.0f, Color4F::RED);
+    
+    // top to right
+    _selectRegion->drawSegment(Vec2(center.x, center.y + _file->tileHeight / 2), Vec2(center.x + _file->tileWidth / 2, center.y), 1.0f, Color4F::RED);
+    
+    // right to bottom
+    _selectRegion->drawSegment(Vec2(center.x + _file->tileWidth / 2, center.y), Vec2(center.x, center.y - _file->tileHeight / 2), 1.0f, Color4F::RED);
+    
+    // bottom to left
+    _selectRegion->drawSegment(Vec2(center.x, center.y - _file->tileHeight / 2), Vec2(center.x - _file->tileWidth / 2, center.y), 1.0f, Color4F::RED);
+}
+
+
+
 
 
 

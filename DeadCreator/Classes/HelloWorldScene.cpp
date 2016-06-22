@@ -39,14 +39,12 @@ bool HelloWorld::init()
     
     _oldWindowSize = Director::getInstance()->getVisibleSize();
     
-    // init();
-    CCImGui::getInstance();
-    
-    
     CCIMGUI->addImGUI([this](){
         
+        // main menu
         if (_showNewMap) showNewMapWindow(&_showNewMap);
         if (_showPalette) showPaletteWindow(&_showPalette);
+        if (_showFileMenuBar) showFileMenuBar(&_showFileMenuBar);
         
         if (ImGui::BeginMainMenuBar())
         {
@@ -124,11 +122,7 @@ bool HelloWorld::init()
             ImGui::EndMainMenuBar();
         }
         
-    }, "main_menu_bar");
-    
-    
-    CCIMGUI->addImGUI([this]{
-        
+        // bottom menu
         ImGuiIO& io = ImGui::GetIO();
         
         ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - STATUSBAR_HEIGHT));
@@ -166,11 +160,7 @@ bool HelloWorld::init()
         ImGui::End();
         ImGui::PopStyleVar(1);
         
-    }, "bottom_menu_bar");
-    
-    CCIMGUI->addImGUI([this]{
-        
-        ImGuiIO& io = ImGui::GetIO();
+        // property ui
         ImGuiStyle& style = ImGui::GetStyle();
         
         ImGui::SetNextWindowPos(ImVec2(WINDOW_PADDING, MENUBAR_HEIGHT + MINIMAP_SIZE + WINDOW_PADDING * 2));
@@ -196,7 +186,7 @@ bool HelloWorld::init()
         ImGui::End();
         ImGui::PopStyleVar(1);
         
-    }, "property_menu");
+    }, "ui_init");
     
     
     CCIMGUI->addImGUI([this]{
@@ -489,6 +479,7 @@ void HelloWorld::showNewMapWindow(bool* opened)
         _isPlayerEnable = true;
         _isWindowEnable = true;
         _isSaveEnable = true;
+        _showFileMenuBar = true;
         
         tileSizeXItem = 0;
         tileSizeYItem = 0;
@@ -561,6 +552,24 @@ void HelloWorld::showPaletteWindow(bool* opened)
     ImGui::End();
 }
 
+
+void HelloWorld::showFileMenuBar(bool* opened)
+{
+    ImGui::SetNextWindowPos(ImVec2(MINIMAP_SIZE + WINDOW_PADDING * 2, MENUBAR_HEIGHT + WINDOW_PADDING));
+    
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(_oldWindowSize.width - MINIMAP_SIZE - WINDOW_PADDING * 3, FILE_MENUBAR_HEIGHT));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
+    ImGui::Begin("untitled_map.gmx", &_showFileMenuBar, ImVec2(0,0), 0.0f,
+                 ImGuiWindowFlags_NoResize |
+                 ImGuiWindowFlags_NoMove |
+                 ImGuiWindowFlags_NoScrollbar |
+                 ImGuiWindowFlags_NoCollapse);
+    
+    ImGui::End();
+    ImGui::PopStyleColor(1);
+    ImGui::PopStyleVar(2);
+}
 
 
 

@@ -32,9 +32,6 @@ public:
     void image(const std::string& fn, int w = -1, int h = -1);
     bool imageButton(const std::string& fn, int w = -1, int h = -1);
     
-	//-------------------------------------------------------
-	void setShowStyleEditor(bool show) { _isShowSetupStyle = show; };
-    
 private:
     
     //-------------------------------------------------------
@@ -53,9 +50,6 @@ private:
     std::map<std::string, std::function<void()>> _callPiplines;
     std::unordered_map<unsigned int, int> _usedTextureIdMap;
     
-    //-------------------------------------------------------
-    bool _isShowSetupStyle = false;
-    void displaySetupStyle();
 };
 
 #endif // __IMGUILAYER_H__

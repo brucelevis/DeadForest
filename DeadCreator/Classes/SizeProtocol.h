@@ -17,6 +17,7 @@
 #define MINIMAP_SIZE (1600 * 0.15f)
 #define MENUBAR_HEIGHT (FONT_SIZE)
 #define STATUSBAR_HEIGHT (FONT_SIZE + (FRAME_PADDING * 2))
+#define FILE_MENUBAR_HEIGHT FONT_SIZE
 
 
 #endif /* SizeProtocol_h */

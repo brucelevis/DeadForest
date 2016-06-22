@@ -52,6 +52,8 @@ private:
     
     void showPaletteWindow(bool* opened);
     
+    void showFileMenuBar(bool* opened);
+    
 private:
 
     cocos2d::Size _oldWindowSize;
@@ -75,6 +77,7 @@ private:
     bool _showTrigger = false;
     bool _showProperty = false;
     bool _showPalette = false;
+    bool _showFileMenuBar = false;
     bool _isSaveEnable = false;
     bool _isEditEnable = false;
     bool _isPlayerEnable = false;

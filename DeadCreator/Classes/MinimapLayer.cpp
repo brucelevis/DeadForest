@@ -86,6 +86,7 @@ void MinimapLayer::setGMXLayer(GMXLayer *layer)
     _focusWindowSize = Size(_layerSize.width * (layer->getClippingRegion().size.width / worldSize.width),
                             _layerSize.height * (layer->getClippingRegion().size.height / worldSize.height));
     
+    _focusWindowRenderer->clear();
     _focusWindowRenderer->drawRect(-Vec2(_focusWindowSize.width / 2, _focusWindowSize.height / 2),
                                    Vec2(_focusWindowSize.width / 2, _focusWindowSize.height / 2), Color4F::WHITE);
     

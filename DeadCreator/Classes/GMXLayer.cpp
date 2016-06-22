@@ -16,8 +16,7 @@ using namespace cocos2d;
 #include "CCImGui.h"
 
 
-GMXLayer::GMXLayer() :
-_isOpened(false)
+GMXLayer::GMXLayer()
 {
 }
 
@@ -54,13 +53,14 @@ bool GMXLayer::init()
     _tileRoot = Node::create();
     _clipNode->addChild(_tileRoot);
     
+    _centerViewPosition = Vec2(_clipNode->getClippingRegion().size / 2);
+    
     return true;
 }
 
 
 void GMXLayer::openFile(GMXFile* file)
 {
-    _isOpened = true;
     _file = file;
     
     int x = file->numOfTileX + DUMMY_TILE_SIZE * 2;
@@ -77,7 +77,7 @@ void GMXLayer::openFile(GMXFile* file)
         for(int j = 0 ; j < x ; ++ j)
         {
             Vec2 tilePosition;
-            if ( i % 2 == 0)
+            if ( i % 2 == 0 )
             {
                 tilePosition.setPoint(j * 128 - (128 * DUMMY_TILE_SIZE), i * 64 - (128 * DUMMY_TILE_SIZE));
             }
@@ -96,8 +96,6 @@ void GMXLayer::openFile(GMXFile* file)
 
 void GMXLayer::closeFile()
 {
-    _isOpened = false;
-    
     int x = _file->numOfTileX + DUMMY_TILE_SIZE * 2;
     int y = _file->numOfTileY * 2 + DUMMY_TILE_SIZE * 4;
 
@@ -123,12 +121,13 @@ void GMXLayer::closeFile()
 
 void GMXLayer::onCenterView(const cocos2d::Vec2& params)
 {
-    // todo
-    if ( isOpened() )
-    {
-        _tileRoot->setPosition(-Vec2(params.x * (_file->worldSize.width - _clipNode->getClippingRegion().size.width),
-                                     params.y * (_file->worldSize.height - _clipNode->getClippingRegion().size.height)));
-    }
+    Size clipRegion = _clipNode->getClippingRegion().size;
+    
+    _tileRoot->setPosition(-Vec2(params.x * (_file->worldSize.width - clipRegion.width),
+                                 params.y * (_file->worldSize.height - clipRegion.height)));
+    
+    _centerViewPosition.setPoint(clipRegion.width / 2.0f + params.x * (_file->worldSize.width - clipRegion.width),
+                                 clipRegion.height / 2.0f + params.y * (_file->worldSize.height - clipRegion.height));
 }
 
 
@@ -148,6 +147,58 @@ void GMXLayer::putTile(int type, int index)
     
 }
 
+
+std::pair<int,int> GMXLayer::getFocusedTileIndex(const cocos2d::Vec2& mousePos) const
+{
+    int centerTileIndexX = static_cast<int>((mousePos.x) / _file->tileWidth) + DUMMY_TILE_SIZE;        // not exact index!
+    int centerTileIndexY = static_cast<int>((mousePos.y) / (_file->tileHeight / 2))  + DUMMY_TILE_SIZE * 2;  // not exact index!
+    
+    for(int i = centerTileIndexY - 2 ; i < centerTileIndexY + 2 ; ++ i)
+    {
+        for(int j = centerTileIndexX - 2 ; j < centerTileIndexX + 2 ; ++ j)
+        {
+            Vec2 pivot;
+            if( i % 2 == 0 ) pivot.setPoint(j * 128 - (128 * DUMMY_TILE_SIZE), i * 64 - (128 * DUMMY_TILE_SIZE));
+            else pivot.setPoint(64 + j * 128 - (128 * DUMMY_TILE_SIZE), i * 64 - (128 * DUMMY_TILE_SIZE));
+            
+            if(isContainPointInDiamond(pivot, Size(_file->tileWidth / 2, _file->tileHeight / 2), mousePos))
+            {
+                centerTileIndexX = j; // exact index!
+                centerTileIndexY = i; // exact index!
+                return std::make_pair(j, i);
+            }
+        }
+    }
+    
+    return {0, 0};
+}
+
+
+bool GMXLayer::isContainPointInDiamond(const cocos2d::Vec2& diamondCenter, const cocos2d::Size& halfLen, const cocos2d::Vec2& p) const
+{
+    int m = 1;
+    float b[4];
+    
+    cocos2d::Vec2 leftPoint = cocos2d::Vec2(diamondCenter.x - halfLen.width, diamondCenter.y);
+    cocos2d::Vec2 rightPoint = cocos2d::Vec2(diamondCenter.x + halfLen.width, diamondCenter.y);
+    cocos2d::Vec2 topPoint = cocos2d::Vec2(diamondCenter.x, diamondCenter.y + halfLen.height);
+    cocos2d::Vec2 botPoint = cocos2d::Vec2(diamondCenter.x, diamondCenter.y - halfLen.height);
+    
+    b[0] = leftPoint.y - m * leftPoint.x;
+    b[1] = topPoint.y + m * topPoint.x;
+    b[2] = rightPoint.y - m * rightPoint.x;
+    b[3] = botPoint.y + m * botPoint.x;
+    
+    if (p.y - (m * p.x) - b[0] < 0.f
+        && p.y - (-m * p.x) - b[1] < 0.f
+        && p.y - (m * p.x) - b[2] > 0.f
+        && p.y - (-m * p.x) - b[3] > 0.f)
+    {
+        return true;
+    }
+    
+    return false;
+}
 
 
 

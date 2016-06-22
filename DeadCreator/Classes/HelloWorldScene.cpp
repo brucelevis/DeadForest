@@ -2,12 +2,13 @@
 using namespace std;
 
 #include <boost/filesystem.hpp>
-#include <boost/any.hpp>
 
 #include "HelloWorldScene.h"
 #include "GMXLayer.hpp"
 #include "CCImGui.h"
 #include "SizeProtocol.h"
+#include "PaletteWindow.hpp"
+#include "TriggerEditor.hpp"
 using namespace cocos2d;
 
 
@@ -43,8 +44,9 @@ bool HelloWorld::init()
         
         // main menu
         if ( _showNewMap ) showNewMapWindow(&_showNewMap);
-        if ( _showPalette && _palette ) _palette->showPaletteWindow(&_showPalette);
+        if ( _showPalette ) _palette->showPaletteWindow(&_showPalette);
         if ( _showFileMenuBar ) showFileMenuBar(&_showFileMenuBar);
+        if ( _showTrigger ) _triggerEditor->showTriggerEditor(&_showTrigger);
         
         if (ImGui::BeginMainMenuBar())
         {
@@ -165,7 +167,7 @@ bool HelloWorld::init()
         
         ImGui::SetNextWindowPos(ImVec2(WINDOW_PADDING, MENUBAR_HEIGHT + MINIMAP_SIZE + WINDOW_PADDING * 2));
         ImGui::SetNextWindowSize(ImVec2(MINIMAP_SIZE, io.DisplaySize.y - (MENUBAR_HEIGHT + MINIMAP_SIZE + STATUSBAR_HEIGHT + WINDOW_PADDING * 3)));
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
         if (ImGui::Begin(" Entities", NULL,
                          ImGuiWindowFlags_NoResize |
                          ImGuiWindowFlags_NoCollapse |
@@ -184,7 +186,7 @@ bool HelloWorld::init()
             ImGui::EndChild();
         }
         ImGui::End();
-        ImGui::PopStyleVar(1);
+        ImGui::PopStyleColor(1);
         
     }, "ui_init");
     
@@ -202,10 +204,13 @@ bool HelloWorld::init()
     _gmxLayerManager->setPosition(Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
     addChild(_gmxLayerManager);
     
-    
     _minimapLayer = MinimapLayer::create(Size(MINIMAP_SIZE,MINIMAP_SIZE));
     _minimapLayer->setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - MENUBAR_HEIGHT - MINIMAP_SIZE - WINDOW_PADDING));
     addChild(_minimapLayer);
+    
+    _debugNode = DrawNode::create();
+    _debugNode->setPosition(Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
+    addChild(_debugNode);
     
     this->scheduleUpdate();
     
@@ -302,6 +307,22 @@ void HelloWorld::onMouseDown(cocos2d::Event* event)
         _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0, 1.0);
         
         onCenterView();
+    }
+    
+    auto currLayer = _gmxLayerManager->getCurrentLayer();
+    if ( currLayer )
+    {
+        Size clipSize = currLayer->getClippingRegion().size;
+        Vec2 positionInClipRect(_mousePosition - Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
+        positionInClipRect.x = clampf(positionInClipRect.x, 0.0f, clipSize.width);
+        positionInClipRect.y = clampf(positionInClipRect.y, 0.0f, clipSize.height);
+
+        Vec2 centerView = _gmxLayerManager->getCurrentLayer()->getCenterViewPosition();
+        positionInClipRect -= clipSize / 2;
+        centerView += positionInClipRect;
+        
+        // ok
+        auto indices = currLayer->getFocusedTileIndex(centerView);
     }
 }
 
@@ -501,31 +522,32 @@ void HelloWorld::showNewMapWindow(bool* opened)
 }
 
 
-
 void HelloWorld::showFileMenuBar(bool* opened)
 {
     ImGui::SetNextWindowPos(ImVec2(MINIMAP_SIZE + WINDOW_PADDING * 2, MENUBAR_HEIGHT + WINDOW_PADDING));
+    ImGui::SetNextWindowSize(ImVec2(_oldWindowSize.width - MINIMAP_SIZE - WINDOW_PADDING * 3, FILE_MENUBAR_HEIGHT));
     
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(_oldWindowSize.width - MINIMAP_SIZE - WINDOW_PADDING * 3, FILE_MENUBAR_HEIGHT));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
     ImGui::Begin(_gmxLayerManager->getCurrentLayer()->getFileName().c_str(), &_showFileMenuBar, ImVec2(0,0), 0.0f,
                  ImGuiWindowFlags_NoResize |
                  ImGuiWindowFlags_NoMove |
                  ImGuiWindowFlags_NoScrollbar |
-                 ImGuiWindowFlags_NoCollapse);
+                 ImGuiWindowFlags_NoCollapse |
+                 ImGuiWindowFlags_NoBringToFrontOnFocus);
     
     ImGui::End();
     ImGui::PopStyleColor(1);
-    ImGui::PopStyleVar(2);
     
     if ( *opened == false )
     {
         // closed
         _showPalette = false;
+        _showTrigger = false;
         _gmxLayerManager->closeLayer();
     }
 }
+
+
 
 
 

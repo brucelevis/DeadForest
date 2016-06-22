@@ -5,12 +5,13 @@
 #include "ui/CocosGUI.h"
 
 #include "GMXLayerManager.hpp"
-#include "PaletteWindow.hpp"
 
 class GMXFile;
 class GMXLayer;
 class GMXLayerManager;
 class MinimapLayer;
+class PaletteWindow;
+class TriggerEditor;
 
 class HelloWorld : public cocos2d::LayerColor
 {
@@ -68,6 +69,10 @@ private:
     cocos2d::Vec2 _mousePosition;
     
     PaletteWindow* _palette;
+    
+    TriggerEditor* _triggerEditor;
+    
+    cocos2d::DrawNode* _debugNode;
     
     bool _isMousePressed;
     

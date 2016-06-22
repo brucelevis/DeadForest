@@ -10,6 +10,7 @@
 #define GMXLayer_hpp
 
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
 #include "GMXFile.hpp"
 #include "MinimapLayer.hpp"
 
@@ -51,17 +52,19 @@ public:
     
     void closeFile();
     
-    bool isOpened() const { return _isOpened; }
-    
     bool isChanged() const { return _isChanged; }
     
     std::string getFileName() const { return _file->fileName; }
     
+    cocos2d::Vec2 getCenterViewPosition() const { return _centerViewPosition; }
+    
+    bool isContainPointInDiamond(const cocos2d::Vec2& diamondCenter, const cocos2d::Size& halfLen, const cocos2d::Vec2& p) const;
+    
+    std::pair<int,int> getFocusedTileIndex(float mouseX, float mouseY) const  { return getFocusedTileIndex(cocos2d::Vec2(mouseX, mouseY)); }
+    
+    std::pair<int,int> getFocusedTileIndex(const cocos2d::Vec2& mousePos) const;
+    
     // todo list
-    
-    int getFocusedTileIndex(float mouseX, float mouseY) const  { return getFocusedTileIndex(cocos2d::Vec2(mouseX, mouseY)); }
-    
-    int getFocusedTileIndex(const cocos2d::Vec2& mousePos) const { return 0; }
     
     void putTile(int type, int index);
     
@@ -81,9 +84,9 @@ private:
     
     std::vector<std::vector<cocos2d::Sprite*>> _tileImages;
     
-    bool _isOpened;
-    
     PaletteWindow* _palette;
+    
+    cocos2d::Vec2 _centerViewPosition;
     
     // todo
     

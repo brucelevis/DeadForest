@@ -9,11 +9,21 @@
 #ifndef PaletteWindow_hpp
 #define PaletteWindow_hpp
 
-class PaletteWindow
+#include "cocos2d.h"
+#include "CCImGui.h"
+
+class PaletteWindow : public cocos2d::Node
 {
     
 public:
     
+    PaletteWindow();
+    
+    virtual ~PaletteWindow();
+    
+    static PaletteWindow* create();
+    
+    void showPaletteWindow(bool* opened);
     
 private:
     

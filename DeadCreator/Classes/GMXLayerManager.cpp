@@ -107,10 +107,10 @@ bool GMXLayerManager::loadGMXFile(GMXFile* file,const std::string &fileName)
 }
 
 
-void GMXLayerManager::addLayer(GMXLayer* layer)
+void GMXLayerManager::addChild(GMXLayer* layer)
 {
     _currLayer = layer;
-    addChild(layer);
+    Node::addChild(layer);
 }
 
 

@@ -15,6 +15,7 @@
 
 #define DUMMY_TILE_SIZE 4
 
+class PaletteWindow;
 class EntityBase;
 class Location;
 class Task;
@@ -81,6 +82,8 @@ private:
     std::vector<std::vector<cocos2d::Sprite*>> _tileImages;
     
     bool _isOpened;
+    
+    PaletteWindow* _palette;
     
     // todo
     

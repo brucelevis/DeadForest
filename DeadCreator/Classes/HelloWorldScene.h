@@ -5,6 +5,7 @@
 #include "ui/CocosGUI.h"
 
 #include "GMXLayerManager.hpp"
+#include "PaletteWindow.hpp"
 
 class GMXFile;
 class GMXLayer;
@@ -42,15 +43,11 @@ private:
     
     void onResize();
     
-    void createGMXLayer(GMXFile* file);
-    
     void saveGMXLayer(GMXFile* file, const std::string fileName);
     
     void loadGMXLayer(GMXFile* file, const std::string fileName);
     
     void showNewMapWindow(bool* opened);
-    
-    void showPaletteWindow(bool* opened);
     
     void showFileMenuBar(bool* opened);
     
@@ -69,6 +66,8 @@ private:
     bool _isKeyPressed[256];
     
     cocos2d::Vec2 _mousePosition;
+    
+    PaletteWindow* _palette;
     
     bool _isMousePressed;
     

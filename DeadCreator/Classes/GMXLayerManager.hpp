@@ -34,8 +34,6 @@ public:
 
     bool loadGMXFile(GMXFile* file, const std::string& fileName);
     
-    void addLayer(GMXLayer* layer);
-    
     void closeLayer();
     
     void onResize();
@@ -43,6 +41,10 @@ public:
     void onCenterView(float x, float y);
     
     GMXLayer* getCurrentLayer() const { return _currLayer; }
+    
+    void setCurrentLayer(GMXLayer* layer) { _currLayer = layer; }
+    
+    void addChild(GMXLayer* layer);
     
 private:
     

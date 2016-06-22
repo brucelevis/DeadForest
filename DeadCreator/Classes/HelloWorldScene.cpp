@@ -42,9 +42,9 @@ bool HelloWorld::init()
     CCIMGUI->addImGUI([this](){
         
         // main menu
-        if (_showNewMap) showNewMapWindow(&_showNewMap);
-        if (_showPalette) showPaletteWindow(&_showPalette);
-        if (_showFileMenuBar) showFileMenuBar(&_showFileMenuBar);
+        if ( _showNewMap ) showNewMapWindow(&_showNewMap);
+        if ( _showPalette && _palette ) _palette->showPaletteWindow(&_showPalette);
+        if ( _showFileMenuBar ) showFileMenuBar(&_showFileMenuBar);
         
         if (ImGui::BeginMainMenuBar())
         {
@@ -55,7 +55,7 @@ bool HelloWorld::init()
                 _isMenuSelected = true;
                 
                 if (ImGui::MenuItem("New", NULL, &_showNewMap))
-                    if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+                if (ImGui::MenuItem("Open", "Ctrl+O")) {}
                 if (ImGui::BeginMenu("Open Recent"))
                 {
                     ImGui::MenuItem("fish_hat.c");
@@ -352,16 +352,6 @@ void HelloWorld::onResize()
 }
 
 
-void HelloWorld::createGMXLayer(GMXFile* file)
-{
-    GMXLayer* newLayer = GMXLayer::create();
-    
-    newLayer->openFile(file);
-    _gmxLayerManager->addLayer(newLayer);
-    
-    _minimapLayer->setGMXLayer(newLayer);
-}
-
 
 void HelloWorld::saveGMXLayer(GMXFile* file, const std::string fileName)
 {
@@ -473,7 +463,15 @@ void HelloWorld::showNewMapWindow(bool* opened)
             }
         }
         
-        createGMXLayer(file);
+        auto newLayer = GMXLayer::create();
+        newLayer->openFile(file);
+        
+        _palette = PaletteWindow::create();
+        newLayer->addChild(_palette);
+        
+        _gmxLayerManager->addChild(newLayer);
+        
+        _minimapLayer->setGMXLayer(newLayer);
         
         _isEditEnable = true;
         _isPlayerEnable = true;
@@ -503,55 +501,6 @@ void HelloWorld::showNewMapWindow(bool* opened)
 }
 
 
-void HelloWorld::showPaletteWindow(bool* opened)
-{
-    ImGui::SetNextWindowPos(ImVec2(750, 100), ImGuiWindowFlags_NoResize);
-    ImGui::SetNextWindowSize(ImVec2(200, 300));
-    
-    static bool open = true;
-    ImGui::Begin("Palette", &open, ImGuiWindowFlags_NoCollapse);
-    
-    
-    static int item = 0;
-    ImGui::Combo("type", &item, "tile\0entity\0item\0doodad");
-    
-    ImGui::Separator();
-    
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
-    if ( item == 0)
-    {
-        CCIMGUI->imageButton("1_1_1234.png", 50, 50); ImGui::SameLine();
-        CCIMGUI->imageButton("2_1_1234.png", 50, 50); ImGui::SameLine();
-        CCIMGUI->imageButton("3_1_1234.png", 50, 50);
-        CCIMGUI->imageButton("5_1_1234.png", 50, 50);
-    }
-    
-    else if ( item == 1)
-    {
-        CCIMGUI->imageButton("human.png", 50, 50);
-    }
-    
-    else if ( item == 2)
-    {
-        CCIMGUI->imageButton("5_56mm.png", 50, 50); ImGui::SameLine();
-        CCIMGUI->imageButton("9mm.png", 50, 50); ImGui::SameLine();
-        CCIMGUI->imageButton("Shell.png", 50, 50);
-        
-        CCIMGUI->imageButton("Axe.png", 50, 50); ImGui::SameLine();
-        CCIMGUI->imageButton("Glock17.png", 50, 50); ImGui::SameLine();
-        CCIMGUI->imageButton("M16A2.png", 50, 50);
-        
-        CCIMGUI->imageButton("M1897.png", 50, 50); ImGui::SameLine();
-        CCIMGUI->imageButton("MeatCan.png", 50, 50); ImGui::SameLine();
-        CCIMGUI->imageButton("Bandage.png", 50, 50);
-    }
-    ImGui::PopStyleColor(3);
-    
-    ImGui::End();
-}
-
 
 void HelloWorld::showFileMenuBar(bool* opened)
 {
@@ -573,6 +522,7 @@ void HelloWorld::showFileMenuBar(bool* opened)
     if ( *opened == false )
     {
         // closed
+        _showPalette = false;
         _gmxLayerManager->closeLayer();
     }
 }

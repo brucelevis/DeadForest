@@ -8,6 +8,7 @@
 
 #include "GMXLayer.hpp"
 #include "GMXLayerManager.hpp"
+#include "PaletteWindow.hpp"
 #include "MinimapLayer.hpp"
 #include "SizeProtocol.h"
 using namespace cocos2d;
@@ -117,7 +118,6 @@ void GMXLayer::closeFile()
     
     delete _file;
     _file = nullptr;
-    
 }
 
 

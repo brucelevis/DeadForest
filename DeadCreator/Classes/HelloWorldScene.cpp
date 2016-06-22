@@ -560,7 +560,7 @@ void HelloWorld::showFileMenuBar(bool* opened)
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(_oldWindowSize.width - MINIMAP_SIZE - WINDOW_PADDING * 3, FILE_MENUBAR_HEIGHT));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
-    ImGui::Begin("untitled_map.gmx", &_showFileMenuBar, ImVec2(0,0), 0.0f,
+    ImGui::Begin(_gmxLayerManager->getCurrentLayer()->getFileName().c_str(), &_showFileMenuBar, ImVec2(0,0), 0.0f,
                  ImGuiWindowFlags_NoResize |
                  ImGuiWindowFlags_NoMove |
                  ImGuiWindowFlags_NoScrollbar |
@@ -569,6 +569,12 @@ void HelloWorld::showFileMenuBar(bool* opened)
     ImGui::End();
     ImGui::PopStyleColor(1);
     ImGui::PopStyleVar(2);
+    
+    if ( *opened == false )
+    {
+        // closed
+        _gmxLayerManager->closeLayer();
+    }
 }
 
 

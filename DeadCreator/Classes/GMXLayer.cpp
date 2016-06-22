@@ -93,6 +93,34 @@ void GMXLayer::openFile(GMXFile* file)
 }
 
 
+void GMXLayer::closeFile()
+{
+    _isOpened = false;
+    
+    int x = _file->numOfTileX + DUMMY_TILE_SIZE * 2;
+    int y = _file->numOfTileY * 2 + DUMMY_TILE_SIZE * 4;
+
+    for(int i = 0 ; i < y ; ++ i)
+    {
+        for(int j = 0 ; j < x ; ++ j)
+        {
+            _tileImages[i][j]->removeFromParent();
+        }
+        _tileImages[i].clear();
+    }
+    
+    for(int i = 0 ; i < y ; ++ i)
+    {
+        _tileImages[i].clear();
+    }
+    _tileImages.clear();
+    
+    delete _file;
+    _file = nullptr;
+    
+}
+
+
 void GMXLayer::onCenterView(const cocos2d::Vec2& params)
 {
     // todo

@@ -109,26 +109,16 @@ bool GMXLayerManager::loadGMXFile(GMXFile* file,const std::string &fileName)
 
 void GMXLayerManager::addLayer(GMXLayer* layer)
 {
-    if ( _currLayer ) _currLayer->setVisible(false);
-    
-    _gmxlayers.push_back(layer);
     _currLayer = layer;
     addChild(layer);
 }
 
 
-void GMXLayerManager::openLayer(GMXLayer* layer)
+void GMXLayerManager::closeLayer()
 {
-}
-
-
-void GMXLayerManager::closeLayer(GMXLayer* layer)
-{
-}
-
-
-void GMXLayerManager::removeLayer(GMXLayer* layer)
-{
+    _currLayer->closeFile();
+    _currLayer->removeFromParent();
+    _currLayer = nullptr;
 }
 
 

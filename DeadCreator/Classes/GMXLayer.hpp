@@ -48,7 +48,13 @@ public:
     
     void openFile(GMXFile* file);
     
+    void closeFile();
+    
     bool isOpened() const { return _isOpened; }
+    
+    bool isChanged() const { return _isChanged; }
+    
+    std::string getFileName() const { return _file->fileName; }
     
     // todo list
     
@@ -71,8 +77,6 @@ private:
     cocos2d::ClippingRectangleNode* _clipNode;
     
     cocos2d::Node* _tileRoot;
-    
-    std::vector<std::vector<std::string>> _tileName;
     
     std::vector<std::vector<cocos2d::Sprite*>> _tileImages;
     

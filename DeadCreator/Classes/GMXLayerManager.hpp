@@ -36,11 +36,7 @@ public:
     
     void addLayer(GMXLayer* layer);
     
-    void openLayer(GMXLayer* layer);
-    
-    void closeLayer(GMXLayer* layer);
-    
-    void removeLayer(GMXLayer* layer);
+    void closeLayer();
     
     void onResize();
     
@@ -51,8 +47,6 @@ public:
 private:
     
     tinyxml2::XMLDocument _document;
-    
-    std::list<GMXLayer*> _gmxlayers;
     
     GMXLayer* _currLayer;
     

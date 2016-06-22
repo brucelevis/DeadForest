@@ -50,13 +50,14 @@ bool HelloWorld::init()
         
         if (ImGui::BeginMainMenuBar())
         {
+            _isMenuSelected = false;
+            
             if (ImGui::BeginMenu("File"))
             {
-                ImGui::MenuItem("(dummy menu)", NULL, false, false);
+                _isMenuSelected = true;
+                
                 if (ImGui::MenuItem("New", NULL, &_showNewMap))
                 {
-                    if ( _showNewMap ) _isPaletteEnable = true;
-                    else _isPaletteEnable = false;
                 }
                 
                 if (ImGui::MenuItem("Open", "Ctrl+O")) {}
@@ -65,49 +66,19 @@ bool HelloWorld::init()
                     ImGui::MenuItem("fish_hat.c");
                     ImGui::MenuItem("fish_hat.inl");
                     ImGui::MenuItem("fish_hat.h");
-                    if (ImGui::BeginMenu("More.."))
-                    {
-                        ImGui::MenuItem("Hello");
-                        ImGui::MenuItem("Sailor");
-                        ImGui::EndMenu();
-                    }
                     ImGui::EndMenu();
                 }
-                if (ImGui::MenuItem("Save", "Ctrl+S")) {}
-                if (ImGui::MenuItem("Save As..")) {}
+                if (ImGui::MenuItem("Save", "Ctrl+S", false, _isSaveEnable)) {}
+                if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", false, _isSaveEnable)) {}
                 ImGui::Separator();
-                if (ImGui::BeginMenu("Options"))
-                {
-                    static bool enabled = true;
-                    ImGui::MenuItem("Enabled", "", &enabled);
-                    ImGui::BeginChild("child", ImVec2(0, 60), true);
-                    for (int i = 0; i < 10; i++)
-                        ImGui::Text("Scrolling Text %d", i);
-                    ImGui::EndChild();
-                    static float f = 0.5f;
-                    static int n = 0;
-                    ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
-                    ImGui::InputFloat("Input", &f, 0.1f);
-                    ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
-                    ImGui::EndMenu();
-                }
-                if (ImGui::BeginMenu("Colors"))
-                {
-                    for (int i = 0; i < ImGuiCol_COUNT; i++)
-                        ImGui::MenuItem(ImGui::GetStyleColName((ImGuiCol)i));
-                    ImGui::EndMenu();
-                }
-                if (ImGui::BeginMenu("Disabled", false)) // Disabled
-                {
-                    IM_ASSERT(0);
-                }
-                if (ImGui::MenuItem("Checked", NULL, true)) {}
                 if (ImGui::MenuItem("Quit", "Alt+F4")) {}
                 
                 ImGui::EndMenu();
             }
-            if (ImGui::BeginMenu("Edit"))
+            if (ImGui::BeginMenu("Edit", _isEditEnable))
             {
+                _isMenuSelected = true;
+                
                 if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
                 if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
                 ImGui::Separator();
@@ -117,8 +88,10 @@ bool HelloWorld::init()
                 ImGui::EndMenu();
             }
             
-            if (ImGui::BeginMenu("Players"))
+            if (ImGui::BeginMenu("Players", _isPlayerEnable))
             {
+                _isMenuSelected = true;
+                
                 if (ImGui::MenuItem("Player 1")) {}
                 if (ImGui::MenuItem("Player 2")) {}
                 if (ImGui::MenuItem("Player 3")) {}
@@ -132,20 +105,20 @@ bool HelloWorld::init()
                 ImGui::EndMenu();
             }
             
-            if (ImGui::BeginMenu("Windows"))
+            if (ImGui::BeginMenu("Windows", _isWindowEnable))
             {
-                ImGui::MenuItem("Trigger Editor", "SHIFT+T");
-                ImGui::MenuItem("Palette Window", "SHIFT+P", &_showPalette, _isPaletteEnable);
-                ImGui::Separator();
-                if (ImGui::MenuItem("test.gmx")) {}
-                if (ImGui::MenuItem("test1.gmx")) {}
-                if (ImGui::MenuItem("test2.gmx")) {}
+                _isMenuSelected = true;
                 
+                ImGui::MenuItem("Trigger Editor", "SHIFT+T", &_showTrigger);
+                ImGui::MenuItem("Palette Window", "SHIFT+P", &_showPalette);
+                ImGui::MenuItem("Property Editor", "SHIFT+R", &_showProperty);
                 ImGui::EndMenu();
             }
             
             if (ImGui::BeginMenu("Help"))
             {
+                _isMenuSelected = true;
+                
                 if (ImGui::MenuItem("Contact")) {}
                 if (ImGui::MenuItem("About")) {}
                 ImGui::EndMenu();
@@ -331,7 +304,7 @@ void HelloWorld::onMouseDown(cocos2d::Event* event)
     _mousePosition.setPoint(mouseEvent->getCursorX(), mouseEvent->getCursorY());
     
     Rect minimapRect(_minimapLayer->getPosition().x, _minimapLayer->getPosition().y, MINIMAP_SIZE, MINIMAP_SIZE);
-    if ( minimapRect.containsPoint(_mousePosition) )
+    if ( !_isMenuSelected && minimapRect.containsPoint(_mousePosition) )
     {
         Size focusWindowSize = _minimapLayer->getFocusWindowSize();
         Vec2 innerPosition = _mousePosition - _minimapLayer->getPosition();
@@ -488,6 +461,11 @@ void HelloWorld::showNewMapWindow(bool* opened)
         file->numOfTileY = atoi(items4[numOfTileY]);
         file->worldSize = Size(file->tileWidth * file->numOfTileX, file->tileHeight * file->numOfTileY);
         createGMXLayer(file);
+        
+        _isEditEnable = true;
+        _isPlayerEnable = true;
+        _isWindowEnable = true;
+        _isSaveEnable = true;
         
         tileSizeXItem = 0;
         tileSizeYItem = 0;

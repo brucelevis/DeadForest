@@ -70,10 +70,15 @@ private:
     
     bool _isMousePressed;
     
+    bool _isMenuSelected = false;
     bool _showNewMap = false;
+    bool _showTrigger = false;
+    bool _showProperty = false;
     bool _showPalette = false;
-    bool _isPaletteEnable = false;
-    
+    bool _isSaveEnable = false;
+    bool _isEditEnable = false;
+    bool _isPlayerEnable = false;
+    bool _isWindowEnable = false;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

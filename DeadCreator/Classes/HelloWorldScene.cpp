@@ -514,10 +514,10 @@ void HelloWorld::showNewMapWindow(bool* opened)
             {
                 std::string tileName;
                 
-                if ( currentTile == TileType::DIRT) tileName = "1_" + std::to_string(random(1, 3)) + "_1234.png";
-                else if ( currentTile == TileType::GRASS) tileName = "2_" + std::to_string(random(1, 3)) + "_1234.png";
-                else if ( currentTile == TileType::WATER) tileName = "3_" + std::to_string(random(1, 3)) + "_1234.png";
-                else if ( currentTile == TileType::HILL) tileName = "5_" + std::to_string(random(1, 3)) + "_1234.png";
+                if ( currentTile == TileType::DIRT) tileName = "1_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( currentTile == TileType::GRASS) tileName = "2_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( currentTile == TileType::WATER) tileName = "3_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( currentTile == TileType::HILL) tileName = "5_" + std::to_string(random(1, 3)) + "_1234";
                 
                 file->tileInfos[i][j] = tileName;
             }

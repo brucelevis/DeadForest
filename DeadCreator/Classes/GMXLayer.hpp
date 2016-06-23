@@ -21,6 +21,41 @@ class EntityBase;
 class Location;
 class Task;
 
+struct Tiling
+{
+    int x;
+    int y;
+    std::string tileNumber;
+    
+    Tiling(int xx = 0, int yy = 0, const std::string& s = "") :
+    x(xx),
+    y(yy),
+    tileNumber(s)
+    {}
+    
+    Tiling(const Tiling& rhs)
+    {
+        copyFrom(rhs);
+    }
+    
+    Tiling& operator=(const Tiling& rhs)
+    {
+        if ( &rhs == this )
+            return *this;
+        copyFrom(rhs);
+        return *this;
+    }
+    
+    void copyFrom(const Tiling& src)
+    {
+        x = src.x;
+        y = src.y;
+        tileNumber = src.tileNumber;
+    }
+    
+};
+
+
 class GMXLayer : public cocos2d::Node
 {
     
@@ -79,6 +114,20 @@ public:
     void addEntity(EntityBase* entity) {}
     
     void addLocation(const cocos2d::Rect& rect, const std::string name) {}
+    
+private:
+    
+    std::vector<std::pair<int, int>> getNeighborTiles(int x, int y) const;
+    
+    int indexToNumber(int x, int y) const;
+    
+    std::pair<int, int> numberToIndex(int number) const;
+    
+    std::string getTileHeader(int type);
+    
+    std::string getTileHeader(const std::string& number);
+    
+    std::string getTileTail(const std::string& number);
     
 private:
     

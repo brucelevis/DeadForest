@@ -10,6 +10,18 @@
 #include "HistoryBase.hpp"
 
 
+HistoryQueue::~HistoryQueue()
+{
+    while ( !_historys.empty() )
+    {
+        auto remove = _historys.back();
+        delete remove;
+        remove = nullptr;
+        _historys.pop_back();
+    }
+}
+
+
 void HistoryQueue::redo()
 {
     _historys[_currIndex + 1]->redo();
@@ -41,7 +53,7 @@ void HistoryQueue::push(HistoryBase* history)
 
 bool HistoryQueue::isRedo() const
 {
-    return (_currIndex < _historys.size() - 1);
+    return (_currIndex + 1 < _historys.size());
 }
 
 

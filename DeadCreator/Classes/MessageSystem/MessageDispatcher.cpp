@@ -89,7 +89,16 @@ bool MessageDispatcher::registerNode(int nodeType, MessageNode* ptr)
 }
 
 
-
+bool MessageDispatcher::removeNode(int nodeType)
+{
+    auto iter = _nodes.find(nodeType);
+    if ( iter != _nodes.end() )
+    {
+        _nodes.erase(iter);
+        return true;
+    }
+    return false;
+}
 
 
 

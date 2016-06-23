@@ -34,6 +34,8 @@ public:
     
     MessageNode* getNodePtr(int type) const;
     
+    bool removeNode(int nodeType);
+    
 private:
     
     void discharge(const Telegram& msg);

@@ -57,8 +57,6 @@ public:
     
     void closeFile();
     
-    bool isChanged() const { return _isChanged; }
-    
     std::string getFileName() const { return _file->fileName; }
     
     cocos2d::Vec2 getCenterViewPosition() const { return _centerViewPosition; }
@@ -88,6 +86,8 @@ public:
     bool isRedo() const;
     
     bool isUndo() const;
+    
+    bool isChanged() const;
     
     // todo list
     
@@ -135,11 +135,8 @@ private:
 
     int _oldSelectedTileType;
     
-    // todo
-    
     HistoryQueue* _historyQueue;
     
-    bool _isChanged;
     
 };
 

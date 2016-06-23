@@ -652,6 +652,15 @@ bool GMXLayer::isUndo() const
 }
 
 
+bool GMXLayer::isChanged() const
+{
+    return _historyQueue->isUndo();
+}
+
+
+
+
+
 
 
 

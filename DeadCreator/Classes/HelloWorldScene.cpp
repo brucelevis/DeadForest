@@ -52,7 +52,7 @@ bool HelloWorld::init()
         {
             if (ImGui::BeginMenu("File"))
             {
-                if (ImGui::MenuItem("New", NULL, &_showNewMap))
+                if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap))
                 if (ImGui::MenuItem("Open", "Ctrl+O")) {}
                 if (ImGui::BeginMenu("Open Recent"))
                 {
@@ -61,8 +61,8 @@ bool HelloWorld::init()
                     ImGui::MenuItem("fish_hat.h");
                     ImGui::EndMenu();
                 }
-                if (ImGui::MenuItem("Save", "Ctrl+S", false, _isSaveEnable)) {}
-                if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", false, _isSaveEnable)) {}
+                if (ImGui::MenuItem("Save", "Ctrl+S", false, _isUndo)) {}
+                if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", false, _isUndo)) {}
                 ImGui::Separator();
                 if (ImGui::MenuItem("Quit", "Alt+F4")) {}
                 
@@ -70,28 +70,13 @@ bool HelloWorld::init()
             }
             if (ImGui::BeginMenu("Edit", _isEditEnable))
             {
-                
-                static bool isUndo = false;
-                static bool isRedo = false;
-                if ( _gmxLayerManager->getCurrentLayer() )
-                {
-                    isUndo = _gmxLayerManager->getCurrentLayer()->isUndo();
-                    isRedo = _gmxLayerManager->getCurrentLayer()->isRedo();
-                }
-                
-                if (ImGui::MenuItem("Undo", "CTRL+Z", false, isUndo))
-                {
-                    _gmxLayerManager->getCurrentLayer()->undo();
-                }
-                if (ImGui::MenuItem("Redo", "CTRL+Y", false, isRedo))
-                {
-                    _gmxLayerManager->getCurrentLayer()->redo();
-                }
+                if (ImGui::MenuItem("Undo", "CTRL+Z", false, _isUndo)) { undo(); }
+                if (ImGui::MenuItem("Redo", "CTRL+Y", false, _isRedo)) { redo(); }
                 
                 ImGui::Separator();
-                if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-                if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-                if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+                if (ImGui::MenuItem("Cut", "CTRL+X", false, false)) {}
+                if (ImGui::MenuItem("Copy", "CTRL+C", false, false)) {}
+                if (ImGui::MenuItem("Paste", "CTRL+V", false, false)) {}
                 ImGui::EndMenu();
             }
             
@@ -277,18 +262,43 @@ void HelloWorld::update(float dt)
             onCenterView();
         }
     }
+    
+    if ( _gmxLayerManager->getCurrentLayer() )
+    {
+        _isUndo = _gmxLayerManager->getCurrentLayer()->isUndo();
+        _isRedo = _gmxLayerManager->getCurrentLayer()->isRedo();
+    }
 }
 
 
 void HelloWorld::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
 {
     _isKeyPressed[static_cast<int>(keyCode)] = true;
+    
+    if ( _isCtrl && keyCode == EventKeyboard::KeyCode::KEY_N )
+    {
+        _showNewMap = true;
+    }
+    if ( _isCtrl && keyCode == EventKeyboard::KeyCode::KEY_Z )
+    {
+        undo();
+    }
+    
+    if ( _isCtrl && keyCode == EventKeyboard::KeyCode::KEY_Y )
+    {
+        redo();
+    }
+    
+    if ( keyCode == EventKeyboard::KeyCode::KEY_CTRL ) { _isCtrl = true; log("ctrl"); }
+    else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT ) { _isShift = true; log("shift"); }
 }
 
 
 void HelloWorld::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
 {
     _isKeyPressed[static_cast<int>(keyCode)] = false;
+    if ( keyCode == EventKeyboard::KeyCode::KEY_CTRL ) _isCtrl = false;
+    else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT ) _isShift = false;
 }
 
 
@@ -542,7 +552,6 @@ void HelloWorld::showNewMapWindow(bool* opened)
         _isEditEnable = true;
         _isPlayerEnable = true;
         _isWindowEnable = true;
-        _isSaveEnable = true;
         _showFileMenuBar = true;
         _showPalette = true;
         
@@ -573,8 +582,14 @@ void HelloWorld::showFileMenuBar(bool* opened)
     ImGui::SetNextWindowPos(ImVec2(MINIMAP_SIZE + WINDOW_PADDING * 2, MENUBAR_HEIGHT + WINDOW_PADDING));
     ImGui::SetNextWindowSize(ImVec2(_oldWindowSize.width - MINIMAP_SIZE - WINDOW_PADDING * 3, FILE_MENUBAR_HEIGHT));
     
+    std::string fileName = _gmxLayerManager->getCurrentLayer()->getFileName() + ".gmx";
+    if ( _gmxLayerManager->getCurrentLayer()->isChanged() )
+    {
+        fileName += " *";
+    }
+    
     ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
-    ImGui::Begin(_gmxLayerManager->getCurrentLayer()->getFileName().c_str(), &_showFileMenuBar, ImVec2(0,0), 0.0f,
+    ImGui::Begin(fileName.c_str(), &_showFileMenuBar, ImVec2(0,0), 0.0f,
                  ImGuiWindowFlags_NoResize |
                  ImGuiWindowFlags_NoMove |
                  ImGuiWindowFlags_NoScrollbar |
@@ -589,10 +604,34 @@ void HelloWorld::showFileMenuBar(bool* opened)
         // closed
         _showPalette = false;
         _showTrigger = false;
+        _isRedo = false;
+        _isWindowEnable = false;
+        _isPlayerEnable = false;
+        _isEditEnable = false;
+        _isUndo = false;
+        Dispatch.removeNode(MessageNodeType::GMX_LAYER);
         _viewSpaceParams.setZero();
         _worldPosition = Vec2::ZERO;
         _minimapLayer->disableFocusWindow();
         _gmxLayerManager->closeLayer();
+    }
+}
+
+
+void HelloWorld::redo()
+{
+    if ( _gmxLayerManager->getCurrentLayer() && _isRedo )
+    {
+        _gmxLayerManager->getCurrentLayer()->redo();
+    }
+}
+
+
+void HelloWorld::undo()
+{
+    if ( _gmxLayerManager->getCurrentLayer() && _isUndo )
+    {
+        _gmxLayerManager->getCurrentLayer()->undo();
     }
 }
 

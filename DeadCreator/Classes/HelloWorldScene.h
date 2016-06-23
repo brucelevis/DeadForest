@@ -52,6 +52,10 @@ private:
     
     void showFileMenuBar(bool* opened);
     
+    void redo();
+    
+    void undo();
+    
 private:
 
     cocos2d::Size _oldWindowSize;
@@ -83,10 +87,14 @@ private:
     bool _showProperty = false;
     bool _showPalette = false;
     bool _showFileMenuBar = false;
-    bool _isSaveEnable = false;
     bool _isEditEnable = false;
     bool _isPlayerEnable = false;
     bool _isWindowEnable = false;
+    bool _isRedo = false;
+    bool _isUndo = false;
+    
+    bool _isCtrl = false;
+    bool _isShift = false;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

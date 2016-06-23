@@ -22,6 +22,8 @@ public:
     
     CREATE_FUNC(HistoryQueue);
     
+    virtual ~HistoryQueue();
+    
     void redo();
     
     void undo();

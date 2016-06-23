@@ -30,7 +30,7 @@ public:
     
     CREATE_FUNC(GMXLayerManager);
     
-    bool saveGMXFile(GMXFile* file, const std::string& fileName);
+    bool saveGMXFile(const std::string& fileName);
 
     bool loadGMXFile(GMXFile* file, const std::string& fileName);
     

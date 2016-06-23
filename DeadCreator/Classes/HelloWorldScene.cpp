@@ -1,7 +1,7 @@
 #include <fstream>
 using namespace std;
 
-#include <boost/filesystem.hpp>
+#include "FileSystem.hpp"
 
 #include "HelloWorldScene.h"
 #include "GMXLayer.hpp"
@@ -23,6 +23,9 @@ bool HelloWorld::init()
     {
         return false;
     }
+    
+    FileSystem::createDirectory(FileSystem::getParentPath(FileSystem::getInitialPath()) + "/maps");
+    
     
     for(int i = 0 ; i < 256 ; ++ i) _isKeyPressed[i] = false;
     _isMousePressed = false;
@@ -47,13 +50,20 @@ bool HelloWorld::init()
         if ( _showPalette ) _palette->showPaletteWindow(&_showPalette);
         if ( _showFileMenuBar ) showFileMenuBar(&_showFileMenuBar);
         if ( _showTrigger ) _triggerEditor->showTriggerEditor(&_showTrigger);
-        
+        if ( _showOpenMap ) showOpenWindow(&_showOpenMap);
+            
         if (ImGui::BeginMainMenuBar())
         {
-            if (ImGui::BeginMenu("File"))
+            if (ImGui::BeginMenu("File", _isFileEnable))
             {
                 if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap))
-                if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+                {
+                    if ( _showNewMap ) _isFileEnable = false;
+                }
+                if (ImGui::MenuItem("Open", "Ctrl+O", &_showOpenMap))
+                {
+                    if ( _showOpenMap ) _isFileEnable = false;
+                }
                 if (ImGui::BeginMenu("Open Recent"))
                 {
                     ImGui::MenuItem("fish_hat.c");
@@ -61,7 +71,7 @@ bool HelloWorld::init()
                     ImGui::MenuItem("fish_hat.h");
                     ImGui::EndMenu();
                 }
-                if (ImGui::MenuItem("Save", "Ctrl+S", false, _isUndo)) {}
+                if (ImGui::MenuItem("Save", "Ctrl+S", false, _isUndo)) { save(); }
                 if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", false, _isUndo)) {}
                 ImGui::Separator();
                 if (ImGui::MenuItem("Quit", "Alt+F4")) {}
@@ -289,8 +299,8 @@ void HelloWorld::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
         redo();
     }
     
-    if ( keyCode == EventKeyboard::KeyCode::KEY_CTRL ) { _isCtrl = true; log("ctrl"); }
-    else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT ) { _isShift = true; log("shift"); }
+    if ( keyCode == EventKeyboard::KeyCode::KEY_CTRL ) { _isCtrl = true; }
+    else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT ) { _isShift = true; }
 }
 
 
@@ -428,20 +438,11 @@ void HelloWorld::onResize()
 }
 
 
-
-void HelloWorld::saveGMXLayer(GMXFile* file, const std::string fileName)
-{
-}
-
-
-void HelloWorld::loadGMXLayer(GMXFile* file, const std::string fileName)
-{
-}
-
-
 void HelloWorld::showNewMapWindow(bool* opened)
 {
-    ImGui::SetNextWindowSize(ImVec2(430,430));
+    Vec2 windowSize = Vec2(430, 430);
+    ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
+    ImGui::SetNextWindowPos(ImVec2((_oldWindowSize.width - windowSize.x) / 2, (_oldWindowSize.height - windowSize.y) / 2));
     if (!ImGui::Begin("New Map", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
     {
         ImGui::End();
@@ -514,6 +515,7 @@ void HelloWorld::showNewMapWindow(bool* opened)
         file->numOfTileX = atoi(items3[numOfTileX]);
         file->numOfTileY = atoi(items4[numOfTileY]);
         file->worldSize = Size(file->tileWidth * file->numOfTileX, file->tileHeight * file->numOfTileY);
+        file->defaultTile = currentTile;
         
         int x = file->numOfTileX + DUMMY_TILE_SIZE * 2;
         int y = file->numOfTileY * 2 + DUMMY_TILE_SIZE * 4;
@@ -546,7 +548,6 @@ void HelloWorld::showNewMapWindow(bool* opened)
         newLayer->addChild(_palette);
         
         _gmxLayerManager->addChild(newLayer);
-        
         _minimapLayer->setGMXLayer(newLayer);
         
         _isEditEnable = true;
@@ -554,6 +555,7 @@ void HelloWorld::showNewMapWindow(bool* opened)
         _isWindowEnable = true;
         _showFileMenuBar = true;
         _showPalette = true;
+        _isFileEnable = true;
         
         tileSizeXItem = 0;
         tileSizeYItem = 0;
@@ -565,12 +567,25 @@ void HelloWorld::showNewMapWindow(bool* opened)
     ImGui::SameLine();
     if ( ImGui::Button("Cancel") )
     {
+        _isFileEnable = true;
+        
         tileSizeXItem = 0;
         tileSizeYItem = 0;
         numOfTileX = 0;
         numOfTileY = 0;
         currentTile = 0;
         *opened = false;
+    }
+    
+    if (*opened == false)
+    {
+        _isFileEnable = true;
+        
+        tileSizeXItem = 0;
+        tileSizeYItem = 0;
+        numOfTileX = 0;
+        numOfTileY = 0;
+        currentTile = 0;
     }
     
     ImGui::End();
@@ -618,6 +633,48 @@ void HelloWorld::showFileMenuBar(bool* opened)
 }
 
 
+void HelloWorld::showOpenWindow(bool* opened)
+{
+    Vec2 windowSize = Vec2(400, 600);
+    ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
+    ImGui::SetNextWindowPos(ImVec2((_oldWindowSize.width - windowSize.x) / 2, (_oldWindowSize.height - windowSize.y) / 2));
+    if (!ImGui::Begin("Open Map", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+    {
+        ImGui::End();
+        return;
+    }
+    
+    ImGui::Text("Your Files in ( /proj_root/maps/* )");
+    
+    ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
+    ImGui::BeginChild("##TileSize", ImVec2(0, 480), true);
+    
+    auto files = FileSystem::getFilesInPath(FileSystem::getParentPath(FileSystem::getInitialPath()) + "/maps/", true);
+    if ( files.size() == 0)
+    {
+        ImGui::Text("empty");
+    }
+    else
+    {
+        for (auto &f : files )
+        {
+            ImGui::Selectable(f.c_str());
+        }
+    }
+    ImGui::EndChild();
+    ImGui::PopStyleVar();
+    
+    
+    
+    ImGui::End();
+    
+    if (*opened == false)
+    {
+        _isFileEnable = true;
+    }
+}
+
+
 void HelloWorld::redo()
 {
     if ( _gmxLayerManager->getCurrentLayer() && _isRedo )
@@ -634,6 +691,39 @@ void HelloWorld::undo()
         _gmxLayerManager->getCurrentLayer()->undo();
     }
 }
+
+
+void HelloWorld::save()
+{
+    if ( _gmxLayerManager->getCurrentLayer() )
+    {
+        _gmxLayerManager->saveGMXFile("test");
+        log("Save");
+    }
+}
+
+
+void HelloWorld::open()
+{
+    GMXFile* file = new GMXFile();
+    
+    _gmxLayerManager->loadGMXFile(file, "test");
+    auto newLayer = GMXLayer::create();
+    newLayer->openFile(file);
+    
+    _palette = PaletteWindow::create();
+    newLayer->addChild(_palette);
+    
+    _gmxLayerManager->addChild(newLayer);
+    _minimapLayer->setGMXLayer(newLayer);
+    
+    _isEditEnable = true;
+    _isPlayerEnable = true;
+    _isWindowEnable = true;
+    _showFileMenuBar = true;
+    _showPalette = true;
+}
+
 
 
 

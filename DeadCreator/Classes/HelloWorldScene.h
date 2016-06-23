@@ -44,17 +44,23 @@ private:
     
     void onResize();
     
-    void saveGMXLayer(GMXFile* file, const std::string fileName);
-    
-    void loadGMXLayer(GMXFile* file, const std::string fileName);
-    
     void showNewMapWindow(bool* opened);
     
     void showFileMenuBar(bool* opened);
     
+    void showOpenWindow(bool* opened);
+    
+    //void showDirectories();
+    
     void redo();
     
     void undo();
+    
+    void save();
+    
+    void saveAs() {}
+    
+    void open();
     
 private:
 
@@ -80,20 +86,34 @@ private:
     
     cocos2d::DrawNode* _debugNode;
     
-    bool _isMousePressed;
+    bool _isMousePressed = false;
     
     bool _showNewMap = false;
+    
+    bool _showOpenMap = false;
+    
     bool _showTrigger = false;
+    
     bool _showProperty = false;
+    
     bool _showPalette = false;
+    
     bool _showFileMenuBar = false;
+    
+    bool _isFileEnable = true;
+    
     bool _isEditEnable = false;
+    
     bool _isPlayerEnable = false;
+    
     bool _isWindowEnable = false;
+    
     bool _isRedo = false;
+    
     bool _isUndo = false;
     
     bool _isCtrl = false;
+    
     bool _isShift = false;
 };
 

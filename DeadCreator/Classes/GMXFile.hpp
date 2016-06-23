@@ -16,18 +16,13 @@ struct GMXFile
 {
     
     std::string fileName;
-    
     int tileWidth = -1;
-    
     int tileHeight = -1;
-    
     int numOfTileX = -1;
-    
     int numOfTileY = -1;
-    
     std::vector<std::vector<std::string>> tileInfos;
-    
     cocos2d::Size worldSize;
+    int defaultTile = -1;
     
     GMXFile() = default;
     
@@ -36,3 +31,13 @@ struct GMXFile
 };
 
 #endif /* GMXFile_hpp */
+
+
+
+
+
+
+
+
+
+

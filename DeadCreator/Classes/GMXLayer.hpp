@@ -22,7 +22,6 @@
 class PaletteWindow;
 class EntityBase;
 class Location;
-class Task;
 class HistoryQueue;
 
 
@@ -88,6 +87,8 @@ public:
     bool isUndo() const;
     
     bool isChanged() const;
+    
+    GMXFile* getFile() const { return _file; }
     
     // todo list
     

@@ -20,6 +20,7 @@ enum TileType
 
 struct Tiling
 {
+    
     int x;
     int y;
     std::string tileNumber;

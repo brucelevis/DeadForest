@@ -34,33 +34,33 @@ std::pair<int, int> GMXLayer::numberToIndex(int number) const
 
 std::vector<std::pair<int, int>> GMXLayer::getNeighborTiles(int x, int y) const
 {
-    //       3
-    //     2   4
-    //   1 (x,y) 5
-    //     8   6
-    //       7
+    //       2
+    //     1   3
+    //   0 (x,y) 4
+    //     7   5
+    //       6
     std::vector<std::pair<int, int>> ret;
     if (y % 2 == 0)
     {
-        ret.push_back( {x - 1, y} );        // 1
-        ret.push_back( {x - 1, y + 1} );    // 2
-        ret.push_back( {x, y + 2} );        // 3
-        ret.push_back( {x, y + 1} );        // 4
-        ret.push_back( {x + 1, y} );        // 5
-        ret.push_back( {x, y - 1} );        // 6
-        ret.push_back( {x, y - 2} );        // 7
-        ret.push_back( {x - 1, y - 1} );    // 8
+        ret.push_back( {x - 1, y} );        // 0
+        ret.push_back( {x - 1, y + 1} );    // 1
+        ret.push_back( {x, y + 2} );        // 2
+        ret.push_back( {x, y + 1} );        // 3
+        ret.push_back( {x + 1, y} );        // 4
+        ret.push_back( {x, y - 1} );        // 5
+        ret.push_back( {x, y - 2} );        // 6
+        ret.push_back( {x - 1, y - 1} );    // 7
     }
     else
     {
-        ret.push_back( {x - 1, y} );        // 1
-        ret.push_back( {x, y + 1} );        // 2
-        ret.push_back( {x, y + 2} );        // 3
-        ret.push_back( {x + 1, y + 1} );    // 4
-        ret.push_back( {x + 1, y} );        // 5
-        ret.push_back( {x + 1, y - 1} );    // 6
-        ret.push_back( {x, y - 2} );        // 7
-        ret.push_back( {x, y - 1} );        // 8
+        ret.push_back( {x - 1, y} );        // 0
+        ret.push_back( {x, y + 1} );        // 1
+        ret.push_back( {x, y + 2} );        // 2
+        ret.push_back( {x + 1, y + 1} );    // 3
+        ret.push_back( {x + 1, y} );        // 4
+        ret.push_back( {x + 1, y - 1} );    // 5
+        ret.push_back( {x, y - 2} );        // 6
+        ret.push_back( {x, y - 1} );        // 7
     }
     return ret;
 }
@@ -132,10 +132,10 @@ bool GMXLayer::init()
     _clipNode->addChild(_tileRoot);
     
     _selectRegion = DrawNode::create();
-    _tileRoot->addChild(_selectRegion , 10);
+    _tileRoot->addChild(_selectRegion , 2);
     
     _selectTileRoot = Node::create();
-    _tileRoot->addChild(_selectTileRoot, 8);
+    _tileRoot->addChild(_selectTileRoot, 1);
     
     _centerViewPosition = Vec2(_clipNode->getClippingRegion().size / 2);
     
@@ -456,6 +456,7 @@ void GMXLayer::putTile(int type, int x, int y)
             {
                 if ( _file->tileInfos[temp.y][temp.x][0] == temp.tileNumber[0] )
                 {
+                    // 같은 타일의 경우 합친후 적용한다.
                     std::string originalTail = getTileTail(_file->tileInfos[temp.y][temp.x]);
                     std::string tail = getTileTail(temp.tileNumber);
                     
@@ -469,16 +470,73 @@ void GMXLayer::putTile(int type, int x, int y)
                 }
                 else if ( _file->tileInfos[temp.y][temp.x][0] == '1' )
                 {
+                    // 흙 타일일 경우에는 바로 적용한다.
                     _file->tileInfos[temp.y][temp.x] = temp.tileNumber;
                     _tileImages[temp.y][temp.x]->setTexture(temp.tileNumber + ".png");
                 }
                 else
                 {
+                    //       2
+                    //     1   3
+                    //   0 (x,y) 4
+                    //     7   5
+                    //       6
+                    // 다른 타일일 경우
+                    _file->tileInfos[temp.y][temp.x] = temp.tileNumber;
+                    _tileImages[temp.y][temp.x]->setTexture(temp.tileNumber + ".png");
                     
+                    auto nei = getNeighborTiles(temp.x, temp.y);
+                    
+                    for(int i = 0 ; i < nei.size(); ++ i)
+                    {
+                        log("index: (%d): %d, %d",i, nei[i].first, nei[i].second);
+                    }
+                    
+                    std::string tail = getTileTail(temp.tileNumber);
+                    if ( tail == "2")
+                    {
+                        s.push(Tiling(nei[0].first, nei[0].second, getTileHeader(TileType::DIRT) + "2"));
+                        s.push(Tiling(nei[1].first, nei[1].second, getTileHeader(TileType::DIRT) + "23"));
+                        s.push(Tiling(nei[7].first, nei[7].second, getTileHeader(TileType::DIRT) + "12"));
+                    }
+                    else if ( tail == "23")
+                    {
+                        s.push(Tiling(nei[1].first, nei[1].second, getTileHeader(TileType::DIRT) + "23"));
+                    }
+                    else if ( tail == "3")
+                    {
+                        s.push(Tiling(nei[1].first, nei[1].second, getTileHeader(TileType::DIRT) + "23"));
+                        s.push(Tiling(nei[2].first, nei[2].second, getTileHeader(TileType::DIRT) + "3"));
+                        s.push(Tiling(nei[3].first, nei[3].second, getTileHeader(TileType::DIRT) + "34"));
+                    }
+                    else if ( tail == "34")
+                    {
+                        s.push(Tiling(nei[3].first, nei[3].second, getTileHeader(TileType::DIRT) + "34"));
+                    }
+                    else if ( tail == "4")
+                    {
+                        s.push(Tiling(nei[3].first, nei[3].second, getTileHeader(TileType::DIRT) + "34"));
+                        s.push(Tiling(nei[4].first, nei[4].second, getTileHeader(TileType::DIRT) + "4"));
+                        s.push(Tiling(nei[5].first, nei[5].second, getTileHeader(TileType::DIRT) + "14"));
+                    }
+                    else if ( tail == "14")
+                    {
+                        s.push(Tiling(nei[5].first, nei[5].second, getTileHeader(TileType::DIRT) + "14"));
+                    }
+                    else if ( tail == "1")
+                    {
+                        s.push(Tiling(nei[5].first, nei[5].second, getTileHeader(TileType::DIRT) + "14"));
+                        s.push(Tiling(nei[6].first, nei[6].second, getTileHeader(TileType::DIRT) + "1"));
+                        s.push(Tiling(nei[7].first, nei[7].second, getTileHeader(TileType::DIRT) + "12"));
+                    }
+                    else if ( tail == "12")
+                    {
+                        s.push(Tiling(nei[7].first, nei[7].second, getTileHeader(TileType::DIRT) + "12"));
+                    }
                 }
             }
         }
-        else
+        else // if ( temp.tileNumber[0] == '1' )
         {
             // 지우는 로직
             if ( getTileTail(temp.tileNumber) == "1234" )
@@ -506,6 +564,8 @@ void GMXLayer::putTile(int type, int x, int y)
                 std::string originalTail = getTileTail(_file->tileInfos[temp.y][temp.x]);
                 std::string tail = getTileTail(temp.tileNumber);
                 
+                log("original Tail: %s", originalTail.c_str());
+                log("source Tail: %s", tail.c_str());
                 for(auto& d : tail)
                 {
                     originalTail.erase(std::remove(originalTail.begin(), originalTail.end(), d), originalTail.end());
@@ -514,6 +574,9 @@ void GMXLayer::putTile(int type, int x, int y)
                 std::string finalTile;
                 if ( originalTail.empty() ) finalTile = getTileHeader(TileType::DIRT) + "1234";
                 else finalTile = getTileHeader(_file->tileInfos[temp.y][temp.x]) + originalTail;
+                
+                log("finalTile: %s", finalTile.c_str());
+                
                 _file->tileInfos[temp.y][temp.x] = finalTile;
                 _tileImages[temp.y][temp.x]->setTexture(finalTile + ".png");
             }

@@ -50,12 +50,8 @@ bool HelloWorld::init()
         
         if (ImGui::BeginMainMenuBar())
         {
-            _isMenuSelected = false;
-            
             if (ImGui::BeginMenu("File"))
             {
-                _isMenuSelected = true;
-                
                 if (ImGui::MenuItem("New", NULL, &_showNewMap))
                 if (ImGui::MenuItem("Open", "Ctrl+O")) {}
                 if (ImGui::BeginMenu("Open Recent"))
@@ -74,10 +70,24 @@ bool HelloWorld::init()
             }
             if (ImGui::BeginMenu("Edit", _isEditEnable))
             {
-                _isMenuSelected = true;
                 
-                if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-                if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+                static bool isUndo = false;
+                static bool isRedo = false;
+                if ( _gmxLayerManager->getCurrentLayer() )
+                {
+                    isUndo = _gmxLayerManager->getCurrentLayer()->isUndo();
+                    isRedo = _gmxLayerManager->getCurrentLayer()->isRedo();
+                }
+                
+                if (ImGui::MenuItem("Undo", "CTRL+Z", false, isUndo))
+                {
+                    _gmxLayerManager->getCurrentLayer()->undo();
+                }
+                if (ImGui::MenuItem("Redo", "CTRL+Y", false, isRedo))
+                {
+                    _gmxLayerManager->getCurrentLayer()->redo();
+                }
+                
                 ImGui::Separator();
                 if (ImGui::MenuItem("Cut", "CTRL+X")) {}
                 if (ImGui::MenuItem("Copy", "CTRL+C")) {}
@@ -87,8 +97,6 @@ bool HelloWorld::init()
             
             if (ImGui::BeginMenu("Players", _isPlayerEnable))
             {
-                _isMenuSelected = true;
-                
                 if (ImGui::MenuItem("Player 1")) {}
                 if (ImGui::MenuItem("Player 2")) {}
                 if (ImGui::MenuItem("Player 3")) {}
@@ -104,8 +112,6 @@ bool HelloWorld::init()
             
             if (ImGui::BeginMenu("Windows", _isWindowEnable))
             {
-                _isMenuSelected = true;
-                
                 ImGui::MenuItem("Trigger Editor", "SHIFT+T", &_showTrigger);
                 ImGui::MenuItem("Palette Window", "SHIFT+P", &_showPalette);
                 ImGui::MenuItem("Property Editor", "SHIFT+R", &_showProperty);
@@ -114,8 +120,6 @@ bool HelloWorld::init()
             
             if (ImGui::BeginMenu("Help"))
             {
-                _isMenuSelected = true;
-                
                 if (ImGui::MenuItem("Contact")) {}
                 if (ImGui::MenuItem("About")) {}
                 ImGui::EndMenu();
@@ -295,8 +299,13 @@ void HelloWorld::onMouseDown(cocos2d::Event* event)
     auto mouseEvent = static_cast<EventMouse*>(event);
     _mousePosition.setPoint(mouseEvent->getCursorX(), mouseEvent->getCursorY());
     
+    bool inImGuiWidgets = ImGui::IsPosHoveringAnyWindow(ImVec2(mouseEvent->getLocationInView().x,
+                                                               _director->getVisibleSize().height - mouseEvent->getLocationInView().y));
+    
+    if ( inImGuiWidgets ) return ;
+    
     Rect minimapRect(_minimapLayer->getPosition().x, _minimapLayer->getPosition().y, MINIMAP_SIZE, MINIMAP_SIZE);
-    if ( !_isMenuSelected && minimapRect.containsPoint(_mousePosition) )
+    if ( minimapRect.containsPoint(_mousePosition) )
     {
         Size focusWindowSize = _minimapLayer->getFocusWindowSize();
         Vec2 innerPosition = _mousePosition - _minimapLayer->getPosition();
@@ -317,10 +326,7 @@ void HelloWorld::onMouseDown(cocos2d::Event* event)
             Size clipSize = currLayer->getClippingRegion().size;
             Vec2 positionInClipRect(_mousePosition - Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
             
-            bool inImGuiWidgets = ImGui::IsPosHoveringAnyWindow(ImVec2(mouseEvent->getLocationInView().x,
-                                                                       _director->getVisibleSize().height - mouseEvent->getLocationInView().y));
-           
-            if ( !inImGuiWidgets && currLayer->getClippingRegion().containsPoint(positionInClipRect) )
+            if ( currLayer->getClippingRegion().containsPoint(positionInClipRect) )
             {
                 _worldPosition = _gmxLayerManager->getCurrentLayer()->getCenterViewPosition();
                 positionInClipRect -= clipSize / 2;

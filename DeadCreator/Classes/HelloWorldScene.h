@@ -78,7 +78,6 @@ private:
     
     bool _isMousePressed;
     
-    bool _isMenuSelected = false;
     bool _showNewMap = false;
     bool _showTrigger = false;
     bool _showProperty = false;

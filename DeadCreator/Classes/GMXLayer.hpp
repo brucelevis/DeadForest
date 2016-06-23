@@ -13,6 +13,9 @@
 #include "ui/CocosGUI.h"
 #include "GMXFile.hpp"
 #include "MinimapLayer.hpp"
+#include "Tiling.hpp"
+#include "MessageNode.hpp"
+#include "Telegram.hpp"
 
 #define DUMMY_TILE_SIZE 4
 
@@ -20,43 +23,10 @@ class PaletteWindow;
 class EntityBase;
 class Location;
 class Task;
-
-struct Tiling
-{
-    int x;
-    int y;
-    std::string tileNumber;
-    
-    Tiling(int xx = 0, int yy = 0, const std::string& s = "") :
-    x(xx),
-    y(yy),
-    tileNumber(s)
-    {}
-    
-    Tiling(const Tiling& rhs)
-    {
-        copyFrom(rhs);
-    }
-    
-    Tiling& operator=(const Tiling& rhs)
-    {
-        if ( &rhs == this )
-            return *this;
-        copyFrom(rhs);
-        return *this;
-    }
-    
-    void copyFrom(const Tiling& src)
-    {
-        x = src.x;
-        y = src.y;
-        tileNumber = src.tileNumber;
-    }
-    
-};
+class HistoryQueue;
 
 
-class GMXLayer : public cocos2d::Node
+class GMXLayer : public cocos2d::Node, public MessageNode
 {
     
 public:
@@ -107,9 +77,19 @@ public:
     
     void setSelectTileImage(int tileType);
     
-    // todo list
+    bool handleMessage(const Telegram& msg) override;
     
     void putTile(int type, int x, int y);
+    
+    void redo();
+    
+    void undo();
+    
+    bool isRedo() const;
+    
+    bool isUndo() const;
+    
+    // todo list
     
     void addEntity(EntityBase* entity) {}
     
@@ -157,7 +137,7 @@ private:
     
     // todo
     
-    std::vector<Task*> _taskHistory;
+    HistoryQueue* _historyQueue;
     
     bool _isChanged;
     

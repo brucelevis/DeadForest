@@ -12,14 +12,6 @@
 #include <string>
 #include <vector>
 
-enum TileType
-{
-    DIRT = 0,
-    GRASS,
-    WATER,
-    HILL
-};
-
 struct GMXFile
 {
     

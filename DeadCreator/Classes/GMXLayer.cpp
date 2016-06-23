@@ -14,6 +14,8 @@
 #include "PaletteWindow.hpp"
 #include "MinimapLayer.hpp"
 #include "SizeProtocol.h"
+#include "HistoryQueue.hpp"
+#include "HistoryModifyTile.hpp"
 using namespace cocos2d;
 
 #include "CCImGui.h"
@@ -139,6 +141,11 @@ bool GMXLayer::init()
     
     _centerViewPosition = Vec2(_clipNode->getClippingRegion().size / 2);
     
+    _historyQueue = HistoryQueue::create();
+    addChild(_historyQueue);
+    
+    Dispatch.registerNode(MessageNodeType::GMX_LAYER, this);
+    
     return true;
 }
 
@@ -148,7 +155,7 @@ void GMXLayer::openFile(GMXFile* file)
     _file = file;
     
     int x = file->numOfTileX + DUMMY_TILE_SIZE * 2;
-    int y = file->numOfTileY * 2 + DUMMY_TILE_SIZE * 2;
+    int y = file->numOfTileY * 2 + DUMMY_TILE_SIZE * 4;
     
     _tileImages.resize(y);
     for(int i = 0 ; i < y ; ++ i)
@@ -215,7 +222,7 @@ void GMXLayer::openFile(GMXFile* file)
 void GMXLayer::closeFile()
 {
     int x = _file->numOfTileX + DUMMY_TILE_SIZE * 2;
-    int y = _file->numOfTileY * 2 + DUMMY_TILE_SIZE * 2;
+    int y = _file->numOfTileY * 2 + DUMMY_TILE_SIZE * 4;
 
     for(int i = 0 ; i < y ; ++ i)
     {
@@ -412,20 +419,11 @@ void GMXLayer::disableSelectRegion()
 
 void GMXLayer::putTile(int type, int x, int y)
 {
-//    std::string center;
-//    if ( type == TileType::DIRT) center = "1_" + std::to_string(random(1, 3)) + "_1234";
-//    else if ( type == TileType::GRASS) center = "2_" + std::to_string(random(1, 3)) + "_1234";
-//    else if ( type == TileType::WATER) center = "3_" + std::to_string(random(1, 3)) + "_1234";
-//    else if ( type == TileType::HILL) center = "5_" + std::to_string(random(1, 3)) + "_1234";
-//   
-//    _file->tileInfos[y][x] = center;
-//    _tileImages[y][x]->setTexture(center + ".png");
+    HistoryModifyTile* history = new HistoryModifyTile();
     
-    std::map<int, bool> visit;
     std::stack<Tiling> s;
     Tiling init(x, y, getTileHeader(type) + "1234");
     s.push(init);
-    visit.insert({ indexToNumber(x, y), true });
     while( !s.empty() )
     {
         Tiling temp = s.top();
@@ -445,12 +443,14 @@ void GMXLayer::putTile(int type, int x, int y)
                 s.push(Tiling(nei[5].first, nei[5].second, getTileHeader(temp.tileNumber) + "14"));
                 s.push(Tiling(nei[6].first, nei[6].second, getTileHeader(temp.tileNumber) + "1"));
                 s.push(Tiling(nei[7].first, nei[7].second, getTileHeader(temp.tileNumber) + "12"));
-                for(int i = 0 ; i < 8 ; ++ i)
-                {
-                    visit.insert( {indexToNumber(nei[i].first, nei[i].second), true } );
-                }
+                
+                // save history
+                std::string prev = _file->tileInfos[temp.y][temp.x];
+                
                 _file->tileInfos[temp.y][temp.x] = temp.tileNumber;
                 _tileImages[temp.y][temp.x]->setTexture(temp.tileNumber + ".png");
+                
+                history->modifiedDatas.push_back(ModifiedData(temp.x, temp.y, prev, temp.tileNumber));
             }
             else
             {
@@ -464,34 +464,38 @@ void GMXLayer::putTile(int type, int x, int y)
                     std::sort(originalTail.begin(), originalTail.end());
                     originalTail.erase(unique(originalTail.begin(), originalTail.end()), originalTail.end());
                     
+                    // save history
+                    std::string prev = _file->tileInfos[temp.y][temp.x];
+                    
                     std::string finalTile = getTileHeader(_file->tileInfos[temp.y][temp.x]) + originalTail;
                     _file->tileInfos[temp.y][temp.x] = finalTile;
                     _tileImages[temp.y][temp.x]->setTexture(finalTile + ".png");
+                    
+                    history->modifiedDatas.push_back(ModifiedData(temp.x, temp.y, prev, finalTile));
                 }
                 else if ( _file->tileInfos[temp.y][temp.x][0] == '1' )
                 {
                     // 흙 타일일 경우에는 바로 적용한다.
+                    
+                    // save history
+                    std::string prev = _file->tileInfos[temp.y][temp.x];
+                    history->modifiedDatas.push_back(ModifiedData(temp.x, temp.y, prev, temp.tileNumber));
+                    
                     _file->tileInfos[temp.y][temp.x] = temp.tileNumber;
                     _tileImages[temp.y][temp.x]->setTexture(temp.tileNumber + ".png");
                 }
                 else
                 {
-                    //       2
-                    //     1   3
-                    //   0 (x,y) 4
-                    //     7   5
-                    //       6
                     // 다른 타일일 경우
+                    
+                    // save history
+                    std::string prev = _file->tileInfos[temp.y][temp.x];
+                    history->modifiedDatas.push_back(ModifiedData(temp.x, temp.y, prev, temp.tileNumber));
+                    
                     _file->tileInfos[temp.y][temp.x] = temp.tileNumber;
                     _tileImages[temp.y][temp.x]->setTexture(temp.tileNumber + ".png");
                     
                     auto nei = getNeighborTiles(temp.x, temp.y);
-                    
-                    for(int i = 0 ; i < nei.size(); ++ i)
-                    {
-                        log("index: (%d): %d, %d",i, nei[i].first, nei[i].second);
-                    }
-                    
                     std::string tail = getTileTail(temp.tileNumber);
                     if ( tail == "2")
                     {
@@ -550,10 +554,11 @@ void GMXLayer::putTile(int type, int x, int y)
                 s.push(Tiling(nei[5].first, nei[5].second, getTileHeader(temp.tileNumber) + "14"));
                 s.push(Tiling(nei[6].first, nei[6].second, getTileHeader(temp.tileNumber) + "1"));
                 s.push(Tiling(nei[7].first, nei[7].second, getTileHeader(temp.tileNumber) + "12"));
-                for(int i = 0 ; i < 8 ; ++ i)
-                {
-                    visit.insert( {indexToNumber(nei[i].first, nei[i].second), true } );
-                }
+                
+                // save history
+                std::string prev = _file->tileInfos[temp.y][temp.x];
+                history->modifiedDatas.push_back(ModifiedData(temp.x, temp.y, prev, temp.tileNumber));
+                
                 _file->tileInfos[temp.y][temp.x] = temp.tileNumber;
                 _tileImages[temp.y][temp.x]->setTexture(temp.tileNumber + ".png");
             }
@@ -561,11 +566,12 @@ void GMXLayer::putTile(int type, int x, int y)
             {
                 if ( _file->tileInfos[temp.y][temp.x][0] == '1') continue;
                 
+                // save history
+                std::string prev = _file->tileInfos[temp.y][temp.x];
+                
                 std::string originalTail = getTileTail(_file->tileInfos[temp.y][temp.x]);
                 std::string tail = getTileTail(temp.tileNumber);
                 
-                log("original Tail: %s", originalTail.c_str());
-                log("source Tail: %s", tail.c_str());
                 for(auto& d : tail)
                 {
                     originalTail.erase(std::remove(originalTail.begin(), originalTail.end(), d), originalTail.end());
@@ -575,18 +581,75 @@ void GMXLayer::putTile(int type, int x, int y)
                 if ( originalTail.empty() ) finalTile = getTileHeader(TileType::DIRT) + "1234";
                 else finalTile = getTileHeader(_file->tileInfos[temp.y][temp.x]) + originalTail;
                 
-                log("finalTile: %s", finalTile.c_str());
-                
                 _file->tileInfos[temp.y][temp.x] = finalTile;
                 _tileImages[temp.y][temp.x]->setTexture(finalTile + ".png");
+                
+                history->modifiedDatas.push_back(ModifiedData(temp.x, temp.y, prev, finalTile));
             }
         }
+    }
+    
+    _historyQueue->push(history);
+}
 
+
+bool GMXLayer::handleMessage(const Telegram& msg)
+{
+    if ( msg.msg == MessageType::REDO_TILE )
+    {
+        auto modifiedTileDatas = *reinterpret_cast<std::vector<ModifiedData>*>(msg.extraInfo);
+        for(auto &d : modifiedTileDatas)
+        {
+            _file->tileInfos[d.y][d.x] = d.curr;
+            _tileImages[d.y][d.x]->setTexture(d.curr + ".png");
+        }
+        
+        return true;
+    }
+    
+    else if ( msg.msg == MessageType::UNDO_TILE )
+    {
+        auto modifiedTileDatas = *reinterpret_cast<std::vector<ModifiedData>*>(msg.extraInfo);
+        for(auto &d : modifiedTileDatas)
+        {
+            _file->tileInfos[d.y][d.x] = d.prev;
+            _tileImages[d.y][d.x]->setTexture(d.prev + ".png");
+        }
+        
+        return true;
+    }
+    
+    return false;
+}
+
+
+void GMXLayer::redo()
+{
+    if ( _historyQueue->isRedo() )
+    {
+        _historyQueue->redo();
+    }
+}
+
+void GMXLayer::undo()
+{
+    if ( _historyQueue->isUndo() )
+    {
+        _historyQueue->undo();
     }
 }
 
 
+bool GMXLayer::isRedo() const
+{
+    return _historyQueue->isRedo();
+}
 
+
+bool GMXLayer::isUndo() const
+{
+    return _historyQueue->isUndo();
+}
 
 
 

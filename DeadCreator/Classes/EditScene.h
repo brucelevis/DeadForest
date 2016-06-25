@@ -1,5 +1,4 @@
-#ifndef __HELLOWORLD_SCENE_H__
-#define __HELLOWORLD_SCENE_H__
+#pragma once
 
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
@@ -15,20 +14,20 @@ class PaletteWindow;
 class TriggerEditor;
 class OpenFileWindow;
 
-class HelloWorld : public ImGuiLayer
+class EditScene : public ImGuiLayer
 {
     
 public:
     
-    HelloWorld();
+    EditScene();
     
-    virtual ~HelloWorld() = default;
+    virtual ~EditScene() = default;
     
     virtual bool init() override;
     
     virtual void update(float dt) override;
     
-    CREATE_FUNC(HelloWorld);
+    CREATE_FUNC(EditScene);
     
     static cocos2d::Scene* createScene();
     
@@ -123,4 +122,3 @@ private:
     bool _isShift = false;
 };
 
-#endif // __HELLOWORLD_SCENE_H__

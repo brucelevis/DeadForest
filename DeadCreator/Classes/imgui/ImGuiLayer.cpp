@@ -17,6 +17,8 @@ bool ImGuiLayer::init()
     ImGuiStyle& style = ImGui::GetStyle();
     
     style.WindowFillAlphaDefault = 0.98f;
+    style.WindowPadding.x = 8;
+    style.WindowPadding.y = 4;
     style.Colors[ImGuiCol_Text] = ImVec4(0.0000000, 0.0000000, 0.0000000, 1.0000000);
     style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.6000000, 0.6000000, 0.6000000, 1.0000000);
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.9400000, 0.9400000, 0.9400000, 1.0000000);
@@ -72,6 +74,7 @@ bool ImGuiLayer::init()
 void ImGuiLayer::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &parentTransform, uint32_t parentFlags)
 {
     Layer::visit(renderer, parentTransform, parentFlags);
+    
     _command.init(_globalZOrder);
     _command.func = CC_CALLBACK_0(ImGuiLayer::onDraw, this);
     Director::getInstance()->getRenderer()->addCommand(&_command);
@@ -87,20 +90,17 @@ void ImGuiLayer::onDraw()
         io.DeltaTime = Director::getInstance()->getDeltaTime();
         
         ImGui_ImplGlfw_NewFrame();
-        updateImGUI();
+        
+        _usedTextureIdMap.clear();
+        
+        for (auto &d : _callPiplines)
+        {
+            d.second();
+        }
+        
         ImGui::Render();
     }
     glUseProgram(1);
-}
-
-void ImGuiLayer::updateImGUI()
-{
-    _usedTextureIdMap.clear();
-    
-    for (auto &d : _callPiplines)
-    {
-        d.second();
-    }
 }
 
 bool ImGuiLayer::removeImGUI(std::string name)

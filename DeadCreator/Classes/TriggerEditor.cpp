@@ -10,7 +10,8 @@
 using namespace cocos2d;
 
 
-TriggerEditor::TriggerEditor()
+TriggerEditor::TriggerEditor(ImGuiLayer* layer) :
+_imguiLayer(layer)
 {
 }
 
@@ -20,9 +21,9 @@ TriggerEditor::~TriggerEditor()
 }
 
 
-TriggerEditor* TriggerEditor::create()
+TriggerEditor* TriggerEditor::create(ImGuiLayer* layer)
 {
-    auto ret = new (std::nothrow) TriggerEditor();
+    auto ret = new (std::nothrow) TriggerEditor(layer);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -36,13 +37,12 @@ TriggerEditor* TriggerEditor::create()
 void TriggerEditor::showTriggerEditor(bool* opened)
 {
     auto visibleSize = _director->getVisibleSize();
-    Vec2 windowSize = Vec2(800, 600);
-    ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
-    ImGui::SetNextWindowPos(ImVec2((visibleSize.width - windowSize.x) / 2, (visibleSize.height - windowSize.y) / 2), ImGuiSetCond_FirstUseEver);
+    Vec2 windowSize = Vec2(visibleSize.width / 2, visibleSize.height / 2);
+    ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y), ImGuiSetCond_Once);
+    ImGui::SetNextWindowPos(ImVec2((visibleSize.width - windowSize.x) / 2, (visibleSize.height - windowSize.y) / 2), ImGuiSetCond_Appearing);
     
-    ImGui::Begin("Trigger Editor", opened, ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin("Trigger Editor", opened, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse);
 
-    
     ImGui::Text("It is Trigger Editor");
     ImGui::Separator();
     

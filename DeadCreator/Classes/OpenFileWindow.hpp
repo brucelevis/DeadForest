@@ -12,16 +12,18 @@
 #include "cocos2d.h"
 #include "imgui.h"
 
+class ImGuiLayer;
+
 class OpenFileWindow : public cocos2d::Node
 {
     
 public:
     
-    OpenFileWindow();
+    explicit OpenFileWindow(ImGuiLayer* layer);
     
     virtual ~OpenFileWindow();
     
-    static OpenFileWindow* create();
+    static OpenFileWindow* create(ImGuiLayer* layer);
     
     void showOpenFileWindow(bool* opened);
     
@@ -35,6 +37,7 @@ private:
     
 private:
     
+    ImGuiLayer* _imguilayer;
     
     char _filePath[256];
     

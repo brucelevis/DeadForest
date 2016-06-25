@@ -3,7 +3,7 @@ using namespace std;
 
 #include "FileSystem.hpp"
 
-#include "HelloWorldScene.h"
+#include "EditScene.h"
 #include "GMXLayer.hpp"
 #include "imgui.h"
 #include "SizeProtocol.h"
@@ -11,24 +11,25 @@ using namespace std;
 #include "TriggerEditor.hpp"
 #include "OpenFileWindow.hpp"
 #include "ImGuiGLViewImpl.h"
+#include "TestScene.hpp"
 using namespace cocos2d;
 
 
-HelloWorld::HelloWorld()
+EditScene::EditScene()
 {
 }
 
 
-cocos2d::Scene* HelloWorld::createScene()
+cocos2d::Scene* EditScene::createScene()
 {
     auto scene = Scene::create();
-    auto layer = HelloWorld::create();
+    auto layer = EditScene::create();
     scene->addChild(layer);
     return scene;
 }
 
 
-bool HelloWorld::init()
+bool EditScene::init()
 {
     if ( !ImGuiLayer::init() )
     {
@@ -39,14 +40,14 @@ bool HelloWorld::init()
     _isMousePressed = false;
     
     auto keylistener = EventListenerKeyboard::create();
-    keylistener->onKeyPressed = CC_CALLBACK_2(HelloWorld::onKeyPressed, this);
-    keylistener->onKeyReleased = CC_CALLBACK_2(HelloWorld::onKeyReleased, this);
+    keylistener->onKeyPressed = CC_CALLBACK_2(EditScene::onKeyPressed, this);
+    keylistener->onKeyReleased = CC_CALLBACK_2(EditScene::onKeyReleased, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(keylistener, this);
     
     auto mouselistener = EventListenerMouse::create();
-    mouselistener->onMouseDown = CC_CALLBACK_1(HelloWorld::onMouseDown, this);
-    mouselistener->onMouseUp = CC_CALLBACK_1(HelloWorld::onMouseUp, this);
-    mouselistener->onMouseMove = CC_CALLBACK_1(HelloWorld::onMouseMove, this);
+    mouselistener->onMouseDown = CC_CALLBACK_1(EditScene::onMouseDown, this);
+    mouselistener->onMouseUp = CC_CALLBACK_1(EditScene::onMouseUp, this);
+    mouselistener->onMouseMove = CC_CALLBACK_1(EditScene::onMouseMove, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouselistener, this);
     
     _oldWindowSize = Director::getInstance()->getVisibleSize();
@@ -55,10 +56,16 @@ bool HelloWorld::init()
         
         // main menu
         if ( _showNewMap ) showNewMapWindow(&_showNewMap);
-        if ( _showPalette ) _palette->showPaletteWindow(&_showPalette);
-        if ( _showFileMenuBar ) showFileMenuBar(&_showFileMenuBar);
-        if ( _showTrigger ) _triggerEditor->showTriggerEditor(&_showTrigger);
+        
         if ( _showOpenMap ) _openFileWindow->showOpenFileWindow(&_showOpenMap);
+        
+        if ( _showPalette ) _palette->showPaletteWindow(&_showPalette);
+        
+        if ( _showFileMenuBar ) showFileMenuBar(&_showFileMenuBar);
+            
+        if ( _showTrigger ) _triggerEditor->showTriggerEditor(&_showTrigger);
+        
+        
         
         if (ImGui::BeginMainMenuBar())
         {
@@ -144,14 +151,8 @@ bool HelloWorld::init()
                      ImGuiWindowFlags_NoScrollbar |
                      ImGuiWindowFlags_NoSavedSettings);
         
-        ImGui::Columns(5, "extra_info", false);
-        ImGui::SameLine();
-        ImGui::Text("Mouse Position (%.0f, %.0f)",
-                    cocos2d::clampf(ImGui::GetMousePos().x, 0.0f, io.DisplaySize.x),
-                    cocos2d::clampf(io.DisplaySize.y - ImGui::GetMousePos().y, 0.0f, io.DisplaySize.y));
+        ImGui::Columns(4, "extra_info", false);
         
-        ImGui::SameLine();
-        ImGui::NextColumn();
         ImGui::Text("World Position (%.0f, %.0f)", _worldPosition.x, _worldPosition.y);
         
         ImGui::SameLine();
@@ -219,7 +220,7 @@ bool HelloWorld::init()
     _debugNode->setPosition(Vec2(SizeProtocol::MINIMAP_SIZE + SizeProtocol::WINDOW_PADDING * 2, SizeProtocol::STATUSBAR_HEIGHT + SizeProtocol::WINDOW_PADDING));
     addChild(_debugNode);
     
-    _openFileWindow = OpenFileWindow::create();
+    _openFileWindow = OpenFileWindow::create(this);
     addChild(_openFileWindow);
     
     this->scheduleUpdate();
@@ -228,23 +229,8 @@ bool HelloWorld::init()
 }
 
 
-void HelloWorld::update(float dt)
+void EditScene::update(float dt)
 {
-//    static int t = 0;
-//    if ( t == 0 )
-//    {
-//        auto view = static_cast<ImGuiGLViewImpl*>(Director::getInstance()->getOpenGLView());
-//        auto mainWindow = view->getWindow();
-//        
-//        view->onGLFWframebuffersize(mainWindow, 1600, 960);
-//        view->setFrameSize(1600, 960);
-//        view->setDesignResolutionSize(1600, 960, ResolutionPolicy::SHOW_ALL);
-//        
-//        onResize();
-//        
-//        t = 1;
-//    }
-    
     static auto director = Director::getInstance();
     Size currSize = director->getVisibleSize();
     if ( _oldWindowSize.width != currSize.width || _oldWindowSize.height != currSize.height)
@@ -307,7 +293,7 @@ void HelloWorld::update(float dt)
 }
 
 
-void HelloWorld::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
+void EditScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
 {
     _isKeyPressed[static_cast<int>(keyCode)] = true;
     
@@ -330,7 +316,7 @@ void HelloWorld::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
 }
 
 
-void HelloWorld::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
+void EditScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
 {
     _isKeyPressed[static_cast<int>(keyCode)] = false;
     if ( keyCode == EventKeyboard::KeyCode::KEY_CTRL ) _isCtrl = false;
@@ -338,7 +324,7 @@ void HelloWorld::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d:
 }
 
 
-void HelloWorld::onMouseDown(cocos2d::Event* event)
+void EditScene::onMouseDown(cocos2d::Event* event)
 {
     _isMousePressed = true;
     
@@ -386,7 +372,7 @@ void HelloWorld::onMouseDown(cocos2d::Event* event)
 }
 
 
-void HelloWorld::onMouseMove(cocos2d::Event* event)
+void EditScene::onMouseMove(cocos2d::Event* event)
 {
     auto mouseEvent = static_cast<EventMouse*>(event);
     _mousePosition.setPoint(mouseEvent->getCursorX(), mouseEvent->getCursorY());
@@ -410,13 +396,13 @@ void HelloWorld::onMouseMove(cocos2d::Event* event)
 }
 
 
-void HelloWorld::onMouseUp(cocos2d::Event* event)
+void EditScene::onMouseUp(cocos2d::Event* event)
 {
     _isMousePressed = false;
 }
 
 
-void HelloWorld::onCenterView()
+void EditScene::onCenterView()
 {
     _gmxLayerManager->onCenterView(_viewSpaceParams.x, _viewSpaceParams.y);
     
@@ -456,7 +442,7 @@ void HelloWorld::onCenterView()
 }
 
 
-void HelloWorld::onResize()
+void EditScene::onResize()
 {
     SizeProtocol::MINIMAP_SIZE = _director->getVisibleSize().width * 0.15f;
     _gmxLayerManager->setPosition(Vec2(SizeProtocol::MINIMAP_SIZE + SizeProtocol::WINDOW_PADDING * 2, SizeProtocol::STATUSBAR_HEIGHT + SizeProtocol::WINDOW_PADDING));
@@ -469,11 +455,11 @@ void HelloWorld::onResize()
 }
 
 
-void HelloWorld::showNewMapWindow(bool* opened)
+void EditScene::showNewMapWindow(bool* opened)
 {
     Vec2 windowSize = Vec2(430, 430);
     ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
-    ImGui::SetNextWindowPos(ImVec2((_oldWindowSize.width - windowSize.x) / 2, (_oldWindowSize.height - windowSize.y) / 2));
+    ImGui::SetNextWindowPos(ImVec2((_oldWindowSize.width - windowSize.x) / 2, (_oldWindowSize.height - windowSize.y) / 2), ImGuiSetCond_Appearing);
     if (!ImGui::Begin("New Map", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
     {
         ImGui::End();
@@ -578,7 +564,7 @@ void HelloWorld::showNewMapWindow(bool* opened)
         _palette = PaletteWindow::create(this);
         newLayer->addChild(_palette);
         
-        _triggerEditor = TriggerEditor::create();
+        _triggerEditor = TriggerEditor::create(this);
         newLayer->addChild(_triggerEditor);
         
         _gmxLayerManager->addChild(newLayer);
@@ -598,6 +584,7 @@ void HelloWorld::showNewMapWindow(bool* opened)
         currentTile = 0;
         *opened = false;
     }
+    
     ImGui::SameLine();
     if ( ImGui::Button("Cancel") )
     {
@@ -626,7 +613,7 @@ void HelloWorld::showNewMapWindow(bool* opened)
 }
 
 
-void HelloWorld::showFileMenuBar(bool* opened)
+void EditScene::showFileMenuBar(bool* opened)
 {
     ImGui::SetNextWindowPos(ImVec2(SizeProtocol::MINIMAP_SIZE + SizeProtocol::WINDOW_PADDING * 2, SizeProtocol::MENUBAR_HEIGHT + SizeProtocol::WINDOW_PADDING));
     ImGui::SetNextWindowSize(ImVec2(_oldWindowSize.width - SizeProtocol::MINIMAP_SIZE - SizeProtocol::WINDOW_PADDING * 3, SizeProtocol::FILE_MENUBAR_HEIGHT));
@@ -668,7 +655,7 @@ void HelloWorld::showFileMenuBar(bool* opened)
 
 
 
-void HelloWorld::redo()
+void EditScene::redo()
 {
     if ( _gmxLayerManager->getCurrentLayer() && _isRedo )
     {
@@ -677,7 +664,7 @@ void HelloWorld::redo()
 }
 
 
-void HelloWorld::undo()
+void EditScene::undo()
 {
     if ( _gmxLayerManager->getCurrentLayer() && _isUndo )
     {
@@ -686,7 +673,7 @@ void HelloWorld::undo()
 }
 
 
-void HelloWorld::save()
+void EditScene::save()
 {
     if ( _gmxLayerManager->getCurrentLayer() )
     {
@@ -696,7 +683,7 @@ void HelloWorld::save()
 }
 
 
-void HelloWorld::open()
+void EditScene::open()
 {
     GMXFile* file = new GMXFile();
     

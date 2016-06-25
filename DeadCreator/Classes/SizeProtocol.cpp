@@ -15,5 +15,5 @@ int SizeProtocol::FONT_SIZE = 25;
 int SizeProtocol::WINDOW_PADDING = 10;
 int SizeProtocol::FRAME_PADDING = 5;
 int SizeProtocol::MENUBAR_HEIGHT = FONT_SIZE;
-int SizeProtocol::STATUSBAR_HEIGHT = FONT_SIZE + (FRAME_PADDING * 2);
+int SizeProtocol::STATUSBAR_HEIGHT = FONT_SIZE;
 int SizeProtocol::FILE_MENUBAR_HEIGHT = FONT_SIZE;

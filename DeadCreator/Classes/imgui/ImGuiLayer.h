@@ -26,8 +26,6 @@ public:
     
     void setClearColor(ImColor color) { _clearColor = color; };
     
-    void updateImGUI();
-    
     void addImGUI(std::function<void()> imGUICall, std::string name) { _callPiplines[name] = imGUICall; };
     
     bool removeImGUI(std::string name);

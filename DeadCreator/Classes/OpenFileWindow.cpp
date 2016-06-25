@@ -10,9 +10,11 @@
 
 #include "OpenFileWindow.hpp"
 #include "FileSystem.hpp"
+#include "EditScene.h"
 using namespace cocos2d;
 
-OpenFileWindow::OpenFileWindow()
+OpenFileWindow::OpenFileWindow(ImGuiLayer* layer) :
+_imguilayer(layer)
 {
 }
 
@@ -22,9 +24,9 @@ OpenFileWindow::~OpenFileWindow()
 }
 
 
-OpenFileWindow* OpenFileWindow::create()
+OpenFileWindow* OpenFileWindow::create(ImGuiLayer* layer)
 {
-    auto ret = new (std::nothrow) OpenFileWindow();
+    auto ret = new (std::nothrow) OpenFileWindow(layer);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -53,7 +55,7 @@ void OpenFileWindow::showOpenFileWindow(bool* opened)
     
     Vec2 windowSize = Vec2(700, 600);
     ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
-    ImGui::SetNextWindowPos(ImVec2((visibleSize.width - windowSize.x) / 2, (visibleSize.height - windowSize.y) / 2), ImGuiSetCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2((visibleSize.width - windowSize.x) / 2, (visibleSize.height - windowSize.y) / 2), ImGuiSetCond_Appearing);
     if (!ImGui::Begin("Open Map", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
     {
         ImGui::End();
@@ -90,9 +92,13 @@ void OpenFileWindow::showOpenFileWindow(bool* opened)
     
     ImGui::EndChild();
     ImGui::PopStyleVar();
-    
    
     ImGui::End();
+    
+    if ( *opened == false)
+    {
+        log("close");
+    }
 }
 
 

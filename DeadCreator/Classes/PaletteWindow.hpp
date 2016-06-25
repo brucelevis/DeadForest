@@ -29,7 +29,7 @@ class PaletteWindow : public cocos2d::Node
     
 public:
     
-    PaletteWindow(ImGuiLayer* imguiLayer);
+    explicit PaletteWindow(ImGuiLayer* imguiLayer);
     
     virtual ~PaletteWindow();
     

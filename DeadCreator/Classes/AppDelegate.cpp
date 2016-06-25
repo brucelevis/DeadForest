@@ -43,14 +43,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // initialize director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
-    if(!glview) {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
-        glview = ImGuiGLViewImpl::createWithRect("Dead Creator v0.1", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
-#elif (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = GLViewImpl::createWithRect("Dead Creator v0.1", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
-#else
-        glview = GLViewImpl::create("Dead Creator v0.1");
-#endif
+    if(!glview)
+    {
+        glview = ImGuiGLViewImpl::createWithRect("Dead Creator v0.1", Rect(0, 0,
+                                                                           designResolutionSize.width,
+                                                                           designResolutionSize.height));
         director->setOpenGLView(glview);
     }
     
@@ -65,21 +62,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
     // create a scene. it's an autorelease object
     
-    auto scene = Scene::create();
-    scene->addChild(HelloWorld::create());
+    auto scene = HelloWorld::createScene();
     director->runWithScene(scene);
     
-    // auto check when imGUI layer is not added yet.
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
-    director->getScheduler()->schedule([=](float dt)
-                                       {
-                                           if(director->getRunningScene()->getChildByName("ImGuiLayer") == NULL)
-                                           {
-                                               auto layer = ImGuiLayer::create();
-                                               scene->addChild(layer, INT_MAX, "ImGuiLayer");
-                                           }
-                                       }, this, 0, false, "checkImGui");
-#endif
     return true;
 }
 

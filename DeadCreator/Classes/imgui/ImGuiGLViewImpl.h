@@ -111,7 +111,7 @@ public:
     id getCocoaWindow() override { return glfwGetCocoaWindow(_mainWindow); }
 #endif // #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 
-protected:
+public:
     ImGuiGLViewImpl();
     virtual ~ImGuiGLViewImpl();
 

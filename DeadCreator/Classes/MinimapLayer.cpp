@@ -31,6 +31,8 @@ bool MinimapLayer::init(const cocos2d::Size& layerSize)
     
     _defaultImage = Sprite::create("bg.png");
     _defaultImage->setAnchorPoint(Vec2::ZERO);
+    _defaultImage->setScale(MINIMAP_SIZE / _defaultImage->getContentSize().width,
+                            MINIMAP_SIZE / _defaultImage->getContentSize().height);
     addChild(_defaultImage);
     
     _focusWindowRenderer = DrawNode::create();
@@ -96,15 +98,17 @@ void MinimapLayer::setGMXLayer(GMXLayer *layer)
 void MinimapLayer::onResize()
 {
     setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - MENUBAR_HEIGHT - _layerSize.height - WINDOW_PADDING));
-    
-    Size worldSize = _gmxLayer->getWorldSize();
-    _focusWindowRenderer->clear();
-    _focusWindowSize = Size(_layerSize.width * (_gmxLayer->getClippingRegion().size.width / worldSize.width),
-                            _layerSize.height * (_gmxLayer->getClippingRegion().size.height / worldSize.height));
-    
-    _focusWindowRenderer->drawRect(-Vec2(_focusWindowSize.width / 2, _focusWindowSize.height / 2),
-                                   Vec2(_focusWindowSize.width /2, _focusWindowSize.height / 2), Color4F::WHITE);
 
+    if ( _gmxLayer )
+    {
+        Size worldSize =_gmxLayer->getWorldSize();
+        _focusWindowRenderer->clear();
+        _focusWindowSize = Size(_layerSize.width * (_gmxLayer->getClippingRegion().size.width / worldSize.width),
+                                _layerSize.height * (_gmxLayer->getClippingRegion().size.height / worldSize.height));
+        
+        _focusWindowRenderer->drawRect(-Vec2(_focusWindowSize.width / 2, _focusWindowSize.height / 2),
+                                       Vec2(_focusWindowSize.width /2, _focusWindowSize.height / 2), Color4F::WHITE);
+    }
 }
 
 

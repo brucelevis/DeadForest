@@ -202,10 +202,7 @@ void GMXLayerManager::closeLayer()
 
 void GMXLayerManager::onResize()
 {
-    if ( _currLayer )
-    {
-        _currLayer->onResize();
-    }
+    _currLayer->onResize();
 }
 
 

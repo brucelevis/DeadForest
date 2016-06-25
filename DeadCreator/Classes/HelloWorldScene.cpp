@@ -9,6 +9,8 @@ using namespace std;
 #include "SizeProtocol.h"
 #include "PaletteWindow.hpp"
 #include "TriggerEditor.hpp"
+#include "OpenFileWindow.hpp"
+#include "ImGuiGLViewImpl.h"
 using namespace cocos2d;
 
 
@@ -17,15 +19,21 @@ HelloWorld::HelloWorld()
 }
 
 
+cocos2d::Scene* HelloWorld::createScene()
+{
+    auto scene = Scene::create();
+    auto layer = HelloWorld::create();
+    scene->addChild(layer);
+    return scene;
+}
+
+
 bool HelloWorld::init()
 {
-    if ( !LayerColor::initWithColor(Color4B::BLACK) )
+    if ( !ImGuiLayer::init() )
     {
         return false;
     }
-    
-    FileSystem::createDirectory(FileSystem::getParentPath(FileSystem::getInitialPath()) + "/maps");
-    
     
     for(int i = 0 ; i < 256 ; ++ i) _isKeyPressed[i] = false;
     _isMousePressed = false;
@@ -50,8 +58,8 @@ bool HelloWorld::init()
         if ( _showPalette ) _palette->showPaletteWindow(&_showPalette);
         if ( _showFileMenuBar ) showFileMenuBar(&_showFileMenuBar);
         if ( _showTrigger ) _triggerEditor->showTriggerEditor(&_showTrigger);
-        if ( _showOpenMap ) showOpenWindow(&_showOpenMap);
-            
+        if ( _showOpenMap ) _openFileWindow->showOpenFileWindow(&_showOpenMap);
+        
         if (ImGui::BeginMainMenuBar())
         {
             if (ImGui::BeginMenu("File", _isFileEnable))
@@ -198,18 +206,21 @@ bool HelloWorld::init()
         
     }, "test_window");
     
-    
     _gmxLayerManager = GMXLayerManager::create();
     _gmxLayerManager->setPosition(Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
     addChild(_gmxLayerManager);
     
-    _minimapLayer = MinimapLayer::create(Size(MINIMAP_SIZE,MINIMAP_SIZE));
+    _minimapLayer = MinimapLayer::create(Size(MINIMAP_SIZE, MINIMAP_SIZE));
     _minimapLayer->setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - MENUBAR_HEIGHT - MINIMAP_SIZE - WINDOW_PADDING));
     addChild(_minimapLayer);
+
     
     _debugNode = DrawNode::create();
     _debugNode->setPosition(Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
     addChild(_debugNode);
+    
+    _openFileWindow = OpenFileWindow::create();
+    addChild(_openFileWindow);
     
     this->scheduleUpdate();
     
@@ -219,6 +230,21 @@ bool HelloWorld::init()
 
 void HelloWorld::update(float dt)
 {
+//    static int t = 0;
+//    if ( t == 0 )
+//    {
+//        auto view = static_cast<ImGuiGLViewImpl*>(Director::getInstance()->getOpenGLView());
+//        auto mainWindow = view->getWindow();
+//        
+//        view->onGLFWframebuffersize(mainWindow, 1600, 960);
+//        view->setFrameSize(1600, 960);
+//        view->setDesignResolutionSize(1600, 960, ResolutionPolicy::SHOW_ALL);
+//        
+//        onResize();
+//        
+//        t = 1;
+//    }
+    
     static auto director = Director::getInstance();
     Size currSize = director->getVisibleSize();
     if ( _oldWindowSize.width != currSize.width || _oldWindowSize.height != currSize.height)
@@ -432,9 +458,11 @@ void HelloWorld::onCenterView()
 
 void HelloWorld::onResize()
 {
-    _gmxLayerManager->onResize();
-    
-    if ( _minimapLayer ) _minimapLayer->onResize();
+    if ( _gmxLayerManager->getCurrentLayer() )
+    {
+        _gmxLayerManager->onResize();
+    }
+    _minimapLayer->onResize();
 }
 
 
@@ -547,6 +575,9 @@ void HelloWorld::showNewMapWindow(bool* opened)
         _palette = PaletteWindow::create();
         newLayer->addChild(_palette);
         
+        _triggerEditor = TriggerEditor::create();
+        newLayer->addChild(_triggerEditor);
+        
         _gmxLayerManager->addChild(newLayer);
         _minimapLayer->setGMXLayer(newLayer);
         
@@ -632,47 +663,6 @@ void HelloWorld::showFileMenuBar(bool* opened)
     }
 }
 
-
-void HelloWorld::showOpenWindow(bool* opened)
-{
-    Vec2 windowSize = Vec2(400, 600);
-    ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
-    ImGui::SetNextWindowPos(ImVec2((_oldWindowSize.width - windowSize.x) / 2, (_oldWindowSize.height - windowSize.y) / 2));
-    if (!ImGui::Begin("Open Map", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
-    {
-        ImGui::End();
-        return;
-    }
-    
-    ImGui::Text("Your Files in ( /proj_root/maps/* )");
-    
-    ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
-    ImGui::BeginChild("##TileSize", ImVec2(0, 480), true);
-    
-    auto files = FileSystem::getFilesInPath(FileSystem::getParentPath(FileSystem::getInitialPath()) + "/maps/", true);
-    if ( files.size() == 0)
-    {
-        ImGui::Text("empty");
-    }
-    else
-    {
-        for (auto &f : files )
-        {
-            ImGui::Selectable(f.c_str());
-        }
-    }
-    ImGui::EndChild();
-    ImGui::PopStyleVar();
-    
-    
-    
-    ImGui::End();
-    
-    if (*opened == false)
-    {
-        _isFileEnable = true;
-    }
-}
 
 
 void HelloWorld::redo()

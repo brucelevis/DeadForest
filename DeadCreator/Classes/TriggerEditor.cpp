@@ -33,8 +33,10 @@ TriggerEditor* TriggerEditor::create()
 
 void TriggerEditor::showTriggerEditor(bool* opened)
 {
-    ImGui::SetNextWindowPos(ImVec2(650, 100), ImGuiSetCond_Once);
-    ImGui::SetNextWindowSize(ImVec2(800, 600), ImGuiSetCond_Once);
+    auto visibleSize = _director->getVisibleSize();
+    Vec2 windowSize = Vec2(800, 600);
+    ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
+    ImGui::SetNextWindowPos(ImVec2((visibleSize.width - windowSize.x) / 2, (visibleSize.height - windowSize.y) / 2), ImGuiSetCond_FirstUseEver);
     
     ImGui::Begin("Trigger Editor", opened, ImGuiWindowFlags_NoCollapse);
 

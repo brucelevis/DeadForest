@@ -5,6 +5,7 @@
 #include "ui/CocosGUI.h"
 
 #include "GMXLayerManager.hpp"
+#include "ImGuiLayer.h"
 
 class GMXFile;
 class GMXLayer;
@@ -12,8 +13,9 @@ class GMXLayerManager;
 class MinimapLayer;
 class PaletteWindow;
 class TriggerEditor;
+class OpenFileWindow;
 
-class HelloWorld : public cocos2d::LayerColor
+class HelloWorld : public ImGuiLayer
 {
     
 public:
@@ -27,6 +29,8 @@ public:
     virtual void update(float dt) override;
     
     CREATE_FUNC(HelloWorld);
+    
+    static cocos2d::Scene* createScene();
     
 private:
     
@@ -83,6 +87,8 @@ private:
     PaletteWindow* _palette;
     
     TriggerEditor* _triggerEditor;
+    
+    OpenFileWindow* _openFileWindow;
     
     cocos2d::DrawNode* _debugNode;
     

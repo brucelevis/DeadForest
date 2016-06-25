@@ -41,6 +41,8 @@ THE SOFTWARE.
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 
+#include "SizeProtocol.h"
+
 NS_CC_BEGIN
 
 // GLFWEventHandler
@@ -115,7 +117,9 @@ public:
     static void onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int height)
     {
         if (_view)
+        {
             _view->onGLFWWindowSizeFunCallback(window, width, height);
+        }
     }
 
     static void setGLViewImpl(ImGuiGLViewImpl* view)
@@ -135,8 +139,8 @@ public:
     {
         if (_view)
         {
-            if ( width < 1024) width = 1024;
-            if ( height < 768 ) height = 768;
+            if ( width < SCREEN_WIDTH / 2) width = SCREEN_WIDTH / 2;
+            if ( height < SCREEN_HEIGHT / 2 ) height = SCREEN_HEIGHT / 2;
             
             _view->setFrameSize(width, height);
             _view->setDesignResolutionSize(width, height, ResolutionPolicy::SHOW_ALL);
@@ -333,40 +337,43 @@ ImGuiGLViewImpl* ImGuiGLViewImpl::create(const std::string& viewName)
         ret->autorelease();
         return ret;
     }
-
+    CC_SAFE_DELETE(ret);
     return nullptr;
 }
 
 ImGuiGLViewImpl* ImGuiGLViewImpl::createWithRect(const std::string& viewName, Rect rect, float frameZoomFactor)
 {
     auto ret = new (std::nothrow) ImGuiGLViewImpl;
-    if(ret && ret->initWithRect(viewName, rect, frameZoomFactor)) {
+    if(ret && ret->initWithRect(viewName, rect, frameZoomFactor))
+    {
         ret->autorelease();
         return ret;
     }
-
+    CC_SAFE_DELETE(ret);
     return nullptr;
 }
 
 ImGuiGLViewImpl* ImGuiGLViewImpl::createWithFullScreen(const std::string& viewName)
 {
     auto ret = new (std::nothrow) ImGuiGLViewImpl();
-    if(ret && ret->initWithFullScreen(viewName)) {
+    if(ret && ret->initWithFullScreen(viewName))
+    {
         ret->autorelease();
         return ret;
     }
-
+    CC_SAFE_DELETE(ret);
     return nullptr;
 }
 
 ImGuiGLViewImpl* ImGuiGLViewImpl::createWithFullScreen(const std::string& viewName, const GLFWvidmode &videoMode, GLFWmonitor *monitor)
 {
     auto ret = new (std::nothrow) ImGuiGLViewImpl();
-    if(ret && ret->initWithFullscreen(viewName, videoMode, monitor)) {
+    if(ret && ret->initWithFullscreen(viewName, videoMode, monitor))
+    {
         ret->autorelease();
         return ret;
     }
-    
+    CC_SAFE_DELETE(ret);
     return nullptr;
 }
 

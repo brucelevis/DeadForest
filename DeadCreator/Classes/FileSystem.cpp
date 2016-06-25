@@ -7,6 +7,7 @@
 //
 
 #include "FileSystem.hpp"
+#include "cocos2d.h"
 
 std::string FileSystem::getInitialPath()
 {
@@ -59,6 +60,30 @@ std::vector<std::string> FileSystem::getDirectoryInPath(const std::string& path,
     return ret;
 }
 
+std::vector<std::string> FileSystem::getFilesAndDirectoriesInPath(const std::string& path, bool leaf)
+{
+    std::vector<std::string> ret;
+    boost::filesystem::path p(path);
+    if ( !isExist(p.native()) ) return ret;
+    
+    try
+    {
+        for ( boost::filesystem::directory_entry& x : boost::filesystem::directory_iterator(p))
+        {
+            if ( leaf)
+                ret.push_back(x.path().leaf().native());
+            else
+                ret.push_back(x.path().native());
+        }
+    }
+    catch ( std::exception& e)
+    {
+        cocos2d::log("%s", e.what());
+    }
+
+    return ret;
+}
+
 std::string FileSystem::getLeafName(const std::string& path)
 {
     boost::filesystem::path p(path);
@@ -82,5 +107,18 @@ bool FileSystem::createDirectory(const std::string& path)
     if ( isExist(path) ) return false;
     return boost::filesystem::create_directories(path);
 }
+
+bool FileSystem::isDirectory(const std::string& path)
+{
+    if ( isExist(path) ) return false;
+    return boost::filesystem::is_directory(boost::filesystem::path(path));
+}
+
+bool FileSystem::isFile(const std::string& path)
+{
+    if ( isExist(path) ) return false;
+    return boost::filesystem::is_regular_file(boost::filesystem::path(path));
+}
+
 
 

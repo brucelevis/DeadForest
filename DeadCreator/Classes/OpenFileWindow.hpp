@@ -12,18 +12,18 @@
 #include "cocos2d.h"
 #include "imgui.h"
 
-class ImGuiLayer;
+class EditScene;
 
 class OpenFileWindow : public cocos2d::Node
 {
     
 public:
     
-    explicit OpenFileWindow(ImGuiLayer* layer);
+    explicit OpenFileWindow(EditScene* layer);
     
     virtual ~OpenFileWindow();
     
-    static OpenFileWindow* create(ImGuiLayer* layer);
+    static OpenFileWindow* create(EditScene* layer);
     
     void showOpenFileWindow(bool* opened);
     
@@ -35,15 +35,19 @@ private:
     
     int strnicmp(const char* str1, const char* str2, int n);
     
+    void closeWindow();
+    
+    void showDirectoryAndFile(const std::string& path);
+    
 private:
     
-    ImGuiLayer* _imguilayer;
+    EditScene* _imguiLayer;
     
     char _filePath[256];
     
     std::vector<std::string> _inDirectories;
     
-    bool _isInputCompleted = false;
+    std::vector<std::string> _inGMXFiles;
     
 };
 

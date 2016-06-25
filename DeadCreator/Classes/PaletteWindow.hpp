@@ -13,7 +13,7 @@
 
 #include "GMXFile.hpp"
 
-class ImGuiLayer;
+class EditScene;
 
 enum PaletteType
 {
@@ -29,11 +29,11 @@ class PaletteWindow : public cocos2d::Node
     
 public:
     
-    explicit PaletteWindow(ImGuiLayer* imguiLayer);
+    explicit PaletteWindow(EditScene* imguiLayer);
     
     virtual ~PaletteWindow();
     
-    static PaletteWindow* create(ImGuiLayer* imguiLayer);
+    static PaletteWindow* create(EditScene* imguiLayer);
     
     void showPaletteWindow(bool* opened);
     
@@ -47,7 +47,7 @@ public:
     
 private:
     
-    ImGuiLayer* _layer;
+    EditScene* _imguiLayer;
     
     int _paletteType = 0;
     

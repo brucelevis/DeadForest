@@ -9,6 +9,7 @@ using namespace std;
 #include "SizeProtocol.h"
 #include "PaletteWindow.hpp"
 #include "TriggerEditor.hpp"
+#include "NewFileWindow.hpp"
 #include "OpenFileWindow.hpp"
 #include "ImGuiGLViewImpl.h"
 #include "TestScene.hpp"
@@ -55,7 +56,7 @@ bool EditScene::init()
     addImGUI([this](){
         
         // main menu
-        if ( _showNewMap ) showNewMapWindow(&_showNewMap);
+        if ( _showNewMap ) _newFileWindow->showNewFileWindow(&_showNewMap);
         
         if ( _showOpenMap ) _openFileWindow->showOpenFileWindow(&_showOpenMap);
         
@@ -64,7 +65,6 @@ bool EditScene::init()
         if ( _showFileMenuBar ) showFileMenuBar(&_showFileMenuBar);
             
         if ( _showTrigger ) _triggerEditor->showTriggerEditor(&_showTrigger);
-        
         
         
         if (ImGui::BeginMainMenuBar())
@@ -219,6 +219,9 @@ bool EditScene::init()
     _debugNode = DrawNode::create();
     _debugNode->setPosition(Vec2(SizeProtocol::MINIMAP_SIZE + SizeProtocol::WINDOW_PADDING * 2, SizeProtocol::STATUSBAR_HEIGHT + SizeProtocol::WINDOW_PADDING));
     addChild(_debugNode);
+    
+    _newFileWindow = NewFileWindow::create(this);
+    addChild(_newFileWindow);
     
     _openFileWindow = OpenFileWindow::create(this);
     addChild(_openFileWindow);
@@ -442,6 +445,29 @@ void EditScene::onCenterView()
 }
 
 
+void EditScene::createNewFile(GMXFile* file)
+{
+    auto newLayer = GMXLayer::create();
+    newLayer->openFile(file);
+    
+    _palette = PaletteWindow::create(this);
+    newLayer->addChild(_palette);
+    
+    _triggerEditor = TriggerEditor::create(this);
+    newLayer->addChild(_triggerEditor);
+    
+    _gmxLayerManager->addChild(newLayer);
+    _minimapLayer->setGMXLayer(newLayer);
+    
+    _isEditEnable = true;
+    _isPlayerEnable = true;
+    _isWindowEnable = true;
+    _showFileMenuBar = true;
+    _showPalette = true;
+    _isFileEnable = true;
+}
+
+
 void EditScene::onResize()
 {
     SizeProtocol::MINIMAP_SIZE = _director->getVisibleSize().width * 0.15f;
@@ -452,164 +478,6 @@ void EditScene::onResize()
         _gmxLayerManager->onResize();
     }
     _minimapLayer->onResize();
-}
-
-
-void EditScene::showNewMapWindow(bool* opened)
-{
-    Vec2 windowSize = Vec2(430, 430);
-    ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
-    ImGui::SetNextWindowPos(ImVec2((_oldWindowSize.width - windowSize.x) / 2, (_oldWindowSize.height - windowSize.y) / 2), ImGuiSetCond_Appearing);
-    if (!ImGui::Begin("New Map", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
-    {
-        ImGui::End();
-        return;
-    }
-    
-    ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
-    ImGui::BeginChild("##TileSize", ImVec2(0,60), true);
-    ImGui::Text("Tile Size");
-    ImGui::Columns(2, "##col1", false);
-    
-    static int tileSizeXItem = 0;
-    const char* items1[] = {"128"};
-    ImGui::Combo("width", &tileSizeXItem, items1, 1);
-    ImGui::NextColumn();
-    
-    static int tileSizeYItem = 0;
-    const char* items2[] = {"128"};
-    ImGui::Combo("height", &tileSizeYItem, items2, 1);
-    
-    ImGui::EndChild();
-    ImGui::PopStyleVar();
-    
-    ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
-    ImGui::BeginChild("##Number Of Tiles", ImVec2(0,60), true);
-    
-    ImGui::Text("Number Of Tiles");
-    ImGui::Columns(2, "##col2", false);
-    
-    static int numOfTileX = 0;
-    const char* items3[] = {"32", "64", "128", "192", "256" };
-    ImGui::Combo("x", &numOfTileX, items3, 5);
-    ImGui::NextColumn();
-    
-    static int numOfTileY = 0;
-    const char* items4[] = {"32", "64", "128", "192", "256" };
-    ImGui::Combo("y", &numOfTileY, items4, 5);
-    
-    ImGui::EndChild();
-    ImGui::PopStyleVar();
-    
-    ImGui::Text("World size is (%d) x (%d)",
-                atoi(items1[tileSizeXItem]) * atoi(items3[numOfTileX]),
-                atoi(items2[tileSizeYItem]) * atoi(items4[numOfTileY]));
-    
-    ImGui::Text("\n");
-    
-    ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
-    ImGui::BeginChild("##Default Tile", ImVec2(0,180), true);
-    
-    ImGui::Text("Default Tile");
-    
-    const char* tiles[] = { "Dirt", "Grass", "Water", "Hill" };
-    static int currentTile = 0;
-    ImGui::ListBox("select\ndefault tile", &currentTile, tiles, 4, 6);
-    
-    ImGui::EndChild();
-    ImGui::PopStyleVar();
-    
-    if (ImGui::Button("Create"))
-    {
-        // create map
-        
-        GMXFile* file = new GMXFile();
-        
-        static int nextNumber = 0;
-        file->fileName = "untitled_map_" + to_string(nextNumber++);
-        file->tileWidth = atoi(items1[tileSizeXItem]);
-        file->tileHeight = atoi(items2[tileSizeYItem]);
-        file->numOfTileX = atoi(items3[numOfTileX]);
-        file->numOfTileY = atoi(items4[numOfTileY]);
-        file->worldSize = Size(file->tileWidth * file->numOfTileX, file->tileHeight * file->numOfTileY);
-        file->defaultTile = currentTile;
-        
-        int x = file->numOfTileX + DUMMY_TILE_SIZE * 2;
-        int y = file->numOfTileY * 2 + DUMMY_TILE_SIZE * 4;
-        
-        file->tileInfos.resize(y);
-        for(int i = 0 ; i < y ; ++ i)
-        {
-            file->tileInfos[i].resize(x);
-        }
-        
-        for(int i = 0 ; i < y; ++ i)
-        {
-            for(int j = 0 ; j < x ; ++ j)
-            {
-                std::string tileName;
-                
-                if ( currentTile == TileType::DIRT) tileName = "1_" + std::to_string(random(1, 3)) + "_1234";
-                else if ( currentTile == TileType::GRASS) tileName = "2_" + std::to_string(random(1, 3)) + "_1234";
-                else if ( currentTile == TileType::WATER) tileName = "3_" + std::to_string(random(1, 3)) + "_1234";
-                else if ( currentTile == TileType::HILL) tileName = "5_" + std::to_string(random(1, 3)) + "_1234";
-                
-                file->tileInfos[i][j] = tileName;
-            }
-        }
-        
-        auto newLayer = GMXLayer::create();
-        newLayer->openFile(file);
-        
-        _palette = PaletteWindow::create(this);
-        newLayer->addChild(_palette);
-        
-        _triggerEditor = TriggerEditor::create(this);
-        newLayer->addChild(_triggerEditor);
-        
-        _gmxLayerManager->addChild(newLayer);
-        _minimapLayer->setGMXLayer(newLayer);
-        
-        _isEditEnable = true;
-        _isPlayerEnable = true;
-        _isWindowEnable = true;
-        _showFileMenuBar = true;
-        _showPalette = true;
-        _isFileEnable = true;
-        
-        tileSizeXItem = 0;
-        tileSizeYItem = 0;
-        numOfTileX = 0;
-        numOfTileY = 0;
-        currentTile = 0;
-        *opened = false;
-    }
-    
-    ImGui::SameLine();
-    if ( ImGui::Button("Cancel") )
-    {
-        _isFileEnable = true;
-        
-        tileSizeXItem = 0;
-        tileSizeYItem = 0;
-        numOfTileX = 0;
-        numOfTileY = 0;
-        currentTile = 0;
-        *opened = false;
-    }
-    
-    if (*opened == false)
-    {
-        _isFileEnable = true;
-        
-        tileSizeXItem = 0;
-        tileSizeYItem = 0;
-        numOfTileX = 0;
-        numOfTileY = 0;
-        currentTile = 0;
-    }
-    
-    ImGui::End();
 }
 
 

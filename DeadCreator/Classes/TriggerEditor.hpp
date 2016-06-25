@@ -12,24 +12,24 @@
 #include "cocos2d.h"
 #include "imgui.h"
 
-class ImGuiLayer;
+class EditScene;
 
 class TriggerEditor : public cocos2d::Node
 {
     
 public:
     
-    explicit TriggerEditor(ImGuiLayer* layer);
+    explicit TriggerEditor(EditScene* layer);
     
     virtual ~TriggerEditor();
     
-    static TriggerEditor* create(ImGuiLayer* layer);
+    static TriggerEditor* create(EditScene* layer);
     
     void showTriggerEditor(bool* opened);
     
 private:
     
-    ImGuiLayer* _imguiLayer;
+    EditScene* _imguiLayer;
     
 };
 

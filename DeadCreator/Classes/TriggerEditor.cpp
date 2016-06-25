@@ -10,7 +10,7 @@
 using namespace cocos2d;
 
 
-TriggerEditor::TriggerEditor(ImGuiLayer* layer) :
+TriggerEditor::TriggerEditor(EditScene* layer) :
 _imguiLayer(layer)
 {
 }
@@ -21,7 +21,7 @@ TriggerEditor::~TriggerEditor()
 }
 
 
-TriggerEditor* TriggerEditor::create(ImGuiLayer* layer)
+TriggerEditor* TriggerEditor::create(EditScene* layer)
 {
     auto ret = new (std::nothrow) TriggerEditor(layer);
     if ( ret && ret->init() )

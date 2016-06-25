@@ -13,6 +13,7 @@ class MinimapLayer;
 class PaletteWindow;
 class TriggerEditor;
 class OpenFileWindow;
+class NewFileWindow;
 
 class EditScene : public ImGuiLayer
 {
@@ -31,6 +32,16 @@ public:
     
     static cocos2d::Scene* createScene();
     
+    void setEnableFileMenu(bool enable) { _isFileEnable = enable; }
+    
+    void setEnableEditMenu(bool enable) { _isEditEnable = enable; }
+    
+    void setEnableWindowMenu(bool enable) { _isWindowEnable = enable; }
+    
+    void setEnablePlayerMenu(bool enable) { _isPlayerEnable = enable; }
+    
+    void createNewFile(GMXFile* file);
+    
 private:
     
     virtual void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) override;
@@ -47,13 +58,7 @@ private:
     
     void onResize();
     
-    void showNewMapWindow(bool* opened);
-    
     void showFileMenuBar(bool* opened);
-    
-    void showOpenWindow(bool* opened);
-    
-    //void showDirectories();
     
     void redo();
     
@@ -86,6 +91,8 @@ private:
     PaletteWindow* _palette;
     
     TriggerEditor* _triggerEditor;
+    
+    NewFileWindow* _newFileWindow;
     
     OpenFileWindow* _openFileWindow;
     

@@ -11,10 +11,11 @@
 #include "OpenFileWindow.hpp"
 #include "FileSystem.hpp"
 #include "EditScene.h"
+#include "SizeProtocol.h"
 using namespace cocos2d;
 
-OpenFileWindow::OpenFileWindow(ImGuiLayer* layer) :
-_imguilayer(layer)
+OpenFileWindow::OpenFileWindow(EditScene* layer) :
+_imguiLayer(layer)
 {
 }
 
@@ -24,7 +25,7 @@ OpenFileWindow::~OpenFileWindow()
 }
 
 
-OpenFileWindow* OpenFileWindow::create(ImGuiLayer* layer)
+OpenFileWindow* OpenFileWindow::create(EditScene* layer)
 {
     auto ret = new (std::nothrow) OpenFileWindow(layer);
     if ( ret && ret->init() )
@@ -53,7 +54,7 @@ void OpenFileWindow::showOpenFileWindow(bool* opened)
 {
     auto visibleSize = _director->getVisibleSize();
     
-    Vec2 windowSize = Vec2(700, 600);
+    Vec2 windowSize = Vec2(visibleSize.width * 0.5f, visibleSize.height * 0.7f);
     ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
     ImGui::SetNextWindowPos(ImVec2((visibleSize.width - windowSize.x) / 2, (visibleSize.height - windowSize.y) / 2), ImGuiSetCond_Appearing);
     if (!ImGui::Begin("Open Map", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
@@ -62,130 +63,77 @@ void OpenFileWindow::showOpenFileWindow(bool* opened)
         return;
     }
     
-    if (ImGui::InputText("search directory", _filePath, 256,
-                     ImGuiInputTextFlags_CallbackCompletion |
-                     ImGuiInputTextFlags_EnterReturnsTrue,
-                     &TextEditCallBackStub, (void*)this))
-    {
-        log("enter!");
-    }
+    float height = ImGui::CalcTextSize("").y;
     
-    ImGui::Text("Press 'TAB' if input is over.");
+    ImGui::InputText("search directory", _filePath, 256);
     
     ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
-    ImGui::BeginChild("##TileSize", ImVec2(0, 480), true);
+    ImGui::BeginChild("##Directories", ImVec2(0, visibleSize.height * 0.7 - 25 - height - 50), true);
     
-    if ( _isInputCompleted )
-    {
-        if ( _inDirectories.size() == 0)
-        {
-            ImGui::Text("empty");
-        }
-        else
-        {
-            for (auto &dir : _inDirectories )
-            {
-                ImGui::Selectable(dir.c_str());
-            }
-        }
-    }
+    showDirectoryAndFile(_filePath);
     
     ImGui::EndChild();
     ImGui::PopStyleVar();
+    
+    if (ImGui::Button("Open", ImVec2(50,25)))
+    {
+        *opened = false;
+        closeWindow();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Close", ImVec2(50,25)))
+    {
+        *opened = false;
+        closeWindow();
+    }
    
     ImGui::End();
     
     if ( *opened == false)
     {
-        log("close");
+        closeWindow();
     }
 }
 
 
-int OpenFileWindow::TextEditCallBackStub(ImGuiTextEditCallbackData* data)
+void OpenFileWindow::closeWindow()
 {
-    OpenFileWindow* window = (OpenFileWindow*)data->UserData;
-    return window->TextEditCallBack(data);
-}
-
-
-int OpenFileWindow::TextEditCallBack(ImGuiTextEditCallbackData* data)
-{
+    _imguiLayer->setEnableFileMenu(true);
     _inDirectories.clear();
-    
-    strncpy(_filePath, data->Buf, 256);
-    
-    if ( FileSystem::isExist(_filePath) )
+}
+
+
+void OpenFileWindow::showDirectoryAndFile(const std::string& path)
+{
+    auto items = FileSystem::getFilesAndDirectoriesInPath(path);
+    for( auto item : items)
     {
-        _inDirectories = FileSystem::getDirectoryInPath(_filePath);
-    }
-    
-    switch (data->EventFlag)
-    {
-        case ImGuiInputTextFlags_CallbackCompletion:
+        try
         {
-            // Example of TEXT COMPLETION
-            
-            // Locate beginning of current word
-            const char* word_end = data->Buf + data->CursorPos;
-            const char* word_start = word_end;
-            while (word_start > data->Buf)
+            if ( boost::filesystem::is_directory(item) )
             {
-                const char c = word_start[-1];
-                if (c == ' ' || c == '\t' || c == ',' || c == ';')
-                    break;
-                word_start--;
-            }
-            
-            // Build a list of candidates
-            std::vector<std::string> candidates;
-            for (int i = 0; i < _inDirectories.size(); ++i)
-                if (strnicmp(_inDirectories[i].c_str(), word_start, (int)(word_end-word_start)) == 0)
-                    candidates.push_back(_inDirectories[i]);
-            
-            if ( candidates.size() == 0)
-            {
-                
-            }
-            else if (candidates.size() == 1)
-            {
-                // Single match. Delete the beginning of the word and replace it entirely so we've got nice casing
-                data->DeleteChars((int)(word_start-data->Buf), (int)(word_end-word_start));
-                data->InsertChars(data->CursorPos, candidates[0].c_str());
+                if (ImGui::TreeNode(item.c_str()))
+                {
+                    showDirectoryAndFile(item);
+                    ImGui::TreePop();
+                }
             }
             else
             {
-                // Multiple matches. Complete as much as we can, so inputing "C" will complete to "CL" and display "CLEAR" and "CLASSIFY"
-                int match_len = (int)(word_end - word_start);
-                for (;;)
+                if ( item.size() > 4 && item.substr(item.size() - 4, 4) == ".gmx" )
                 {
-                    int c = 0;
-                    bool all_candidates_matches = true;
-                    for (int i = 0; i < candidates.size() && all_candidates_matches; i++)
-                        if (i == 0)
-                            c = toupper(candidates[i][match_len]);
-                        else if (c != toupper(candidates[i][match_len]))
-                            all_candidates_matches = false;
-                    if (!all_candidates_matches)
-                        break;
-                    match_len++;
-                }
-                
-                if (match_len > 0)
-                {
-                    data->DeleteChars((int)(word_start - data->Buf), (int)(word_end-word_start));
-                    data->InsertChars(data->CursorPos, candidates[0].c_str(), candidates[0].c_str() + match_len);
+                    if (ImGui::Selectable(item.c_str()))
+                    {
+                        strncpy(_filePath, item.c_str(), 256);
+                    }
                 }
             }
-            
-            break;
+        }
+        catch (std::exception& e)
+        {
+            // ignore
         }
     }
-
-    _isInputCompleted = true;
-
-    
-    return 0;
 }
 
 

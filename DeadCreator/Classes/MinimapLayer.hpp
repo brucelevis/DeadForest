@@ -10,6 +10,7 @@
 #define MinimapLayer_hpp
 
 #include "cocos2d.h"
+#include "imgui.h"
 
 class GMXLayer;
 
@@ -25,12 +26,6 @@ public:
     bool init(const cocos2d::Size& layerSize);
     
     static MinimapLayer* create(const cocos2d::Size& layerSize);
-    
-    cocos2d::Size getLayerSize() const { return _layerSize; }
-    
-    void setLayerSize(float width, float height) { setLayerSize(cocos2d::Size(width, height)); }
-    
-    void setLayerSize(const cocos2d::Size& size);
     
     void setFocusWindowSize(float width, float height) { setFocusWindowSize(cocos2d::Size(width, height)); }
     
@@ -57,8 +52,6 @@ private:
     cocos2d::DrawNode* _focusWindowRenderer;
     
     cocos2d::Size _focusWindowSize;
-    
-    cocos2d::Size _layerSize;
     
     cocos2d::Sprite* _defaultImage;
     

@@ -7,6 +7,8 @@
 //
 
 #include "TriggerEditor.hpp"
+using namespace cocos2d;
+
 
 TriggerEditor::TriggerEditor()
 {

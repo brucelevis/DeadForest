@@ -16,9 +16,8 @@
 #include "SizeProtocol.h"
 #include "HistoryQueue.hpp"
 #include "HistoryModifyTile.hpp"
+#include "imgui.h"
 using namespace cocos2d;
-
-#include "CCImGui.h"
 
 
 int GMXLayer::indexToNumber(int x, int y) const
@@ -126,8 +125,8 @@ bool GMXLayer::init()
     
     auto visibleSize = _director->getVisibleSize();
     _clipNode = ClippingRectangleNode::create(Rect(0, 0,
-                                                   visibleSize.width - MINIMAP_SIZE - WINDOW_PADDING * 3,
-                                                   visibleSize.height - MENUBAR_HEIGHT - STATUSBAR_HEIGHT - WINDOW_PADDING * 2));
+                                                   visibleSize.width - SizeProtocol::MINIMAP_SIZE - SizeProtocol::WINDOW_PADDING * 3,
+                                                   visibleSize.height - SizeProtocol::MENUBAR_HEIGHT - SizeProtocol::STATUSBAR_HEIGHT - SizeProtocol::WINDOW_PADDING * 2));
     addChild(_clipNode);
     
     _tileRoot = Node::create();
@@ -263,8 +262,8 @@ void GMXLayer::onResize()
 {
     auto visibleSize = _director->getVisibleSize();
     Rect clipRect = Rect(0, 0,
-                         visibleSize.width - MINIMAP_SIZE - WINDOW_PADDING * 3,
-                         visibleSize.height - MENUBAR_HEIGHT - STATUSBAR_HEIGHT - WINDOW_PADDING * 2);
+                         visibleSize.width - SizeProtocol::MINIMAP_SIZE - SizeProtocol::WINDOW_PADDING * 3,
+                         visibleSize.height - SizeProtocol::MENUBAR_HEIGHT - SizeProtocol::STATUSBAR_HEIGHT - SizeProtocol::WINDOW_PADDING * 2);
     
     setClippingRegion(clipRect);
 }

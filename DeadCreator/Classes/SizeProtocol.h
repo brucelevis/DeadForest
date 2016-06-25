@@ -9,15 +9,18 @@
 #ifndef SizeProtocol_h
 #define SizeProtocol_h
 
-#define SCREEN_WIDTH 1600
-#define SCREEN_HEIGHT 960
-#define WINDOW_PADDING 10
-#define FONT_SIZE 25
-#define FRAME_PADDING 4
-#define MINIMAP_SIZE (SCREEN_WIDTH * 0.15f)
-#define MENUBAR_HEIGHT (FONT_SIZE)
-#define STATUSBAR_HEIGHT (FONT_SIZE + (FRAME_PADDING * 2))
-#define FILE_MENUBAR_HEIGHT FONT_SIZE
+struct SizeProtocol
+{
+    static int SCREEN_WIDTH;
+    static int SCREEN_HEIGHT;
+    static int MINIMAP_SIZE;
+    static int FONT_SIZE;
+    static int WINDOW_PADDING;
+    static int FRAME_PADDING;
+    static int MENUBAR_HEIGHT;
+    static int STATUSBAR_HEIGHT;
+    static int FILE_MENUBAR_HEIGHT;
+};
 
 
 #endif /* SizeProtocol_h */

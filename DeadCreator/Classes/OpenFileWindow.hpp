@@ -10,7 +10,7 @@
 #define OpenFileWindow_hpp
 
 #include "cocos2d.h"
-#include "CCImGui.h"
+#include "imgui.h"
 
 class OpenFileWindow : public cocos2d::Node
 {

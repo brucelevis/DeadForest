@@ -10,7 +10,7 @@
 #define TriggerEditor_hpp
 
 #include "cocos2d.h"
-#include "CCImGui.h"
+#include "imgui.h"
 
 class TriggerEditor : public cocos2d::Node
 {

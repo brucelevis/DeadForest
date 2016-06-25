@@ -10,6 +10,7 @@
 
 #include "OpenFileWindow.hpp"
 #include "FileSystem.hpp"
+using namespace cocos2d;
 
 OpenFileWindow::OpenFileWindow()
 {

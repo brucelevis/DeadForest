@@ -7,9 +7,11 @@
 //
 
 #include "PaletteWindow.hpp"
+#include "ImGuiLayer.h"
 
 
-PaletteWindow::PaletteWindow()
+PaletteWindow::PaletteWindow(ImGuiLayer* imguiLayer):
+_layer(imguiLayer)
 {
 }
 
@@ -19,9 +21,9 @@ PaletteWindow::~PaletteWindow()
 }
 
 
-PaletteWindow* PaletteWindow::create()
+PaletteWindow* PaletteWindow::create(ImGuiLayer* imguiLayer)
 {
-    auto ret = new (std::nothrow) PaletteWindow();
+    auto ret = new (std::nothrow) PaletteWindow(imguiLayer);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -52,24 +54,24 @@ void PaletteWindow::showPaletteWindow(bool* opened)
     
     if ( _paletteType == 0)
     {
-        if (CCIMGUI->imageButton("1_1_1234.png", 50, 50))
+        if (_layer->imageButton("1_1_1234.png", 50, 50))
         {
             _selectedItem = 0;
         }
         ImGui::SameLine();
         
-        if (CCIMGUI->imageButton("2_1_1234.png", 50, 50))
+        if (_layer->imageButton("2_1_1234.png", 50, 50))
         {
             _selectedItem = 1;
         }
         ImGui::SameLine();
         
-        if (CCIMGUI->imageButton("3_1_1234.png", 50, 50))
+        if (_layer->imageButton("3_1_1234.png", 50, 50))
         {
             _selectedItem = 2;
         }
         
-        if (CCIMGUI->imageButton("5_1_1234.png", 50, 50))
+        if (_layer->imageButton("5_1_1234.png", 50, 50))
         {
             _selectedItem = 3;
         }
@@ -77,7 +79,7 @@ void PaletteWindow::showPaletteWindow(bool* opened)
     
     else if ( _paletteType == 1)
     {
-        if (CCIMGUI->imageButton("human.png", 50, 50))
+        if (_layer->imageButton("human.png", 50, 50))
         {
             log("human");
             _selectedItem = 0;
@@ -86,23 +88,23 @@ void PaletteWindow::showPaletteWindow(bool* opened)
     
     else if ( _paletteType == 2)
     {
-        if (CCIMGUI->imageButton("5_56mm.png", 50, 50)) _selectedItem = 0;
+        if (_layer->imageButton("5_56mm.png", 50, 50)) _selectedItem = 0;
         ImGui::SameLine();
-        if (CCIMGUI->imageButton("9mm.png", 50, 50)) _selectedItem = 1;
+        if (_layer->imageButton("9mm.png", 50, 50)) _selectedItem = 1;
         ImGui::SameLine();
-        if (CCIMGUI->imageButton("Shell.png", 50, 50)) _selectedItem = 2;
+        if (_layer->imageButton("Shell.png", 50, 50)) _selectedItem = 2;
         
-        if (CCIMGUI->imageButton("Axe.png", 50, 50)) _selectedItem = 3;
+        if (_layer->imageButton("Axe.png", 50, 50)) _selectedItem = 3;
         ImGui::SameLine();
-        if (CCIMGUI->imageButton("Glock17.png", 50, 50)) _selectedItem = 4;
+        if (_layer->imageButton("Glock17.png", 50, 50)) _selectedItem = 4;
         ImGui::SameLine();
-        if (CCIMGUI->imageButton("M16A2.png", 50, 50)) _selectedItem = 5;
+        if (_layer->imageButton("M16A2.png", 50, 50)) _selectedItem = 5;
         
-        if (CCIMGUI->imageButton("M1897.png", 50, 50)) _selectedItem = 6;
+        if (_layer->imageButton("M1897.png", 50, 50)) _selectedItem = 6;
         ImGui::SameLine();
-        if (CCIMGUI->imageButton("MeatCan.png", 50, 50)) _selectedItem = 7;
+        if (_layer->imageButton("MeatCan.png", 50, 50)) _selectedItem = 7;
         ImGui::SameLine();
-        if (CCIMGUI->imageButton("Bandage.png", 50, 50)) _selectedItem = 8;
+        if (_layer->imageButton("Bandage.png", 50, 50)) _selectedItem = 8;
     }
     ImGui::PopStyleColor(3);
     

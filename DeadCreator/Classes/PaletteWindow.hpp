@@ -10,9 +10,10 @@
 #define PaletteWindow_hpp
 
 #include "cocos2d.h"
-#include "CCImGui.h"
 
 #include "GMXFile.hpp"
+
+class ImGuiLayer;
 
 enum PaletteType
 {
@@ -28,11 +29,11 @@ class PaletteWindow : public cocos2d::Node
     
 public:
     
-    PaletteWindow();
+    PaletteWindow(ImGuiLayer* imguiLayer);
     
     virtual ~PaletteWindow();
     
-    static PaletteWindow* create();
+    static PaletteWindow* create(ImGuiLayer* imguiLayer);
     
     void showPaletteWindow(bool* opened);
     
@@ -45,6 +46,8 @@ public:
     int getSelectedItem() const { return _selectedItem; }
     
 private:
+    
+    ImGuiLayer* _layer;
     
     int _paletteType = 0;
     

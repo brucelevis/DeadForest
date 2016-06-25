@@ -5,7 +5,7 @@ using namespace std;
 
 #include "HelloWorldScene.h"
 #include "GMXLayer.hpp"
-#include "CCImGui.h"
+#include "imgui.h"
 #include "SizeProtocol.h"
 #include "PaletteWindow.hpp"
 #include "TriggerEditor.hpp"
@@ -51,7 +51,7 @@ bool HelloWorld::init()
     
     _oldWindowSize = Director::getInstance()->getVisibleSize();
     
-    CCIMGUI->addImGUI([this](){
+    addImGUI([this](){
         
         // main menu
         if ( _showNewMap ) showNewMapWindow(&_showNewMap);
@@ -134,8 +134,8 @@ bool HelloWorld::init()
         // bottom menu
         ImGuiIO& io = ImGui::GetIO();
         
-        ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - STATUSBAR_HEIGHT));
-        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, STATUSBAR_HEIGHT));
+        ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - SizeProtocol::STATUSBAR_HEIGHT));
+        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, SizeProtocol::STATUSBAR_HEIGHT));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::Begin("##BottomMenuBar", NULL,
                      ImGuiWindowFlags_NoTitleBar |
@@ -172,8 +172,8 @@ bool HelloWorld::init()
         // property ui
         ImGuiStyle& style = ImGui::GetStyle();
         
-        ImGui::SetNextWindowPos(ImVec2(WINDOW_PADDING, MENUBAR_HEIGHT + MINIMAP_SIZE + WINDOW_PADDING * 2));
-        ImGui::SetNextWindowSize(ImVec2(MINIMAP_SIZE, io.DisplaySize.y - (MENUBAR_HEIGHT + MINIMAP_SIZE + STATUSBAR_HEIGHT + WINDOW_PADDING * 3)));
+        ImGui::SetNextWindowPos(ImVec2(SizeProtocol::WINDOW_PADDING, SizeProtocol::MENUBAR_HEIGHT + SizeProtocol::MINIMAP_SIZE + SizeProtocol::WINDOW_PADDING * 2));
+        ImGui::SetNextWindowSize(ImVec2(SizeProtocol::MINIMAP_SIZE, io.DisplaySize.y - (SizeProtocol::MENUBAR_HEIGHT + SizeProtocol::MINIMAP_SIZE + SizeProtocol::STATUSBAR_HEIGHT + SizeProtocol::WINDOW_PADDING * 3)));
         ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
         if (ImGui::Begin(" Entities", NULL,
                          ImGuiWindowFlags_NoResize |
@@ -182,7 +182,7 @@ bool HelloWorld::init()
                          ImGuiWindowFlags_NoMove))
         {
             static int selected = 0;
-            ImGui::BeginChild("##ObjectList", ImVec2(MINIMAP_SIZE - style.WindowPadding.x * 2, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
+            ImGui::BeginChild("##ObjectList", ImVec2(SizeProtocol::MINIMAP_SIZE - style.WindowPadding.x * 2, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
             for (int i = 0; i < 1; i++)
             {
                 std::string label;
@@ -198,7 +198,7 @@ bool HelloWorld::init()
     }, "ui_init");
     
     
-    CCIMGUI->addImGUI([this]{
+    addImGUI([this]{
         
         static bool isShowDemo = true;
         ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
@@ -207,16 +207,16 @@ bool HelloWorld::init()
     }, "test_window");
     
     _gmxLayerManager = GMXLayerManager::create();
-    _gmxLayerManager->setPosition(Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
+    _gmxLayerManager->setPosition(Vec2(SizeProtocol::MINIMAP_SIZE + SizeProtocol::WINDOW_PADDING * 2, SizeProtocol::STATUSBAR_HEIGHT + SizeProtocol::WINDOW_PADDING));
     addChild(_gmxLayerManager);
     
-    _minimapLayer = MinimapLayer::create(Size(MINIMAP_SIZE, MINIMAP_SIZE));
-    _minimapLayer->setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - MENUBAR_HEIGHT - MINIMAP_SIZE - WINDOW_PADDING));
+    _minimapLayer = MinimapLayer::create(Size(SizeProtocol::MINIMAP_SIZE, SizeProtocol::MINIMAP_SIZE));
+    _minimapLayer->setPosition(Vec2(SizeProtocol::WINDOW_PADDING, _director->getVisibleSize().height - SizeProtocol::MENUBAR_HEIGHT - SizeProtocol::MINIMAP_SIZE - SizeProtocol::WINDOW_PADDING));
     addChild(_minimapLayer);
 
     
     _debugNode = DrawNode::create();
-    _debugNode->setPosition(Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
+    _debugNode->setPosition(Vec2(SizeProtocol::MINIMAP_SIZE + SizeProtocol::WINDOW_PADDING * 2, SizeProtocol::STATUSBAR_HEIGHT + SizeProtocol::WINDOW_PADDING));
     addChild(_debugNode);
     
     _openFileWindow = OpenFileWindow::create();
@@ -350,13 +350,13 @@ void HelloWorld::onMouseDown(cocos2d::Event* event)
     
     if ( inImGuiWidgets ) return ;
     
-    Rect minimapRect(_minimapLayer->getPosition().x, _minimapLayer->getPosition().y, MINIMAP_SIZE, MINIMAP_SIZE);
+    Rect minimapRect(_minimapLayer->getPosition().x, _minimapLayer->getPosition().y, SizeProtocol::MINIMAP_SIZE, SizeProtocol::MINIMAP_SIZE);
     if ( minimapRect.containsPoint(_mousePosition) )
     {
         Size focusWindowSize = _minimapLayer->getFocusWindowSize();
         Vec2 innerPosition = _mousePosition - _minimapLayer->getPosition();
-        _viewSpaceParams.setPoint((innerPosition.x - focusWindowSize.width / 2) / (MINIMAP_SIZE - focusWindowSize.width),
-                                  (innerPosition.y - focusWindowSize.height / 2) / (MINIMAP_SIZE - focusWindowSize.height));
+        _viewSpaceParams.setPoint((innerPosition.x - focusWindowSize.width / 2) / (SizeProtocol::MINIMAP_SIZE - focusWindowSize.width),
+                                  (innerPosition.y - focusWindowSize.height / 2) / (SizeProtocol::MINIMAP_SIZE - focusWindowSize.height));
         
         _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0, 1.0);
         _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0, 1.0);
@@ -370,7 +370,7 @@ void HelloWorld::onMouseDown(cocos2d::Event* event)
         if ( _palette->getPaletteType() == PaletteType::TILE )
         {
             Size clipSize = currLayer->getClippingRegion().size;
-            Vec2 positionInClipRect(_mousePosition - Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
+            Vec2 positionInClipRect(_mousePosition - Vec2(SizeProtocol::MINIMAP_SIZE + SizeProtocol::WINDOW_PADDING * 2, SizeProtocol::STATUSBAR_HEIGHT + SizeProtocol::WINDOW_PADDING));
             
             if ( currLayer->getClippingRegion().containsPoint(positionInClipRect) )
             {
@@ -393,13 +393,13 @@ void HelloWorld::onMouseMove(cocos2d::Event* event)
     
     if ( _isMousePressed )
     {
-        Rect minimapRect(_minimapLayer->getPosition().x, _minimapLayer->getPosition().y, MINIMAP_SIZE, MINIMAP_SIZE);
+        Rect minimapRect(_minimapLayer->getPosition().x, _minimapLayer->getPosition().y, SizeProtocol::MINIMAP_SIZE, SizeProtocol::MINIMAP_SIZE);
         if ( minimapRect.containsPoint(_mousePosition) )
         {
             Size focusWindowSize = _minimapLayer->getFocusWindowSize();
             Vec2 innerPosition = _mousePosition - _minimapLayer->getPosition();
-            _viewSpaceParams.setPoint((innerPosition.x - focusWindowSize.width / 2) / (MINIMAP_SIZE - focusWindowSize.width),
-                                      (innerPosition.y - focusWindowSize.height / 2) / (MINIMAP_SIZE - focusWindowSize.height));
+            _viewSpaceParams.setPoint((innerPosition.x - focusWindowSize.width / 2) / (SizeProtocol::MINIMAP_SIZE - focusWindowSize.width),
+                                      (innerPosition.y - focusWindowSize.height / 2) / (SizeProtocol::MINIMAP_SIZE - focusWindowSize.height));
             
             _viewSpaceParams.x = clampf(_viewSpaceParams.x, 0.0, 1.0);
             _viewSpaceParams.y = clampf(_viewSpaceParams.y, 0.0, 1.0);
@@ -428,7 +428,7 @@ void HelloWorld::onCenterView()
         if ( _palette->getPaletteType() == PaletteType::TILE )
         {
             Size clipSize = currLayer->getClippingRegion().size;
-            Vec2 positionInClipRect(_mousePosition - Vec2(MINIMAP_SIZE + WINDOW_PADDING * 2, STATUSBAR_HEIGHT + WINDOW_PADDING));
+            Vec2 positionInClipRect(_mousePosition - Vec2(SizeProtocol::MINIMAP_SIZE + SizeProtocol::SizeProtocol::WINDOW_PADDING * 2, SizeProtocol::STATUSBAR_HEIGHT + SizeProtocol::WINDOW_PADDING));
             positionInClipRect.x = clampf(positionInClipRect.x, 0.0f, clipSize.width);
             positionInClipRect.y = clampf(positionInClipRect.y, 0.0f, clipSize.height);
             
@@ -458,6 +458,9 @@ void HelloWorld::onCenterView()
 
 void HelloWorld::onResize()
 {
+    SizeProtocol::MINIMAP_SIZE = _director->getVisibleSize().width * 0.15f;
+    _gmxLayerManager->setPosition(Vec2(SizeProtocol::MINIMAP_SIZE + SizeProtocol::WINDOW_PADDING * 2, SizeProtocol::STATUSBAR_HEIGHT + SizeProtocol::WINDOW_PADDING));
+    
     if ( _gmxLayerManager->getCurrentLayer() )
     {
         _gmxLayerManager->onResize();
@@ -572,7 +575,7 @@ void HelloWorld::showNewMapWindow(bool* opened)
         auto newLayer = GMXLayer::create();
         newLayer->openFile(file);
         
-        _palette = PaletteWindow::create();
+        _palette = PaletteWindow::create(this);
         newLayer->addChild(_palette);
         
         _triggerEditor = TriggerEditor::create();
@@ -625,8 +628,8 @@ void HelloWorld::showNewMapWindow(bool* opened)
 
 void HelloWorld::showFileMenuBar(bool* opened)
 {
-    ImGui::SetNextWindowPos(ImVec2(MINIMAP_SIZE + WINDOW_PADDING * 2, MENUBAR_HEIGHT + WINDOW_PADDING));
-    ImGui::SetNextWindowSize(ImVec2(_oldWindowSize.width - MINIMAP_SIZE - WINDOW_PADDING * 3, FILE_MENUBAR_HEIGHT));
+    ImGui::SetNextWindowPos(ImVec2(SizeProtocol::MINIMAP_SIZE + SizeProtocol::WINDOW_PADDING * 2, SizeProtocol::MENUBAR_HEIGHT + SizeProtocol::WINDOW_PADDING));
+    ImGui::SetNextWindowSize(ImVec2(_oldWindowSize.width - SizeProtocol::MINIMAP_SIZE - SizeProtocol::WINDOW_PADDING * 3, SizeProtocol::FILE_MENUBAR_HEIGHT));
     
     std::string fileName = _gmxLayerManager->getCurrentLayer()->getFileName() + ".gmx";
     if ( _gmxLayerManager->getCurrentLayer()->isChanged() )
@@ -701,7 +704,7 @@ void HelloWorld::open()
     auto newLayer = GMXLayer::create();
     newLayer->openFile(file);
     
-    _palette = PaletteWindow::create();
+    _palette = PaletteWindow::create(this);
     newLayer->addChild(_palette);
     
     _gmxLayerManager->addChild(newLayer);

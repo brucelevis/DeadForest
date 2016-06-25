@@ -6,7 +6,6 @@
 //
 //
 
-#include "CCImGui.h"
 #include "MinimapLayer.hpp"
 #include "GMXLayer.hpp"
 #include "SizeProtocol.h"
@@ -27,12 +26,10 @@ bool MinimapLayer::init(const cocos2d::Size& layerSize)
     if ( !Node::init() )
         return false;
     
-    _layerSize = layerSize;
-    
     _defaultImage = Sprite::create("bg.png");
     _defaultImage->setAnchorPoint(Vec2::ZERO);
-    _defaultImage->setScale(MINIMAP_SIZE / _defaultImage->getContentSize().width,
-                            MINIMAP_SIZE / _defaultImage->getContentSize().height);
+    _defaultImage->setScale(SizeProtocol::MINIMAP_SIZE / _defaultImage->getContentSize().width,
+                            SizeProtocol::MINIMAP_SIZE / _defaultImage->getContentSize().height);
     addChild(_defaultImage);
     
     _focusWindowRenderer = DrawNode::create();
@@ -59,18 +56,10 @@ void MinimapLayer::onCenterView(const cocos2d::Vec2& params)
 {
     if ( !_gmxLayer ) return ;
     
-    _focusWindowRenderer->setPosition(Vec2(_focusWindowSize.width / 2 + params.x * (_layerSize.width - _focusWindowSize.width),
-                                           _focusWindowSize.height / 2 + params.y * (_layerSize.height - _focusWindowSize.height)));
-}
-
-
-void MinimapLayer::setLayerSize(const cocos2d::Size& size)
-{
-    _layerSize = size;
+    auto layerSize = Size(SizeProtocol::MINIMAP_SIZE, SizeProtocol::MINIMAP_SIZE);
     
-    // todo
-    // 1. resize layer
-    // 2. center view params update
+    _focusWindowRenderer->setPosition(Vec2(_focusWindowSize.width / 2 + params.x * (layerSize.width - _focusWindowSize.width),
+                                           _focusWindowSize.height / 2 + params.y * (layerSize.height - _focusWindowSize.height)));
 }
 
 
@@ -85,8 +74,10 @@ void MinimapLayer::setGMXLayer(GMXLayer *layer)
     _gmxLayer = layer;
     Size worldSize = _gmxLayer->getWorldSize();
     
-    _focusWindowSize = Size(_layerSize.width * (layer->getClippingRegion().size.width / worldSize.width),
-                            _layerSize.height * (layer->getClippingRegion().size.height / worldSize.height));
+    auto layerSize = Size(SizeProtocol::MINIMAP_SIZE, SizeProtocol::MINIMAP_SIZE);
+    
+    _focusWindowSize = Size(layerSize.width * (layer->getClippingRegion().size.width / worldSize.width),
+                            layerSize.height * (layer->getClippingRegion().size.height / worldSize.height));
     
     _focusWindowRenderer->clear();
     _focusWindowRenderer->drawRect(-Vec2(_focusWindowSize.width / 2, _focusWindowSize.height / 2),
@@ -97,14 +88,20 @@ void MinimapLayer::setGMXLayer(GMXLayer *layer)
 
 void MinimapLayer::onResize()
 {
-    setPosition(Vec2(WINDOW_PADDING, _director->getVisibleSize().height - MENUBAR_HEIGHT - _layerSize.height - WINDOW_PADDING));
+    auto layerSize = Size(SizeProtocol::MINIMAP_SIZE, SizeProtocol::MINIMAP_SIZE);
+    
+    _defaultImage->setScale(SizeProtocol::MINIMAP_SIZE / _defaultImage->getContentSize().width,
+                            SizeProtocol::MINIMAP_SIZE / _defaultImage->getContentSize().height);
+
+    
+    setPosition(Vec2(SizeProtocol::WINDOW_PADDING, _director->getVisibleSize().height - SizeProtocol::MENUBAR_HEIGHT - layerSize.height - SizeProtocol::WINDOW_PADDING));
 
     if ( _gmxLayer )
     {
         Size worldSize =_gmxLayer->getWorldSize();
         _focusWindowRenderer->clear();
-        _focusWindowSize = Size(_layerSize.width * (_gmxLayer->getClippingRegion().size.width / worldSize.width),
-                                _layerSize.height * (_gmxLayer->getClippingRegion().size.height / worldSize.height));
+        _focusWindowSize = Size(layerSize.width * (_gmxLayer->getClippingRegion().size.width / worldSize.width),
+                                layerSize.height * (_gmxLayer->getClippingRegion().size.height / worldSize.height));
         
         _focusWindowRenderer->drawRect(-Vec2(_focusWindowSize.width / 2, _focusWindowSize.height / 2),
                                        Vec2(_focusWindowSize.width /2, _focusWindowSize.height / 2), Color4F::WHITE);

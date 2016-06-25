@@ -38,7 +38,7 @@ public:
     
     virtual bool init() override;
     
-    cocos2d::Size getWorldSize() const { if ( _file ) return _file->worldSize; return cocos2d::Size::ZERO; }
+    cocos2d::Size getWorldSize() const { if ( _file ) return _file->worldSize; return cocos2d::Size(1, 1); }
     
     void onCenterView(float x, float y) { onCenterView(cocos2d::Vec2(x,y)); }
     

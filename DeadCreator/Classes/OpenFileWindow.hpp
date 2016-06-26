@@ -11,6 +11,7 @@
 
 #include "cocos2d.h"
 #include "imgui.h"
+#include "imgui_internal.h"
 
 class EditScene;
 
@@ -29,12 +30,6 @@ public:
     
 private:
     
-    static int TextEditCallBackStub(ImGuiTextEditCallbackData* data);
-    
-    int TextEditCallBack(ImGuiTextEditCallbackData* data);
-    
-    int strnicmp(const char* str1, const char* str2, int n);
-    
     void closeWindow();
     
     void showDirectoryAndFile(const std::string& path);
@@ -48,6 +43,12 @@ private:
     std::vector<std::string> _inDirectories;
     
     std::vector<std::string> _inGMXFiles;
+    
+    ImGuiButtonFlags _openButtonFlags = ImGuiButtonFlags_Disabled;
+    
+    float _openButtonTextAlpha = 0.5f;
+    
+    std::string _lastFileRoot;
     
 };
 

@@ -11,6 +11,7 @@ using namespace std;
 #include "TriggerEditor.hpp"
 #include "NewFileWindow.hpp"
 #include "OpenFileWindow.hpp"
+#include "SaveAsFileWindow.hpp"
 #include "ImGuiGLViewImpl.h"
 #include "TestScene.hpp"
 using namespace cocos2d;
@@ -60,6 +61,8 @@ bool EditScene::init()
         
         if ( _showOpenMap ) _openFileWindow->showOpenFileWindow(&_showOpenMap);
         
+        if ( _showSaveAsFile ) _saveAsFileWindow->showSaveAsFileWindow(&_showSaveAsFile);
+        
         if ( _showPalette ) _palette->showPaletteWindow(&_showPalette);
         
         if ( _showFileMenuBar ) showFileMenuBar(&_showFileMenuBar);
@@ -87,7 +90,7 @@ bool EditScene::init()
                     ImGui::EndMenu();
                 }
                 if (ImGui::MenuItem("Save", "Ctrl+S", false, _isUndo)) { save(); }
-                if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", false, _isUndo)) {}
+                if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", &_showSaveAsFile, _isUndo)) { saveAs(); }
                 ImGui::Separator();
                 if (ImGui::MenuItem("Quit", "Alt+F4")) {}
                 
@@ -225,6 +228,9 @@ bool EditScene::init()
     
     _openFileWindow = OpenFileWindow::create(this);
     addChild(_openFileWindow);
+    
+    _saveAsFileWindow = SaveAsFileWindow::create(this);
+    addChild(_saveAsFileWindow);
     
     this->scheduleUpdate();
     
@@ -486,7 +492,7 @@ void EditScene::showFileMenuBar(bool* opened)
     ImGui::SetNextWindowPos(ImVec2(SizeProtocol::MINIMAP_SIZE + SizeProtocol::WINDOW_PADDING * 2, SizeProtocol::MENUBAR_HEIGHT + SizeProtocol::WINDOW_PADDING));
     ImGui::SetNextWindowSize(ImVec2(_oldWindowSize.width - SizeProtocol::MINIMAP_SIZE - SizeProtocol::WINDOW_PADDING * 3, SizeProtocol::FILE_MENUBAR_HEIGHT));
     
-    std::string fileName = _gmxLayerManager->getCurrentLayer()->getFileName() + ".gmx";
+    std::string fileName = _gmxLayerManager->getCurrentLayer()->getFileName();
     if ( _gmxLayerManager->getCurrentLayer()->isChanged() )
     {
         fileName += " *";
@@ -506,18 +512,7 @@ void EditScene::showFileMenuBar(bool* opened)
     if ( *opened == false )
     {
         // closed
-        _showPalette = false;
-        _showTrigger = false;
-        _isRedo = false;
-        _isWindowEnable = false;
-        _isPlayerEnable = false;
-        _isEditEnable = false;
-        _isUndo = false;
-        Dispatch.removeNode(MessageNodeType::GMX_LAYER);
-        _viewSpaceParams.setZero();
-        _worldPosition = Vec2::ZERO;
-        _minimapLayer->disableFocusWindow();
-        _gmxLayerManager->closeLayer();
+        closeCurrentLayer();
     }
 }
 
@@ -543,33 +538,105 @@ void EditScene::undo()
 
 void EditScene::save()
 {
-    if ( _gmxLayerManager->getCurrentLayer() )
+    auto currLayer = _gmxLayerManager->getCurrentLayer();
+    if ( currLayer )
     {
-        _gmxLayerManager->saveGMXFile("test");
-        log("Save");
+        if ( currLayer->isFirstFile() )
+        {
+            // show save
+            _showSaveAsFile = true;
+            
+            _isFileEnable = false;
+            _isEditEnable = false;
+            _isWindowEnable = false;
+            _isPlayerEnable = false;
+        }
+        else
+        {
+            boost::filesystem::remove(currLayer->getFilePath());
+            _gmxLayerManager->saveGMXFile(currLayer->getFilePath());
+            log("[%s] Saved.", currLayer->getFilePath().c_str());
+        }
     }
 }
 
 
-void EditScene::open()
+void EditScene::save(const std::string& path)
 {
+    if (!boost::filesystem::exists(path))
+    {
+        _gmxLayerManager->saveGMXFile(path);
+        _gmxLayerManager->getCurrentLayer()->disableFirstFile();
+        log("[%s] Saved.", path.c_str());
+    }
+    else
+    {
+        log("[%s] is already exists.", path.c_str());
+    }
+
+}
+
+
+void EditScene::saveAs()
+{
+    
+}
+
+
+void EditScene::open(const std::string& path)
+{
+    if ( _gmxLayerManager->getCurrentLayer() )
+    {
+        closeCurrentLayer();
+    }
+    
     GMXFile* file = new GMXFile();
     
-    _gmxLayerManager->loadGMXFile(file, "test");
-    auto newLayer = GMXLayer::create();
-    newLayer->openFile(file);
-    
-    _palette = PaletteWindow::create(this);
-    newLayer->addChild(_palette);
-    
-    _gmxLayerManager->addChild(newLayer);
-    _minimapLayer->setGMXLayer(newLayer);
-    
-    _isEditEnable = true;
-    _isPlayerEnable = true;
-    _isWindowEnable = true;
-    _showFileMenuBar = true;
-    _showPalette = true;
+    if ( _gmxLayerManager->loadGMXFile(file, path) )
+    {
+        auto newLayer = GMXLayer::create();
+        newLayer->setFilePath(path);
+        newLayer->disableFirstFile();
+        newLayer->openFile(file);
+        
+        _palette = PaletteWindow::create(this);
+        newLayer->addChild(_palette);
+        
+        _gmxLayerManager->addChild(newLayer);
+        _minimapLayer->setGMXLayer(newLayer);
+        
+        
+        _isEditEnable = true;
+        _isPlayerEnable = true;
+        _isWindowEnable = true;
+        _showFileMenuBar = true;
+        _showPalette = true;
+    }
+    else
+    {
+        delete file;
+        file = nullptr;
+        
+        log("open file fail!");
+    }
+}
+
+
+void EditScene::closeCurrentLayer()
+{
+    _showPalette = false;
+    _showTrigger = false;
+    _isRedo = false;
+    _isWindowEnable = false;
+    _isPlayerEnable = false;
+    _isEditEnable = false;
+    _isUndo = false;
+    Dispatch.removeNode(MessageNodeType::GMX_LAYER);
+    _viewSpaceParams.setZero();
+    _worldPosition = Vec2::ZERO;
+    _minimapLayer->disableFocusWindow();
+    _gmxLayerManager->closeLayer();
+
 }
 
 

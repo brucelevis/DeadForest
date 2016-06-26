@@ -22,9 +22,11 @@ _currLayer(nullptr)
 {}
 
 
-bool GMXLayerManager::saveGMXFile(const std::string &fileName)
+bool GMXLayerManager::saveGMXFile(const std::string &path)
 {
     GMXFile* file = _currLayer->getFile();
+    file->fileName = FileSystem::getLeafName(path);
+    _currLayer->setFilePath(path);
     
     XMLDeclaration* decl = _document.NewDeclaration();
     _document.InsertEndChild(decl);
@@ -95,24 +97,18 @@ bool GMXLayerManager::saveGMXFile(const std::string &fileName)
     element->SetAttribute("tileSize", changedTileSize);
     rootNode->InsertEndChild(element);
     
-    std::string filePath = FileSystem::getParentPath(FileSystem::getInitialPath()) + "/maps/" + fileName;
-    log("%s", filePath.c_str());
-    auto ret = _document.SaveFile(filePath.c_str());
+    auto ret = _document.SaveFile(path.c_str());
         
     if (ret != 0) return false;
     else return true;
 }
 
 
-bool GMXLayerManager::loadGMXFile(GMXFile* file, const std::string& fileName)
+bool GMXLayerManager::loadGMXFile(GMXFile* file, const std::string& path)
 {
-    boost::filesystem::path path(boost::filesystem::initial_path());
-    path /= fileName;
+    log("path: %s", path.c_str());
     
-    //std::string filePath = path.native();
-    std::string filePath = "/Users/jun/Desktop/" + fileName;
-    
-    auto ret = _document.LoadFile(filePath.c_str());
+    auto ret = _document.LoadFile(path.c_str());
     if ( ret != 0)
     {
         cocos2d::log("file is not exist");

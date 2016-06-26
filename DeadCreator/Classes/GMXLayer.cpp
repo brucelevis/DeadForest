@@ -175,9 +175,6 @@ void GMXLayer::openFile(GMXFile* file)
             {
                 tilePosition.setPoint(64 + j * 128 - (128 * DUMMY_TILE_SIZE), i * 64 - (128 * DUMMY_TILE_SIZE));
             }
-            
-            auto stuff = PhysicsBody::createCircle(15.0f);
-            stuff->setEnabled(true);
    
             _tileImages[i][j] = Sprite::create(file->tileInfos[i][j] + ".png");
             _tileImages[i][j]->setPosition(tilePosition);

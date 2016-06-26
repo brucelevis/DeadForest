@@ -35,10 +35,6 @@ public:
     static std::vector<std::string> getFilesAndDirectoriesInPath(const std::string& path, bool leaf = false);
     
     static bool createDirectory(const std::string& path);
-  
-    static bool isDirectory(const std::string& path);
-    
-    static bool isFile(const std::string& path);
     
 };
 

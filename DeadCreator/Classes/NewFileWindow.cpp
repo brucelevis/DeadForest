@@ -45,7 +45,7 @@ void NewFileWindow::showNewFileWindow(bool* opened)
     Vec2 windowSize = Vec2(430, 430);
     ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
     ImGui::SetNextWindowPos(ImVec2((visibleSize.width - windowSize.x) / 2, (visibleSize.height - windowSize.y) / 2), ImGuiSetCond_Appearing);
-    if (!ImGui::Begin("New Map", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+    if (!ImGui::Begin("New", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
     {
         ImGui::End();
         return;

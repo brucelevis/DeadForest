@@ -23,7 +23,14 @@ bool FileSystem::remove(const std::string& path)
 {
     boost::filesystem::path p(path);
     if ( !isExist(p.native()) ) return false;
-    return boost::filesystem::remove(p);
+    try
+    {
+        return boost::filesystem::remove(p);
+    }
+    catch (std::exception& e)
+    {
+        return false;
+    }
 }
 
 std::vector<std::string> FileSystem::getFilesInPath(const std::string& path, bool leaf)
@@ -78,7 +85,6 @@ std::vector<std::string> FileSystem::getFilesAndDirectoriesInPath(const std::str
     }
     catch ( std::exception& e)
     {
-        cocos2d::log("%s", e.what());
     }
 
     return ret;
@@ -106,18 +112,6 @@ bool FileSystem::createDirectory(const std::string& path)
 {
     if ( isExist(path) ) return false;
     return boost::filesystem::create_directories(path);
-}
-
-bool FileSystem::isDirectory(const std::string& path)
-{
-    if ( isExist(path) ) return false;
-    return boost::filesystem::is_directory(boost::filesystem::path(path));
-}
-
-bool FileSystem::isFile(const std::string& path)
-{
-    if ( isExist(path) ) return false;
-    return boost::filesystem::is_regular_file(boost::filesystem::path(path));
 }
 
 

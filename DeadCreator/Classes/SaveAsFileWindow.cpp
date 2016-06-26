@@ -1,54 +1,58 @@
 //
-//  OpenFileWindow.cpp
+//  SaveAsFileWindow.cpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 6. 24..
+//  Created by mac on 2016. 6. 26..
 //
 //
 
-#include <functional>
-
-#include "OpenFileWindow.hpp"
-#include "FileSystem.hpp"
+#include "SaveAsFileWindow.hpp"
 #include "EditScene.h"
-#include "SizeProtocol.h"
+#include "FileSystem.hpp"
 using namespace cocos2d;
 
-#include "imgui_internal.h"
-
-OpenFileWindow::OpenFileWindow(EditScene* layer) :
+SaveAsFileWindow::SaveAsFileWindow(EditScene* layer) :
 _imguiLayer(layer)
 {
     strncpy(_filePath, "/\0", 2);
 }
 
 
-OpenFileWindow::~OpenFileWindow()
+SaveAsFileWindow::~SaveAsFileWindow()
 {
 }
 
 
-OpenFileWindow* OpenFileWindow::create(EditScene* layer)
+SaveAsFileWindow* SaveAsFileWindow::create(EditScene* layer)
 {
-    auto ret = new (std::nothrow) OpenFileWindow(layer);
+    auto ret = new (std::nothrow) SaveAsFileWindow(layer);
     if ( ret && ret->init() )
     {
         ret->autorelease();
         return ret;
     }
-    CC_SAFE_FREE(ret);
+    CC_SAFE_DELETE(ret);
     return nullptr;
 }
 
 
-void OpenFileWindow::showOpenFileWindow(bool* opened)
+bool SaveAsFileWindow::init()
+{
+    if ( !Node::init() )
+        return false;
+    
+    return true;
+}
+
+
+void SaveAsFileWindow::showSaveAsFileWindow(bool* opened)
 {
     auto visibleSize = _director->getVisibleSize();
     
     Vec2 windowSize = Vec2(visibleSize.width * 0.5f, visibleSize.height * 0.7f);
     ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
     ImGui::SetNextWindowPos(ImVec2((visibleSize.width - windowSize.x) / 2, (visibleSize.height - windowSize.y) / 2), ImGuiSetCond_Appearing);
-    if (!ImGui::Begin("Open", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+    if (!ImGui::Begin("Save As", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
     {
         ImGui::End();
         return;
@@ -56,7 +60,24 @@ void OpenFileWindow::showOpenFileWindow(bool* opened)
     
     float height = ImGui::CalcTextSize("").y;
     
-    ImGui::InputText("search directory", _filePath, 256);
+    if (ImGui::InputText("search directory", _filePath, 256))
+    {
+        std::string temp = _filePath;
+        auto idx = temp.find_last_of('/');
+        temp = temp.substr(0, idx);
+        temp += '/';
+        
+        if ( FileSystem::isExist(temp) && !FileSystem::isExist(_filePath) )
+        {
+            _saveButtonTextAlpha = 1.0f;
+            _saveButtonFlags = 0;
+        }
+        else
+        {
+            _saveButtonTextAlpha = 0.5f;
+            _saveButtonFlags = ImGuiButtonFlags_Disabled;
+        }
+    }
     
     ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
     ImGui::BeginChild("##Directories", ImVec2(0, visibleSize.height * 0.7 - 25 - height - 50), true);
@@ -65,16 +86,16 @@ void OpenFileWindow::showOpenFileWindow(bool* opened)
     
     ImGui::EndChild();
     ImGui::PopStyleVar();
-
+    
     auto style = ImGui::GetStyle();
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(style.Colors[ImGuiCol_Text].x,
                                                 style.Colors[ImGuiCol_Text].y,
                                                 style.Colors[ImGuiCol_Text].z,
-                                                _openButtonTextAlpha));
+                                                _saveButtonTextAlpha));
     
-    if (ImGui::ButtonEx("Open", ImVec2(50,25), _openButtonFlags))
+    if (ImGui::ButtonEx("Save", ImVec2(60,25), _saveButtonFlags))
     {
-        _imguiLayer->open(_filePath);
+        _imguiLayer->save(std::string(_filePath) + ".gmx");
         _lastFileRoot = FileSystem::getParentPath(_filePath);
         *opened = false;
         closeWindow();
@@ -82,12 +103,12 @@ void OpenFileWindow::showOpenFileWindow(bool* opened)
     ImGui::PopStyleColor();
     
     ImGui::SameLine();
-    if (ImGui::Button("Close", ImVec2(50,25)))
+    if (ImGui::Button("Close", ImVec2(60,25)))
     {
         *opened = false;
         closeWindow();
     }
-   
+    
     ImGui::End();
     
     if ( *opened == false)
@@ -97,17 +118,19 @@ void OpenFileWindow::showOpenFileWindow(bool* opened)
 }
 
 
-void OpenFileWindow::closeWindow()
+void SaveAsFileWindow::closeWindow()
 {
     strncpy(_filePath, _lastFileRoot.c_str(), 256);
-    _openButtonTextAlpha = 0.5f;
-    _openButtonFlags |= ImGuiButtonFlags_Disabled;
+    _saveButtonTextAlpha = 0.5f;
+    _saveButtonFlags = ImGuiButtonFlags_Disabled;
     _imguiLayer->setEnableFileMenu(true);
+    _imguiLayer->setEnableEditMenu(true);
+    _imguiLayer->setEnablePlayerMenu(true);
+    _imguiLayer->setEnableWindowMenu(true);
     _inDirectories.clear();
 }
 
-
-void OpenFileWindow::showDirectoryAndFile(const std::string& path)
+void SaveAsFileWindow::showDirectoryAndFile(const std::string& path)
 {
     auto items = FileSystem::getFilesAndDirectoriesInPath(path);
     for( auto item : items)
@@ -120,27 +143,13 @@ void OpenFileWindow::showDirectoryAndFile(const std::string& path)
                 if ( idx != std::string::npos && item[idx-1] == '/' )
                     continue;
                 
-                if (ImGui::TreeNode(item.c_str()))
+                if ( ImGui::TreeNode(item.c_str()) )
                 {
-                    _openButtonTextAlpha = 0.5f;
-                    _openButtonFlags |= ImGuiButtonFlags_Disabled;
+                    _saveButtonTextAlpha = 0.5f;
+                    _saveButtonFlags = ImGuiButtonFlags_Disabled;
+                    strncpy(_filePath, item.c_str(), 256);
                     showDirectoryAndFile(item);
                     ImGui::TreePop();
-                }
-            }
-            else
-            {
-                if ( item.size() > 4 && item.substr(item.size() - 4, 4) == ".gmx" )
-                {
-                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-                    ImGui::Bullet();
-                    if (ImGui::Selectable(item.c_str()))
-                    {
-                        _openButtonTextAlpha = 1.0f;
-                        _openButtonFlags = 0;
-                        strncpy(_filePath, item.c_str(), 256);
-                    }
-                    ImGui::PopStyleColor();
                 }
             }
         }
@@ -150,10 +159,6 @@ void OpenFileWindow::showDirectoryAndFile(const std::string& path)
         }
     }
 }
-
-
-
-
 
 
 

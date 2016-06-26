@@ -16,9 +16,6 @@ bool ImGuiLayer::init()
     
     ImGuiStyle& style = ImGui::GetStyle();
     
-    style.WindowFillAlphaDefault = 0.98f;
-    style.WindowPadding.x = 8;
-    style.WindowPadding.y = 4;
     style.Colors[ImGuiCol_Text] = ImVec4(0.0000000, 0.0000000, 0.0000000, 1.0000000);
     style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.6000000, 0.6000000, 0.6000000, 1.0000000);
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.9400000, 0.9400000, 0.9400000, 1.0000000);
@@ -63,7 +60,12 @@ bool ImGuiLayer::init()
     style.Colors[ImGuiCol_TooltipBg] = ImVec4(1.0000000, 1.0000000, 1.0000000, 0.9400000);
     style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.2000000, 0.2000000, 0.2000000, 0.3500000);
     
+    style.WindowFillAlphaDefault = 0.98f;
+    style.WindowPadding.x = 8.0f;
+    style.WindowPadding.y = 4.0f;
     style.FramePadding = ImVec2(4.0f, 4.0f);
+    style.FrameRounding = 4.0f;
+    style.ItemSpacing.x = 8.0f;
     
     ImGui::GetIO().FontGlobalScale = 1.4f;
     

@@ -14,6 +14,7 @@ class PaletteWindow;
 class TriggerEditor;
 class OpenFileWindow;
 class NewFileWindow;
+class SaveAsFileWindow;
 
 class EditScene : public ImGuiLayer
 {
@@ -42,6 +43,16 @@ public:
     
     void createNewFile(GMXFile* file);
     
+    void open(const std::string& path);
+    
+    void save();
+    
+    void save(const std::string& path);
+    
+    void saveAs();
+    
+    void closeCurrentLayer();
+    
 private:
     
     virtual void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) override;
@@ -63,12 +74,6 @@ private:
     void redo();
     
     void undo();
-    
-    void save();
-    
-    void saveAs() {}
-    
-    void open();
     
 private:
 
@@ -96,6 +101,8 @@ private:
     
     OpenFileWindow* _openFileWindow;
     
+    SaveAsFileWindow* _saveAsFileWindow;
+    
     cocos2d::DrawNode* _debugNode;
     
     bool _isMousePressed = false;
@@ -103,6 +110,8 @@ private:
     bool _showNewMap = false;
     
     bool _showOpenMap = false;
+    
+    bool _showSaveAsFile = false;
     
     bool _showTrigger = false;
     

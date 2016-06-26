@@ -88,7 +88,15 @@ public:
     
     bool isChanged() const;
     
+    bool isFirstFile() const { return _isFirstFile; }
+    
+    void disableFirstFile() { _isFirstFile = false; }
+    
     GMXFile* getFile() const { return _file; }
+    
+    std::string getFilePath() const { return _filePath; }
+    
+    void setFilePath(const std::string& path) { _filePath = path; }
     
     // todo list
     
@@ -138,6 +146,9 @@ private:
     
     HistoryQueue* _historyQueue;
     
+    bool _isFirstFile = true;
+    
+    std::string _filePath;
     
 };
 

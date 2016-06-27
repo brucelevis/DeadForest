@@ -11,6 +11,8 @@
 
 #include "cocos2d.h"
 
+#include "GMXLayer2.hpp"
+
 class TestScene : public cocos2d::Layer
 {
     
@@ -21,6 +23,10 @@ public:
     static cocos2d::Scene* createScene();
     
     virtual bool init() override;
+    
+private:
+    
+    GMXLayer2* _layer;
     
 };
 

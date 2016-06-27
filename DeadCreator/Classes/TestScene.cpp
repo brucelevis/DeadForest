@@ -23,5 +23,17 @@ bool TestScene::init()
     if ( !Layer::init() )
         return false;
     
+    _layer = GMXLayer2::create(Size(300, 300));
+    addChild(_layer);
+    
     return true;
 }
+
+
+
+
+
+
+
+
+

@@ -3,8 +3,7 @@
 
 #include "cocos2d.h"
 #include "imgui.h"
-
-USING_NS_CC;
+#include "imgui_impl_glfw.h"
 
 class ImGuiLayer : public cocos2d::Layer
 {
@@ -12,7 +11,9 @@ public:
     
     virtual bool init() override;
 
-    virtual void visit(Renderer *renderer, const Mat4& parentTransform, uint32_t parentFlags) override;
+    virtual void visit(cocos2d::Renderer *renderer,
+                       const cocos2d::Mat4& parentTransform,
+                       uint32_t parentFlags) override;
 
     void onDraw();
 
@@ -36,7 +37,7 @@ public:
 
 protected:
     
-    CustomCommand _command;
+    cocos2d::CustomCommand _command;
     
     GLFWwindow* _window = nullptr;
     

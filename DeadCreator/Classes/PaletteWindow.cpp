@@ -8,7 +8,7 @@
 
 #include "PaletteWindow.hpp"
 #include "EditScene.h"
-
+using namespace cocos2d;
 
 PaletteWindow::PaletteWindow(EditScene* imguiLayer):
 _imguiLayer(imguiLayer)
@@ -81,7 +81,6 @@ void PaletteWindow::showPaletteWindow(bool* opened)
     {
         if (_imguiLayer->imageButton("human.png", 50, 50))
         {
-            log("human");
             _selectedItem = 0;
         }
     }

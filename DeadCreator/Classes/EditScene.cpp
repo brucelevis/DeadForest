@@ -54,7 +54,7 @@ bool EditScene::init()
     
     _oldWindowSize = Director::getInstance()->getVisibleSize();
     
-    addImGUI([this](){
+    addImGUI([this]() {
         
         // main menu
         if ( _showNewMap ) _newFileWindow->showNewFileWindow(&_showNewMap);

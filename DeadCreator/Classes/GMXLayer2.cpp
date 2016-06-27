@@ -50,7 +50,7 @@ void GMXLayer2::showWindow()
     ImGui::SetNextWindowPos(ImVec2(_position.x, _position.y), ImGuiSetCond_Once);
     ImGui::SetNextWindowSize(ImVec2(windowSize.width, windowSize.height));
     
-    //        ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
+    ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
     ImGui::Begin("test layer", &_isShowWindow, ImVec2(0,0), 0.0f,
                  ImGuiWindowFlags_NoResize |
                  ImGuiWindowFlags_NoScrollbar |
@@ -58,7 +58,7 @@ void GMXLayer2::showWindow()
                  ImGuiWindowFlags_NoBringToFrontOnFocus);
     
     ImGui::End();
-    //        ImGui::PopStyleColor(1);
+    ImGui::PopStyleColor(1);
 }
 
 

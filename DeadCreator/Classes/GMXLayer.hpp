@@ -132,7 +132,7 @@ private:
     
     std::vector<cocos2d::Sprite*> _attachedTileImages;
     
-    std::vector<std::vector<cocos2d::Sprite*>> _tileImages;
+    std::vector< std::vector<cocos2d::Sprite*> > _tileImages;
     
     PaletteWindow* _palette;
     

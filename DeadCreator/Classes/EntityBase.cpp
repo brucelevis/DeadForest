@@ -1,0 +1,31 @@
+//
+//  EntityBase.cpp
+//  TheDeadForest
+//
+//  Created by mac on 2016. 1. 3..
+//
+//
+
+#include "EntityBase.hpp"
+
+
+EntityBase::EntityBase(GameManager* gameMgr) :
+_gameMgr(gameMgr),
+_familyMask(0),
+_entityType(0)
+{
+}
+
+EntityBase::EntityBase(const EntityBase& rhs)
+{
+    _gameMgr = rhs._gameMgr;
+    _familyMask = rhs._familyMask;
+    _entityType = rhs._entityType;
+    _tag = rhs._tag;
+}
+
+void EntityBase::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags)
+{
+    //        setPosition( getWorldPosition() - _gameMgr->getGameWorld()->getGameCamera()->getCameraPos() );
+    Node::visit(renderer, transform, flags);
+}

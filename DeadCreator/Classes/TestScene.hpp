@@ -12,6 +12,7 @@
 #include "cocos2d.h"
 
 #include "GMXLayer2.hpp"
+#include "CellSpacePartition.hpp"
 
 class TestScene : public cocos2d::Layer
 {
@@ -25,6 +26,8 @@ public:
     virtual bool init() override;
     
 private:
+    
+    CellSpacePartition* _cellSpace;
     
     GMXLayer2* _layer;
     

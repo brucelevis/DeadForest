@@ -159,13 +159,7 @@ void GMXLayer2::initFile()
 void GMXLayer2::showWindow()
 {
     if ( _isShowPalette ) _paletteLayer->showLayer(&_isShowPalette);
-    
-    if ( _isShowNavigator )
-    {
-        _navigatorLayer->showLayer(&_isShowNavigator);
-        _navigatorLayer->setVisible(true);
-    }
-    else _navigatorLayer->setVisible(false);
+    if ( _isShowNavigator ) _navigatorLayer->showLayer(&_isShowNavigator);
     
     ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Appearing);
     ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Appearing);
@@ -176,7 +170,6 @@ void GMXLayer2::showWindow()
     ImGui::Begin(_file.fileName.c_str(), &_isShowWindow, ImVec2(0,0), 0.0f,
                  ImGuiWindowFlags_NoScrollbar |
                  ImGuiWindowFlags_NoCollapse |
-                 ImGuiWindowFlags_ShowBorders |
                  ImGuiWindowFlags_NoBringToFrontOnFocus);
     
     _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
@@ -209,6 +202,7 @@ void GMXLayer2::showWindow()
     {
         setVisible(false);
         _isShowPalette = false;
+        _isShowNavigator = false;
         _imguiLayer.setEnableEditMenu(false);
         _imguiLayer.setEnablePlayerMenu(false);
         _imguiLayer.setEnableWindowMenu(false);

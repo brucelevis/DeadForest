@@ -32,15 +32,10 @@ private:
     EditScene2& _imguiLayer;
     
     bool _isShowWindow = true;
-    cocos2d::DrawNode* _worldDebugNode;
-    cocos2d::DrawNode* _localDebugNode;
-    cocos2d::ClippingRectangleNode* _clipNode;
-    cocos2d::Size _visibleSize;
     cocos2d::Size _layerSize;
     cocos2d::Vec2 _layerPosition;
     cocos2d::Vec2 _centerViewParam;
     cocos2d::Vec2 _centerViewPosition;
-    cocos2d::Node* _rootNode;
     
 };
 

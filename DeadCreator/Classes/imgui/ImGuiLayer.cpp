@@ -116,7 +116,8 @@ bool ImGuiLayer::removeImGUI(std::string name)
 
 
 #include <tuple>
-static std::tuple<Texture2D*, ImVec2, ImVec2, ImVec2> getTextureInfo(const std::string& fn, int w = -1, int h = -1) {
+static std::tuple<Texture2D*, ImVec2, ImVec2, ImVec2> getTextureInfo(const std::string& fn, int w = -1, int h = -1)
+{
     std::string name = fn;
     cocos2d::Texture2D *texture = NULL;
     ImVec2 uv0(0, 0);
@@ -124,22 +125,27 @@ static std::tuple<Texture2D*, ImVec2, ImVec2, ImVec2> getTextureInfo(const std::
     ImVec2 size(0, 0);
     
     // sprite frame
-    if (fn.at(0) == '#') {
+    if (fn.at(0) == '#')
+    {
         name = name.substr(1, name.size());
         SpriteFrame *sf = cocos2d::SpriteFrameCache::getInstance()->getSpriteFrameByName(name);
-        if (sf) {
+        if (sf)
+        {
             float atlasWidth = (float)sf->getTexture()->getPixelsWide();
             float atlasHeight = (float)sf->getTexture()->getPixelsHigh();
             
             const Rect& rect = sf->getRect();
             texture = sf->getTexture();
-            if (sf->isRotated()) {
+            if (sf->isRotated())
+            {
                 // FIXME:
                 uv0.x = rect.origin.x / atlasWidth;
                 uv0.y = rect.origin.y / atlasHeight;
                 uv1.x = (rect.origin.x + rect.size.width) / atlasWidth;
                 uv1.y = (rect.origin.y + rect.size.height) / atlasHeight;
-            } else {
+            }
+            else
+            {
                 uv0.x = rect.origin.x / atlasWidth;
                 uv0.y = rect.origin.y / atlasHeight;
                 uv1.x = (rect.origin.x + rect.size.width) / atlasWidth;
@@ -149,13 +155,16 @@ static std::tuple<Texture2D*, ImVec2, ImVec2, ImVec2> getTextureInfo(const std::
             size.x = sf->getRect().size.width;
             size.y = sf->getRect().size.height;
         }
-    } else {
+    }
+    else
+    {
         texture = cocos2d::Director::getInstance()->getTextureCache()->addImage(fn);
         size.x = texture->getPixelsWide();
         size.y = texture->getPixelsHigh();
     }
     
-    if (w > 0 && h > 0) {
+    if (w > 0 && h > 0)
+    {
         size.x = w;
         size.y = h;
     }
@@ -171,12 +180,16 @@ void ImGuiLayer::image(const std::string& fn, int w, int h)
     ImVec2 size(0, 0);
     
     std::tie(texture, size, uv0, uv1) = getTextureInfo(fn, w, h);
-    if (texture) {
+    if (texture)
+    {
         bool needToPopID = false;
         GLuint texId = texture->getName();
-        if (_usedTextureIdMap.find(texId) == _usedTextureIdMap.end()) {
+        if (_usedTextureIdMap.find(texId) == _usedTextureIdMap.end())
+        {
             _usedTextureIdMap[texId] = 0;
-        } else {
+        }
+        else
+        {
             _usedTextureIdMap[texId]++;
             ImGui::PushID(_usedTextureIdMap[texId]);
             needToPopID = true;
@@ -184,11 +197,13 @@ void ImGuiLayer::image(const std::string& fn, int w, int h)
         
         ImGui::Image(reinterpret_cast<ImTextureID>(texId), size, uv0, uv1);
         
-        if (needToPopID) {
+        if (needToPopID)
+        {
             ImGui::PopID();
         }
     }
 }
+
 bool ImGuiLayer::imageButton(const std::string& fn, int w, int h)
 {
     cocos2d::Texture2D *texture = NULL;
@@ -198,12 +213,16 @@ bool ImGuiLayer::imageButton(const std::string& fn, int w, int h)
     
     bool ret = false;
     std::tie(texture, size, uv0, uv1) = getTextureInfo(fn, w, h);
-    if (texture) {
+    if (texture)
+    {
         bool needToPopID = false;
         GLuint texId = texture->getName();
-        if (_usedTextureIdMap.find(texId) == _usedTextureIdMap.end()) {
+        if (_usedTextureIdMap.find(texId) == _usedTextureIdMap.end())
+        {
             _usedTextureIdMap[texId] = 0;
-        } else {
+        }
+        else
+        {
             _usedTextureIdMap[texId]++;
             ImGui::PushID(_usedTextureIdMap[texId]);
             needToPopID = true;
@@ -211,7 +230,8 @@ bool ImGuiLayer::imageButton(const std::string& fn, int w, int h)
         
         ret = ImGui::ImageButton(reinterpret_cast<ImTextureID>(texture->getName()), size, uv0, uv1);
         
-        if (needToPopID) {
+        if (needToPopID)
+        {
             ImGui::PopID();
         }
     }

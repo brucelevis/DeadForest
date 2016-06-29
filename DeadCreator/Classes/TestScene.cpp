@@ -24,11 +24,10 @@ bool TestScene::init()
 {
     if ( !Layer::init() )
         return false;
-
     
     GMXFile* file = new GMXFile();
-    file->numOfTileY = 30;
-    file->numOfTileX = 30;
+    file->numOfTileY = 32;
+    file->numOfTileX = 32;
     file->tileWidth = 128;
     file->tileHeight = 128;
     file->worldSize = Size(file->numOfTileX * file->tileWidth, file->numOfTileY * file->tileHeight);
@@ -36,17 +35,8 @@ bool TestScene::init()
     _layer = GMXLayer2::create(*file);
     addChild(_layer);
     
-    auto btn = ui::Button::create("CloseNormal.png", "CloseSelected.png");
-    btn->setPosition(Vec2(500, 300));
-    btn->addTouchEventListener([this](Ref* ref, ui::Widget::TouchEventType type) {
-        
-        if ( type == ui::Widget::TouchEventType::ENDED )
-        {
-            _layer->setVisible( !_layer->isVisible() );
-        }
-        
-    });
-    addChild(btn, 1);
+    auto l2 = GMXLayer2::create(*file);
+    addChild(l2);
     
     return true;
 }

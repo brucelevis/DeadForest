@@ -11,18 +11,18 @@
 
 #include <vector>
 
-class TerrainBase;
+class TileBase;
 
 class MutableUiBase
 {
     
 public:
     
-    virtual void setTerrain(int x, int y, TerrainBase* terrain) { _tiles[y][x] = terrain; }
+    virtual void setTile(int x, int y, TileBase* tile) { _tiles[y][x] = tile; }
     
 protected:
     
-    std::vector<std::vector<TerrainBase*>> _tiles;
+    std::vector<std::vector<TileBase*>> _tiles;
     
 };
 

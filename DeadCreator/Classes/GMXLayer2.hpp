@@ -16,6 +16,8 @@
 #include "TileImage.hpp"
 #include "Camera2D.hpp"
 
+#define DUMMY_TILE_SIZE 4
+
 class GMXFile;
 
 class GMXLayer2 : public MutableUiBase, public ImGuiLayer
@@ -37,27 +39,33 @@ public:
 
     virtual void update(float dt) override;
     
-    virtual void setTerrain(int x, int y, TerrainBase* terrain) override;
+    virtual void setTile(int x, int y, TileBase* tile) override;
     
     void showWindow();
     
-    void updateChunk(int x, int y);
+    void updateChunk(const cocos2d::Vec2& pivot);
     
     bool isUpdateChunk(const cocos2d::Vec2& newPos, const cocos2d::Vec2& oldPos);
     
     void setLayerMaxSize(const cocos2d::Size& maxSize) { _layerMaxSize = maxSize; }
     
-    cocos2d::Vec2 getRootTileWorldPosition() const { return _rootTileWorldPosition; }
+    cocos2d::Vec2 getTileRootWorldPosition() const { return _tileRootWorldPosition; }
     
     virtual void setVisible(bool visible) override;
     
     void initFile();
     
+    std::pair<int,int> getFocusedTileIndex(const cocos2d::Vec2& worldPos) const;
+    
+    bool isContainPointInDiamond(const cocos2d::Vec2& diamondCenter, const cocos2d::Size& halfLen, const cocos2d::Vec2& p) const;
+    
 private:
     
     GMXFile& _file;
     
-    cocos2d::DrawNode* _debugNode;
+    cocos2d::DrawNode* _worldDebugNode;
+    
+    cocos2d::DrawNode* _localDebugNode;
     
     cocos2d::Size _visibleSize;
     
@@ -71,7 +79,7 @@ private:
     
     cocos2d::Vec2 _centerViewPosition;
     
-    cocos2d::Vec2 _rootTileWorldPosition;
+    cocos2d::Vec2 _tileRootWorldPosition;
     
     cocos2d::Vec2 _cameraDirection;
     
@@ -79,11 +87,17 @@ private:
     
     float _windowSpeed;
     
-    cocos2d::Node* _root;
+    cocos2d::Node* _tileRoot;
+    
+    cocos2d::Node* _rootNode;
     
     CellSpacePartition* _cellSpacePartition;
     
     std::vector< std::vector<TileImage*> > _tileImages;
+    
+    int _viewX;
+    
+    int _viewY;
     
     cocos2d::ClippingRectangleNode* _clipNode;
     

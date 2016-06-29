@@ -1,24 +1,25 @@
 //
-//  TestScene.hpp
+//  EditScene2.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 6. 26..
 //
 //
 
-#ifndef TestScene_hpp
-#define TestScene_hpp
+#pragma once
 
 #include "cocos2d.h"
+#include "ImGuiLayer.h"
 
-#include "GMXLayer2.hpp"
+class GMXLayer2;
+class NewFileWindow2;
 
-class TestScene : public cocos2d::Layer
+class EditScene2 : public ImGuiLayer
 {
     
 public:
     
-    CREATE_FUNC(TestScene);
+    CREATE_FUNC(EditScene2);
     
     static cocos2d::Scene* createScene();
     
@@ -28,6 +29,8 @@ private:
     
     GMXLayer2* _layer;
     
-};
+    NewFileWindow2* _newFileWindow;
 
-#endif /* TestScene_hpp */
+    bool _showNewMap = false;
+    
+};

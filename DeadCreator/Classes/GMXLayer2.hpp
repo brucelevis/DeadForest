@@ -20,12 +20,12 @@
 
 class GMXFile;
 
-class GMXLayer2 : public MutableUiBase, public ImGuiLayer
+class GMXLayer2 : public MutableUiBase, public cocos2d::Layer
 {
     
 public:
     
-    explicit GMXLayer2(GMXFile& file);
+    explicit GMXLayer2(ImGuiLayer& _imguiLayer, GMXFile& file);
     
     virtual ~GMXLayer2() = default;
     
@@ -33,7 +33,7 @@ public:
     
     virtual void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) override;
     
-    static GMXLayer2* create(GMXFile& file);
+    static GMXLayer2* create(ImGuiLayer& imguiLayer, GMXFile& file);
     
     virtual bool init() override;
 
@@ -47,7 +47,7 @@ public:
     
     bool isUpdateChunk(const cocos2d::Vec2& newPos, const cocos2d::Vec2& oldPos);
     
-    void setLayerMaxSize(const cocos2d::Size& maxSize) { _layerMaxSize = maxSize; }
+    void setLayerPosition(const cocos2d::Vec2& pos) { _layerPosition = pos; }
     
     cocos2d::Vec2 getTileRootWorldPosition() const { return _tileRootWorldPosition; }
     
@@ -61,6 +61,8 @@ public:
     
 private:
     
+    ImGuiLayer& _imguiLayer;
+    
     GMXFile& _file;
     
     cocos2d::DrawNode* _worldDebugNode;
@@ -70,8 +72,6 @@ private:
     cocos2d::Size _visibleSize;
     
     cocos2d::Size _layerSize;
-    
-    cocos2d::Size _layerMaxSize;
     
     cocos2d::Vec2 _layerPosition;
     

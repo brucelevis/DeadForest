@@ -1,6 +1,6 @@
 #include "AppDelegate.h"
 #include "EditScene.h"
-#include "TestScene.hpp"
+#include "EditScene2.hpp"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 #include "ImGuiGLViewImpl.h"
@@ -64,7 +64,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
     // create a scene. it's an autorelease object
     
-    auto scene = TestScene::createScene();
+    auto scene = EditScene2::createScene();
     director->runWithScene(scene);
     
     return true;

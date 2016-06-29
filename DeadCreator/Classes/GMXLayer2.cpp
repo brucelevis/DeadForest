@@ -12,13 +12,13 @@
 using namespace cocos2d;
 
 
-GMXLayer2::GMXLayer2(GMXFile& file) :
+GMXLayer2::GMXLayer2(ImGuiLayer& imguiLayer, GMXFile& file) :
+_imguiLayer(imguiLayer),
 _file(file),
 _worldDebugNode(nullptr),
 _localDebugNode(nullptr),
 _visibleSize(Director::getInstance()->getVisibleSize()),
 _layerSize(Size(800, 500)),
-_layerMaxSize(Director::getInstance()->getVisibleSize()),
 _layerPosition(Director::getInstance()->getVisibleSize() / 2 - _layerSize / 2),
 _centerViewParam(Vec2::ZERO),
 _centerViewPosition(Vec2(_layerSize / 2)),
@@ -31,9 +31,9 @@ _viewY(60)
 {}
 
 
-GMXLayer2* GMXLayer2::create(GMXFile& file)
+GMXLayer2* GMXLayer2::create(ImGuiLayer& imguiLayer, GMXFile& file)
 {
-    auto ret = new (std::nothrow) GMXLayer2(file);
+    auto ret = new (std::nothrow) GMXLayer2(imguiLayer, file);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -46,7 +46,7 @@ GMXLayer2* GMXLayer2::create(GMXFile& file)
 
 bool GMXLayer2::init()
 {
-    if ( !ImGuiLayer::init() )
+    if ( !Layer::init() )
         return false;
     
     for(int i = 0 ; i < 256 ; ++ i)
@@ -61,7 +61,7 @@ bool GMXLayer2::init()
     
     this->scheduleUpdate();
     
-    addImGUI([this] {
+    _imguiLayer.addImGUI([this] {
         
         if ( _isShowWindow ) showWindow();
         
@@ -152,7 +152,7 @@ void GMXLayer2::showWindow()
     ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Appearing);
     
     ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
     ImGui::Begin("gmx layer", &_isShowWindow, ImVec2(0,0), 0.0f,
                  ImGuiWindowFlags_NoScrollbar |
                  ImGuiWindowFlags_NoCollapse |
@@ -185,7 +185,6 @@ void GMXLayer2::showWindow()
 //        log("layer: %.0f, %.0f", _layerPosition.x, _layerPosition.y);
 //        log("pos: %.0f, %.0f", getPosition().x, getPosition().y);
     
-    
     if ( _isShowWindow == false )
         setVisible(false);
 }
@@ -194,6 +193,9 @@ void GMXLayer2::showWindow()
 void GMXLayer2::setVisible(bool visible)
 {
     _isShowWindow = visible;
+    _clipNode->setVisible(visible);
+    _rootNode->setVisible(visible);
+    _tileRoot->setVisible(visible);
     Node::setVisible(visible);
 }
 
@@ -246,7 +248,6 @@ void GMXLayer2::update(float dt)
     _tileRoot->setPosition( Vec2(_layerSize / 2) + _tileRootWorldPosition - _camera->getPosition() );
     
     _rootNode->setPosition( -_camera->getPosition() + Vec2(_layerSize / 2) );
-    log("%.0f, %.0f", _camera->getPosition().x, _camera->getPosition().y);
     
 }
 

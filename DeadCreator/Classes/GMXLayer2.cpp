@@ -6,13 +6,17 @@
 //
 //
 
+
 #include "GMXLayer2.hpp"
-#include "TileBase.hpp"
 #include "GMXFile.hpp"
+#include "TileBase.hpp"
+#include "PaletteLayer.hpp"
+#include "NavigatorLayer.hpp"
+#include "EditScene2.hpp"
+#include "TileHelperFunctions.hpp"
 using namespace cocos2d;
 
-
-GMXLayer2::GMXLayer2(ImGuiLayer& imguiLayer, GMXFile& file) :
+GMXLayer2::GMXLayer2(EditScene2& imguiLayer, GMXFile& file) :
 _imguiLayer(imguiLayer),
 _file(file),
 _worldDebugNode(nullptr),
@@ -31,7 +35,7 @@ _viewY(60)
 {}
 
 
-GMXLayer2* GMXLayer2::create(ImGuiLayer& imguiLayer, GMXFile& file)
+GMXLayer2* GMXLayer2::create(EditScene2& imguiLayer, GMXFile& file)
 {
     auto ret = new (std::nothrow) GMXLayer2(imguiLayer, file);
     if ( ret && ret->init() )
@@ -92,6 +96,12 @@ bool GMXLayer2::init()
     
     initFile();
     
+    _paletteLayer = PaletteLayer::create(_imguiLayer);
+    addChild(_paletteLayer);
+    
+    _navigatorLayer = NavigatorLayer::create(_imguiLayer);
+    addChild(_navigatorLayer);
+    
     return true;
 }
 
@@ -123,7 +133,7 @@ void GMXLayer2::initFile()
                                       i * _file.tileHeight / 2 - (_file.tileHeight * DUMMY_TILE_SIZE));
             }
             
-            _tiles[i][j] = new TileBase( std::to_string(random(1,3)) + "_" + std::to_string(random(1,3)) + "_1234", tilePosition);
+            _tiles[i][j] = new TileBase( _file.tileInfos[i][j], tilePosition);
         }
     }
     
@@ -148,12 +158,22 @@ void GMXLayer2::initFile()
 
 void GMXLayer2::showWindow()
 {
+    if ( _isShowPalette ) _paletteLayer->showLayer(&_isShowPalette);
+    
+    if ( _isShowNavigator )
+    {
+        _navigatorLayer->showLayer(&_isShowNavigator);
+        _navigatorLayer->setVisible(true);
+    }
+    else _navigatorLayer->setVisible(false);
+    
     ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Appearing);
     ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Appearing);
     
     ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
-    ImGui::Begin("gmx layer", &_isShowWindow, ImVec2(0,0), 0.0f,
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(200,200));
+    ImGui::Begin(_file.fileName.c_str(), &_isShowWindow, ImVec2(0,0), 0.0f,
                  ImGuiWindowFlags_NoScrollbar |
                  ImGuiWindowFlags_NoCollapse |
                  ImGuiWindowFlags_ShowBorders |
@@ -163,7 +183,7 @@ void GMXLayer2::showWindow()
     _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
     
     ImGui::End();
-    ImGui::PopStyleVar();
+    ImGui::PopStyleVar(2);
     ImGui::PopStyleColor();
     
     _visibleSize = Director::getInstance()->getVisibleSize();
@@ -186,18 +206,15 @@ void GMXLayer2::showWindow()
 //        log("pos: %.0f, %.0f", getPosition().x, getPosition().y);
     
     if ( _isShowWindow == false )
+    {
         setVisible(false);
+        _isShowPalette = false;
+        _imguiLayer.setEnableEditMenu(false);
+        _imguiLayer.setEnablePlayerMenu(false);
+        _imguiLayer.setEnableWindowMenu(false);
+    }
 }
 
-
-void GMXLayer2::setVisible(bool visible)
-{
-    _isShowWindow = visible;
-    _clipNode->setVisible(visible);
-    _rootNode->setVisible(visible);
-    _tileRoot->setVisible(visible);
-    Node::setVisible(visible);
-}
 
 
 void GMXLayer2::setTile(int x, int y, TileBase* tile)
@@ -237,7 +254,7 @@ void GMXLayer2::update(float dt)
     
     _camera->setPosition(newPosition);
     auto cameraPos = _camera->getPosition();
-    cameraPos.clamp(Vec2::ZERO, Vec2(_file.worldSize));
+    cameraPos.clamp(Vec2(_layerSize / 2), Vec2(_file.worldSize) - Vec2(_layerSize / 2));
     _camera->setPosition(cameraPos);
     
     if ( _cellSpacePartition->isUpdateChunk(oldPosition, newPosition) )
@@ -248,7 +265,6 @@ void GMXLayer2::update(float dt)
     _tileRoot->setPosition( Vec2(_layerSize / 2) + _tileRootWorldPosition - _camera->getPosition() );
     
     _rootNode->setPosition( -_camera->getPosition() + Vec2(_layerSize / 2) );
-    
 }
 
 
@@ -256,7 +272,7 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
 {
     _tileRootWorldPosition = pivot;
     
-    auto index = getFocusedTileIndex(pivot);
+    auto index = getFocusedTileIndex(pivot, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
     
     index.first -= _viewX / 2;
     index.second -= _viewY / 2;
@@ -290,57 +306,12 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
 }
 
 
-std::pair<int,int> GMXLayer2::getFocusedTileIndex(const cocos2d::Vec2& worldPos) const
-{
-    int centerTileIndexX = static_cast<int>((worldPos.x) / _file.tileWidth) + DUMMY_TILE_SIZE;        // not exact index!
-    int centerTileIndexY = static_cast<int>((worldPos.y) / (_file.tileHeight / 2))  + DUMMY_TILE_SIZE * 2;  // not exact index!
-    
-    for(int i = centerTileIndexY - 2 ; i < centerTileIndexY + 2 ; ++ i)
-    {
-        for(int j = centerTileIndexX - 2 ; j < centerTileIndexX + 2 ; ++ j)
-        {
-            Vec2 pivot;
-            if( i % 2 == 0 ) pivot.setPoint(j * 128 - (128 * DUMMY_TILE_SIZE), i * 64 - (128 * DUMMY_TILE_SIZE));
-            else pivot.setPoint(64 + j * 128 - (128 * DUMMY_TILE_SIZE), i * 64 - (128 * DUMMY_TILE_SIZE));
-            
-            if(isContainPointInDiamond(pivot, Size(_file.tileWidth / 2, _file.tileHeight / 2), worldPos))
-            {
-                centerTileIndexX = j; // exact index!
-                centerTileIndexY = i; // exact index!
-                return std::make_pair(j, i);
-            }
-        }
-    }
-    
-    return {0, 0};
-}
 
 
-bool GMXLayer2::isContainPointInDiamond(const cocos2d::Vec2& diamondCenter, const cocos2d::Size& halfLen, const cocos2d::Vec2& p) const
-{
-    int m = 1;
-    float b[4];
-    
-    cocos2d::Vec2 leftPoint = cocos2d::Vec2(diamondCenter.x - halfLen.width, diamondCenter.y);
-    cocos2d::Vec2 rightPoint = cocos2d::Vec2(diamondCenter.x + halfLen.width, diamondCenter.y);
-    cocos2d::Vec2 topPoint = cocos2d::Vec2(diamondCenter.x, diamondCenter.y + halfLen.height);
-    cocos2d::Vec2 botPoint = cocos2d::Vec2(diamondCenter.x, diamondCenter.y - halfLen.height);
-    
-    b[0] = leftPoint.y - m * leftPoint.x;
-    b[1] = topPoint.y + m * topPoint.x;
-    b[2] = rightPoint.y - m * rightPoint.x;
-    b[3] = botPoint.y + m * botPoint.x;
-    
-    if (p.y - (m * p.x) - b[0] < 0.f
-        && p.y - (-m * p.x) - b[1] < 0.f
-        && p.y - (m * p.x) - b[2] > 0.f
-        && p.y - (-m * p.x) - b[3] > 0.f)
-    {
-        return true;
-    }
-    
-    return false;
-}
+
+
+
+
 
 
 

@@ -35,9 +35,6 @@ bool EditScene2::init()
     file->tileHeight = 128;
     file->worldSize = Size(file->numOfTileX * file->tileWidth, file->numOfTileY * file->tileHeight);
     
-//    _layer = GMXLayer2::create(*this, *file);
-//    addChild(_layer);
-    
     _newFileWindow = NewFileWindow2::create(this);
     addChild(_newFileWindow);
     
@@ -47,9 +44,12 @@ bool EditScene2::init()
         
         if (ImGui::BeginMainMenuBar())
         {
-            if (ImGui::BeginMenu("File"))
+            if (ImGui::BeginMenu("File", _isFileEnable))
             {
-                if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap)) {}
+                if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap))
+                {
+                    if ( _showNewMap ) _isFileEnable = false;
+                }
                 if (ImGui::MenuItem("Open", "Ctrl+O")) {}
                 if (ImGui::BeginMenu("Open Recent"))
                 {
@@ -65,7 +65,7 @@ bool EditScene2::init()
                 
                 ImGui::EndMenu();
             }
-            if (ImGui::BeginMenu("Edit"))
+            if (ImGui::BeginMenu("Edit", _isEditEnable))
             {
                 if (ImGui::MenuItem("Undo", "CTRL+Z")) { }
                 if (ImGui::MenuItem("Redo", "CTRL+Y")) { }
@@ -77,7 +77,7 @@ bool EditScene2::init()
                 ImGui::EndMenu();
             }
             
-            if (ImGui::BeginMenu("Players"))
+            if (ImGui::BeginMenu("Players", _isPlayerEnable))
             {
                 if (ImGui::MenuItem("Player 1")) {}
                 if (ImGui::MenuItem("Player 2")) {}
@@ -92,11 +92,12 @@ bool EditScene2::init()
                 ImGui::EndMenu();
             }
             
-            if (ImGui::BeginMenu("Windows"))
+            if (ImGui::BeginMenu("Windows", _isWindowEnable))
             {
-                ImGui::MenuItem("Trigger Editor", "SHIFT+T");
-                ImGui::MenuItem("Palette Window", "SHIFT+P");
-                ImGui::MenuItem("Property Editor", "SHIFT+R");
+                ImGui::MenuItem("Navigator", "SHIFT+N", &_layer->isShowNavigator());
+                ImGui::MenuItem("Trigger", "SHIFT+T");
+                ImGui::MenuItem("Palette", "SHIFT+P", &_layer->isShowPalette());
+                ImGui::MenuItem("Property", "SHIFT+R");
                 ImGui::EndMenu();
             }
             
@@ -145,6 +146,17 @@ bool EditScene2::init()
     }, "##main menu");
     
     return true;
+}
+
+
+void EditScene2::createGMXLayer(GMXFile* file)
+{
+    _layer = GMXLayer2::create(*this, *file);
+    addChild(_layer);
+    
+    _isEditEnable = true;
+    _isPlayerEnable = true;
+    _isWindowEnable = true;
 }
 
 

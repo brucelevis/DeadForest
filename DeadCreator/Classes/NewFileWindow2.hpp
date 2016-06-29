@@ -36,12 +36,24 @@ private:
     EditScene2* _imguiLayer;
     
     int _tileSizeXItem = 0;
-    int _tileSizeYItem = 0;
-    int _numOfTileX = 0;
-    int _numOfTileY = 0;
-    int _currentTile = 0;
     
+    int _tileSizeYItem = 0;
+    
+    int _numOfTileX = 0;
+    
+    int _numOfTileY = 0;
+    
+    int _currentTile = 0;
     
 };
 
 #endif /* NewFileWindow2_hpp */
+
+
+
+
+
+
+
+
+

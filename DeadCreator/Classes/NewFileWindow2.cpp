@@ -106,7 +106,6 @@ void NewFileWindow2::showNewFileWindow(bool* opened)
     if (ImGui::Button("Create"))
     {
         // create map
-        
         GMXFile* file = new GMXFile();
         
         file->fileName = "untitled_map_" + std::to_string(nextNumber++);
@@ -141,7 +140,7 @@ void NewFileWindow2::showNewFileWindow(bool* opened)
             }
         }
         
-       // _imguilayer->createNewFile(file);
+        _imguiLayer->createGMXLayer(file);
         
         *opened = false;
         closeWindow();
@@ -165,7 +164,7 @@ void NewFileWindow2::showNewFileWindow(bool* opened)
 
 void NewFileWindow2::closeWindow()
 {
-    //_imguilayer->setEnableFileMenu(true);
+    _imguiLayer->setEnableFileMenu(true);
     
     _tileSizeXItem = 0;
     _tileSizeYItem = 0;
@@ -173,6 +172,8 @@ void NewFileWindow2::closeWindow()
     _numOfTileY = 0;
     _currentTile = 0;
 }
+
+
 
 
 

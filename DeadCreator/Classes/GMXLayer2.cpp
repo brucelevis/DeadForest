@@ -23,7 +23,8 @@ _worldDebugNode(nullptr),
 _localDebugNode(nullptr),
 _hoveredTileRegion(nullptr),
 _visibleSize(Director::getInstance()->getVisibleSize()),
-_layerSize(Director::getInstance()->getVisibleSize() / 2),
+_canvasSize(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y),
+_layerSize(Director::getInstance()->getVisibleSize() / 1.5),
 _layerPosition(Director::getInstance()->getVisibleSize() / 2 - _layerSize / 2),
 _centerViewParam(Vec2::ZERO),
 _cameraDirection(Vec2::ZERO),
@@ -102,7 +103,7 @@ bool GMXLayer2::init()
     _paletteLayer = PaletteLayer::create(_imguiLayer);
     addChild(_paletteLayer);
     
-    _navigatorLayer = NavigatorLayer::create(_imguiLayer);
+    _navigatorLayer = NavigatorLayer::create(_imguiLayer, *this);
     addChild(_navigatorLayer);
     
     return true;
@@ -167,9 +168,6 @@ void GMXLayer2::initFile()
 
 void GMXLayer2::showWindow()
 {
-    if ( _isShowPalette ) _paletteLayer->showLayer(&_isShowPalette);
-    if ( _isShowNavigator ) _navigatorLayer->showLayer(&_isShowNavigator);
-    
     ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Appearing);
     ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Appearing);
     
@@ -185,10 +183,10 @@ void GMXLayer2::showWindow()
     _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
     _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
     
-    ImVec2 canvasSize = ImGui::GetContentRegionAvail();
+    _canvasSize = Size(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
     ImVec2 canvasPos = ImGui::GetCursorScreenPos();
     _mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - canvasPos.x,
-                            canvasSize.y - (ImGui::GetIO().MousePos.y - canvasPos.y));
+                            _canvasSize.height - (ImGui::GetIO().MousePos.y - canvasPos.y));
     
     _mousePosInWorld = _camera->getPosition() + (Vec2(_mousePosInCanvas.x - _layerSize.width / 2 + ImGui::GetStyle().WindowPadding.x,
                                                       _mousePosInCanvas.y - _layerSize.height / 2 + ImGui::GetStyle().WindowPadding.y));
@@ -211,19 +209,18 @@ void GMXLayer2::showWindow()
     _localDebugNode->clear();
     _localDebugNode->drawDot(Vec2(_layerSize / 2), 5.0f, Color4F::YELLOW);
     
-//        log("layer: %.0f, %.0f", _layerPosition.x, _layerPosition.y);
-//        log("pos: %.0f, %.0f", getPosition().x, getPosition().y);
-    
     auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
     
     _hoveredTileRegion->clear();
     
     Vec2 hoveredRegionCenterPos = _tiles[indices.second][indices.first]->getPosition();
-    log("(%d, %d) (%.0f, %.0f)", indices.second, indices.first, hoveredRegionCenterPos.x, hoveredRegionCenterPos.y);
     _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), 2.0f, Color4F::GREEN);
     _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
     _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), 2.0f, Color4F::GREEN);
     _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
+    
+    _centerViewParam = Vec2((_camera->getPosition().x - _layerSize.width / 2) / (_file.worldSize.width - _layerSize.width),
+                            (_camera->getPosition().y - _layerSize.height / 2) / (_file.worldSize.height - _layerSize.height));
     
     if ( _isShowWindow == false )
     {
@@ -234,6 +231,9 @@ void GMXLayer2::showWindow()
         _imguiLayer.setEnablePlayerMenu(false);
         _imguiLayer.setEnableWindowMenu(false);
     }
+    
+    if ( _isShowPalette ) _paletteLayer->showLayer(&_isShowPalette);
+    if ( _isShowNavigator ) _navigatorLayer->showLayer(&_isShowNavigator);
 }
 
 
@@ -327,17 +327,17 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
             
             _tileImages[i][j]->setTexture(fileName);
             _tileImages[i][j]->setPosition(pos);
+            _tileIndices[i][j]->setPosition(pos);
             
             if ( viewable )
             {
-                _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
-                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
-                _worldDebugNode->drawLine(Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
-                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
+//                _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
+//                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
+//                _worldDebugNode->drawLine(Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
+//                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
+//                
+//                _tileIndices[i][j]->setString("(" + std::to_string(y) + ", " + std::to_string(x) + ")");
             }
-            
-            _tileIndices[i][j]->setPosition(pos);
-            if ( viewable ) _tileIndices[i][j]->setString("(" + std::to_string(y) + ", " + std::to_string(x) + ")");
             else _tileIndices[i][j]->setString("");
         }
     }

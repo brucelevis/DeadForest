@@ -11,8 +11,9 @@
 #include "GMXLayer2.hpp"
 using namespace cocos2d;
 
-NavigatorLayer::NavigatorLayer(EditScene2& imguiLayer) :
+NavigatorLayer::NavigatorLayer(EditScene2& imguiLayer, GMXLayer2& gmxLayer) :
 _imguiLayer(imguiLayer),
+_gmxLayer(gmxLayer),
 _layerSize(Size(200,200)),
 _layerPosition(Vec2(50, 50)),
 _centerViewParam(Vec2::ZERO),
@@ -26,9 +27,9 @@ NavigatorLayer::~NavigatorLayer()
 }
 
 
-NavigatorLayer* NavigatorLayer::create(EditScene2& imguiLayer)
+NavigatorLayer* NavigatorLayer::create(EditScene2& imguiLayer, GMXLayer2& gmxLayer)
 {
-    auto ret = new (std::nothrow) NavigatorLayer(imguiLayer);
+    auto ret = new (std::nothrow) NavigatorLayer(imguiLayer, gmxLayer);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -79,10 +80,27 @@ void NavigatorLayer::showLayer(bool* opened)
     
     ImDrawList* list = ImGui::GetWindowDrawList();
     ImGui::SetCursorScreenPos(ImVec2(_boundingBoxPadding.origin.x, _boundingBoxPadding.origin.y));
-    ImU32 col = ImColor(ImVec4(1, 0, 0, 1));
-    list->AddRect(ImVec2(_boundingBoxPadding.origin.x, _boundingBoxPadding.origin.y),
-                  ImVec2(_boundingBoxPadding.origin.x + _boundingBoxPadding.size.width, _boundingBoxPadding.origin.y + _boundingBoxPadding.size.height),
-                  col);
+    ImU32 col = ImColor(ImVec4(1, 1, 1, 1));
+    
+    Size canvasSize = Size(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
+    Size gmxCanvasSize = _gmxLayer.getLayerSize();
+    Vec2 canvasOrigin = Vec2(_boundingBoxPadding.origin.x, _boundingBoxPadding.origin.y + canvasSize.height);
+    
+//    log("this canvas: [%.0f, %.0f], gmx canvas: [%.0f, %.0f]", canvasSize.width, canvasSize.height, gmxCanvasSize.width, gmxCanvasSize.height);
+    
+    Size selectRegionSize = Size(gmxCanvasSize.width * canvasSize.width / _gmxLayer.getWorldSize().width, gmxCanvasSize.height * canvasSize.height / _gmxLayer.getWorldSize().height);
+//    log("selectRegionSize: [%.0f, %.0f]", selectRegionSize.width, selectRegionSize.height);
+
+    Rect movableRect = Rect(canvasOrigin.x + selectRegionSize.width / 2,
+                            canvasOrigin.y - selectRegionSize.height / 2,
+                            canvasSize.width - selectRegionSize.width,
+                            canvasSize.height - selectRegionSize.height);
+    
+    list->AddRect(ImVec2(movableRect.origin.x + (movableRect.size.width * _gmxLayer.getCenterViewParameter().x) - selectRegionSize.width / 2,
+                         movableRect.origin.y - (movableRect.size.height * _gmxLayer.getCenterViewParameter().y) - selectRegionSize.height / 2),
+                  ImVec2(movableRect.origin.x + (movableRect.size.width * _gmxLayer.getCenterViewParameter().x) + selectRegionSize.width / 2,
+                         movableRect.origin.y - (movableRect.size.height * _gmxLayer.getCenterViewParameter().y) + selectRegionSize.height / 2),
+                  col , 5.0f);
     
     ImGui::End();
     ImGui::PopStyleVar();

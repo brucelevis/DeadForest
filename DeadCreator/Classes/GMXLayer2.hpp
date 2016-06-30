@@ -15,10 +15,10 @@
 #include "CellSpacePartition.hpp"
 #include "TileImage.hpp"
 #include "Camera2D.hpp"
+#include "GMXFile.hpp"
 
 #define DUMMY_TILE_SIZE 4
 
-class GMXFile;
 class PaletteLayer;
 class NavigatorLayer;
 class EditScene2;
@@ -58,6 +58,14 @@ public:
     
     cocos2d::Vec2 getMousePosInWorld() const { return _mousePosInWorld; }
     
+    cocos2d::Vec2 getCenterViewParameter() const { return _centerViewParam; }
+    
+    cocos2d::Size getCanvasSize() const { return _canvasSize; }
+    
+    cocos2d::Size getLayerSize() const { return _layerSize; }
+    
+    cocos2d::Size getWorldSize() const { return _file.worldSize; }
+    
     void initFile();
     
     bool& isShowPalette() { return _isShowPalette; }
@@ -74,6 +82,7 @@ private:
     cocos2d::DrawNode* _hoveredTileRegion;
     cocos2d::ClippingRectangleNode* _clipNode;
     cocos2d::Size _visibleSize;
+    cocos2d::Size _canvasSize;
     cocos2d::Size _layerSize;
     cocos2d::Vec2 _layerPosition;
     cocos2d::Vec2 _centerViewParam;

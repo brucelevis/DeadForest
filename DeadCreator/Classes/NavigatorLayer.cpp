@@ -9,6 +9,7 @@
 #include "NavigatorLayer.hpp"
 #include "EditScene2.hpp"
 #include "GMXLayer2.hpp"
+#include "SizeProtocol.h"
 using namespace cocos2d;
 
 NavigatorLayer::NavigatorLayer(EditScene2& imguiLayer, GMXLayer2& gmxLayer) :
@@ -54,7 +55,29 @@ void NavigatorLayer::showLayer(bool* opened)
     ImGuiState& g = *GImGui;
     float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
     
+    if ( _layerPosition.x < SizeProtocol::WINDOW_PADDING )
+    {
+        _layerPosition.x = SizeProtocol::WINDOW_PADDING;
+    }
+    
+    if ( _layerPosition.y < height + SizeProtocol::WINDOW_PADDING )
+    {
+        _layerPosition.y = height + SizeProtocol::WINDOW_PADDING;
+    }
+    
+    if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - SizeProtocol::WINDOW_PADDING )
+    {
+        _layerPosition.x = g.IO.DisplaySize.x - _layerSize.width - SizeProtocol::WINDOW_PADDING;
+    }
+    
+    if ( _layerPosition.y + _layerSize.height > g.IO.DisplaySize.y - SizeProtocol::WINDOW_PADDING - SizeProtocol::STATUSBAR_HEIGHT )
+    {
+        _layerPosition.y = g.IO.DisplaySize.y - _layerSize.height - SizeProtocol::WINDOW_PADDING - SizeProtocol::STATUSBAR_HEIGHT;
+    }
+    
     _layerSize = Size(Director::getInstance()->getVisibleSize().width * 0.15f, Director::getInstance()->getVisibleSize().width * 0.15f + height + g.Style.WindowPadding.y * 2);
+    _layerSize.width = std::min(_layerSize.width, 300.0f);
+    _layerSize.height = std::min(_layerSize.height, 300.0f);
     
     ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Always);
     ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Always);
@@ -103,7 +126,21 @@ void NavigatorLayer::showLayer(bool* opened)
                          movableRect.origin.y - (movableRect.size.height * _centerViewParam.y) + selectRegionSize.height / 2),
                   col , 5.0f);
     
-    if ( ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0] )
+    static bool titleClicked = false;
+    if ( ImGui::GetIO().MouseClicked[0] )
+    {
+        Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerPosition.y - height, _layerSize.width, height);
+        if ( boundingBox.containsPoint(Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y)) )
+        {
+            titleClicked = true;
+        }
+    }
+    else if ( ImGui::GetIO().MouseReleased[0] )
+    {
+        titleClicked = false;
+    }
+    
+    if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && !titleClicked )
     {
         Rect boundingBox(canvasOrigin.x, ImGui::GetIO().DisplaySize.y - canvasOrigin.y, canvasSize.width, canvasSize.height);
         if ( boundingBox.containsPoint(Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y)) )

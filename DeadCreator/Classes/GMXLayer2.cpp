@@ -14,6 +14,7 @@
 #include "NavigatorLayer.hpp"
 #include "EditScene2.hpp"
 #include "TileHelperFunctions.hpp"
+#include "SizeProtocol.h"
 using namespace cocos2d;
 
 GMXLayer2::GMXLayer2(EditScene2& imguiLayer, GMXFile& file) :
@@ -168,8 +169,31 @@ void GMXLayer2::initFile()
 
 void GMXLayer2::showWindow()
 {
-    ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Appearing);
-    ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Appearing);
+    ImGuiState& g = *GImGui;
+    float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
+    
+    if ( _layerSize.width + _layerPosition.x > g.IO.DisplaySize.x - SizeProtocol::WINDOW_PADDING )
+        _layerSize.width = g.IO.DisplaySize.x - SizeProtocol::WINDOW_PADDING - _layerPosition.x;
+    
+    if ( _layerSize.height + _layerPosition.y > g.IO.DisplaySize.y - SizeProtocol::WINDOW_PADDING - height )
+        _layerSize.height = g.IO.DisplaySize.y - SizeProtocol::WINDOW_PADDING - _layerPosition.y - height;
+
+    
+    if ( _layerPosition.x < SizeProtocol::WINDOW_PADDING )
+        _layerPosition.x = SizeProtocol::WINDOW_PADDING;
+    
+    if ( _layerPosition.y < height + SizeProtocol::WINDOW_PADDING )
+        _layerPosition.y = height + SizeProtocol::WINDOW_PADDING;
+    
+    if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - SizeProtocol::WINDOW_PADDING )
+        _layerPosition.x = g.IO.DisplaySize.x - _layerSize.width - SizeProtocol::WINDOW_PADDING;
+    
+    if ( _layerPosition.y + _layerSize.height > g.IO.DisplaySize.y - SizeProtocol::WINDOW_PADDING - SizeProtocol::STATUSBAR_HEIGHT )
+        _layerPosition.y = g.IO.DisplaySize.y - _layerSize.height - SizeProtocol::WINDOW_PADDING - SizeProtocol::STATUSBAR_HEIGHT;
+    
+    
+    ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Always);
     
     ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
@@ -179,6 +203,8 @@ void GMXLayer2::showWindow()
                  ImGuiWindowFlags_NoCollapse |
                  ImGuiWindowFlags_NoBringToFrontOnFocus |
                  ImGuiWindowFlags_ShowBorders);
+  
+    ImGui::InvisibleButton("##dummy", ImGui::GetContentRegionAvail());
     
     _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
     _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
@@ -192,10 +218,7 @@ void GMXLayer2::showWindow()
                                                       _mousePosInCanvas.y - _layerSize.height / 2 + ImGui::GetStyle().WindowPadding.y));
     
     _mousePosInWorld.clamp(_camera->getPosition() - Vec2(_layerSize / 2), _camera->getPosition() + Vec2(_layerSize / 2));
-    
-    if ( ImGui::GetIO().MouseClicked[0] ) { log("left pressed."); }
-    if ( ImGui::GetIO().MouseReleased[0] ) { log("left released."); }
-    
+ 
     ImGui::End();
     ImGui::PopStyleVar(2);
     ImGui::PopStyleColor();

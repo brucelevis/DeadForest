@@ -13,6 +13,7 @@ using namespace cocos2d;
 #include "GMXLayer2.hpp"
 #include "GMXFile.hpp"
 #include "NewFileWindow2.hpp"
+#include "SizeProtocol.h"
 
 Scene* EditScene2::createScene()
 {
@@ -113,8 +114,8 @@ bool EditScene2::init()
         
         ImGuiIO& io = ImGui::GetIO();
         
-        ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - 25));
-        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, 25));
+        ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - SizeProtocol::STATUSBAR_HEIGHT));
+        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, SizeProtocol::STATUSBAR_HEIGHT));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::Begin("##BottomMenuBar", NULL,
                      ImGuiWindowFlags_NoTitleBar |

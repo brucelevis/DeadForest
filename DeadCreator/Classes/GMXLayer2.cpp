@@ -21,6 +21,7 @@ _imguiLayer(imguiLayer),
 _file(file),
 _worldDebugNode(nullptr),
 _localDebugNode(nullptr),
+_hoveredTileRegion(nullptr),
 _visibleSize(Director::getInstance()->getVisibleSize()),
 _layerSize(Director::getInstance()->getVisibleSize() / 2),
 _layerPosition(Director::getInstance()->getVisibleSize() / 2 - _layerSize / 2),
@@ -85,6 +86,9 @@ bool GMXLayer2::init()
     
     _localDebugNode = DrawNode::create();
     _clipNode->addChild(_localDebugNode);
+    
+    _hoveredTileRegion = DrawNode::create();
+    _rootNode->addChild(_hoveredTileRegion);
     
     _cellSpacePartition = CellSpacePartition::create(_file.worldSize, Size(500, 500));
     addChild(_cellSpacePartition);
@@ -194,11 +198,6 @@ void GMXLayer2::showWindow()
     if ( ImGui::GetIO().MouseClicked[0] ) { log("left pressed."); }
     if ( ImGui::GetIO().MouseReleased[0] ) { log("left released."); }
     
-    auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
-    log("(%d, %d)", indices.second, indices.first);
-    
-    
-    
     ImGui::End();
     ImGui::PopStyleVar(2);
     ImGui::PopStyleColor();
@@ -214,6 +213,17 @@ void GMXLayer2::showWindow()
     
 //        log("layer: %.0f, %.0f", _layerPosition.x, _layerPosition.y);
 //        log("pos: %.0f, %.0f", getPosition().x, getPosition().y);
+    
+    auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
+    
+    _hoveredTileRegion->clear();
+    
+    Vec2 hoveredRegionCenterPos = _tiles[indices.second][indices.first]->getPosition();
+    log("(%d, %d) (%.0f, %.0f)", indices.second, indices.first, hoveredRegionCenterPos.x, hoveredRegionCenterPos.y);
+    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), 2.0f, Color4F::GREEN);
+    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
+    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), 2.0f, Color4F::GREEN);
+    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
     
     if ( _isShowWindow == false )
     {

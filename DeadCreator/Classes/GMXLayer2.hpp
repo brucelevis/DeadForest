@@ -71,6 +71,7 @@ private:
     
     cocos2d::DrawNode* _worldDebugNode;
     cocos2d::DrawNode* _localDebugNode;
+    cocos2d::DrawNode* _hoveredTileRegion;
     cocos2d::ClippingRectangleNode* _clipNode;
     cocos2d::Size _visibleSize;
     cocos2d::Size _layerSize;

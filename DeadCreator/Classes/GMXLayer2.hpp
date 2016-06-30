@@ -60,6 +60,8 @@ public:
     
     cocos2d::Vec2 getCenterViewParameter() const { return _centerViewParam; }
     
+    void setCenterViewParameter(const cocos2d::Vec2& p);
+    
     cocos2d::Size getCanvasSize() const { return _canvasSize; }
     
     cocos2d::Size getLayerSize() const { return _layerSize; }

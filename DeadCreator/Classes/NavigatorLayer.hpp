@@ -38,8 +38,8 @@ private:
     cocos2d::Vec2 _layerPosition;
     cocos2d::Vec2 _centerViewParam;
     cocos2d::Vec2 _centerViewPosition;
-    cocos2d::Rect _boundingBox;
     cocos2d::Rect _boundingBoxPadding;
+    cocos2d::Vec2 _mousePosInCanvas;
     
 };
 

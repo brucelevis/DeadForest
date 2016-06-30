@@ -65,18 +65,31 @@ void NavigatorLayer::showLayer(bool* opened)
                  ImGuiWindowFlags_NoScrollbar |
                  ImGuiWindowFlags_NoCollapse |
                  ImGuiWindowFlags_NoResize |
+                 ImGuiWindowFlags_NoScrollWithMouse |
                  ImGuiWindowFlags_ShowBorders);
     
     _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
     _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
     
-    _boundingBox.setRect(_layerPosition.x, _layerPosition.y + _layerSize.height, _layerSize.width, _layerSize.height);
     _boundingBoxPadding.setRect(_layerPosition.x + g.Style.WindowPadding.x,
                                 _layerPosition.y + g.Style.WindowPadding.y + height,
                                 _layerSize.width - g.Style.WindowPadding.x * 2.0f,
                                 _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
     
-    _imguiLayer.image("default_tile_dirt.png", _layerSize.width - g.Style.WindowPadding.x * 2.0f, _layerSize.height - height - g.Style.WindowPadding.y * 2.0f);
+//    static ImVec2 size(100, 100), offset(50, 20);
+//    ImGui::TextWrapped("On a per-widget basis we are occasionally clipping text CPU-side if it won't fit in its frame. Otherwise we are doing coarser clipping + passing a scissor rectangle to the renderer. The system is designed to try minimizing both execution and CPU/GPU rendering cost.");
+//    ImGui::DragFloat2("size", (float*)&size, 0.5f, 0.0f, 200.0f, "%.0f");
+//    ImGui::TextWrapped("(Click and drag)");
+//    ImVec2 pos = ImGui::GetCursorScreenPos();
+//    ImVec4 clip_rect(pos.x, pos.y, pos.x+size.x, pos.y+size.y);
+//    ImGui::InvisibleButton("##dummy", size);
+//    if (ImGui::IsItemActive() && ImGui::IsMouseDragging()) { offset.x += ImGui::GetIO().MouseDelta.x; offset.y += ImGui::GetIO().MouseDelta.y; }
+    
+    static ImVec2 size(_layerSize.width - g.Style.WindowPadding.x * 2.0f, _layerSize.height - height - g.Style.WindowPadding.y * 2.0f);
+    ImGui::InvisibleButton("##dummy", size);
+    
+    ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y - size.y - ImGui::GetStyle().WindowPadding.y));
+    _imguiLayer.image("default_tile_dirt.png", size.x, size.y);
     
     ImDrawList* list = ImGui::GetWindowDrawList();
     ImGui::SetCursorScreenPos(ImVec2(_boundingBoxPadding.origin.x, _boundingBoxPadding.origin.y));
@@ -86,26 +99,42 @@ void NavigatorLayer::showLayer(bool* opened)
     Size gmxCanvasSize = _gmxLayer.getLayerSize();
     Vec2 canvasOrigin = Vec2(_boundingBoxPadding.origin.x, _boundingBoxPadding.origin.y + canvasSize.height);
     
-//    log("this canvas: [%.0f, %.0f], gmx canvas: [%.0f, %.0f]", canvasSize.width, canvasSize.height, gmxCanvasSize.width, gmxCanvasSize.height);
-    
     Size selectRegionSize = Size(gmxCanvasSize.width * canvasSize.width / _gmxLayer.getWorldSize().width, gmxCanvasSize.height * canvasSize.height / _gmxLayer.getWorldSize().height);
-//    log("selectRegionSize: [%.0f, %.0f]", selectRegionSize.width, selectRegionSize.height);
-
     Rect movableRect = Rect(canvasOrigin.x + selectRegionSize.width / 2,
                             canvasOrigin.y - selectRegionSize.height / 2,
                             canvasSize.width - selectRegionSize.width,
                             canvasSize.height - selectRegionSize.height);
     
-    list->AddRect(ImVec2(movableRect.origin.x + (movableRect.size.width * _gmxLayer.getCenterViewParameter().x) - selectRegionSize.width / 2,
-                         movableRect.origin.y - (movableRect.size.height * _gmxLayer.getCenterViewParameter().y) - selectRegionSize.height / 2),
-                  ImVec2(movableRect.origin.x + (movableRect.size.width * _gmxLayer.getCenterViewParameter().x) + selectRegionSize.width / 2,
-                         movableRect.origin.y - (movableRect.size.height * _gmxLayer.getCenterViewParameter().y) + selectRegionSize.height / 2),
+    _centerViewParam = _gmxLayer.getCenterViewParameter();
+    list->AddRect(ImVec2(movableRect.origin.x + (movableRect.size.width * _centerViewParam.x) - selectRegionSize.width / 2,
+                         movableRect.origin.y - (movableRect.size.height * _centerViewParam.y) - selectRegionSize.height / 2),
+                  ImVec2(movableRect.origin.x + (movableRect.size.width * _centerViewParam.x) + selectRegionSize.width / 2,
+                         movableRect.origin.y - (movableRect.size.height * _centerViewParam.y) + selectRegionSize.height / 2),
                   col , 5.0f);
+    
+    if ( ImGui::GetIO().MouseClicked[0] )
+    {
+        Rect boundingBox(canvasOrigin.x, ImGui::GetIO().DisplaySize.y - canvasOrigin.y, canvasSize.width, canvasSize.height);
+        if ( boundingBox.containsPoint(Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y)) )
+        {
+            ImVec2 canvasPos = ImGui::GetCursorScreenPos();
+            _mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - canvasPos.x, canvasSize.height - (ImGui::GetIO().MousePos.y - canvasPos.y));
+            _mousePosInCanvas.clamp(Vec2(selectRegionSize / 2), Vec2(canvasSize - selectRegionSize / 2));
+            
+            _centerViewParam = Vec2((_mousePosInCanvas.x - selectRegionSize.width / 2) / (canvasSize.width - selectRegionSize.width),
+                                    (_mousePosInCanvas.y - selectRegionSize.height / 2) / (canvasSize.height - selectRegionSize.height));
+            _gmxLayer.setCenterViewParameter(_centerViewParam);
+        }
+    }
     
     ImGui::End();
     ImGui::PopStyleVar();
     ImGui::PopStyleColor();
 }
+
+
+
+
 
 
 

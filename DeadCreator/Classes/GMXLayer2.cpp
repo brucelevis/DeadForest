@@ -267,11 +267,13 @@ void GMXLayer2::update(float dt)
     else if ( _isKeyDown[static_cast<int>(EventKeyboard::KeyCode::KEY_DOWN_ARROW)] ) _cameraDirection.y = -1.0f;
     else _cameraDirection.y = 0.0f;
     
-    Vec2 oldPosition = _camera->getPosition();
-    Vec2 newPosition = _camera->getPosition() + (_cameraDirection * _windowSpeed * dt);
+    _centerViewParam.x += (_cameraDirection.x * _windowSpeed * dt) / (_file.worldSize.width - _layerSize.width);
+    _centerViewParam.y += (_cameraDirection.y * _windowSpeed * dt) / (_file.worldSize.height - _layerSize.height);
+    _centerViewParam.clamp(Vec2::ZERO, Vec2::ONE);
     
-    _centerViewParam = Vec2( newPosition.x / (_file.worldSize.width - _layerSize.width),
-                            newPosition.y / (_file.worldSize.height - _layerSize.height));
+    Vec2 oldPosition = _camera->getPosition();
+    Vec2 newPosition = Vec2( _layerSize.width / 2 + (_file.worldSize.width - _layerSize.width) * _centerViewParam.x,
+                            _layerSize.height / 2 + (_file.worldSize.height - _layerSize.height) * _centerViewParam.y);
     
     _camera->setPosition(newPosition);
     auto cameraPos = _camera->getPosition();
@@ -284,7 +286,6 @@ void GMXLayer2::update(float dt)
     }
     
     _tileRoot->setPosition( Vec2(_layerSize / 2) + _tileRootWorldPosition - _camera->getPosition() );
-    
     _rootNode->setPosition( -_camera->getPosition() + Vec2(_layerSize / 2) );
 }
 
@@ -335,10 +336,12 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
 //                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
 //                _worldDebugNode->drawLine(Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
 //                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
-//                
 //                _tileIndices[i][j]->setString("(" + std::to_string(y) + ", " + std::to_string(x) + ")");
             }
-            else _tileIndices[i][j]->setString("");
+            else
+            {
+                _tileIndices[i][j]->setString("");
+            }
         }
     }
     
@@ -351,7 +354,10 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
 }
 
 
-
+void GMXLayer2::setCenterViewParameter(const cocos2d::Vec2& p)
+{
+    _centerViewParam = p;
+}
 
 
 

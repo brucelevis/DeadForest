@@ -76,16 +76,7 @@ void NavigatorLayer::showLayer(bool* opened)
                                 _layerSize.width - g.Style.WindowPadding.x * 2.0f,
                                 _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
     
-//    static ImVec2 size(100, 100), offset(50, 20);
-//    ImGui::TextWrapped("On a per-widget basis we are occasionally clipping text CPU-side if it won't fit in its frame. Otherwise we are doing coarser clipping + passing a scissor rectangle to the renderer. The system is designed to try minimizing both execution and CPU/GPU rendering cost.");
-//    ImGui::DragFloat2("size", (float*)&size, 0.5f, 0.0f, 200.0f, "%.0f");
-//    ImGui::TextWrapped("(Click and drag)");
-//    ImVec2 pos = ImGui::GetCursorScreenPos();
-//    ImVec4 clip_rect(pos.x, pos.y, pos.x+size.x, pos.y+size.y);
-//    ImGui::InvisibleButton("##dummy", size);
-//    if (ImGui::IsItemActive() && ImGui::IsMouseDragging()) { offset.x += ImGui::GetIO().MouseDelta.x; offset.y += ImGui::GetIO().MouseDelta.y; }
-    
-    static ImVec2 size(_layerSize.width - g.Style.WindowPadding.x * 2.0f, _layerSize.height - height - g.Style.WindowPadding.y * 2.0f);
+    ImVec2 size(_layerSize.width - g.Style.WindowPadding.x * 2.0f, _layerSize.height - height - g.Style.WindowPadding.y * 2.0f);
     ImGui::InvisibleButton("##dummy", size);
     
     ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y - size.y - ImGui::GetStyle().WindowPadding.y));
@@ -112,7 +103,7 @@ void NavigatorLayer::showLayer(bool* opened)
                          movableRect.origin.y - (movableRect.size.height * _centerViewParam.y) + selectRegionSize.height / 2),
                   col , 5.0f);
     
-    if ( ImGui::GetIO().MouseClicked[0] )
+    if ( ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0] )
     {
         Rect boundingBox(canvasOrigin.x, ImGui::GetIO().DisplaySize.y - canvasOrigin.y, canvasSize.width, canvasSize.height);
         if ( boundingBox.containsPoint(Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y)) )

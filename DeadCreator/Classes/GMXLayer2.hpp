@@ -10,6 +10,7 @@
 #define GMXLayer2_hpp
 
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
 #include "MutableUiBase.hpp"
 #include "CellSpacePartition.hpp"
 #include "TileImage.hpp"
@@ -53,6 +54,10 @@ public:
     
     cocos2d::Vec2 getTileRootWorldPosition() const { return _tileRootWorldPosition; }
     
+    cocos2d::Vec2 getCameraPosition() const { return _camera->getPosition(); }
+    
+    cocos2d::Vec2 getMousePosInWorld() const { return _mousePosInWorld; }
+    
     void initFile();
     
     bool& isShowPalette() { return _isShowPalette; }
@@ -71,7 +76,6 @@ private:
     cocos2d::Size _layerSize;
     cocos2d::Vec2 _layerPosition;
     cocos2d::Vec2 _centerViewParam;
-    cocos2d::Vec2 _centerViewPosition;
     cocos2d::Vec2 _tileRootWorldPosition;
     cocos2d::Vec2 _cameraDirection;
     Camera2D* _camera;
@@ -81,11 +85,15 @@ private:
     
     CellSpacePartition* _cellSpacePartition;
     std::vector< std::vector<TileImage*> > _tileImages;
+    std::vector< std::vector<cocos2d::ui::Text*> > _tileIndices;
     int _viewX;
     int _viewY;
     
     bool _isShowWindow = true;
     bool _isKeyDown[256];
+    
+    cocos2d::Vec2 _mousePosInWorld;
+    cocos2d::Vec2 _mousePosInCanvas;
     
     PaletteLayer* _paletteLayer;
     bool _isShowPalette = true;

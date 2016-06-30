@@ -36,12 +36,13 @@ PaletteLayer* PaletteLayer::create(EditScene2& imguiLayer)
 
 void PaletteLayer::showLayer(bool* opened)
 {
-    ImGui::SetNextWindowPos(ImVec2(750, 100), ImGuiSetCond_Once);
-    ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
+    ImGui::SetNextWindowPos(ImVec2(80, 400), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(205, 300), ImGuiSetCond_Once);
     
     ImGui::Begin("Palette", opened,
                  ImGuiWindowFlags_NoCollapse |
-                 ImGuiWindowFlags_NoResize);
+                 ImGuiWindowFlags_NoResize |
+                 ImGuiWindowFlags_ShowBorders);
     
     if (ImGui::Combo("type", &_paletteType, "tile\0entity\0item\0doodad\0"))
     {

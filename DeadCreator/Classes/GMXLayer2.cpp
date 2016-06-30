@@ -22,16 +22,15 @@ _file(file),
 _worldDebugNode(nullptr),
 _localDebugNode(nullptr),
 _visibleSize(Director::getInstance()->getVisibleSize()),
-_layerSize(Size(800, 500)),
+_layerSize(Director::getInstance()->getVisibleSize() / 2),
 _layerPosition(Director::getInstance()->getVisibleSize() / 2 - _layerSize / 2),
 _centerViewParam(Vec2::ZERO),
-_centerViewPosition(Vec2(_layerSize / 2)),
 _cameraDirection(Vec2::ZERO),
 _camera(nullptr),
 _windowSpeed(1000),
 _tileRoot(nullptr),
-_viewX(30),
-_viewY(60)
+_viewX(15),
+_viewY(30)
 {}
 
 
@@ -91,7 +90,7 @@ bool GMXLayer2::init()
     addChild(_cellSpacePartition);
     
     _camera = Camera2D::create();
-    _camera->setPosition(_centerViewPosition);
+    _camera->setPosition(_layerSize / 2);
     addChild(_camera);
     
     initFile();
@@ -138,9 +137,11 @@ void GMXLayer2::initFile()
     }
     
     _tileImages.resize(_viewY);
+    _tileIndices.resize(_viewY);
     for(int i = 0 ; i < _viewY; ++ i)
     {
         _tileImages[i].resize(_viewX);
+        _tileIndices[i].resize(_viewX);
     }
     
     for(int i = 0 ; i < _viewY; ++ i)
@@ -149,6 +150,10 @@ void GMXLayer2::initFile()
         {
             _tileImages[i][j] = TileImage::create();
             _tileRoot->addChild(_tileImages[i][j]);
+            
+            _tileIndices[i][j] = ui::Text::create("", "", 20);
+            _tileIndices[i][j]->setOpacity(128);
+            _tileRoot->addChild(_tileIndices[i][j]);
         }
     }
     
@@ -170,10 +175,29 @@ void GMXLayer2::showWindow()
     ImGui::Begin(_file.fileName.c_str(), &_isShowWindow, ImVec2(0,0), 0.0f,
                  ImGuiWindowFlags_NoScrollbar |
                  ImGuiWindowFlags_NoCollapse |
-                 ImGuiWindowFlags_NoBringToFrontOnFocus);
+                 ImGuiWindowFlags_NoBringToFrontOnFocus |
+                 ImGuiWindowFlags_ShowBorders);
     
     _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
     _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+    
+    ImVec2 canvasSize = ImGui::GetContentRegionAvail();
+    ImVec2 canvasPos = ImGui::GetCursorScreenPos();
+    _mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - canvasPos.x,
+                            canvasSize.y - (ImGui::GetIO().MousePos.y - canvasPos.y));
+    
+    _mousePosInWorld = _camera->getPosition() + (Vec2(_mousePosInCanvas.x - _layerSize.width / 2 + ImGui::GetStyle().WindowPadding.x,
+                                                      _mousePosInCanvas.y - _layerSize.height / 2 + ImGui::GetStyle().WindowPadding.y));
+    
+    _mousePosInWorld.clamp(_camera->getPosition() - Vec2(_layerSize / 2), _camera->getPosition() + Vec2(_layerSize / 2));
+    
+    if ( ImGui::GetIO().MouseClicked[0] ) { log("left pressed."); }
+    if ( ImGui::GetIO().MouseReleased[0] ) { log("left released."); }
+    
+    auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
+    log("(%d, %d)", indices.second, indices.first);
+    
+    
     
     ImGui::End();
     ImGui::PopStyleVar(2);
@@ -184,13 +208,6 @@ void GMXLayer2::showWindow()
     _tileRoot->setPosition(_layerSize / 2);
     
     _clipNode->setClippingRegion(Rect(0, 0, _layerSize.width, _layerSize.height));
-    
-    _worldDebugNode->clear();
-    for(int i = 0 ; i < _cellSpacePartition->getNumOfCellY() * _cellSpacePartition->getNumOfCellX() ; ++ i)
-    {
-        Rect cellRect = _cellSpacePartition->getCell(i).boundingBox;
-        _worldDebugNode->drawRect(cellRect.origin, cellRect.origin + cellRect.size, Color4F::RED);
-    }
     
     _localDebugNode->clear();
     _localDebugNode->drawDot(Vec2(_layerSize / 2), 5.0f, Color4F::YELLOW);
@@ -271,6 +288,7 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
     index.first -= _viewX / 2;
     index.second -= _viewY / 2;
     
+    _worldDebugNode->clear();
     for(int i = 0 ; i < _viewY; ++ i)
     {
         for(int j = 0 ; j < _viewX; ++ j)
@@ -278,23 +296,46 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
             int x = index.first + j;
             int y = index.second + i;
             
+            bool viewable = true;
             std::string fileName;
             Vec2 pos;
+            Vec2 worldPos;
             if ( x < 0 || x > _file.numOfTileX + DUMMY_TILE_SIZE * 2 - 1 ||
                  y < 0 || y > _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4- 1)
             {
                 fileName = "empty_image.png";
                 pos = Vec2::ZERO;
+                worldPos = Vec2::ZERO;
+                viewable = false;
             }
             else
             {
                 fileName = _tiles[y][x]->getNumber() + ".png";
                 pos = _tiles[y][x]->getPosition() - _tileRootWorldPosition;
+                worldPos = _tiles[y][x]->getPosition();
             }
             
             _tileImages[i][j]->setTexture(fileName);
             _tileImages[i][j]->setPosition(pos);
+            
+            if ( viewable )
+            {
+                _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
+                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
+                _worldDebugNode->drawLine(Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
+                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
+            }
+            
+            _tileIndices[i][j]->setPosition(pos);
+            if ( viewable ) _tileIndices[i][j]->setString("(" + std::to_string(y) + ", " + std::to_string(x) + ")");
+            else _tileIndices[i][j]->setString("");
         }
+    }
+    
+    for(int i = 0 ; i < _cellSpacePartition->getNumOfCellY() * _cellSpacePartition->getNumOfCellX() ; ++ i)
+    {
+        Rect cellRect = _cellSpacePartition->getCell(i).boundingBox;
+        _worldDebugNode->drawRect(cellRect.origin, cellRect.origin + cellRect.size, Color4F::RED);
     }
     
 }

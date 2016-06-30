@@ -59,7 +59,7 @@ bool ImGuiLayer::init()
     style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.2000000, 0.2000000, 0.2000000, 0.3500000);
     
     style.WindowFillAlphaDefault = 0.98f;
-    style.WindowPadding.x = 8.0f;
+    style.WindowPadding.x = 4.0f;
     style.WindowPadding.y = 4.0f;
     style.FramePadding = ImVec2(4.0f, 4.0f);
     style.FrameRounding = 4.0f;

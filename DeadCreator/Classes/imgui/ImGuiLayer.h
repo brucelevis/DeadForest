@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "imgui_impl_glfw.h"
 
 class ImGuiLayer : public cocos2d::Layer

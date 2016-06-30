@@ -125,7 +125,9 @@ bool EditScene2::init()
         
         ImGui::Columns(4, "extra_info", false);
         
-        ImGui::Text("World Position (%.0f, %.0f)", 1111.0f, 1111.0f);
+        static Vec2 worldPosition = Vec2::ZERO;
+        if ( _layer ) worldPosition = _layer->getMousePosInWorld();
+        ImGui::Text("World Position (%.0f, %.0f)", worldPosition.x, worldPosition.y);
         
         ImGui::SameLine();
         ImGui::NextColumn();

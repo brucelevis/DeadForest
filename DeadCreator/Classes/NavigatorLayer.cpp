@@ -10,6 +10,7 @@
 #include "EditScene2.hpp"
 #include "GMXLayer2.hpp"
 #include "SizeProtocol.h"
+#include "TileHelperFunctions.hpp"
 using namespace cocos2d;
 
 NavigatorLayer::NavigatorLayer(EditScene2& imguiLayer, GMXLayer2& gmxLayer) :
@@ -47,7 +48,6 @@ bool NavigatorLayer::init()
         return false;
     
     auto file = _gmxLayer.getFile();
-    _marks.resize(file.numOfTileX * file.numOfTileY);
     
     return true;
 }
@@ -123,9 +123,23 @@ void NavigatorLayer::showLayer(bool* opened)
                             _boundingBoxPadding.size.width - selectRegionSize.width,
                             _boundingBoxPadding.size.height - selectRegionSize.height);
     
-    for(auto &mark : _marks)
+    
+    ImGui::PushClipRect(ImVec2(_boundingBoxPadding.origin.x,
+                               _boundingBoxPadding.origin.y),
+                        ImVec2(_boundingBoxPadding.origin.x + _boundingBoxPadding.size.width,
+                               _boundingBoxPadding.origin.y + _boundingBoxPadding.size.height - 2));
+    
+    auto file = _gmxLayer.getFile();
+    ImVec2 worldSize = ImVec2(file.worldSize.width, file.worldSize.height);
+    for(auto &tile : _tileMarks)
     {
-        list->AddImage(mark.texture, mark.origin, ImVec2(mark.origin.x + mark.size.x, mark.origin.y + mark.size.y));
+        int key = tile.first;
+        auto indices = numberToIndex(key, file.numOfTileX, DUMMY_TILE_SIZE);
+        auto position = indexToPosition(indices.first, indices.second, file.tileWidth, file.tileHeight, DUMMY_TILE_SIZE);
+        ImVec2 param = ImVec2(position.x / worldSize.x, position.y / worldSize.y);
+        ImVec2 origin = ImVec2(canvasOrigin.x + param.x * _boundingBoxPadding.size.width, canvasOrigin.y - param.y * _boundingBoxPadding.size.height);
+        ImVec2 size = ImVec2(_boundingBoxPadding.size.width * file.tileWidth / worldSize.x, _boundingBoxPadding.size.height * file.tileHeight / worldSize.y);
+        list->AddImage(tile.second, origin, ImVec2(origin.x + size.x, origin.y - size.y));
     }
     
     _centerViewParam = _gmxLayer.getCenterViewParameter();
@@ -134,7 +148,8 @@ void NavigatorLayer::showLayer(bool* opened)
                   ImVec2(movableRect.origin.x + (movableRect.size.width * _centerViewParam.x) + selectRegionSize.width / 2,
                          movableRect.origin.y - (movableRect.size.height * _centerViewParam.y) + selectRegionSize.height / 2),
                   col , 5.0f);
-
+    
+    ImGui::PopClipRect();
     
     static bool titleClicked = false;
     if ( ImGui::GetIO().MouseClicked[0] )
@@ -171,11 +186,26 @@ void NavigatorLayer::showLayer(bool* opened)
 }
 
 
-void NavigatorLayer::setTile(int x, int y, TileType type)
+void NavigatorLayer::setTile(int x, int y, const TileBase& tile)
 {
-    Vec2 origin(_boundingBoxPadding.origin.x, _boundingBoxPadding.origin.y + _boundingBoxPadding.size.height);
-//    MarkInfo
-//    _marks.push_back(MarkInfo(ImVec2(origin.x + px * _boundingBoxPadding.size.width, origin.y - py * _boundingBoxPadding.size.height), ImVec4(0,1,0,1)));
+    int key = indexToNumber(x, y, _gmxLayer.getFile().numOfTileX, DUMMY_TILE_SIZE);
+    
+    if ( tile.getType() == TileType::DIRT)
+    {
+        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("dirt_mark.png")->getName());
+    }
+    else if ( tile.getType() == TileType::GRASS )
+    {
+        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("grass_mark.png")->getName());
+    }
+    else if ( tile.getType() == TileType::WATER )
+    {
+        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("water_mark.png")->getName());
+    }
+    else if ( tile.getType() == TileType::HILL )
+    {
+        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("hill_mark.png")->getName());
+    }
 }
 
 

@@ -72,6 +72,8 @@ public:
     
     cocos2d::Size getWorldSize() const { return _file.worldSize; }
     
+    const TileBase& getTile(int x, int y) const { return _tiles[y][x]; }
+    
     void initFile();
     
     bool& isShowPalette() { return _isShowPalette; }

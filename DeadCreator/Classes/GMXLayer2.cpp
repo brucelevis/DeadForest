@@ -304,7 +304,7 @@ void GMXLayer2::setTile(int x, int y, const TileBase& tile)
     
     _tileImages[localY][localX]->setTexture(tile.getNumber() + ".png");
     
-    _navigatorLayer->setTile(x, y, tile.getType());
+    _navigatorLayer->setTile(x, y, tile);
 }
 
 

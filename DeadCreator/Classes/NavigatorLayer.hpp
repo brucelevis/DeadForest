@@ -14,13 +14,6 @@ class GMXLayer2;
 #include "TileBase.hpp"
 #include "imgui.h"
 
-struct MarkInfo
-{
-    ImTextureID texture;
-    ImVec2 origin;
-    ImVec2 size;
-};
-
 class NavigatorLayer : public cocos2d::Node
 {
     
@@ -36,7 +29,7 @@ public:
     
     void showLayer(bool* opened);
     
-    void setTile(int x, int y, TileType type);
+    void setTile(int x, int y, const TileBase& tile);
     
 private:
     
@@ -51,7 +44,8 @@ private:
     cocos2d::Rect _boundingBoxPadding;
     cocos2d::Vec2 _mousePosInCanvas;
     
-    std::vector<MarkInfo> _marks;
+    std::map<int, ImTextureID> _tileMarks;
+    std::map<int, ImTextureID> _entityMarks;
     
 };
 

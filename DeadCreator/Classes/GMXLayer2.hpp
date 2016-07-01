@@ -16,6 +16,7 @@
 #include "TileImage.hpp"
 #include "Camera2D.hpp"
 #include "GMXFile.hpp"
+#include "TileBase.hpp"
 
 #define DUMMY_TILE_SIZE 4
 
@@ -42,13 +43,15 @@ public:
 
     virtual void update(float dt) override;
     
-    virtual void setTile(int x, int y, TileBase* tile) override;
+    virtual void setTile(int x, int y, const TileBase& tile) override;
     
     void showWindow();
     
     void updateChunk(const cocos2d::Vec2& pivot);
     
     bool isUpdateChunk(const cocos2d::Vec2& newPos, const cocos2d::Vec2& oldPos);
+    
+    void putTile(TileType type, int x, int y);
     
     void setLayerPosition(const cocos2d::Vec2& pos) { _layerPosition = pos; }
     

@@ -7,9 +7,10 @@
 //
 
 
+#include <stack>
+
 #include "GMXLayer2.hpp"
 #include "GMXFile.hpp"
-#include "TileBase.hpp"
 #include "PaletteLayer.hpp"
 #include "NavigatorLayer.hpp"
 #include "EditScene2.hpp"
@@ -32,8 +33,8 @@ _cameraDirection(Vec2::ZERO),
 _camera(nullptr),
 _windowSpeed(1000),
 _tileRoot(nullptr),
-_viewX(15),
-_viewY(30)
+_viewX(30),
+_viewY(60)
 {}
 
 
@@ -92,7 +93,7 @@ bool GMXLayer2::init()
     _hoveredTileRegion = DrawNode::create();
     _rootNode->addChild(_hoveredTileRegion);
     
-    _cellSpacePartition = CellSpacePartition::create(_file.worldSize, Size(500, 500));
+    _cellSpacePartition = CellSpacePartition::create(_file.worldSize, Size(_file.tileWidth * 5, _file.tileHeight * 5));
     addChild(_cellSpacePartition);
     
     _camera = Camera2D::create();
@@ -126,19 +127,8 @@ void GMXLayer2::initFile()
     {
         for(int j = 0 ; j < x ; ++ j)
         {
-            Vec2 tilePosition;
-            if ( i % 2 == 0 )
-            {
-                tilePosition.setPoint(j * _file.tileWidth - (_file.tileWidth * DUMMY_TILE_SIZE),
-                                      i * _file.tileHeight / 2 - (_file.tileHeight * DUMMY_TILE_SIZE));
-            }
-            else
-            {
-                tilePosition.setPoint(_file.tileWidth / 2 + j * _file.tileWidth - (_file.tileWidth * DUMMY_TILE_SIZE),
-                                      i * _file.tileHeight / 2 - (_file.tileHeight * DUMMY_TILE_SIZE));
-            }
-            
-            _tiles[i][j] = new TileBase( _file.tileInfos[i][j], tilePosition);
+            Vec2 tilePosition = indexToPosition(j, i, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
+            _tiles[i][j] = TileBase(j, i, _file.tileInfos[i][j], tilePosition);
         }
     }
     
@@ -203,22 +193,73 @@ void GMXLayer2::showWindow()
                  ImGuiWindowFlags_NoCollapse |
                  ImGuiWindowFlags_NoBringToFrontOnFocus |
                  ImGuiWindowFlags_ShowBorders);
-  
-    ImGui::InvisibleButton("##dummy", ImGui::GetContentRegionAvail());
+
+    _canvasSize = Size(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
+    ImGui::InvisibleButton("##dummy", ImVec2(_canvasSize.width, _canvasSize.height));
     
     _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
     _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
-    
-    _canvasSize = Size(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
-    ImVec2 canvasPos = ImGui::GetCursorScreenPos();
-    _mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - canvasPos.x,
-                            _canvasSize.height - (ImGui::GetIO().MousePos.y - canvasPos.y));
+
+    _mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - ImGui::GetCursorScreenPos().x,
+                            ImGui::GetContentRegionAvail().y - (ImGui::GetIO().MousePos.y - ImGui::GetCursorScreenPos().y));
     
     _mousePosInWorld = _camera->getPosition() + (Vec2(_mousePosInCanvas.x - _layerSize.width / 2 + ImGui::GetStyle().WindowPadding.x,
                                                       _mousePosInCanvas.y - _layerSize.height / 2 + ImGui::GetStyle().WindowPadding.y));
     
     _mousePosInWorld.clamp(_camera->getPosition() - Vec2(_layerSize / 2), _camera->getPosition() + Vec2(_layerSize / 2));
  
+    auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
+    _hoveredTileRegion->clear();
+    
+    Vec2 hoveredRegionCenterPos = _tiles[indices.second][indices.first].getPosition();
+    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), 2.0f, Color4F::GREEN);
+    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
+    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), 2.0f, Color4F::GREEN);
+    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
+    
+    Vec2 mousePosInCocos2dMatrix(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
+    
+    static bool titleClicked = false;
+    if ( ImGui::GetIO().MouseClicked[0] )
+    {
+        Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerPosition.y - height, _layerSize.width, height);
+        if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
+        {
+            titleClicked = true;
+        }
+    }
+    else if ( ImGui::GetIO().MouseReleased[0] )
+    {
+        titleClicked = false;
+    }
+    
+    if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && !titleClicked )
+    {
+        Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerPosition.y, _layerSize.width, _layerSize.height);
+        if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
+        {
+            ImVec2 canvasPos = ImGui::GetCursorScreenPos();
+            _mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - canvasPos.x, _layerSize.height - (ImGui::GetIO().MousePos.y - canvasPos.y));
+        }
+    }
+    
+    if ( ImGui::IsMouseHoveringWindow() && ImGui::GetIO().MouseClicked[0] && !titleClicked )
+    {
+        Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
+        bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+        if ( !isClickedResizeButton && _paletteLayer->getPaletteType() == PaletteType::TILE )
+        {
+            int selectedItem = _paletteLayer->getSelectedItem();
+            putTile(static_cast<TileType>(selectedItem), indices.first, indices.second);
+            
+            log("[%d, %d]", indices.second, indices.first);
+            // 0 = dirt
+            // 1 = grass
+            // 2 = water
+            // 3 = hill
+        }
+    }
+
     ImGui::End();
     ImGui::PopStyleVar(2);
     ImGui::PopStyleColor();
@@ -231,19 +272,6 @@ void GMXLayer2::showWindow()
     
     _localDebugNode->clear();
     _localDebugNode->drawDot(Vec2(_layerSize / 2), 5.0f, Color4F::YELLOW);
-    
-    auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
-    
-    _hoveredTileRegion->clear();
-    
-    Vec2 hoveredRegionCenterPos = _tiles[indices.second][indices.first]->getPosition();
-    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), 2.0f, Color4F::GREEN);
-    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
-    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), 2.0f, Color4F::GREEN);
-    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
-    
-    _centerViewParam = Vec2((_camera->getPosition().x - _layerSize.width / 2) / (_file.worldSize.width - _layerSize.width),
-                            (_camera->getPosition().y - _layerSize.height / 2) / (_file.worldSize.height - _layerSize.height));
     
     if ( _isShowWindow == false )
     {
@@ -261,10 +289,25 @@ void GMXLayer2::showWindow()
 
 
 
-void GMXLayer2::setTile(int x, int y, TileBase* tile)
+void GMXLayer2::setTile(int x, int y, const TileBase& tile)
 {
-    _tileImages[y][x]->setTexture(tile->getNumber() + ".png");
     MutableUiBase::setTile(x, y, tile);
+    
+    auto rootIndices = getFocusedTileIndex(_tileRootWorldPosition,_file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
+    
+    auto clickedWorldPosition = indexToPosition(x, y, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
+    auto clickedIndices = getFocusedTileIndex(clickedWorldPosition, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
+    
+    int offsetX = clickedIndices.first - rootIndices.first;
+    int offsetY = clickedIndices.second - rootIndices.second;
+    
+    int localX = _viewX / 2 + offsetX;
+    int localY = _viewY / 2 + offsetY;
+    
+    if ( localX < 0 || localY < 0 || localX >= _viewX || localY >= _viewY )
+        return ;
+    
+    _tileImages[localY][localX]->setTexture(tile.getNumber() + ".png");
 }
 
 
@@ -344,9 +387,9 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
             }
             else
             {
-                fileName = _tiles[y][x]->getNumber() + ".png";
-                pos = _tiles[y][x]->getPosition() - _tileRootWorldPosition;
-                worldPos = _tiles[y][x]->getPosition();
+                fileName = _tiles[y][x].getNumber() + ".png";
+                pos = _tiles[y][x].getPosition() - _tileRootWorldPosition;
+                worldPos = _tiles[y][x].getPosition();
             }
             
             _tileImages[i][j]->setTexture(fileName);
@@ -382,6 +425,159 @@ void GMXLayer2::setCenterViewParameter(const cocos2d::Vec2& p)
     _centerViewParam = p;
 }
 
+
+void GMXLayer2::putTile(TileType type, int x, int y)
+{
+    const int tileWidth = _file.tileWidth;
+    const int tileHeight = _file.tileHeight;
+    const int dummy = DUMMY_TILE_SIZE;
+    
+    std::stack<TileBase> s;
+    
+    TileBase init = TileBase(x, y, TileBase::getTileHeader(type) + "1234", indexToPosition(x, y, tileWidth, tileHeight, dummy));
+    s.push(init);
+    while( !s.empty() )
+    {
+        TileBase temp = s.top();
+        s.pop();
+        
+        std::string number = temp.getNumber();
+        int xx = temp.getIndexX();
+        int yy = temp.getIndexY();
+        
+        if ( temp.getNumber().at(0) != '1')
+        {
+            // 추가하는 로직
+            if ( TileBase::getTileTail(temp.getNumber()) == "1234" )
+            {
+                auto nei = getNeighborTiles(xx, yy);
+                s.push(TileBase(nei[0].first, nei[0].second, TileBase::getTileHeader(number) + "2", indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(number) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[2].first, nei[2].second, TileBase::getTileHeader(number) + "3", indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(number) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[4].first, nei[4].second, TileBase::getTileHeader(number) + "4", indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(number) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[6].first, nei[6].second, TileBase::getTileHeader(number) + "1", indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(number) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                
+                setTile(xx, yy, temp);
+            }
+            else
+            {
+                if ( _tiles[yy][xx].getNumber().at(0) == number[0] )
+                {
+                    // 같은 타일의 경우 합친후 적용한다.
+                    std::string originalTail = _tiles[yy][xx].getTileTail();
+                    std::string tail = temp.getTileTail();
+                    
+                    originalTail += tail;
+                    std::sort(begin(originalTail), end(originalTail));
+                    originalTail.erase(unique(begin(originalTail), end(originalTail)), end(originalTail));
+                    
+                    std::string finalTile = _tiles[yy][xx].getTileHeader() + originalTail;
+                    
+                    temp.setNumber(finalTile);
+                    setTile(xx, yy, temp);
+                    
+                }
+                else if ( _tiles[yy][xx].getNumber().at(0) == '1' )
+                {
+                    // 흙 타일일 경우에는 바로 적용한다.
+                    setTile(xx, yy, temp);
+                }
+                else
+                {
+                    // 다른 타일일 경우
+                    
+                    auto nei = getNeighborTiles(xx, yy);
+                    std::string tail = temp.getTileTail();
+                    if ( tail == "2")
+                    {
+                        s.push(TileBase(nei[0].first, nei[0].second, TileBase::getTileHeader(TileType::DIRT) + "2", indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                    }
+                    else if ( tail == "23")
+                    {
+                        s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                    }
+                    else if ( tail == "3")
+                    {
+                        s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[2].first, nei[2].second, TileBase::getTileHeader(TileType::DIRT) + "3", indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                    }
+                    else if ( tail == "34")
+                    {
+                        s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                    }
+                    else if ( tail == "4")
+                    {
+                        s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[4].first, nei[4].second, TileBase::getTileHeader(TileType::DIRT) + "4", indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                    }
+                    else if ( tail == "14")
+                    {
+                        s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                    }
+                    else if ( tail == "1")
+                    {
+                        s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[6].first, nei[6].second, TileBase::getTileHeader(TileType::DIRT) + "1", indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                    }
+                    else if ( tail == "12")
+                    {
+                        s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                    }
+                    
+                    setTile(xx, yy, temp);
+                }
+            }
+        }
+        else // if ( temp.tileNumber[0] == '1' )
+        {
+            // 지우는 로직
+            if ( temp.getTileTail() == "1234" )
+            {
+                auto nei = getNeighborTiles(xx, yy);
+                s.push(TileBase(nei[0].first, nei[0].second, temp.getTileHeader() + "2", indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[1].first, nei[1].second, temp.getTileHeader() + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[2].first, nei[2].second, temp.getTileHeader() + "3", indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[3].first, nei[3].second, temp.getTileHeader() + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[4].first, nei[4].second, temp.getTileHeader() + "4", indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[5].first, nei[5].second, temp.getTileHeader() + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[6].first, nei[6].second, temp.getTileHeader() + "1", indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
+                s.push(TileBase(nei[7].first, nei[7].second, temp.getTileHeader() + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                
+                setTile(xx, yy, temp);
+            }
+            else
+            {
+                if ( _tiles[yy][xx].getNumber().at(0) == '1')
+                {
+                    continue;
+                }
+                
+                std::string originalTail = _tiles[yy][xx].getTileTail();
+                std::string tail = temp.getTileTail();
+                
+                for(auto& d : tail)
+                {
+                    originalTail.erase(std::remove(begin(originalTail), end(originalTail), d), end(originalTail));
+                }
+                
+                std::string finalTile;
+                if ( originalTail.empty() ) finalTile = TileBase::getTileHeader(TileType::DIRT) + "1234";
+                else finalTile = _tiles[yy][xx].getTileHeader() + originalTail;
+                
+                temp.setNumber(finalTile);
+                setTile(xx, yy, temp);
+            }
+        }
+    }
+}
 
 
 

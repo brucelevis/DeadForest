@@ -11,18 +11,21 @@
 
 #include <vector>
 
-class TileBase;
+#include "TileBase.hpp"
 
 class MutableUiBase
 {
     
 public:
     
-    virtual void setTile(int x, int y, TileBase* tile) { _tiles[y][x] = tile; }
+    virtual void setTile(int x, int y, const TileBase& tile)
+    {
+        _tiles[y][x] = tile;
+    }
     
 protected:
     
-    std::vector<std::vector<TileBase*>> _tiles;
+    std::vector<std::vector<TileBase>> _tiles;
     
 };
 

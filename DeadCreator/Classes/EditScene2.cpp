@@ -38,7 +38,7 @@ bool EditScene2::init()
     
     _newFileWindow = NewFileWindow2::create(this);
     addChild(_newFileWindow);
-    
+
     addImGUI([this] {
         
         if ( _showNewMap ) _newFileWindow->showNewFileWindow(&_showNewMap);

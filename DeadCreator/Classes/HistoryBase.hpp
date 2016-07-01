@@ -1,37 +1,37 @@
+////
+////  HistoryBase.hpp
+////  DeadCreator
+////
+////  Created by mac on 2016. 6. 23..
+////
+////
 //
-//  HistoryBase.hpp
-//  DeadCreator
+//#ifndef History_hpp
+//#define History_hpp
 //
-//  Created by mac on 2016. 6. 23..
+//#include "MessageNode.hpp"
 //
 //
-
-#ifndef History_hpp
-#define History_hpp
-
-#include "MessageNode.hpp"
-
-
-struct HistoryBase : public MessageNode
-{
-    
-    HistoryBase() = default;
-    
-    virtual ~HistoryBase() = default;
-    
-    virtual void redo() = 0;
-    
-    virtual void undo() = 0;
-    
-};
-
-#endif /* History_hpp */
-
-
-
-
-
-
-
-
-
+//struct HistoryBase : public MessageNode
+//{
+//    
+//    HistoryBase() = default;
+//    
+//    virtual ~HistoryBase() = default;
+//    
+//    virtual void redo() = 0;
+//    
+//    virtual void undo() = 0;
+//    
+//};
+//
+//#endif /* History_hpp */
+//
+//
+//
+//
+//
+//
+//
+//
+//

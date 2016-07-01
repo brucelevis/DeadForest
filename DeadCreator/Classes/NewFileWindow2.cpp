@@ -13,7 +13,6 @@
 #include "GMXLayer2.hpp"
 #include "GMXFile.hpp"
 #include "FileSystem.hpp"
-#include "TileBase.hpp"
 using namespace cocos2d;
 
 NewFileWindow2::NewFileWindow2(EditScene2* layer) :
@@ -131,10 +130,10 @@ void NewFileWindow2::showNewFileWindow(bool* opened)
             {
                 std::string tileName;
                 
-                if ( _currentTile == TileType::DIRT) tileName = "1_" + std::to_string(random(1, 3)) + "_1234";
-                else if ( _currentTile == TileType::GRASS) tileName = "2_" + std::to_string(random(1, 3)) + "_1234";
-                else if ( _currentTile == TileType::WATER) tileName = "3_" + std::to_string(random(1, 3)) + "_1234";
-                else if ( _currentTile == TileType::HILL) tileName = "5_" + std::to_string(random(1, 3)) + "_1234";
+                if ( _currentTile == static_cast<int>(TileType::DIRT)) tileName = "1_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( _currentTile == static_cast<int>(TileType::GRASS)) tileName = "2_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( _currentTile == static_cast<int>(TileType::WATER)) tileName = "3_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( _currentTile == static_cast<int>(TileType::HILL)) tileName = "5_" + std::to_string(random(1, 3)) + "_1234";
                 
                 file->tileInfos[i][j] = tileName;
             }

@@ -217,7 +217,8 @@ void GMXLayer2::showWindow()
     _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), 2.0f, Color4F::GREEN);
     _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
     
-    Vec2 mousePosInCocos2dMatrix(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
+    static Vec2 mousePosInCocos2dMatrix;
+    mousePosInCocos2dMatrix = Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
     
     static bool titleClicked = false;
     if ( ImGui::GetIO().MouseClicked[0] )
@@ -249,14 +250,8 @@ void GMXLayer2::showWindow()
         bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
         if ( !isClickedResizeButton && _paletteLayer->getPaletteType() == PaletteType::TILE )
         {
-            int selectedItem = _paletteLayer->getSelectedItem();
-            putTile(static_cast<TileType>(selectedItem), indices.first, indices.second);
-            
-            log("[%d, %d]", indices.second, indices.first);
-            // 0 = dirt
-            // 1 = grass
-            // 2 = water
-            // 3 = hill
+            TileType selectedTile = static_cast<TileType>(_paletteLayer->getSelectedItem());
+            putTile(selectedTile, indices.first, indices.second);
         }
     }
 
@@ -291,7 +286,7 @@ void GMXLayer2::showWindow()
 
 void GMXLayer2::setTile(int x, int y, const TileBase& tile)
 {
-    MutableUiBase::setTile(x, y, tile);
+    _tiles[y][x] = tile;
     
     auto rootIndices = getFocusedTileIndex(_tileRootWorldPosition,_file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
     
@@ -308,6 +303,8 @@ void GMXLayer2::setTile(int x, int y, const TileBase& tile)
         return ;
     
     _tileImages[localY][localX]->setTexture(tile.getNumber() + ".png");
+    
+    _navigatorLayer->setTile(x, y, tile.getType());
 }
 
 

@@ -11,7 +11,6 @@
 
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
-#include "MutableUiBase.hpp"
 #include "CellSpacePartition.hpp"
 #include "TileImage.hpp"
 #include "Camera2D.hpp"
@@ -24,7 +23,7 @@ class PaletteLayer;
 class NavigatorLayer;
 class EditScene2;
 
-class GMXLayer2 : public MutableUiBase, public cocos2d::Layer
+class GMXLayer2 : public cocos2d::Layer
 {
     
 public:
@@ -43,7 +42,9 @@ public:
 
     virtual void update(float dt) override;
     
-    virtual void setTile(int x, int y, const TileBase& tile) override;
+    const GMXFile& getFile() const { return _file; }
+    
+    void setTile(int x, int y, const TileBase& tile);
     
     void showWindow();
     
@@ -99,6 +100,7 @@ private:
     cocos2d::Node* _rootNode;
     
     CellSpacePartition* _cellSpacePartition;
+    std::vector<std::vector<TileBase>> _tiles;
     std::vector< std::vector<TileImage*> > _tileImages;
     std::vector< std::vector<cocos2d::ui::Text*> > _tileIndices;
     int _viewX;

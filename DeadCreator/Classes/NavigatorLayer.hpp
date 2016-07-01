@@ -8,12 +8,20 @@
 
 #pragma once
 
-#include "MutableUiBase.hpp"
-
 class EditScene2;
 class GMXLayer2;
 
-class NavigatorLayer : public MutableUiBase, public cocos2d::Node
+#include "TileBase.hpp"
+#include "imgui.h"
+
+struct MarkInfo
+{
+    ImTextureID texture;
+    ImVec2 origin;
+    ImVec2 size;
+};
+
+class NavigatorLayer : public cocos2d::Node
 {
     
 public:
@@ -28,6 +36,8 @@ public:
     
     void showLayer(bool* opened);
     
+    void setTile(int x, int y, TileType type);
+    
 private:
     
     EditScene2& _imguiLayer;
@@ -41,7 +51,15 @@ private:
     cocos2d::Rect _boundingBoxPadding;
     cocos2d::Vec2 _mousePosInCanvas;
     
+    std::vector<MarkInfo> _marks;
+    
 };
+
+
+
+
+
+
 
 
 

@@ -46,6 +46,9 @@ bool NavigatorLayer::init()
     if ( !Node::init() )
         return false;
     
+    auto file = _gmxLayer.getFile();
+    _marks.resize(file.numOfTileX * file.numOfTileY);
+    
     return true;
 }
 
@@ -109,15 +112,21 @@ void NavigatorLayer::showLayer(bool* opened)
     ImGui::SetCursorScreenPos(ImVec2(_boundingBoxPadding.origin.x, _boundingBoxPadding.origin.y));
     ImU32 col = ImColor(ImVec4(1, 1, 1, 1));
     
-    Size canvasSize = Size(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
     Size gmxCanvasSize = _gmxLayer.getLayerSize();
-    Vec2 canvasOrigin = Vec2(_boundingBoxPadding.origin.x, _boundingBoxPadding.origin.y + canvasSize.height);
+    Vec2 canvasOrigin = Vec2(_boundingBoxPadding.origin.x, _boundingBoxPadding.origin.y + _boundingBoxPadding.size.height);
     
-    Size selectRegionSize = Size(gmxCanvasSize.width * canvasSize.width / _gmxLayer.getWorldSize().width, gmxCanvasSize.height * canvasSize.height / _gmxLayer.getWorldSize().height);
+    Size selectRegionSize = Size(gmxCanvasSize.width * _boundingBoxPadding.size.width / _gmxLayer.getWorldSize().width,
+                                 gmxCanvasSize.height * _boundingBoxPadding.size.height / _gmxLayer.getWorldSize().height);
+    
     Rect movableRect = Rect(canvasOrigin.x + selectRegionSize.width / 2,
                             canvasOrigin.y - selectRegionSize.height / 2,
-                            canvasSize.width - selectRegionSize.width,
-                            canvasSize.height - selectRegionSize.height);
+                            _boundingBoxPadding.size.width - selectRegionSize.width,
+                            _boundingBoxPadding.size.height - selectRegionSize.height);
+    
+    for(auto &mark : _marks)
+    {
+        list->AddImage(mark.texture, mark.origin, ImVec2(mark.origin.x + mark.size.x, mark.origin.y + mark.size.y));
+    }
     
     _centerViewParam = _gmxLayer.getCenterViewParameter();
     list->AddRect(ImVec2(movableRect.origin.x + (movableRect.size.width * _centerViewParam.x) - selectRegionSize.width / 2,
@@ -125,6 +134,7 @@ void NavigatorLayer::showLayer(bool* opened)
                   ImVec2(movableRect.origin.x + (movableRect.size.width * _centerViewParam.x) + selectRegionSize.width / 2,
                          movableRect.origin.y - (movableRect.size.height * _centerViewParam.y) + selectRegionSize.height / 2),
                   col , 5.0f);
+
     
     static bool titleClicked = false;
     if ( ImGui::GetIO().MouseClicked[0] )
@@ -140,17 +150,17 @@ void NavigatorLayer::showLayer(bool* opened)
         titleClicked = false;
     }
     
-    if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && !titleClicked )
+    if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && !titleClicked && ImGui::IsMouseHoveringWindow() )
     {
-        Rect boundingBox(canvasOrigin.x, ImGui::GetIO().DisplaySize.y - canvasOrigin.y, canvasSize.width, canvasSize.height);
+        Rect boundingBox(canvasOrigin.x, ImGui::GetIO().DisplaySize.y - canvasOrigin.y, _boundingBoxPadding.size.width, _boundingBoxPadding.size.height);
         if ( boundingBox.containsPoint(Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y)) )
         {
             ImVec2 canvasPos = ImGui::GetCursorScreenPos();
-            _mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - canvasPos.x, canvasSize.height - (ImGui::GetIO().MousePos.y - canvasPos.y));
-            _mousePosInCanvas.clamp(Vec2(selectRegionSize / 2), Vec2(canvasSize - selectRegionSize / 2));
+            _mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - canvasPos.x, _boundingBoxPadding.size.height - (ImGui::GetIO().MousePos.y - canvasPos.y));
+            _mousePosInCanvas.clamp(Vec2(selectRegionSize / 2), Vec2(_boundingBoxPadding.size - selectRegionSize / 2));
             
-            _centerViewParam = Vec2((_mousePosInCanvas.x - selectRegionSize.width / 2) / (canvasSize.width - selectRegionSize.width),
-                                    (_mousePosInCanvas.y - selectRegionSize.height / 2) / (canvasSize.height - selectRegionSize.height));
+            _centerViewParam = Vec2((_mousePosInCanvas.x - selectRegionSize.width / 2) / (_boundingBoxPadding.size.width - selectRegionSize.width),
+                                    (_mousePosInCanvas.y - selectRegionSize.height / 2) / (_boundingBoxPadding.size.height - selectRegionSize.height));
             _gmxLayer.setCenterViewParameter(_centerViewParam);
         }
     }
@@ -160,6 +170,13 @@ void NavigatorLayer::showLayer(bool* opened)
     ImGui::PopStyleColor();
 }
 
+
+void NavigatorLayer::setTile(int x, int y, TileType type)
+{
+    Vec2 origin(_boundingBoxPadding.origin.x, _boundingBoxPadding.origin.y + _boundingBoxPadding.size.height);
+//    MarkInfo
+//    _marks.push_back(MarkInfo(ImVec2(origin.x + px * _boundingBoxPadding.size.width, origin.y - py * _boundingBoxPadding.size.height), ImVec4(0,1,0,1)));
+}
 
 
 

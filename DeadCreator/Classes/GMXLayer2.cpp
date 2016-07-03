@@ -307,6 +307,7 @@ void GMXLayer2::setTile(int x, int y, const TileBase& tile, bool isExecCommand)
     }
     
     _tiles[y][x] = tile;
+    _navigatorLayer->setTile(x, y, tile);
     
     auto rootIndices = getFocusedTileIndex(_tileRootWorldPosition,_file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
     
@@ -323,8 +324,6 @@ void GMXLayer2::setTile(int x, int y, const TileBase& tile, bool isExecCommand)
         return ;
     
     _tileImages[localY][localX]->setTexture(tile.getNumber() + ".png");
-    
-    _navigatorLayer->setTile(x, y, tile);
 }
 
 

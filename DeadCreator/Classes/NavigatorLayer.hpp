@@ -45,6 +45,10 @@ private:
     
     TileType _defaultTile;
     GLint _defaultTileTextureName;
+    ImTextureID _dirtMarkTextureName;
+    ImTextureID _grassMarkTextureName;
+    ImTextureID _waterMarkTextureName;
+    ImTextureID _hillMarkTextureName;
     
 };
 

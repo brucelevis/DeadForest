@@ -52,6 +52,11 @@ bool NavigatorLayer::init()
     else if ( _defaultTile == TileType::WATER ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_water.png")->getName();
     else if ( _defaultTile == TileType::HILL ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_hill.png")->getName();
     
+    _dirtMarkTextureName = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("dirt_mark.png")->getName());
+    _grassMarkTextureName = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("grass_mark.png")->getName());
+    _waterMarkTextureName = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("water_mark.png")->getName());
+    _hillMarkTextureName = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("hill_mark.png")->getName());
+    
     return true;
 }
 
@@ -132,17 +137,18 @@ void NavigatorLayer::showLayer(bool* opened)
                         ImVec2(_boundingBoxPadding.origin.x + _boundingBoxPadding.size.width,
                                _boundingBoxPadding.origin.y + _boundingBoxPadding.size.height - 2));
     
-    auto file = _gmxLayer.getFile();
-    ImVec2 worldSize = ImVec2(file.worldSize.width, file.worldSize.height);
+    static auto file = _gmxLayer.getFile();
+    static ImVec2 worldSize = ImVec2(file.worldSize.width, file.worldSize.height);
+    log("%d", _tileMarks.size());
     for(auto &tile : _tileMarks)
     {
         int key = tile.first;
         auto indices = numberToIndex(key, file.numOfTileX, DUMMY_TILE_SIZE);
-        
         auto position = indexToPosition(indices.first, indices.second, file.tileWidth, file.tileHeight, DUMMY_TILE_SIZE);
         ImVec2 param = ImVec2(position.x / worldSize.x, position.y / worldSize.y);
         ImVec2 origin = ImVec2(canvasOrigin.x + param.x * _boundingBoxPadding.size.width, canvasOrigin.y - param.y * _boundingBoxPadding.size.height);
         ImVec2 size = ImVec2(_boundingBoxPadding.size.width * file.tileWidth / worldSize.x, _boundingBoxPadding.size.height * file.tileHeight / worldSize.y);
+        
         list->AddImage(tile.second, origin, ImVec2(origin.x + size.x, origin.y - size.y));
     }
     
@@ -191,7 +197,8 @@ void NavigatorLayer::showLayer(bool* opened)
 
 void NavigatorLayer::setTile(int x, int y, const TileBase& tile)
 {
-    int key = indexToNumber(x, y, _gmxLayer.getFile().numOfTileX, DUMMY_TILE_SIZE);
+    static int numOfTileX = _gmxLayer.getFile().numOfTileX;
+    int key = indexToNumber(x, y, numOfTileX, DUMMY_TILE_SIZE);
     
     if ( tile.getType() == _defaultTile )
     {
@@ -201,19 +208,19 @@ void NavigatorLayer::setTile(int x, int y, const TileBase& tile)
     {
         if ( tile.getType() == TileType::DIRT)
         {
-            _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("dirt_mark.png")->getName());
+            _tileMarks[key] = _dirtMarkTextureName;
         }
         else if ( tile.getType() == TileType::GRASS )
         {
-            _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("grass_mark.png")->getName());
+            _tileMarks[key] = _grassMarkTextureName;
         }
         else if ( tile.getType() == TileType::WATER )
         {
-            _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("water_mark.png")->getName());
+            _tileMarks[key] = _waterMarkTextureName;
         }
         else if ( tile.getType() == TileType::HILL )
         {
-            _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("hill_mark.png")->getName());
+            _tileMarks[key] = _hillMarkTextureName;
         }
     }
 }

@@ -8,6 +8,7 @@
 
 #include "HistoryLayer.hpp"
 #include "GMXLayer2.hpp"
+#include "CommandBase.hpp"
 using namespace cocos2d;
 
 HistoryLayer::HistoryLayer(GMXLayer2& gmxLayer) :
@@ -91,6 +92,47 @@ void HistoryLayer::showLayer(bool* opened)
                                 _layerSize.width - g.Style.WindowPadding.x * 2.0f,
                                 _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
     
+    ImGui::BeginChild("##child", ImVec2(0, _layerSize.height - height - g.Style.FramePadding.y * 2.0f), true);
+    ImGui::Separator();
+    int currIndex = _commandQueue.getIndex();
+    for(int i = 0 ; i < _commandQueue.size() ; ++ i)
+    {
+        bool isPrev = (currIndex > i);
+        bool isCurr = (currIndex == i);
+        bool isNext = (currIndex < i);
+        bool isSelected = false;
+        
+        if ( isPrev )
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0000, 0.0000, 0.0000, 0.7000));
+        }
+        else if ( isCurr )
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0000, 1.0000, 1.0000, 1.0000));
+            isSelected = true;
+        }
+        else if ( isNext )
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0000, 0.0000, 0.0000, 0.5000));
+        }
+        
+        std::string commandName = _commandQueue[i]->getCommandName()  + "[" + std::to_string(i) + "]";
+        if ( ImGui::Selectable(commandName.c_str(), isSelected) )
+        {
+            _commandQueue.setStateToIndex(i);
+        }
+        
+        ImGui::PopStyleColor();
+        ImGui::Separator();
+    }
+    
+    if ( _isSetScrollBottom )
+    {
+        ImGui::SetScrollHere(1.0f);
+        _isSetScrollBottom = false;
+    }
+    
+    ImGui::EndChild();
     
     ImGui::End();
     ImGui::PopStyleVar();

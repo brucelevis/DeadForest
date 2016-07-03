@@ -36,6 +36,10 @@ public:
     bool isUndo() const;
     
     int size() const { return static_cast<int>(_commands.size()); }
+    
+    void setStateToIndex(int index);
+    
+    const CommandBase* operator[](size_t index) const { return _commands[index]; }
 
 private:
 

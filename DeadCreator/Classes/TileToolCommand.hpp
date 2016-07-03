@@ -20,7 +20,9 @@ public:
     
     explicit TileToolCommand(GMXLayer2* layer) :
     CommandBase(layer)
-    {}
+    {
+        _commandName = "Tile Tool";
+    }
     
     TileToolCommand(const TileToolCommand& rhs) : CommandBase(rhs)
     {

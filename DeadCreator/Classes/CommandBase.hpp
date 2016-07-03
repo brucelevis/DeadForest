@@ -9,6 +9,7 @@
 #pragma once
 
 #include <exception>
+#include <string>
 
 class GMXLayer2;
 
@@ -31,6 +32,7 @@ public:
     {
         _layer = rhs._layer;
         _isBegan = rhs._isBegan;
+        _commandName = rhs._commandName;
     }
     
     virtual ~CommandBase() = default;
@@ -67,11 +69,15 @@ public:
         endImpl();
     }
     
+    std::string getCommandName() const { return _commandName; }
+    
 protected:
     
     GMXLayer2* _layer;
     
     bool _isBegan;
+    
+    std::string _commandName;
     
 };
 

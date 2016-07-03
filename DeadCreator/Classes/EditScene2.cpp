@@ -68,8 +68,8 @@ bool EditScene2::init()
             }
             if (ImGui::BeginMenu("Edit", _isEditEnable))
             {
-                if (ImGui::MenuItem("Undo", "CTRL+Z")) { }
-                if (ImGui::MenuItem("Redo", "CTRL+Y")) { }
+                if (ImGui::MenuItem("Undo", "CTRL+Z", false, _layer->isUndo())) { _layer->undo(); }
+                if (ImGui::MenuItem("Redo", "CTRL+Y", false, _layer->isRedo())) { _layer->redo(); }
                 
                 ImGui::Separator();
                 if (ImGui::MenuItem("Cut", "CTRL+X", false, false)) {}

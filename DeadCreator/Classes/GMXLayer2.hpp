@@ -19,12 +19,12 @@
 #include "TileBase.hpp"
 #include "CommandQueue.hpp"
 #include "SizeProtocol.h"
+#include "HistoryLayer.hpp"
 
 #define DUMMY_TILE_SIZE 4
 
 class PaletteLayer;
 class NavigatorLayer;
-class HistoryLayer;
 class EditScene2;
 class CommandBase;
 class TileToolCommand;
@@ -87,6 +87,14 @@ public:
     bool& isShowNavigator() { return _isShowNavigator; }
     
     bool& isShowHistory() { return _isShowHistory; }
+    
+    bool isRedo() const { return _historyLayer->isRedo(); }
+    
+    bool isUndo() const { return _historyLayer->isUndo(); }
+    
+    void redo() { _historyLayer->redo(); }
+    
+    void undo() { _historyLayer->undo(); }
     
 private:
     

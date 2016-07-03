@@ -50,6 +50,25 @@ void CommandQueue::pushCommand(CommandBase* command)
 }
 
 
+void CommandQueue::setStateToIndex(int index)
+{
+    if ( _currIndex > index )
+    {
+        while( _currIndex != index )
+        {
+            undo();
+        }
+    }
+    else
+    {
+        while( _currIndex != index )
+        {
+            redo();
+        }
+    }
+}
+
+
 bool CommandQueue::isRedo() const
 {
     return (_currIndex + 1 < _commands.size());

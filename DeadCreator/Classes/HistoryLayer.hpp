@@ -29,7 +29,7 @@ public:
     
     void showLayer(bool* opened);
     
-    void pushCommand(CommandBase* command) { _commandQueue.pushCommand(command); }
+    void pushCommand(CommandBase* command) { _commandQueue.pushCommand(command); _isSetScrollBottom = true; }
     
     void redo() { if ( isRedo() ) _commandQueue.redo(); }
     
@@ -52,6 +52,7 @@ private:
     cocos2d::Rect _boundingBoxPadding;
     
     CommandQueue _commandQueue;
+    bool _isSetScrollBottom = false;
 
 };
 

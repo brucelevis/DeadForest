@@ -96,8 +96,9 @@ bool EditScene2::init()
             if (ImGui::BeginMenu("Windows", _isWindowEnable))
             {
                 ImGui::MenuItem("Navigator", "SHIFT+N", &_layer->isShowNavigator());
-                ImGui::MenuItem("Trigger", "SHIFT+T");
                 ImGui::MenuItem("Palette", "SHIFT+P", &_layer->isShowPalette());
+                ImGui::MenuItem("History", "SHIFT+H", &_layer->isShowHistory());
+                ImGui::MenuItem("Trigger", "SHIFT+T");
                 ImGui::MenuItem("Property", "SHIFT+R");
                 ImGui::EndMenu();
             }
@@ -114,8 +115,8 @@ bool EditScene2::init()
         
         ImGuiIO& io = ImGui::GetIO();
         
-        ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - SizeProtocol::STATUSBAR_HEIGHT));
-        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, SizeProtocol::STATUSBAR_HEIGHT));
+        ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - STATUSBAR_HEIGHT));
+        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, STATUSBAR_HEIGHT));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::Begin("##BottomMenuBar", NULL,
                      ImGuiWindowFlags_NoTitleBar |

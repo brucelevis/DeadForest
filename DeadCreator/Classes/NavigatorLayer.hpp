@@ -8,22 +8,21 @@
 
 #pragma once
 
-class EditScene2;
 class GMXLayer2;
 
 #include "TileBase.hpp"
-#include "imgui.h"
+#include "ImGuiLayer.h"
 
 class NavigatorLayer : public cocos2d::Node
 {
     
 public:
     
-    NavigatorLayer(EditScene2& imguiLayer, GMXLayer2& gmxLayer);
+    NavigatorLayer(GMXLayer2& gmxLayer);
     
     virtual ~NavigatorLayer();
     
-    static NavigatorLayer* create(EditScene2& imguiLayer, GMXLayer2& gmxLayer);
+    static NavigatorLayer* create(GMXLayer2& gmxLayer);
     
     virtual bool init() override;
     
@@ -33,16 +32,13 @@ public:
     
 private:
     
-    EditScene2& _imguiLayer;
     GMXLayer2& _gmxLayer;
     
-    bool _isShowWindow = true;
     cocos2d::Size _layerSize;
     cocos2d::Vec2 _layerPosition;
-    cocos2d::Vec2 _centerViewParam;
-    cocos2d::Vec2 _centerViewPosition;
     cocos2d::Rect _boundingBoxPadding;
-    cocos2d::Vec2 _mousePosInCanvas;
+    
+    cocos2d::Vec2 _centerViewParam;
     
     std::map<int, ImTextureID> _tileMarks;
     std::map<int, ImTextureID> _entityMarks;

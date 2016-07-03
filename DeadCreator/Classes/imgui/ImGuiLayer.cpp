@@ -91,8 +91,6 @@ void ImGuiLayer::onDraw()
         
         ImGui_ImplGlfw_NewFrame();
         
-        _usedTextureIdMap.clear();
-        
         for (auto &d : _callPiplines)
         {
             d.second();
@@ -115,125 +113,23 @@ bool ImGuiLayer::removeImGUI(std::string name)
 }
 
 
-#include <tuple>
-static std::tuple<Texture2D*, ImVec2, ImVec2, ImVec2> getTextureInfo(const std::string& fn, int w = -1, int h = -1)
+void ImGuiLayer::image(const std::string& fn, float w, float h)
 {
-    std::string name = fn;
-    cocos2d::Texture2D *texture = NULL;
-    ImVec2 uv0(0, 0);
-    ImVec2 uv1(1, 1);
-    ImVec2 size(0, 0);
-    
-    // sprite frame
-    if (fn.at(0) == '#')
-    {
-        name = name.substr(1, name.size());
-        SpriteFrame *sf = cocos2d::SpriteFrameCache::getInstance()->getSpriteFrameByName(name);
-        if (sf)
-        {
-            float atlasWidth = (float)sf->getTexture()->getPixelsWide();
-            float atlasHeight = (float)sf->getTexture()->getPixelsHigh();
-            
-            const Rect& rect = sf->getRect();
-            texture = sf->getTexture();
-            if (sf->isRotated())
-            {
-                // FIXME:
-                uv0.x = rect.origin.x / atlasWidth;
-                uv0.y = rect.origin.y / atlasHeight;
-                uv1.x = (rect.origin.x + rect.size.width) / atlasWidth;
-                uv1.y = (rect.origin.y + rect.size.height) / atlasHeight;
-            }
-            else
-            {
-                uv0.x = rect.origin.x / atlasWidth;
-                uv0.y = rect.origin.y / atlasHeight;
-                uv1.x = (rect.origin.x + rect.size.width) / atlasWidth;
-                uv1.y = (rect.origin.y + rect.size.height) / atlasHeight;
-            }
-            
-            size.x = sf->getRect().size.width;
-            size.y = sf->getRect().size.height;
-        }
-    }
-    else
-    {
-        texture = cocos2d::Director::getInstance()->getTextureCache()->addImage(fn);
-        size.x = texture->getPixelsWide();
-        size.y = texture->getPixelsHigh();
-    }
-    
-    if (w > 0 && h > 0)
-    {
-        size.x = w;
-        size.y = h;
-    }
-    
-    return std::make_tuple(texture, size, uv0, uv1);
+    auto texName = cocos2d::Director::getInstance()->getTextureCache()->addImage(fn)->getName();
+    ImGui::Image(reinterpret_cast<ImTextureID>(texName), ImVec2(w, h));
 }
 
-void ImGuiLayer::image(const std::string& fn, int w, int h)
+bool ImGuiLayer::imageButton(const std::string& fn,float w, float h)
 {
-    cocos2d::Texture2D *texture = NULL;
-    ImVec2 uv0(0, 0);
-    ImVec2 uv1(1, 1);
-    ImVec2 size(0, 0);
-    
-    std::tie(texture, size, uv0, uv1) = getTextureInfo(fn, w, h);
-    if (texture)
-    {
-        bool needToPopID = false;
-        GLuint texId = texture->getName();
-        if (_usedTextureIdMap.find(texId) == _usedTextureIdMap.end())
-        {
-            _usedTextureIdMap[texId] = 0;
-        }
-        else
-        {
-            _usedTextureIdMap[texId]++;
-            ImGui::PushID(_usedTextureIdMap[texId]);
-            needToPopID = true;
-        }
-        
-        ImGui::Image(reinterpret_cast<ImTextureID>(texId), size, uv0, uv1);
-        
-        if (needToPopID)
-        {
-            ImGui::PopID();
-        }
-    }
+    auto texName = cocos2d::Director::getInstance()->getTextureCache()->addImage(fn)->getName();
+    return ImGui::ImageButton(reinterpret_cast<ImTextureID>(texName), ImVec2(w, h));
 }
 
-bool ImGuiLayer::imageButton(const std::string& fn, int w, int h)
-{
-    cocos2d::Texture2D *texture = NULL;
-    ImVec2 uv0(0, 0);
-    ImVec2 uv1(1, 1);
-    ImVec2 size(0, 0);
-    
-    bool ret = false;
-    std::tie(texture, size, uv0, uv1) = getTextureInfo(fn, w, h);
-    if (texture)
-    {
-        bool needToPopID = false;
-        GLuint texId = texture->getName();
-        if (_usedTextureIdMap.find(texId) == _usedTextureIdMap.end())
-        {
-            _usedTextureIdMap[texId] = 0;
-        }
-        else
-        {
-            _usedTextureIdMap[texId]++;
-            ImGui::PushID(_usedTextureIdMap[texId]);
-            needToPopID = true;
-        }
-        
-        ret = ImGui::ImageButton(reinterpret_cast<ImTextureID>(texture->getName()), size, uv0, uv1);
-        
-        if (needToPopID)
-        {
-            ImGui::PopID();
-        }
-    }
-    return ret;
-}
+
+
+
+
+
+
+
+

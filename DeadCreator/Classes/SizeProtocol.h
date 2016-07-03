@@ -6,21 +6,9 @@
 //
 //
 
-#ifndef SizeProtocol_h
-#define SizeProtocol_h
+#pragma once
 
-struct SizeProtocol
-{
-    static int SCREEN_WIDTH;
-    static int SCREEN_HEIGHT;
-    static int MINIMAP_SIZE;
-    static int FONT_SIZE;
-    static int WINDOW_PADDING;
-    static int FRAME_PADDING;
-    static int MENUBAR_HEIGHT;
-    static int STATUSBAR_HEIGHT;
-    static int FILE_MENUBAR_HEIGHT;
-};
-
-
-#endif /* SizeProtocol_h */
+#define SCREEN_WIDTH 1136
+#define SCREEN_HEIGHT 640
+#define STATUSBAR_HEIGHT 25
+#define WINDOW_PADDING 10

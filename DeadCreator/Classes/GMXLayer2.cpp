@@ -10,12 +10,11 @@
 #include <stack>
 
 #include "GMXLayer2.hpp"
-#include "GMXFile.hpp"
-#include "PaletteLayer.hpp"
-#include "NavigatorLayer.hpp"
 #include "EditScene2.hpp"
 #include "TileHelperFunctions.hpp"
-#include "SizeProtocol.h"
+#include "PaletteLayer.hpp"
+#include "NavigatorLayer.hpp"
+#include "HistoryLayer.hpp"
 #include "TileToolCommand.hpp"
 using namespace cocos2d;
 
@@ -25,7 +24,6 @@ _file(file),
 _worldDebugNode(nullptr),
 _localDebugNode(nullptr),
 _hoveredTileRegion(nullptr),
-_visibleSize(Director::getInstance()->getVisibleSize()),
 _canvasSize(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y),
 _layerSize(Director::getInstance()->getVisibleSize() / 1.5),
 _layerPosition(Director::getInstance()->getVisibleSize() / 2 - _layerSize / 2),
@@ -109,11 +107,14 @@ bool GMXLayer2::init()
     
     initFile();
     
-    _paletteLayer = PaletteLayer::create(_imguiLayer);
+    _paletteLayer = PaletteLayer::create();
     addChild(_paletteLayer);
     
-    _navigatorLayer = NavigatorLayer::create(_imguiLayer, *this);
+    _navigatorLayer = NavigatorLayer::create(*this);
     addChild(_navigatorLayer);
+    
+    _historyLayer = HistoryLayer::create(*this);
+    addChild(_historyLayer);
     
     _tileToolCommand = new TileToolCommand(this);
     
@@ -171,24 +172,24 @@ void GMXLayer2::showWindow()
     ImGuiState& g = *GImGui;
     float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
     
-    if ( _layerSize.width + _layerPosition.x > g.IO.DisplaySize.x - SizeProtocol::WINDOW_PADDING )
-        _layerSize.width = g.IO.DisplaySize.x - SizeProtocol::WINDOW_PADDING - _layerPosition.x;
+    if ( _layerSize.width + _layerPosition.x > g.IO.DisplaySize.x - WINDOW_PADDING )
+        _layerSize.width = g.IO.DisplaySize.x - WINDOW_PADDING - _layerPosition.x;
     
-    if ( _layerSize.height + _layerPosition.y > g.IO.DisplaySize.y - SizeProtocol::WINDOW_PADDING - height )
-        _layerSize.height = g.IO.DisplaySize.y - SizeProtocol::WINDOW_PADDING - _layerPosition.y - height;
+    if ( _layerSize.height + _layerPosition.y > g.IO.DisplaySize.y - WINDOW_PADDING - height )
+        _layerSize.height = g.IO.DisplaySize.y - WINDOW_PADDING - _layerPosition.y - height;
 
     
-    if ( _layerPosition.x < SizeProtocol::WINDOW_PADDING )
-        _layerPosition.x = SizeProtocol::WINDOW_PADDING;
+    if ( _layerPosition.x < WINDOW_PADDING )
+        _layerPosition.x = WINDOW_PADDING;
     
-    if ( _layerPosition.y < height + SizeProtocol::WINDOW_PADDING )
-        _layerPosition.y = height + SizeProtocol::WINDOW_PADDING;
+    if ( _layerPosition.y < height + WINDOW_PADDING )
+        _layerPosition.y = height + WINDOW_PADDING;
     
-    if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - SizeProtocol::WINDOW_PADDING )
-        _layerPosition.x = g.IO.DisplaySize.x - _layerSize.width - SizeProtocol::WINDOW_PADDING;
+    if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - WINDOW_PADDING )
+        _layerPosition.x = g.IO.DisplaySize.x - _layerSize.width - WINDOW_PADDING;
     
-    if ( _layerPosition.y + _layerSize.height > g.IO.DisplaySize.y - SizeProtocol::WINDOW_PADDING - SizeProtocol::STATUSBAR_HEIGHT )
-        _layerPosition.y = g.IO.DisplaySize.y - _layerSize.height - SizeProtocol::WINDOW_PADDING - SizeProtocol::STATUSBAR_HEIGHT;
+    if ( _layerPosition.y + _layerSize.height > g.IO.DisplaySize.y - WINDOW_PADDING - STATUSBAR_HEIGHT )
+        _layerPosition.y = g.IO.DisplaySize.y - _layerSize.height - WINDOW_PADDING - STATUSBAR_HEIGHT;
     
     
     ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Always);
@@ -265,7 +266,7 @@ void GMXLayer2::showWindow()
             putTile(selectedTile, indices.first, indices.second);
             
             _tileToolCommand->end();
-            _commandQueue.pushCommand(_tileToolCommand->clone());
+            _historyLayer->pushCommand(_tileToolCommand->clone());
         }
     }
 
@@ -273,8 +274,7 @@ void GMXLayer2::showWindow()
     ImGui::PopStyleVar(2);
     ImGui::PopStyleColor();
     
-    _visibleSize = Director::getInstance()->getVisibleSize();
-    setPosition(_layerPosition.x, _visibleSize.height - _layerPosition.y - _layerSize.height);
+    setPosition(_layerPosition.x, Director::getInstance()->getVisibleSize().height - _layerPosition.y - _layerSize.height);
     _tileRoot->setPosition(_layerSize / 2);
     
     _clipNode->setClippingRegion(Rect(0, 0, _layerSize.width, _layerSize.height));
@@ -294,6 +294,7 @@ void GMXLayer2::showWindow()
     
     if ( _isShowPalette ) _paletteLayer->showLayer(&_isShowPalette);
     if ( _isShowNavigator ) _navigatorLayer->showLayer(&_isShowNavigator);
+    if ( _isShowHistory ) _historyLayer->showLayer(&_isShowHistory);
 }
 
 
@@ -341,6 +342,7 @@ void GMXLayer2::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
 
 void GMXLayer2::update(float dt)
 {
+    
     if ( _isKeyDown[static_cast<int>(EventKeyboard::KeyCode::KEY_RIGHT_ARROW)] ) _cameraDirection.x = 1.0f;
     else if ( _isKeyDown[static_cast<int>(EventKeyboard::KeyCode::KEY_LEFT_ARROW)] ) _cameraDirection.x = -1.0f;
     else _cameraDirection.x = 0.0f;

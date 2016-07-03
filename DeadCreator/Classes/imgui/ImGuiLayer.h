@@ -1,5 +1,4 @@
-#ifndef __IMGUILAYER_H__
-#define __IMGUILAYER_H__
+#pragma once
 
 #include "cocos2d.h"
 #include "imgui.h"
@@ -32,9 +31,9 @@ public:
     
     bool removeImGUI(std::string name);
     
-    void image(const std::string& fn, int w = -1, int h = -1);
+    static void image(const std::string& fn, float w, float h);
     
-    bool imageButton(const std::string& fn, int w = -1, int h = -1);
+    static bool imageButton(const std::string& fn, float w, float h);
 
 protected:
     
@@ -46,8 +45,13 @@ protected:
     
     std::map<std::string, std::function<void()>> _callPiplines;
     
-    std::unordered_map<unsigned int, int> _usedTextureIdMap;
-    
 };
 
-#endif // __IMGUILAYER_H__
+
+
+
+
+
+
+
+

@@ -139,8 +139,8 @@ public:
     {
         if (_view)
         {
-            if ( width < SizeProtocol::SCREEN_WIDTH / 2) width = SizeProtocol::SCREEN_WIDTH / 2;
-            if ( height < SizeProtocol::SCREEN_HEIGHT / 2 ) height = SizeProtocol::SCREEN_HEIGHT / 2;
+            if ( width < SCREEN_WIDTH / 2) width = SCREEN_WIDTH / 2;
+            if ( height < SCREEN_HEIGHT / 2 ) height = SCREEN_HEIGHT / 2;
             
             _view->setFrameSize(width, height);
             _view->setDesignResolutionSize(width, height, ResolutionPolicy::SHOW_ALL);

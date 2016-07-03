@@ -13,8 +13,6 @@
 
 #include "GMXFile.hpp"
 
-class EditScene2;
-
 enum PaletteType
 {
     DEFAULT = -1,
@@ -29,11 +27,11 @@ class PaletteLayer : public cocos2d::Node
     
 public:
     
-    explicit PaletteLayer(EditScene2& imguiLayer);
+    PaletteLayer();
     
     virtual ~PaletteLayer();
     
-    static PaletteLayer* create(EditScene2& imguiLayer);
+    static PaletteLayer* create();
     
     void showLayer(bool* opened);
     
@@ -47,10 +45,11 @@ public:
     
 private:
     
-    EditScene2& _imguiLayer;
+    cocos2d::Size _layerSize;
+    cocos2d::Vec2 _layerPosition;
+    cocos2d::Rect _boundingBoxPadding;
     
     int _paletteType = 0;
-    
     int _selectedItem = 0;
     
 };

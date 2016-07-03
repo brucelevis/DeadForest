@@ -11,17 +11,20 @@
 
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
+
+#include "GMXFile.hpp"
 #include "CellSpacePartition.hpp"
 #include "TileImage.hpp"
 #include "Camera2D.hpp"
-#include "GMXFile.hpp"
 #include "TileBase.hpp"
 #include "CommandQueue.hpp"
+#include "SizeProtocol.h"
 
 #define DUMMY_TILE_SIZE 4
 
 class PaletteLayer;
 class NavigatorLayer;
+class HistoryLayer;
 class EditScene2;
 class CommandBase;
 class TileToolCommand;
@@ -83,6 +86,8 @@ public:
     
     bool& isShowNavigator() { return _isShowNavigator; }
     
+    bool& isShowHistory() { return _isShowHistory; }
+    
 private:
     
     EditScene2& _imguiLayer;
@@ -92,7 +97,6 @@ private:
     cocos2d::DrawNode* _localDebugNode;
     cocos2d::DrawNode* _hoveredTileRegion;
     cocos2d::ClippingRectangleNode* _clipNode;
-    cocos2d::Size _visibleSize;
     cocos2d::Size _canvasSize;
     cocos2d::Size _layerSize;
     cocos2d::Vec2 _layerPosition;
@@ -123,7 +127,9 @@ private:
     NavigatorLayer* _navigatorLayer;
     bool _isShowNavigator = true;
     
-    CommandQueue _commandQueue;
+    HistoryLayer* _historyLayer;
+    bool _isShowHistory = true;
+    
     TileToolCommand* _tileToolCommand;
     
 };

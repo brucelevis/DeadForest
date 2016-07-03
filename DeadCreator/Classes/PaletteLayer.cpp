@@ -7,11 +7,14 @@
 //
 
 #include "PaletteLayer.hpp"
-#include "EditScene2.hpp"
+#include "ImGuiLayer.h"
+#include "SizeProtocol.h"
 using namespace cocos2d;
 
-PaletteLayer::PaletteLayer(EditScene2& imguiLayer):
-_imguiLayer(imguiLayer)
+PaletteLayer::PaletteLayer():
+_layerSize(Size(200,200)),
+_layerPosition(Vec2(200, 100)),
+_boundingBoxPadding(Rect::ZERO)
 {
 }
 
@@ -21,9 +24,9 @@ PaletteLayer::~PaletteLayer()
 }
 
 
-PaletteLayer* PaletteLayer::create(EditScene2& imguiLayer)
+PaletteLayer* PaletteLayer::create()
 {
-    auto ret = new (std::nothrow) PaletteLayer(imguiLayer);
+    auto ret = new (std::nothrow) PaletteLayer();
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -36,13 +39,49 @@ PaletteLayer* PaletteLayer::create(EditScene2& imguiLayer)
 
 void PaletteLayer::showLayer(bool* opened)
 {
-    ImGui::SetNextWindowPos(ImVec2(80, 400), ImGuiSetCond_Once);
+    ImGuiState& g = *GImGui;
+    float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
+    
+    if ( _layerPosition.x < WINDOW_PADDING )
+    {
+        _layerPosition.x = WINDOW_PADDING;
+    }
+    
+    if ( _layerPosition.y < height + WINDOW_PADDING )
+    {
+        _layerPosition.y = height + WINDOW_PADDING;
+    }
+    
+    if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - WINDOW_PADDING )
+    {
+        _layerPosition.x = g.IO.DisplaySize.x - _layerSize.width - WINDOW_PADDING;
+    }
+    
+    if ( _layerPosition.y + _layerSize.height > g.IO.DisplaySize.y - WINDOW_PADDING - STATUSBAR_HEIGHT )
+    {
+        _layerPosition.y = g.IO.DisplaySize.y - _layerSize.height - WINDOW_PADDING - STATUSBAR_HEIGHT;
+    }
+  
+    
+    ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Always);
     ImGui::SetNextWindowSize(ImVec2(205, 300), ImGuiSetCond_Once);
     
     ImGui::Begin("Palette", opened,
+                 ImGuiWindowFlags_NoScrollbar |
                  ImGuiWindowFlags_NoCollapse |
                  ImGuiWindowFlags_NoResize |
+                 ImGuiWindowFlags_NoScrollWithMouse |
                  ImGuiWindowFlags_ShowBorders);
+
+    
+    _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
+    _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+    
+    _boundingBoxPadding.setRect(_layerPosition.x + g.Style.WindowPadding.x,
+                                _layerPosition.y + g.Style.WindowPadding.y + height,
+                                _layerSize.width - g.Style.WindowPadding.x * 2.0f,
+                                _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
+    
     
     if (ImGui::Combo("type", &_paletteType, "tile\0entity\0item\0doodad\0"))
     {
@@ -57,24 +96,24 @@ void PaletteLayer::showLayer(bool* opened)
     
     if ( _paletteType == 0)
     {
-        if ( _imguiLayer.imageButton("1_1_1234.png", 50, 50) )
+        if ( ImGuiLayer::imageButton("1_1_1234.png", 50, 50) )
         {
             _selectedItem = 0;
         }
         ImGui::SameLine();
         
-        if ( _imguiLayer.imageButton("2_1_1234.png", 50, 50) )
+        if ( ImGuiLayer::imageButton("2_1_1234.png", 50, 50) )
         {
             _selectedItem = 1;
         }
         ImGui::SameLine();
         
-        if ( _imguiLayer.imageButton("3_1_1234.png", 50, 50) )
+        if ( ImGuiLayer::imageButton("3_1_1234.png", 50, 50) )
         {
             _selectedItem = 2;
         }
         
-        if ( _imguiLayer.imageButton("5_1_1234.png", 50, 50) )
+        if ( ImGuiLayer::imageButton("5_1_1234.png", 50, 50) )
         {
             _selectedItem = 3;
         }
@@ -82,7 +121,7 @@ void PaletteLayer::showLayer(bool* opened)
     
     else if ( _paletteType == 1)
     {
-        if ( _imguiLayer.imageButton("human.png", 50, 50) )
+        if ( ImGuiLayer::imageButton("human.png", 50, 50) )
         {
             _selectedItem = 0;
         }
@@ -90,23 +129,23 @@ void PaletteLayer::showLayer(bool* opened)
     
     else if ( _paletteType == 2)
     {
-        if (_imguiLayer.imageButton("5_56mm.png", 50, 50)) _selectedItem = 0;
+        if (ImGuiLayer::imageButton("5_56mm.png", 50, 50)) _selectedItem = 0;
         ImGui::SameLine();
-        if (_imguiLayer.imageButton("9mm.png", 50, 50)) _selectedItem = 1;
+        if (ImGuiLayer::imageButton("9mm.png", 50, 50)) _selectedItem = 1;
         ImGui::SameLine();
-        if (_imguiLayer.imageButton("Shell.png", 50, 50)) _selectedItem = 2;
+        if (ImGuiLayer::imageButton("Shell.png", 50, 50)) _selectedItem = 2;
         
-        if (_imguiLayer.imageButton("Axe.png", 50, 50)) _selectedItem = 3;
+        if (ImGuiLayer::imageButton("Axe.png", 50, 50)) _selectedItem = 3;
         ImGui::SameLine();
-        if (_imguiLayer.imageButton("Glock17.png", 50, 50)) _selectedItem = 4;
+        if (ImGuiLayer::imageButton("Glock17.png", 50, 50)) _selectedItem = 4;
         ImGui::SameLine();
-        if (_imguiLayer.imageButton("M16A2.png", 50, 50)) _selectedItem = 5;
+        if (ImGuiLayer::imageButton("M16A2.png", 50, 50)) _selectedItem = 5;
         
-        if (_imguiLayer.imageButton("M1897.png", 50, 50)) _selectedItem = 6;
+        if (ImGuiLayer::imageButton("M1897.png", 50, 50)) _selectedItem = 6;
         ImGui::SameLine();
-        if (_imguiLayer.imageButton("MeatCan.png", 50, 50)) _selectedItem = 7;
+        if (ImGuiLayer::imageButton("MeatCan.png", 50, 50)) _selectedItem = 7;
         ImGui::SameLine();
-        if (_imguiLayer.imageButton("Bandage.png", 50, 50)) _selectedItem = 8;
+        if (ImGuiLayer::imageButton("Bandage.png", 50, 50)) _selectedItem = 8;
     }
     
     ImGui::PopStyleColor(3);

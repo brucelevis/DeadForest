@@ -1,0 +1,62 @@
+//
+//  TileToolCommand.hpp
+//  DeadCreator
+//
+//  Created by mac on 2016. 7. 3..
+//
+//
+
+#pragma once
+
+#include <vector>
+
+#include "CommandBase.hpp"
+#include "TileBase.hpp"
+
+class TileToolCommand : public CommandBase
+{
+    
+public:
+    
+    explicit TileToolCommand(GMXLayer2* layer) :
+    CommandBase(layer)
+    {}
+    
+    TileToolCommand(const TileToolCommand& rhs) : CommandBase(rhs)
+    {
+        copyFrom(rhs);
+    }
+    
+    void copyFrom(const TileToolCommand& rhs)
+    {
+        _prevTiles = rhs._prevTiles;
+        _currTiles = rhs._currTiles;
+    }
+    
+    virtual ~TileToolCommand() = default;
+    
+    virtual void execute() override;
+    
+    virtual void undo() override;
+    
+    virtual TileToolCommand* clone() const override;
+    
+    virtual void beginImpl() override;
+    
+    void pushTile(const TileBase& prevTile, const TileBase& currTile);
+    
+private:
+    
+    std::vector<TileBase> _prevTiles;
+    std::vector<TileBase> _currTiles;
+    
+};
+
+
+
+
+
+
+
+
+

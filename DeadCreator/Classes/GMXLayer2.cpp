@@ -16,6 +16,7 @@
 #include "EditScene2.hpp"
 #include "TileHelperFunctions.hpp"
 #include "SizeProtocol.h"
+#include "TileToolCommand.hpp"
 using namespace cocos2d;
 
 GMXLayer2::GMXLayer2(EditScene2& imguiLayer, GMXFile& file) :
@@ -36,6 +37,12 @@ _tileRoot(nullptr),
 _viewX(30),
 _viewY(60)
 {}
+
+
+GMXLayer2::~GMXLayer2()
+{
+    CC_SAFE_DELETE(_tileToolCommand);
+}
 
 
 GMXLayer2* GMXLayer2::create(EditScene2& imguiLayer, GMXFile& file)
@@ -107,6 +114,8 @@ bool GMXLayer2::init()
     
     _navigatorLayer = NavigatorLayer::create(_imguiLayer, *this);
     addChild(_navigatorLayer);
+    
+    _tileToolCommand = new TileToolCommand(this);
     
     return true;
 }
@@ -250,8 +259,13 @@ void GMXLayer2::showWindow()
         bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
         if ( !isClickedResizeButton && _paletteLayer->getPaletteType() == PaletteType::TILE )
         {
+            _tileToolCommand->begin();
+            
             TileType selectedTile = static_cast<TileType>(_paletteLayer->getSelectedItem());
             putTile(selectedTile, indices.first, indices.second);
+            
+            _tileToolCommand->end();
+            _commandQueue.pushCommand(_tileToolCommand->clone());
         }
     }
 
@@ -284,8 +298,13 @@ void GMXLayer2::showWindow()
 
 
 
-void GMXLayer2::setTile(int x, int y, const TileBase& tile)
+void GMXLayer2::setTile(int x, int y, const TileBase& tile, bool isExecCommand)
 {
+    if ( !isExecCommand )
+    {
+        _tileToolCommand->pushTile(_tiles[y][x], tile);
+    }
+    
     _tiles[y][x] = tile;
     
     auto rootIndices = getFocusedTileIndex(_tileRootWorldPosition,_file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);

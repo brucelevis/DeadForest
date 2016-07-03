@@ -16,12 +16,15 @@
 #include "Camera2D.hpp"
 #include "GMXFile.hpp"
 #include "TileBase.hpp"
+#include "CommandQueue.hpp"
 
 #define DUMMY_TILE_SIZE 4
 
 class PaletteLayer;
 class NavigatorLayer;
 class EditScene2;
+class CommandBase;
+class TileToolCommand;
 
 class GMXLayer2 : public cocos2d::Layer
 {
@@ -30,7 +33,7 @@ public:
     
     explicit GMXLayer2(EditScene2& _imguiLayer, GMXFile& file);
     
-    virtual ~GMXLayer2() = default;
+    virtual ~GMXLayer2();
     
     virtual void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) override;
     
@@ -44,7 +47,7 @@ public:
     
     const GMXFile& getFile() const { return _file; }
     
-    void setTile(int x, int y, const TileBase& tile);
+    void setTile(int x, int y, const TileBase& tile, bool isExecCommand = false);
     
     void showWindow();
     
@@ -119,6 +122,9 @@ private:
     
     NavigatorLayer* _navigatorLayer;
     bool _isShowNavigator = true;
+    
+    CommandQueue _commandQueue;
+    TileToolCommand* _tileToolCommand;
     
 };
 

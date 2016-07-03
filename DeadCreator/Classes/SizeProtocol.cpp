@@ -8,12 +8,8 @@
 
 #include "SizeProtocol.h"
 
-int SizeProtocol::SCREEN_WIDTH = 1600;
-int SizeProtocol::SCREEN_HEIGHT = 960;
-int SizeProtocol::MINIMAP_SIZE = SCREEN_WIDTH * 0.15f;
+int SizeProtocol::SCREEN_WIDTH = 1136;
+int SizeProtocol::SCREEN_HEIGHT = 640;
 int SizeProtocol::FONT_SIZE = 25;
 int SizeProtocol::WINDOW_PADDING = 10;
-int SizeProtocol::FRAME_PADDING = 5;
-int SizeProtocol::MENUBAR_HEIGHT = FONT_SIZE;
 int SizeProtocol::STATUSBAR_HEIGHT = FONT_SIZE;
-int SizeProtocol::FILE_MENUBAR_HEIGHT = FONT_SIZE;

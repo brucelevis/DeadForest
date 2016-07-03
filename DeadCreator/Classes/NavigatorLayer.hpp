@@ -43,6 +43,9 @@ private:
     std::map<int, ImTextureID> _tileMarks;
     std::map<int, ImTextureID> _entityMarks;
     
+    TileType _defaultTile;
+    GLint _defaultTileTextureName;
+    
 };
 
 

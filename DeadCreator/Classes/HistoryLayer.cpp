@@ -13,7 +13,7 @@ using namespace cocos2d;
 
 HistoryLayer::HistoryLayer(GMXLayer2& gmxLayer) :
 _gmxLayer(gmxLayer),
-_layerSize(Size(Director::getInstance()->getVisibleSize().width * 0.20f, Director::getInstance()->getVisibleSize().height * 0.5f)),
+_layerSize(Size(200, 300)),
 _layerPosition(Vec2(120, 70)),
 _boundingBoxPadding(Rect::ZERO)
 {
@@ -75,9 +75,8 @@ void HistoryLayer::showLayer(bool* opened)
     ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Always);
     ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Once);
     
-    ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
-    ImGui::Begin("history", opened,
+    ImGui::Begin("history", opened, ImVec2(0,0), 0.9f,
                  ImGuiWindowFlags_NoScrollbar |
                  ImGuiWindowFlags_NoCollapse |
                  ImGuiWindowFlags_NoResize |
@@ -93,7 +92,6 @@ void HistoryLayer::showLayer(bool* opened)
                                 _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
     
     ImGui::BeginChild("##child", ImVec2(0, _layerSize.height - height - g.Style.FramePadding.y * 2.0f), true);
-    ImGui::Separator();
     int currIndex = _commandQueue.getIndex();
     for(int i = 0 ; i < _commandQueue.size() ; ++ i)
     {
@@ -104,7 +102,7 @@ void HistoryLayer::showLayer(bool* opened)
         
         if ( isPrev )
         {
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0000, 0.0000, 0.0000, 0.7000));
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0000, 0.0000, 0.0000, 1.0000));
         }
         else if ( isCurr )
         {
@@ -136,7 +134,6 @@ void HistoryLayer::showLayer(bool* opened)
     
     ImGui::End();
     ImGui::PopStyleVar();
-    ImGui::PopStyleColor();
 }
 
 

@@ -66,7 +66,7 @@ void PaletteLayer::showLayer(bool* opened)
     ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Always);
     ImGui::SetNextWindowSize(ImVec2(205, 300), ImGuiSetCond_Once);
     
-    ImGui::Begin("Palette", opened,
+    ImGui::Begin("Palette", opened, ImVec2(0,0), 0.9f,
                  ImGuiWindowFlags_NoScrollbar |
                  ImGuiWindowFlags_NoCollapse |
                  ImGuiWindowFlags_NoResize |

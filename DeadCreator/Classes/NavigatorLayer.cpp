@@ -45,6 +45,13 @@ bool NavigatorLayer::init()
     if ( !Node::init() )
         return false;
     
+    _defaultTile = static_cast<TileType>(_gmxLayer.getFile().defaultTile);
+    
+    if ( _defaultTile == TileType::DIRT ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_dirt.png")->getName();
+    else if ( _defaultTile == TileType::GRASS ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_grass.png")->getName();
+    else if ( _defaultTile == TileType::WATER ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_water.png")->getName();
+    else if ( _defaultTile == TileType::HILL ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_hill.png")->getName();
+    
     return true;
 }
 
@@ -81,7 +88,6 @@ void NavigatorLayer::showLayer(bool* opened)
     ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Always);
     ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Always);
     
-    ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
     ImGui::Begin("navigator", opened,
                  ImGuiWindowFlags_NoScrollbar |
@@ -102,8 +108,8 @@ void NavigatorLayer::showLayer(bool* opened)
     ImGui::InvisibleButton("##dummy", size);
     
     ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y - size.y - ImGui::GetStyle().WindowPadding.y));
-    auto texName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_dirt.png")->getName();
-    ImGui::Image(reinterpret_cast<ImTextureID>(texName), ImVec2(size.x, size.y));
+    
+    ImGui::Image(reinterpret_cast<ImTextureID>(_defaultTileTextureName), ImVec2(size.x, size.y));
     
     ImDrawList* list = ImGui::GetWindowDrawList();
     ImGui::SetCursorScreenPos(ImVec2(_boundingBoxPadding.origin.x, _boundingBoxPadding.origin.y));
@@ -132,6 +138,7 @@ void NavigatorLayer::showLayer(bool* opened)
     {
         int key = tile.first;
         auto indices = numberToIndex(key, file.numOfTileX, DUMMY_TILE_SIZE);
+        
         auto position = indexToPosition(indices.first, indices.second, file.tileWidth, file.tileHeight, DUMMY_TILE_SIZE);
         ImVec2 param = ImVec2(position.x / worldSize.x, position.y / worldSize.y);
         ImVec2 origin = ImVec2(canvasOrigin.x + param.x * _boundingBoxPadding.size.width, canvasOrigin.y - param.y * _boundingBoxPadding.size.height);
@@ -179,7 +186,6 @@ void NavigatorLayer::showLayer(bool* opened)
     
     ImGui::End();
     ImGui::PopStyleVar();
-    ImGui::PopStyleColor();
 }
 
 
@@ -187,21 +193,28 @@ void NavigatorLayer::setTile(int x, int y, const TileBase& tile)
 {
     int key = indexToNumber(x, y, _gmxLayer.getFile().numOfTileX, DUMMY_TILE_SIZE);
     
-    if ( tile.getType() == TileType::DIRT)
+    if ( tile.getType() == _defaultTile )
     {
-        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("dirt_mark.png")->getName());
+        _tileMarks.erase(key);
     }
-    else if ( tile.getType() == TileType::GRASS )
+    else
     {
-        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("grass_mark.png")->getName());
-    }
-    else if ( tile.getType() == TileType::WATER )
-    {
-        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("water_mark.png")->getName());
-    }
-    else if ( tile.getType() == TileType::HILL )
-    {
-        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("hill_mark.png")->getName());
+        if ( tile.getType() == TileType::DIRT)
+        {
+            _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("dirt_mark.png")->getName());
+        }
+        else if ( tile.getType() == TileType::GRASS )
+        {
+            _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("grass_mark.png")->getName());
+        }
+        else if ( tile.getType() == TileType::WATER )
+        {
+            _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("water_mark.png")->getName());
+        }
+        else if ( tile.getType() == TileType::HILL )
+        {
+            _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("hill_mark.png")->getName());
+        }
     }
 }
 

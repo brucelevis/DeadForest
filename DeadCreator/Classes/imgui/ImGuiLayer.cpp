@@ -23,9 +23,9 @@ bool ImGuiLayer::init()
     style.Colors[ImGuiCol_FrameBg] = ImVec4(1.0000000, 1.0000000, 1.0000000, 1.0000000);
     style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.2600000, 0.5900000, 0.9800000, 0.4000000);
     style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.2600000, 0.5900000, 0.9800000, 0.6700000);
-    style.Colors[ImGuiCol_TitleBg] = ImVec4(0.9599999, 0.9599999, 0.9599999, 1.0000000);
-    style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(1.0000000, 1.0000000, 1.0000000, 0.5100000);
-    style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000);
+    style.Colors[ImGuiCol_TitleBg] = ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000);
+    style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.7600000, 0.7600000, 0.7600000, 0.5100000);
+    style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.9599999, 0.9599999, 0.9599999, 1.0000000);
     style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.8600000, 0.8600000, 0.8600000, 1.0000000);
     style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.9800000, 0.9800000, 0.9800000, 0.5300000);
     style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.6900000, 0.6900000, 0.6900000, 0.8000000);

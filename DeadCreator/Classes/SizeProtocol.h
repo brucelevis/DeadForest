@@ -8,7 +8,7 @@
 
 #pragma once
 
-#define SCREEN_WIDTH 1136
-#define SCREEN_HEIGHT 640
+#define SCREEN_WIDTH 1600
+#define SCREEN_HEIGHT 960
 #define STATUSBAR_HEIGHT 25
 #define WINDOW_PADDING 10

@@ -238,35 +238,38 @@ void GMXLayer2::showWindow()
         {
             titleClicked = true;
         }
+        
+        if ( !_isLeftMouseClickEventDone )
+        {
+            _tileToolCommand->begin();
+            _isLeftMouseClickEventDone = true;
+        }
+        
     }
     else if ( ImGui::GetIO().MouseReleased[0] )
     {
         titleClicked = false;
-    }
-    
-    if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && !titleClicked )
-    {
-        Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerPosition.y, _layerSize.width, _layerSize.height);
-        if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
+        
+        if ( _isLeftMouseClickEventDone )
         {
-            ImVec2 canvasPos = ImGui::GetCursorScreenPos();
-            _mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - canvasPos.x, _layerSize.height - (ImGui::GetIO().MousePos.y - canvasPos.y));
+            _tileToolCommand->end();
+            _isLeftMouseClickEventDone = false;
+            
+            if ( !_tileToolCommand->empty() )
+            {
+                _historyLayer->pushCommand(_tileToolCommand->clone());
+            }
         }
     }
     
-    if ( ImGui::IsMouseHoveringWindow() && ImGui::GetIO().MouseClicked[0] && !titleClicked )
+    if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !titleClicked )
     {
         Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
         bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
         if ( !isClickedResizeButton && _paletteLayer->getPaletteType() == PaletteType::TILE )
         {
-            _tileToolCommand->begin();
-            
             TileType selectedTile = static_cast<TileType>(_paletteLayer->getSelectedItem());
             putTile(selectedTile, indices.first, indices.second);
-            
-            _tileToolCommand->end();
-            _historyLayer->pushCommand(_tileToolCommand->clone());
         }
     }
 
@@ -445,6 +448,11 @@ void GMXLayer2::setCenterViewParameter(const cocos2d::Vec2& p)
 
 void GMXLayer2::putTile(TileType type, int x, int y)
 {
+    if ( _tiles[y][x].getType() == type && _tiles[y][x].getTileTail() == "1234" )
+    {
+        return ;
+    }
+    
     const int tileWidth = _file.tileWidth;
     const int tileHeight = _file.tileHeight;
     const int dummy = DUMMY_TILE_SIZE;

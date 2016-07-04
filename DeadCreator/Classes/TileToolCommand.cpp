@@ -11,18 +11,18 @@
 
 void TileToolCommand::execute()
 {
-    for( auto& tile : _currTiles )
+    for( auto tile = _currTiles.cbegin() ; tile != _currTiles.cend() ; ++ tile)
     {
-        _layer->setTile(tile.getIndexX(), tile.getIndexY(), tile, true);
+        _layer->setTile(tile->getIndexX(), tile->getIndexY(), *tile, true);
     }
 }
 
 
 void TileToolCommand::undo()
 {
-    for( auto& tile : _prevTiles )
+    for( auto tile = _prevTiles.crbegin() ; tile != _prevTiles.crend() ; ++ tile)
     {
-        _layer->setTile(tile.getIndexX(), tile.getIndexY(), tile, true);
+        _layer->setTile(tile->getIndexX(), tile->getIndexY(), *tile, true);
     }
 }
 

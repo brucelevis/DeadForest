@@ -43,12 +43,17 @@ public:
     
     virtual TileToolCommand* clone() const override;
     
-    virtual void beginImpl() override;
-    
     void pushTile(const TileBase& prevTile, const TileBase& currTile);
+    
+    bool empty() const { return _prevTiles.empty(); }
     
 private:
     
+    virtual void beginImpl() override;
+    
+private:
+    
+    bool _isEmpty;
     std::vector<TileBase> _prevTiles;
     std::vector<TileBase> _currTiles;
     

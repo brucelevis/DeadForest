@@ -139,7 +139,6 @@ void NavigatorLayer::showLayer(bool* opened)
     
     static auto file = _gmxLayer.getFile();
     static ImVec2 worldSize = ImVec2(file.worldSize.width, file.worldSize.height);
-    log("%d", _tileMarks.size());
     for(auto &tile : _tileMarks)
     {
         int key = tile.first;

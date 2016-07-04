@@ -125,6 +125,7 @@ private:
     
     bool _isShowWindow = true;
     bool _isKeyDown[256];
+    bool _isLeftMouseClickEventDone = false;
     
     cocos2d::Vec2 _mousePosInWorld;
     cocos2d::Vec2 _mousePosInCanvas;

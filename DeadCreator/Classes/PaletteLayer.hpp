@@ -13,6 +13,8 @@
 
 #include "GMXFile.hpp"
 
+class GMXLayer2;
+
 enum PaletteType
 {
     DEFAULT = -1,
@@ -27,11 +29,11 @@ class PaletteLayer : public cocos2d::Node
     
 public:
     
-    PaletteLayer();
+    explicit PaletteLayer(GMXLayer2& gmxLayer);
     
     virtual ~PaletteLayer();
     
-    static PaletteLayer* create();
+    static PaletteLayer* create(GMXLayer2& gmxLayer);
     
     void showLayer(bool* opened);
     
@@ -44,6 +46,8 @@ public:
     int getSelectedItem() const { return _selectedItem; }
     
 private:
+    
+    GMXLayer2& _gmxLayer;
     
     cocos2d::Size _layerSize;
     cocos2d::Vec2 _layerPosition;

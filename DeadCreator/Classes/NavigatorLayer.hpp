@@ -8,10 +8,11 @@
 
 #pragma once
 
-class GMXLayer2;
-
 #include "TileBase.hpp"
 #include "ImGuiLayer.h"
+
+class GMXLayer2;
+class EntityBase;
 
 class NavigatorLayer : public cocos2d::Node
 {
@@ -29,6 +30,8 @@ public:
     void showLayer(bool* opened);
     
     void setTile(int x, int y, const TileBase& tile);
+    
+    void addEntity(EntityBase* ent);
     
 private:
     

@@ -36,6 +36,9 @@ Item9mm* Item9mm::create(GMXLayer2& layer, int id, const std::string& fileName, 
 
 bool Item9mm::init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
 {
+    _resType = resType;
+    _fileName = fileName;
+    
     if ( resType == cocos2d::ui::Widget::TextureResType::LOCAL )
     {
         _body = Sprite::create(fileName);
@@ -49,3 +52,18 @@ bool Item9mm::init(const std::string& fileName, cocos2d::ui::Widget::TextureResT
     
     return true;
 }
+
+
+Item9mm* Item9mm::clone() const
+{
+    return Item9mm::create(_gmxLayer, _id, _fileName, _resType);
+}
+
+
+
+
+
+
+
+
+

@@ -22,8 +22,10 @@ public:
     
     bool init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType);
     
+    virtual ItemM1897* clone() const override;
+    
 private:
     
-    
+    std::string _fileName;
     
 };

@@ -71,13 +71,14 @@ public:
     
     std::string getCommandName() const { return _commandName; }
     
+    virtual bool empty() const { return true; }
+    
 protected:
     
     GMXLayer2* _layer;
-    
     bool _isBegan;
-    
     std::string _commandName;
+    bool _isEmpty;
     
 };
 

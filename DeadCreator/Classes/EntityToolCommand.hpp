@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "CommandBase.hpp"
+#include "EntityBase.hpp"
 
 class EntityToolCommand : public CommandBase
 {
@@ -30,7 +31,14 @@ public:
     
     void copyFrom(const EntityToolCommand& rhs)
     {
+        while ( !_entities.empty() )
+        {
+            auto remove = _entities.back();
+            CC_SAFE_DELETE(remove);
+            _entities.popBack();
+        }
         
+        _entities = rhs._entities;
     }
     
     virtual ~EntityToolCommand() = default;
@@ -41,7 +49,9 @@ public:
     
     virtual EntityToolCommand* clone() const override;
     
-    bool empty() const { return false; }
+    virtual bool empty() const override { return _entities.empty(); }
+    
+    void pushEntity(EntityBase* ent) { _entities.pushBack(ent); }
     
 private:
     
@@ -49,6 +59,7 @@ private:
     
 private:
     
-    bool _isEmpty;
+    
+    cocos2d::Vector<EntityBase*> _entities;
     
 };

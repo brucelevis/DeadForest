@@ -36,6 +36,9 @@ ItemAxe* ItemAxe::create(GMXLayer2& layer, int id, const std::string& fileName, 
 
 bool ItemAxe::init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
 {
+    _resType = resType;
+    _fileName = fileName;
+    
     if ( resType == cocos2d::ui::Widget::TextureResType::LOCAL )
     {
         _body = Sprite::create(fileName);
@@ -48,4 +51,10 @@ bool ItemAxe::init(const std::string& fileName, cocos2d::ui::Widget::TextureResT
     addChild(_body);
     
     return true;
+}
+
+
+ItemAxe* ItemAxe::clone() const
+{
+    return ItemAxe::create(_gmxLayer, _id, _fileName, _resType);
 }

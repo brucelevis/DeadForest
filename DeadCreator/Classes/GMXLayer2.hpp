@@ -27,6 +27,7 @@ class PaletteLayer;
 class NavigatorLayer;
 class EditScene2;
 class CommandBase;
+class EntityToolCommand;
 class TileToolCommand;
 class EntityBase;
 
@@ -99,6 +100,22 @@ public:
     
     PaletteLayer* getPaletteLayer() const { return _paletteLayer; }
     
+    void setCommand(CommandBase* newCommand) { _currCommand = newCommand; }
+    
+    TileToolCommand* getTileToolCommand() const { return _tileToolCommand; }
+    
+    EntityToolCommand* getEntityToolCommand() const { return _entityToolCommand; }
+    
+    bool addEntity(EntityBase* entity);
+    
+    bool eraseEntity(EntityBase* entity);
+    
+    static int getNextValidID()
+    {
+        static int validID = 0;
+        return validID++;
+    }
+    
 private:
     
     EditScene2& _imguiLayer;
@@ -143,7 +160,9 @@ private:
     HistoryLayer* _historyLayer = nullptr;
     bool _isShowHistory = true;
     
+    CommandBase* _currCommand;
     TileToolCommand* _tileToolCommand = nullptr;
+    EntityToolCommand* _entityToolCommand = nullptr;
     
 };
 

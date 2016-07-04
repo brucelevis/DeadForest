@@ -8,14 +8,18 @@
 
 #include "EntityToolCommand.hpp"
 #include "GMXLayer2.hpp"
+using namespace cocos2d;
+
 
 void EntityToolCommand::execute()
 {
+    
 }
 
 
 void EntityToolCommand::undo()
 {
+    
 }
 
 

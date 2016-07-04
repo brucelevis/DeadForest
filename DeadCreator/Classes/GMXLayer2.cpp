@@ -16,8 +16,10 @@
 #include "NavigatorLayer.hpp"
 #include "HistoryLayer.hpp"
 #include "TileToolCommand.hpp"
+#include "EntityToolCommand.hpp"
 #include "Sheriff.hpp"
 #include "Item556mm.hpp"
+#include "CellSpacePartition.hpp"
 using namespace cocos2d;
 
 GMXLayer2::GMXLayer2(EditScene2& imguiLayer, GMXFile& file) :
@@ -42,6 +44,7 @@ _viewY(60)
 GMXLayer2::~GMXLayer2()
 {
     CC_SAFE_DELETE(_tileToolCommand);
+    CC_SAFE_DELETE(_entityToolCommand);
 }
 
 
@@ -109,7 +112,7 @@ bool GMXLayer2::init()
     
     initFile();
     
-    _paletteLayer = PaletteLayer::create();
+    _paletteLayer = PaletteLayer::create(*this);
     addChild(_paletteLayer);
     
     _navigatorLayer = NavigatorLayer::create(*this);
@@ -119,39 +122,7 @@ bool GMXLayer2::init()
     addChild(_historyLayer);
     
     _tileToolCommand = new TileToolCommand(this);
-    
-    
-    auto ent = Sheriff::create(*this, 0, ui::Widget::TextureResType::PLIST);
-    ent->setWorldPosition(Vec2(_layerSize / 2));
-    _clipNode->addChild(ent, 100);
-    
-    auto item = Item556mm::create(*this, 1, "5_56mm.png", ui::Widget::TextureResType::PLIST);
-    item->setWorldPosition(Vec2(_layerSize / 2) + Vec2(50, 100));
-    _clipNode->addChild(item, 100);
-    
-    auto item2 = Item556mm::create(*this, 2, "9mm.png", ui::Widget::TextureResType::PLIST);
-    item2->setWorldPosition(Vec2(_layerSize / 2) + Vec2(100, 100));
-    _clipNode->addChild(item2, 100);
-    
-    auto item3 = Item556mm::create(*this, 3, "Shell.png", ui::Widget::TextureResType::PLIST);
-    item3->setWorldPosition(Vec2(_layerSize / 2) + Vec2(150, 100));
-    _clipNode->addChild(item3, 100);
-    
-    auto item4 = Item556mm::create(*this, 4, "Axe.png", ui::Widget::TextureResType::PLIST);
-    item4->setWorldPosition(Vec2(_layerSize / 2) + Vec2(200, 100));
-    _clipNode->addChild(item4, 100);
-    
-    auto item5 = Item556mm::create(*this, 5, "Glock17.png", ui::Widget::TextureResType::PLIST);
-    item5->setWorldPosition(Vec2(_layerSize / 2) + Vec2(250, 100));
-    _clipNode->addChild(item5, 100);
-    
-    auto item6 = Item556mm::create(*this, 6, "M16A2.png", ui::Widget::TextureResType::PLIST);
-    item6->setWorldPosition(Vec2(_layerSize / 2) + Vec2(300, 100));
-    _clipNode->addChild(item6, 100);
-    
-    auto item7 = Item556mm::create(*this, 7, "M1897.png", ui::Widget::TextureResType::PLIST);
-    item7->setWorldPosition(Vec2(_layerSize / 2) + Vec2(350, 100));
-    _clipNode->addChild(item7, 100);
+    _entityToolCommand = new EntityToolCommand(this);
     
     return true;
 }
@@ -212,7 +183,6 @@ void GMXLayer2::showWindow()
     
     if ( _layerSize.height + _layerPosition.y > g.IO.DisplaySize.y - WINDOW_PADDING - height )
         _layerSize.height = g.IO.DisplaySize.y - WINDOW_PADDING - _layerPosition.y - height;
-
     
     if ( _layerPosition.x < WINDOW_PADDING )
         _layerPosition.x = WINDOW_PADDING;
@@ -238,21 +208,21 @@ void GMXLayer2::showWindow()
                  ImGuiWindowFlags_NoCollapse |
                  ImGuiWindowFlags_NoBringToFrontOnFocus |
                  ImGuiWindowFlags_ShowBorders);
-
+    
     _canvasSize = Size(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
     ImGui::InvisibleButton("##dummy", ImVec2(_canvasSize.width, _canvasSize.height));
     
     _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
     _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
-
+    
     _mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - ImGui::GetCursorScreenPos().x,
-                            ImGui::GetContentRegionAvail().y - (ImGui::GetIO().MousePos.y - ImGui::GetCursorScreenPos().y));
+                             ImGui::GetContentRegionAvail().y - (ImGui::GetIO().MousePos.y - ImGui::GetCursorScreenPos().y));
     
     _mousePosInWorld = _camera->getPosition() + (Vec2(_mousePosInCanvas.x - _layerSize.width / 2 + ImGui::GetStyle().WindowPadding.x,
                                                       _mousePosInCanvas.y - _layerSize.height / 2 + ImGui::GetStyle().WindowPadding.y));
     
     _mousePosInWorld.clamp(_camera->getPosition() - Vec2(_layerSize / 2), _camera->getPosition() + Vec2(_layerSize / 2));
- 
+    
     static Vec2 mousePosInCocos2dMatrix;
     mousePosInCocos2dMatrix = Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
     
@@ -267,7 +237,7 @@ void GMXLayer2::showWindow()
         
         if ( !_isLeftMouseClickEventDone )
         {
-            _tileToolCommand->begin();
+            _currCommand->begin();
             _isLeftMouseClickEventDone = true;
         }
         
@@ -278,12 +248,12 @@ void GMXLayer2::showWindow()
         
         if ( _isLeftMouseClickEventDone )
         {
-            _tileToolCommand->end();
+            _currCommand->end();
             _isLeftMouseClickEventDone = false;
             
             if ( !_tileToolCommand->empty() )
             {
-                _historyLayer->pushCommand(_tileToolCommand->clone());
+                _historyLayer->pushCommand(_currCommand->clone());
             }
         }
     }
@@ -310,7 +280,25 @@ void GMXLayer2::showWindow()
             }
         }
     }
-
+    else if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN )
+    {
+        if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !titleClicked )
+        {
+            Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
+            bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+            if ( !isClickedResizeButton )
+            {
+                EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
+                if ( selectedEntity == EntityType::SHERIFF )
+                {
+                    Sheriff* ent = Sheriff::create(*this, getNextValidID(), cocos2d::ui::Widget::TextureResType::PLIST);
+                    ent->setWorldPosition(_mousePosInWorld);
+                    ent->setRotation(random(0.0f, 360.0f));
+                    addEntity(ent);
+                }
+            }
+        }
+    }
     
     ImGui::End();
     ImGui::PopStyleVar(2);
@@ -340,12 +328,11 @@ void GMXLayer2::showWindow()
 }
 
 
-
 void GMXLayer2::setTile(int x, int y, const TileBase& tile, bool isExecCommand)
 {
     if ( !isExecCommand )
     {
-        _tileToolCommand->pushTile(_tiles[y][x], tile);
+        static_cast<TileToolCommand*>(_currCommand)->pushTile(_tiles[y][x], tile);
     }
     
     _tiles[y][x] = tile;
@@ -377,7 +364,7 @@ void GMXLayer2::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 
 void GMXLayer2::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
 {
-   _isKeyDown[static_cast<int>(keyCode)] = false;
+    _isKeyDown[static_cast<int>(keyCode)] = false;
 }
 
 
@@ -436,7 +423,7 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
             Vec2 pos;
             Vec2 worldPos;
             if ( x < 0 || x > _file.numOfTileX + DUMMY_TILE_SIZE * 2 - 1 ||
-                 y < 0 || y > _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4- 1)
+                y < 0 || y > _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4- 1)
             {
                 fileName = "empty_image.png";
                 pos = Vec2::ZERO;
@@ -456,11 +443,11 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
             
             if ( viewable )
             {
-                _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
-                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
-                _worldDebugNode->drawLine(Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
-                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
-//                _tileIndices[i][j]->setString("(" + std::to_string(y) + ", " + std::to_string(x) + ")");
+                _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Color4F(1, 1, 1, 0.1f));
+                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.1f));
+                _worldDebugNode->drawLine(Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Color4F(1, 1, 1, 0.1f));
+                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.1f));
+                //                _tileIndices[i][j]->setString("(" + std::to_string(y) + ", " + std::to_string(x) + ")");
             }
             else
             {
@@ -641,6 +628,40 @@ void GMXLayer2::putTile(TileType type, int x, int y)
         }
     }
 }
+
+
+bool GMXLayer2::addEntity(EntityBase* entity)
+{
+    auto iter = _entities.find(entity->getID());
+    if ( iter == std::end(_entities))
+    {
+        //if ( ... aabb intersection )
+        _cellSpacePartition->addEntity(entity);
+        _clipNode->addChild(entity);
+        
+        _navigatorLayer->addEntity(entity);
+        
+        return true;
+    }
+    
+    return false;
+}
+
+
+bool GMXLayer2::eraseEntity(EntityBase* entity)
+{
+    auto iter = _entities.find(entity->getID());
+    if ( iter != std::end(_entities))
+    {
+        _cellSpacePartition->removeEntityFromCell(entity);
+        entity->removeFromParent();
+        
+        return true;
+    }
+    
+    return false;
+}
+
 
 
 

@@ -24,6 +24,8 @@ public:
     
     bool init(cocos2d::ui::Widget::TextureResType resType);
     
+    virtual Sheriff* clone() const override;
+    
 private:
     
     

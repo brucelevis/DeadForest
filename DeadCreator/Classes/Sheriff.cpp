@@ -36,6 +36,8 @@ Sheriff* Sheriff::create(GMXLayer2& layer, int id, cocos2d::ui::Widget::TextureR
 
 bool Sheriff::init(cocos2d::ui::Widget::TextureResType resType)
 {
+    _resType = resType;
+    
     if ( resType == cocos2d::ui::Widget::TextureResType::LOCAL )
     {
         _body = Sprite::create("HumanFistIdleLoop0.png");
@@ -53,7 +55,20 @@ bool Sheriff::init(cocos2d::ui::Widget::TextureResType resType)
     addChild(_shadow);
     addChild(_body);
     
-    
-    
     return true;
 }
+
+
+Sheriff* Sheriff::clone() const
+{
+    return Sheriff::create(_gmxLayer, _id, _resType);
+}
+
+
+
+
+
+
+
+
+

@@ -8,10 +8,13 @@
 
 #include "PaletteLayer.hpp"
 #include "ImGuiLayer.h"
-#include "SizeProtocol.h"
+#include "GMXLayer2.hpp"
+#include "TileToolCommand.hpp"
+#include "EntityToolCommand.hpp"
 using namespace cocos2d;
 
-PaletteLayer::PaletteLayer():
+PaletteLayer::PaletteLayer(GMXLayer2& layer):
+_gmxLayer(layer),
 _layerSize(Size(200,200)),
 _layerPosition(Vec2(200, 100)),
 _boundingBoxPadding(Rect::ZERO)
@@ -24,9 +27,9 @@ PaletteLayer::~PaletteLayer()
 }
 
 
-PaletteLayer* PaletteLayer::create()
+PaletteLayer* PaletteLayer::create(GMXLayer2& layer)
 {
-    auto ret = new (std::nothrow) PaletteLayer();
+    auto ret = new (std::nothrow) PaletteLayer(layer);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -96,6 +99,8 @@ void PaletteLayer::showLayer(bool* opened)
     
     if ( _paletteType == 0)
     {
+        _gmxLayer.setCommand(_gmxLayer.getTileToolCommand());
+        
         if ( ImGuiLayer::imageButton("1_1_1234.png", 50, 50) )
         {
             _selectedItem = 0;
@@ -121,6 +126,8 @@ void PaletteLayer::showLayer(bool* opened)
     
     else if ( _paletteType == 1)
     {
+        _gmxLayer.setCommand(_gmxLayer.getEntityToolCommand());
+        
         if ( ImGuiLayer::imageButton("human.png", 50, 50) )
         {
             _selectedItem = 0;
@@ -129,6 +136,8 @@ void PaletteLayer::showLayer(bool* opened)
     
     else if ( _paletteType == 2)
     {
+        _gmxLayer.setCommand(_gmxLayer.getEntityToolCommand());
+        
         if (ImGuiLayer::imageButton("5_56mm.png", 50, 50)) _selectedItem = 0;
         ImGui::SameLine();
         if (ImGuiLayer::imageButton("9mm.png", 50, 50)) _selectedItem = 1;

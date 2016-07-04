@@ -36,6 +36,9 @@ ItemGlock17* ItemGlock17::create(GMXLayer2& layer, int id, const std::string& fi
 
 bool ItemGlock17::init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
 {
+    _resType = resType;
+    _fileName = fileName;
+    
     if ( resType == cocos2d::ui::Widget::TextureResType::LOCAL )
     {
         _body = Sprite::create(fileName);
@@ -49,3 +52,18 @@ bool ItemGlock17::init(const std::string& fileName, cocos2d::ui::Widget::Texture
     
     return true;
 }
+
+
+ItemGlock17* ItemGlock17::clone() const
+{
+    return ItemGlock17::create(_gmxLayer, _id, _fileName, _resType);
+}
+
+
+
+
+
+
+
+
+

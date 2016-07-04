@@ -45,7 +45,7 @@ public:
     
     void pushTile(const TileBase& prevTile, const TileBase& currTile);
     
-    bool empty() const { return _prevTiles.empty(); }
+    virtual bool empty() const override { return _prevTiles.empty(); }
     
 private:
     
@@ -53,7 +53,6 @@ private:
     
 private:
     
-    bool _isEmpty;
     std::vector<TileBase> _prevTiles;
     std::vector<TileBase> _currTiles;
     

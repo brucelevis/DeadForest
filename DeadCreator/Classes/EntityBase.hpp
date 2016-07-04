@@ -9,6 +9,7 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
 
 class GMXLayer2;
 
@@ -38,19 +39,21 @@ public:
     
     void setWorldPosition(const cocos2d::Vec2& pos) { _worldPosition = pos; }
     
+    int getID() const { return _id; }
+    
     virtual void visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& parentTransform, uint32_t parentFlags) override;
+    
+    virtual EntityBase* clone() const = 0;
     
 protected:
     
     GMXLayer2& _gmxLayer;
     
-    cocos2d::Vec2 _worldPosition;
-    
     int _id;
-    
+    cocos2d::Vec2 _worldPosition;
     EntityType _type;
-    
     cocos2d::Sprite* _body;
     cocos2d::Sprite* _shadow;
+    cocos2d::ui::Widget::TextureResType _resType;
     
 };

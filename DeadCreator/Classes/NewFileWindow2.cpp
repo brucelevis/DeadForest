@@ -163,7 +163,7 @@ void NewFileWindow2::showNewFileWindow(bool* opened)
 
 void NewFileWindow2::closeWindow()
 {
-    _imguiLayer->setEnableFileMenu(true);
+    _imguiLayer->revertNewButton();
     
     _tileSizeXItem = 0;
     _tileSizeYItem = 0;

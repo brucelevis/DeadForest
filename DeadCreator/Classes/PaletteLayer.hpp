@@ -17,7 +17,7 @@ enum PaletteType
 {
     DEFAULT = -1,
     TILE,
-    ENTITY,
+    HUMAN,
     ITEM,
     DOODAD
 };

@@ -119,10 +119,17 @@ void ImGuiLayer::image(const std::string& fn, float w, float h)
     ImGui::Image(reinterpret_cast<ImTextureID>(texName), ImVec2(w, h));
 }
 
-bool ImGuiLayer::imageButton(const std::string& fn,float w, float h)
+bool ImGuiLayer::imageButton(const std::string& fn,
+                             float w,
+                             float h,
+                             const ImVec2& uv0,
+                             const ImVec2& uv1,
+                             int frame_padding,
+                             const ImVec4& bg_col,
+                             const ImVec4& tint_col)
 {
     auto texName = cocos2d::Director::getInstance()->getTextureCache()->addImage(fn)->getName();
-    return ImGui::ImageButton(reinterpret_cast<ImTextureID>(texName), ImVec2(w, h));
+    return ImGui::ImageButton(reinterpret_cast<ImTextureID>(texName), ImVec2(w, h), uv0, uv1, frame_padding, bg_col, tint_col);
 }
 
 

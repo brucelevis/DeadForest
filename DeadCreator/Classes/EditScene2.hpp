@@ -36,6 +36,10 @@ public:
     
     void createGMXLayer(GMXFile* file);
     
+    void doNewButton();
+    
+    void revertNewButton();
+    
 private:
     
     GMXLayer2* _layer;
@@ -45,6 +49,10 @@ private:
     bool _showNewMap = false;
     
     bool _isFileEnable = true;
+    bool _enableNewMap = true;
+    bool _enableOpenMap = true;
+    bool _enableSaveMap = false;
+    
     
     bool _isEditEnable = false;
     

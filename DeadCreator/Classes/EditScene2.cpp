@@ -13,6 +13,7 @@ using namespace cocos2d;
 #include "GMXLayer2.hpp"
 #include "GMXFile.hpp"
 #include "NewFileWindow2.hpp"
+#include "PaletteLayer.hpp"
 #include "SizeProtocol.h"
 
 Scene* EditScene2::createScene()
@@ -47,11 +48,11 @@ bool EditScene2::init()
         {
             if (ImGui::BeginMenu("File", _isFileEnable))
             {
-                if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap))
+                if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap, _enableNewMap))
                 {
-                    if ( _showNewMap ) _isFileEnable = false;
+                    if ( _showNewMap ) doNewButton();
                 }
-                if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+                if (ImGui::MenuItem("Open", "Ctrl+O", false, _enableOpenMap)) {}
                 if (ImGui::BeginMenu("Open Recent"))
                 {
                     ImGui::MenuItem("fish_hat.c");
@@ -59,8 +60,8 @@ bool EditScene2::init()
                     ImGui::MenuItem("fish_hat.h");
                     ImGui::EndMenu();
                 }
-                if (ImGui::MenuItem("Save", "Ctrl+S")) { }
-                if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S")) { }
+                if (ImGui::MenuItem("Save", "Ctrl+S", false, _enableSaveMap)) { }
+                if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", false, _enableSaveMap)) { }
                 ImGui::Separator();
                 if (ImGui::MenuItem("Quit", "Alt+F4")) {}
                 
@@ -112,8 +113,162 @@ bool EditScene2::init()
             
             ImGui::EndMainMenuBar();
         }
+
+        ImGuiState& g = *GImGui;
+        float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
         
         ImGuiIO& io = ImGui::GetIO();
+        
+        ImGui::SetNextWindowPos(ImVec2(0.0f, height));
+        ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, ICONBAR_HEIGHT));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(219/255.0, 219/255.0, 219/255.0, 1.0));
+
+        ImGui::Begin("##IconMenuBar", NULL,
+                     ImGuiWindowFlags_NoTitleBar|
+                     ImGuiWindowFlags_NoResize|
+                     ImGuiWindowFlags_NoMove|
+                     ImGuiWindowFlags_NoScrollbar|
+                     ImGuiWindowFlags_NoSavedSettings|
+                     ImGuiWindowFlags_NoBringToFrontOnFocus|
+                     ImGuiWindowFlags_ShowBorders);
+        
+        static float newAlpha;
+        if ( _enableNewMap )
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
+            newAlpha = 1.0f;
+        }
+        else
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0, 0.0, 0.0, 0.0));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
+            newAlpha = 0.2f;
+        }
+        if ( ImGuiLayer::imageButton("new.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, newAlpha)) )
+        {
+            doNewButton();
+        }
+        ImGui::PopStyleColor(2);
+        
+        static float openAlpha;
+        if ( _enableOpenMap )
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
+            openAlpha = 1.0f;
+        }
+        else
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0, 0.0, 0.0, 0.0));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
+            openAlpha = 0.2f;
+        }
+        ImGui::SameLine(); ImGuiLayer::imageButton("open.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, openAlpha));
+        ImGui::PopStyleColor(2);
+        
+        static float saveAlpha;
+        if ( _enableSaveMap )
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
+            saveAlpha = 1.0f;
+        }
+        else
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0, 0.0, 0.0, 0.0));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
+            saveAlpha = 0.2f;
+        }
+        ImGui::SameLine(); ImGuiLayer::imageButton("save.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, saveAlpha));
+        ImGui::PopStyleColor(2);
+        
+        ImGui::SameLine();
+        static float undoAlpha;
+        if ( _layer && _layer->isUndo() )
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
+            undoAlpha = 1.0f;
+        }
+        else
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0, 0.0, 0.0, 0.0));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
+            undoAlpha = 0.2f;
+        }
+        if (ImGuiLayer::imageButton("undo.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, undoAlpha)))
+        {
+            if ( _layer) _layer->undo();
+        }
+        ImGui::PopStyleColor(2);
+        
+        ImGui::SameLine();
+        static float redoAlpha;
+        if ( _layer && _layer->isRedo() )
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
+            redoAlpha = 1.0f;
+        }
+        else
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0, 0.0, 0.0, 0.0));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
+            redoAlpha = 0.2f;
+        }
+        if (ImGuiLayer::imageButton("redo.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, redoAlpha)))
+        {
+            if ( _layer) _layer->redo();
+        }
+        ImGui::PopStyleColor(2);
+        
+        
+        ImGui::SameLine();
+        static int layerType = -1;
+
+        ImGui::PushItemWidth(200);
+        ImGui::Combo("##layer", &layerType, "Tile Layer\0Entity Layer\0Doodad Layer\0Location Layer\0");
+        
+        if ( _layer )
+        {
+            PaletteLayer* paletteLayer = _layer->getPaletteLayer();
+            if ( paletteLayer )
+            {
+                if ( layerType == 0 )
+                {
+//                    _layer->getPaletteLayer()->setPaletteType(PaletteType::TILE);
+                }
+                else if ( layerType == 1)
+                {
+//                    _layer->getPaletteLayer()->setPaletteType(PaletteType::ENTITY);
+                }
+                else if ( layerType == 2)
+                {
+//                    _layer->getPaletteLayer()->setPaletteType(PaletteType::DOODAD);
+                }
+                else if ( layerType == 3)
+                {
+//                    _layer->getPaletteLayer()->setPaletteType(PaletteType::ENTITY);
+                }
+            }
+        }
+        
+        ImGui::SameLine();
+        static int playerType = -1;
+        if (ImGui::Combo("##player", &playerType, "Player 1\0Player 2\0Player 3\0Player 4\0Player 5\0Player 6\0Player 7\0Player 8\0", 8))
+        {
+        }
+        ImGui::PopItemWidth();
+        
+        ImGui::End();
+        ImGui::PopStyleColor(4);
+        ImGui::PopStyleVar(1);
+
         
         ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - STATUSBAR_HEIGHT));
         ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, STATUSBAR_HEIGHT));
@@ -165,11 +320,29 @@ void EditScene2::createGMXLayer(GMXFile* file)
 {
     _layer = GMXLayer2::create(*this, *file);
     addChild(_layer);
+    revertNewButton();
     
-    _isEditEnable = true;
-    _isPlayerEnable = true;
-    _isWindowEnable = true;
+    setEnableEditMenu(true);
+    setEnablePlayerMenu(true);
 }
+
+
+void EditScene2::doNewButton()
+{
+    _isFileEnable = false;
+    _showNewMap = true;
+    _enableOpenMap = false;
+    _enableNewMap = false;
+}
+
+
+void EditScene2::revertNewButton()
+{
+    setEnableFileMenu(true);
+    _enableOpenMap = true;
+    _enableNewMap = true;
+}
+
 
 
 

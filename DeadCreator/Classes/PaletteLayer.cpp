@@ -47,9 +47,9 @@ void PaletteLayer::showLayer(bool* opened)
         _layerPosition.x = WINDOW_PADDING;
     }
     
-    if ( _layerPosition.y < height + WINDOW_PADDING )
+    if ( _layerPosition.y < height + WINDOW_PADDING + ICONBAR_HEIGHT )
     {
-        _layerPosition.y = height + WINDOW_PADDING;
+        _layerPosition.y = height + WINDOW_PADDING + ICONBAR_HEIGHT;
     }
     
     if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - WINDOW_PADDING )
@@ -83,7 +83,7 @@ void PaletteLayer::showLayer(bool* opened)
                                 _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
     
     
-    if (ImGui::Combo("type", &_paletteType, "tile\0entity\0item\0doodad\0"))
+    if (ImGui::Combo("type", &_paletteType, "tile\0human\0item\0doodad\0"))
     {
         _selectedItem = 0;
     }

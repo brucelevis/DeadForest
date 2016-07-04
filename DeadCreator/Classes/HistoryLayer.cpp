@@ -14,7 +14,7 @@ using namespace cocos2d;
 HistoryLayer::HistoryLayer(GMXLayer2& gmxLayer) :
 _gmxLayer(gmxLayer),
 _layerSize(Size(200, 300)),
-_layerPosition(Vec2(120, 70)),
+_layerPosition(Vec2(120, 270)),
 _boundingBoxPadding(Rect::ZERO)
 {
 }
@@ -57,9 +57,9 @@ void HistoryLayer::showLayer(bool* opened)
         _layerPosition.x = WINDOW_PADDING;
     }
     
-    if ( _layerPosition.y < height + WINDOW_PADDING )
+    if ( _layerPosition.y < height + WINDOW_PADDING + ICONBAR_HEIGHT)
     {
-        _layerPosition.y = height + WINDOW_PADDING;
+        _layerPosition.y = height + WINDOW_PADDING + ICONBAR_HEIGHT;
     }
     
     if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - WINDOW_PADDING )

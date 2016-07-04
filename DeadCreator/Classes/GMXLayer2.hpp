@@ -28,6 +28,7 @@ class NavigatorLayer;
 class EditScene2;
 class CommandBase;
 class TileToolCommand;
+class EntityBase;
 
 class GMXLayer2 : public cocos2d::Layer
 {
@@ -96,6 +97,8 @@ public:
     
     void undo() { _historyLayer->undo(); }
     
+    PaletteLayer* getPaletteLayer() const { return _paletteLayer; }
+    
 private:
     
     EditScene2& _imguiLayer;
@@ -117,6 +120,7 @@ private:
     cocos2d::Node* _rootNode;
     
     CellSpacePartition* _cellSpacePartition;
+    std::map<int, EntityBase*> _entities;
     std::vector<std::vector<TileBase>> _tiles;
     std::vector< std::vector<TileImage*> > _tileImages;
     std::vector< std::vector<cocos2d::ui::Text*> > _tileIndices;
@@ -130,16 +134,16 @@ private:
     cocos2d::Vec2 _mousePosInWorld;
     cocos2d::Vec2 _mousePosInCanvas;
     
-    PaletteLayer* _paletteLayer;
+    PaletteLayer* _paletteLayer = nullptr;
     bool _isShowPalette = true;
     
-    NavigatorLayer* _navigatorLayer;
+    NavigatorLayer* _navigatorLayer = nullptr;
     bool _isShowNavigator = true;
     
-    HistoryLayer* _historyLayer;
+    HistoryLayer* _historyLayer = nullptr;
     bool _isShowHistory = true;
     
-    TileToolCommand* _tileToolCommand;
+    TileToolCommand* _tileToolCommand = nullptr;
     
 };
 

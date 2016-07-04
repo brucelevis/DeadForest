@@ -71,9 +71,9 @@ void NavigatorLayer::showLayer(bool* opened)
         _layerPosition.x = WINDOW_PADDING;
     }
     
-    if ( _layerPosition.y < height + WINDOW_PADDING )
+    if ( _layerPosition.y < height + WINDOW_PADDING + ICONBAR_HEIGHT )
     {
-        _layerPosition.y = height + WINDOW_PADDING;
+        _layerPosition.y = height + WINDOW_PADDING + ICONBAR_HEIGHT;
     }
     
     if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - WINDOW_PADDING )

@@ -16,6 +16,8 @@
 #include "NavigatorLayer.hpp"
 #include "HistoryLayer.hpp"
 #include "TileToolCommand.hpp"
+#include "Sheriff.hpp"
+#include "Item556mm.hpp"
 using namespace cocos2d;
 
 GMXLayer2::GMXLayer2(EditScene2& imguiLayer, GMXFile& file) :
@@ -118,6 +120,39 @@ bool GMXLayer2::init()
     
     _tileToolCommand = new TileToolCommand(this);
     
+    
+    auto ent = Sheriff::create(*this, 0, ui::Widget::TextureResType::PLIST);
+    ent->setWorldPosition(Vec2(_layerSize / 2));
+    _clipNode->addChild(ent, 100);
+    
+    auto item = Item556mm::create(*this, 1, "5_56mm.png", ui::Widget::TextureResType::PLIST);
+    item->setWorldPosition(Vec2(_layerSize / 2) + Vec2(50, 100));
+    _clipNode->addChild(item, 100);
+    
+    auto item2 = Item556mm::create(*this, 2, "9mm.png", ui::Widget::TextureResType::PLIST);
+    item2->setWorldPosition(Vec2(_layerSize / 2) + Vec2(100, 100));
+    _clipNode->addChild(item2, 100);
+    
+    auto item3 = Item556mm::create(*this, 3, "Shell.png", ui::Widget::TextureResType::PLIST);
+    item3->setWorldPosition(Vec2(_layerSize / 2) + Vec2(150, 100));
+    _clipNode->addChild(item3, 100);
+    
+    auto item4 = Item556mm::create(*this, 4, "Axe.png", ui::Widget::TextureResType::PLIST);
+    item4->setWorldPosition(Vec2(_layerSize / 2) + Vec2(200, 100));
+    _clipNode->addChild(item4, 100);
+    
+    auto item5 = Item556mm::create(*this, 5, "Glock17.png", ui::Widget::TextureResType::PLIST);
+    item5->setWorldPosition(Vec2(_layerSize / 2) + Vec2(250, 100));
+    _clipNode->addChild(item5, 100);
+    
+    auto item6 = Item556mm::create(*this, 6, "M16A2.png", ui::Widget::TextureResType::PLIST);
+    item6->setWorldPosition(Vec2(_layerSize / 2) + Vec2(300, 100));
+    _clipNode->addChild(item6, 100);
+    
+    auto item7 = Item556mm::create(*this, 7, "M1897.png", ui::Widget::TextureResType::PLIST);
+    item7->setWorldPosition(Vec2(_layerSize / 2) + Vec2(350, 100));
+    _clipNode->addChild(item7, 100);
+    
     return true;
 }
 
@@ -182,8 +217,8 @@ void GMXLayer2::showWindow()
     if ( _layerPosition.x < WINDOW_PADDING )
         _layerPosition.x = WINDOW_PADDING;
     
-    if ( _layerPosition.y < height + WINDOW_PADDING )
-        _layerPosition.y = height + WINDOW_PADDING;
+    if ( _layerPosition.y < height + WINDOW_PADDING + ICONBAR_HEIGHT )
+        _layerPosition.y = height + WINDOW_PADDING + ICONBAR_HEIGHT;
     
     if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - WINDOW_PADDING )
         _layerPosition.x = g.IO.DisplaySize.x - _layerSize.width - WINDOW_PADDING;
@@ -218,15 +253,6 @@ void GMXLayer2::showWindow()
     
     _mousePosInWorld.clamp(_camera->getPosition() - Vec2(_layerSize / 2), _camera->getPosition() + Vec2(_layerSize / 2));
  
-    auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
-    _hoveredTileRegion->clear();
-    
-    Vec2 hoveredRegionCenterPos = _tiles[indices.second][indices.first].getPosition();
-    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), 2.0f, Color4F::GREEN);
-    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
-    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), 2.0f, Color4F::GREEN);
-    _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
-    
     static Vec2 mousePosInCocos2dMatrix;
     mousePosInCocos2dMatrix = Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
     
@@ -262,17 +288,30 @@ void GMXLayer2::showWindow()
         }
     }
     
-    if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !titleClicked )
+    _hoveredTileRegion->clear();
+    if ( _paletteLayer->getPaletteType() == PaletteType::TILE )
     {
-        Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-        bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
-        if ( !isClickedResizeButton && _paletteLayer->getPaletteType() == PaletteType::TILE )
+        auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
+        
+        Vec2 hoveredRegionCenterPos = _tiles[indices.second][indices.first].getPosition();
+        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), 2.0f, Color4F::GREEN);
+        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
+        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), 2.0f, Color4F::GREEN);
+        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
+        
+        if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !titleClicked )
         {
-            TileType selectedTile = static_cast<TileType>(_paletteLayer->getSelectedItem());
-            putTile(selectedTile, indices.first, indices.second);
+            Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
+            bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+            if ( !isClickedResizeButton )
+            {
+                TileType selectedTile = static_cast<TileType>(_paletteLayer->getSelectedItem());
+                putTile(selectedTile, indices.first, indices.second);
+            }
         }
     }
 
+    
     ImGui::End();
     ImGui::PopStyleVar(2);
     ImGui::PopStyleColor();
@@ -344,7 +383,6 @@ void GMXLayer2::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
 
 void GMXLayer2::update(float dt)
 {
-    
     if ( _isKeyDown[static_cast<int>(EventKeyboard::KeyCode::KEY_RIGHT_ARROW)] ) _cameraDirection.x = 1.0f;
     else if ( _isKeyDown[static_cast<int>(EventKeyboard::KeyCode::KEY_LEFT_ARROW)] ) _cameraDirection.x = -1.0f;
     else _cameraDirection.x = 0.0f;
@@ -418,10 +456,10 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
             
             if ( viewable )
             {
-//                _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
-//                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
-//                _worldDebugNode->drawLine(Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
-//                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
+                _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
+                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
+                _worldDebugNode->drawLine(Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Color4F(1, 1, 1, 0.3f));
+                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.3f));
 //                _tileIndices[i][j]->setString("(" + std::to_string(y) + ", " + std::to_string(x) + ")");
             }
             else
@@ -434,7 +472,7 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
     for(int i = 0 ; i < _cellSpacePartition->getNumOfCellY() * _cellSpacePartition->getNumOfCellX() ; ++ i)
     {
         Rect cellRect = _cellSpacePartition->getCell(i).boundingBox;
-        _worldDebugNode->drawRect(cellRect.origin, cellRect.origin + cellRect.size, Color4F::RED);
+        _worldDebugNode->drawRect(cellRect.origin, cellRect.origin + cellRect.size, Color4F(1, 0, 0, 0.3f));
     }
     
 }

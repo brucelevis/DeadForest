@@ -23,3 +23,17 @@ _id(id)
 EntityBase::~EntityBase()
 {
 }
+
+
+void EntityBase::setBoundingBox(const cocos2d::Rect& aabb)
+{
+    _boundingBox = aabb;
+}
+
+
+
+
+
+
+
+

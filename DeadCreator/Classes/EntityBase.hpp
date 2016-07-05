@@ -56,6 +56,18 @@ public:
     
     PlayerType getPlayerType() const { return _playerType; }
     
+    cocos2d::Rect getBoundingBox() const
+    {
+        return cocos2d::Rect(getPositionX() - _boundingBox.size.width / 2,
+                             getPositionY() - _boundingBox.size.height / 2,
+                             _boundingBox.size.width,
+                             _boundingBox.size.height);
+    }
+    
+    virtual void setBoundingBox(const cocos2d::Rect& aabb);
+    
+    void setVisibleAABB(bool enable) { if ( _boundingBoxNode ) _boundingBoxNode->setVisible(enable); }
+    
 protected:
     
     GMXLayer2& _gmxLayer;
@@ -66,6 +78,8 @@ protected:
     cocos2d::Sprite* _shadow;
     cocos2d::ui::Widget::TextureResType _resType;
     PlayerType _playerType;
+    cocos2d::Rect _boundingBox;
+    cocos2d::DrawNode* _boundingBoxNode = nullptr;
     
 };
 

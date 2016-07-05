@@ -51,11 +51,13 @@ public:
     
     void setLayerType(LayerType type) { _layerType = type; }
     
+    int getLayerType() const { return _layerType; }
+    
 private:
     
-    GMXLayer2* _layer;
+    GMXLayer2* _layer = nullptr;
     
-    NewFileWindow2* _newFileWindow;
+    NewFileWindow2* _newFileWindow = nullptr;
 
     bool _showNewMap = false;
     

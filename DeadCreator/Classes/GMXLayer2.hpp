@@ -118,6 +118,8 @@ public:
     static void disableTitleClicked() { TITLE_CLICKED = false; }
     static bool isTitleClicked() { return TITLE_CLICKED; }
     
+    void enableEntityBoundingBoxNode(bool enable);
+    
 private:
     
     static bool TITLE_CLICKED;
@@ -164,9 +166,12 @@ private:
     HistoryLayer* _historyLayer = nullptr;
     bool _isShowHistory = true;
     
-    CommandBase* _currCommand;
+    CommandBase* _currCommand = nullptr;
     TileToolCommand* _tileToolCommand = nullptr;
     EntityToolCommand* _entityToolCommand = nullptr;
+    
+    cocos2d::Rect _selectRect;
+    cocos2d::DrawNode* _selectionRectNode;
     
 };
 

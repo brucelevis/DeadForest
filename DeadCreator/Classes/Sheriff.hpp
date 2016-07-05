@@ -26,6 +26,9 @@ public:
     
     virtual Sheriff* clone() const override;
     
+    virtual void setBoundingBox(const cocos2d::Rect& aabb) override;
+
+    
 private:
     
     

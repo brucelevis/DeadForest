@@ -98,6 +98,9 @@ bool GMXLayer2::init()
     _worldDebugNode = DrawNode::create();
     _rootNode->addChild(_worldDebugNode);
     
+    _selectionRectNode = DrawNode::create();
+    _rootNode->addChild(_selectionRectNode, 10);
+    
     _localDebugNode = DrawNode::create();
     _clipNode->addChild(_localDebugNode);
     
@@ -105,7 +108,7 @@ bool GMXLayer2::init()
     _rootNode->addChild(_hoveredTileRegion);
     
     _selectedItem = Sprite::create();
-    _rootNode->addChild(_selectedItem);
+    _rootNode->addChild(_selectedItem, 10);
     
     _cellSpacePartition = CellSpacePartition::create(_file.worldSize, Size(_file.tileWidth * 5, _file.tileHeight * 5));
     addChild(_cellSpacePartition);
@@ -243,52 +246,75 @@ void GMXLayer2::showWindow()
         GMXLayer2::disableTitleClicked();
     }
     
-    if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+    if ( ImGui::GetIO().MouseClicked[0] && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
     {
         if ( !_isLeftMouseClickEventDone )
         {
-            _currCommand->begin();
+            if ( _currCommand ) _currCommand->begin();
             _isLeftMouseClickEventDone = true;
         }
 
     }
-    else if ( (ImGui::GetIO().MouseReleased[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+    else if ( ImGui::GetIO().MouseReleased[0] && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
     {
         if ( _isLeftMouseClickEventDone )
         {
-            _currCommand->end();
             _isLeftMouseClickEventDone = false;
             
-            if ( !_currCommand->empty() )
+            if ( _currCommand )
             {
-                _historyLayer->pushCommand(_currCommand->clone());
+                _currCommand->end();
+                if ( !_currCommand->empty() )
+                {
+                    _historyLayer->pushCommand(_currCommand->clone());
+                }
             }
         }
     }
     
     _hoveredTileRegion->clear();
-    
+     
     int selectedItem = _paletteLayer->getSelectedItem();
     if ( selectedItem == -1 )
     {
         _selectedItem->setTexture("empty_image.png");
     }
     
-    if ( _paletteLayer->getPaletteType() == PaletteType::TILE )
+    if ( ImGui::GetIO().MouseClicked[1] && ImGui::IsMouseHoveringWindow() )
+    {
+        _paletteLayer->setSelectedItem(-1);
+    }
+    
+    if ( _imguiLayer.getLayerType() == LayerType::DOODAD || _imguiLayer.getLayerType() == LayerType::ENTITY )
+    {
+        if ( selectedItem == - 1)
+        {
+            if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+            {
+                if ( ImGui::GetIO().MouseClicked[0] )
+                {
+                    _selectRect.origin = _mousePosInWorld;
+                }
+                _selectRect.size = _mousePosInWorld - _selectRect.origin;
+                _selectionRectNode->clear();
+                _selectionRectNode->drawRect(_selectRect.origin, _selectRect.origin + Vec2(_selectRect.size), Color4F(0.0, 1.0, 0.0, 0.5));
+            }
+            
+            if ( ImGui::GetIO().MouseReleased[0] )
+            {
+                _selectRect = Rect::ZERO;
+                _selectionRectNode->clear();
+            }
+        }
+    }
+
+    
+    if ( _imguiLayer.getLayerType() == LayerType::TILE )
     {
         TileType selectedTile = static_cast<TileType>(_paletteLayer->getSelectedItem());
+        auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
         if ( selectedTile != TileType::INVALID )
         {
-            auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
-            
-            Vec2 hoveredRegionCenterPos = _tiles[indices.second][indices.first].getPosition();
-            _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), 2.0f, Color4F::GREEN);
-            _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
-            _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), 2.0f, Color4F::GREEN);
-            _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
-            _selectedItem->setPosition(_tiles[indices.second][indices.first].getPosition());
-            _selectedItem->setOpacity(128);
-            
             if ( selectedTile == TileType::DIRT )
             {
                 _selectedItem->setTexture("1_1_1234.png");
@@ -316,6 +342,14 @@ void GMXLayer2::showWindow()
                 }
             }
         }
+        
+        Vec2 hoveredRegionCenterPos = _tiles[indices.second][indices.first].getPosition();
+        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), 2.0f, Color4F::GREEN);
+        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
+        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), 2.0f, Color4F::GREEN);
+        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
+        _selectedItem->setPosition(_tiles[indices.second][indices.first].getPosition());
+        _selectedItem->setOpacity(128);
     }
     else if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN )
     {
@@ -333,11 +367,14 @@ void GMXLayer2::showWindow()
                 {
                     Sheriff* ent = Sheriff::create(*this, getNextValidID(), cocos2d::ui::Widget::TextureResType::PLIST);
                     ent->setPosition(_mousePosInWorld);
-                    ent->setRotation(random(0.0f, 360.0f));
                     ent->setPlayerType(PlayerType::PLAYER1);
                     addEntity(ent);
                 }
             }
+        }
+        else
+        {
+            enableEntityBoundingBoxNode(false);
         }
     }
     else if ( _paletteLayer->getPaletteType() == PaletteType::ITEM )
@@ -834,6 +871,7 @@ bool GMXLayer2::eraseEntity(EntityBase* entity)
 void GMXLayer2::setCommand(CommandBase* newCommand)
 {
     _currCommand = newCommand;
+    
     if ( dynamic_cast<TileToolCommand*>(newCommand) )
     {
         _imguiLayer.setLayerType(LayerType::TILE);
@@ -843,6 +881,17 @@ void GMXLayer2::setCommand(CommandBase* newCommand)
         _imguiLayer.setLayerType(LayerType::ENTITY);
     }
 }
+
+
+void GMXLayer2::enableEntityBoundingBoxNode(bool enable)
+{
+    for ( auto& ent :_entities )
+    {
+        ent.second->setVisibleAABB(enable);
+    }
+}
+
+
 
 
 

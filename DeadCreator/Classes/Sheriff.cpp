@@ -55,6 +55,12 @@ bool Sheriff::init(cocos2d::ui::Widget::TextureResType resType)
     addChild(_shadow);
     addChild(_body);
     
+    _boundingBoxNode = DrawNode::create();
+    setBoundingBox(Rect(0, 0, 10, 10));
+    _boundingBoxNode->drawRect(Vec2(-_boundingBox.size.width / 2, -_boundingBox.size.height / 2), Vec2(_boundingBox.size.width, _boundingBox.size.height), Color4F::RED);
+    _boundingBoxNode->setPosition( _body->getContentSize() / 2);
+    _body->addChild(_boundingBoxNode);
+    
     return true;
 }
 
@@ -62,6 +68,14 @@ bool Sheriff::init(cocos2d::ui::Widget::TextureResType resType)
 Sheriff* Sheriff::clone() const
 {
     return Sheriff::create(_gmxLayer, _id, _resType);
+}
+
+
+void Sheriff::setBoundingBox(const cocos2d::Rect& aabb)
+{
+    _boundingBoxNode->clear();
+    _boundingBoxNode->drawRect(Vec2(-aabb.size.width / 2, -aabb.size.height / 2), Vec2(aabb.size.width, aabb.size.height), Color4F::RED);
+    EntityBase::setBoundingBox(aabb);
 }
 
 

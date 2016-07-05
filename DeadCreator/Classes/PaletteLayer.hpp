@@ -15,7 +15,7 @@
 
 class GMXLayer2;
 
-enum PaletteType
+enum class PaletteType : int
 {
     DEFAULT = -1,
     TILE,
@@ -37,11 +37,11 @@ public:
     
     void showLayer(bool* opened);
     
-    void setPaletteType(PaletteType type) { _paletteType = type; }
+    void setPaletteType(PaletteType type) { _paletteType = static_cast<int>(type); }
     
     void setSelectedItem(int item) { _selectedItem = item; }
     
-    int getPaletteType() const { return _paletteType; }
+    PaletteType getPaletteType() const { return static_cast<PaletteType>(_paletteType); }
     
     int getSelectedItem() const { return _selectedItem; }
     

@@ -103,24 +103,24 @@ void PaletteLayer::showLayer(bool* opened)
         
         if ( ImGuiLayer::imageButton("1_1_1234.png", 50, 50) )
         {
-            _selectedItem = 0;
+            _selectedItem = static_cast<int>(TileType::DIRT);
         }
         ImGui::SameLine();
         
         if ( ImGuiLayer::imageButton("2_1_1234.png", 50, 50) )
         {
-            _selectedItem = 1;
+            _selectedItem = static_cast<int>(TileType::GRASS);
         }
         ImGui::SameLine();
         
         if ( ImGuiLayer::imageButton("3_1_1234.png", 50, 50) )
         {
-            _selectedItem = 2;
+            _selectedItem = static_cast<int>(TileType::WATER);
         }
         
         if ( ImGuiLayer::imageButton("5_1_1234.png", 50, 50) )
         {
-            _selectedItem = 3;
+            _selectedItem = static_cast<int>(TileType::HILL);
         }
     }
     
@@ -130,7 +130,7 @@ void PaletteLayer::showLayer(bool* opened)
         
         if ( ImGuiLayer::imageButton("human.png", 50, 50) )
         {
-            _selectedItem = 0;
+            _selectedItem = static_cast<int>(EntityType::SHERIFF);
         }
     }
     

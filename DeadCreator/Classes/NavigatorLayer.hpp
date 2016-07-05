@@ -44,14 +44,10 @@ private:
     cocos2d::Vec2 _centerViewParam;
     
     std::map<int, ImTextureID> _tileMarks;
-    std::map<int, ImTextureID> _entityMarks;
+    std::map<int, EntityBase*> _entityMarks;
     
     TileType _defaultTile;
     GLint _defaultTileTextureName;
-    ImTextureID _dirtMarkTextureName;
-    ImTextureID _grassMarkTextureName;
-    ImTextureID _waterMarkTextureName;
-    ImTextureID _hillMarkTextureName;
     
 };
 

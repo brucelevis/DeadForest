@@ -135,6 +135,7 @@ private:
     float _windowSpeed;
     cocos2d::Node* _tileRoot;
     cocos2d::Node* _rootNode;
+    cocos2d::Sprite* _selectedItem;
     
     CellSpacePartition* _cellSpacePartition;
     std::map<int, EntityBase*> _entities;

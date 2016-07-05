@@ -25,6 +25,18 @@ enum class EntityType : int
     ITEM_M1897,
     ITEM_AXE,
 };
+    
+enum class PlayerType : int
+{
+    PLAYER1 = 1,
+    PLAYER2,
+    PLAYER3,
+    PLAYER4,
+    PLAYER5,
+    PLAYER6,
+    PLAYER7,
+    PLAYER8,
+};
 
 class EntityBase : public cocos2d::Node
 {
@@ -35,25 +47,32 @@ public:
     
     virtual ~EntityBase();
     
-    cocos2d::Vec2 getWorldPosition() const { return _worldPosition; }
-    
-    void setWorldPosition(const cocos2d::Vec2& pos) { _worldPosition = pos; }
-    
     int getID() const { return _id; }
     
-    virtual void visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& parentTransform, uint32_t parentFlags) override;
-    
     virtual EntityBase* clone() const = 0;
+    
+    void setPlayerType(PlayerType type) { _playerType = type; }
+    
+    PlayerType getPlayerType() const { return _playerType; }
     
 protected:
     
     GMXLayer2& _gmxLayer;
     
     int _id;
-    cocos2d::Vec2 _worldPosition;
     EntityType _type;
     cocos2d::Sprite* _body;
     cocos2d::Sprite* _shadow;
     cocos2d::ui::Widget::TextureResType _resType;
+    PlayerType _playerType;
     
 };
+
+
+
+
+
+
+
+
+

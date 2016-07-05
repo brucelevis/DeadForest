@@ -23,10 +23,3 @@ _id(id)
 EntityBase::~EntityBase()
 {
 }
-
-
-void EntityBase::visit(cocos2d::Renderer* renderer, const cocos2d::Mat4& parentTransform, uint32_t parentFlags)
-{
-    setPosition( _worldPosition - _gmxLayer.getCameraPosition() + Vec2(_gmxLayer.getLayerSize() / 2) );
-    Node::visit(renderer, parentTransform, parentFlags);
-}

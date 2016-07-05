@@ -62,8 +62,6 @@ public:
         _numOfCellsX = (worldSize.width  / cellSize.width) + 2;
         _numOfCellsY = (worldSize.height / cellSize.height) + 2;
         
-//        cocos2d::log("x: %d, y: %d", _numOfCellsX, _numOfCellsY);
-        
         for (int y = 0; y < _numOfCellsY; ++y)
         {
             for (int x = 0; x <_numOfCellsX; ++x)

@@ -103,6 +103,9 @@ bool GMXLayer2::init()
     _hoveredTileRegion = DrawNode::create();
     _rootNode->addChild(_hoveredTileRegion);
     
+    _selectedItem = Sprite::create();
+    _rootNode->addChild(_selectedItem);
+    
     _cellSpacePartition = CellSpacePartition::create(_file.worldSize, Size(_file.tileWidth * 5, _file.tileHeight * 5));
     addChild(_cellSpacePartition);
     
@@ -261,7 +264,27 @@ void GMXLayer2::showWindow()
     _hoveredTileRegion->clear();
     if ( _paletteLayer->getPaletteType() == PaletteType::TILE )
     {
+        TileType selectedTile = static_cast<TileType>(_paletteLayer->getSelectedItem());
         auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
+        
+        if ( selectedTile == TileType::DIRT )
+        {
+            _selectedItem->setTexture("1_1_1234.png");
+        }
+        else if ( selectedTile == TileType::GRASS )
+        {
+            _selectedItem->setTexture("selected_grass.png");
+        }
+        else if ( selectedTile == TileType::WATER )
+        {
+            _selectedItem->setTexture("3_1_1234.png");
+        }
+        else if ( selectedTile == TileType::HILL )
+        {
+            _selectedItem->setTexture("5_1_1234.png");
+        }
+        _selectedItem->setPosition(_tiles[indices.second][indices.first].getPosition());
+        _selectedItem->setOpacity(128);
         
         Vec2 hoveredRegionCenterPos = _tiles[indices.second][indices.first].getPosition();
         _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), 2.0f, Color4F::GREEN);
@@ -275,25 +298,28 @@ void GMXLayer2::showWindow()
             bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
             if ( !isClickedResizeButton )
             {
-                TileType selectedTile = static_cast<TileType>(_paletteLayer->getSelectedItem());
                 putTile(selectedTile, indices.first, indices.second);
             }
         }
     }
     else if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN )
     {
-        if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !titleClicked )
+        _selectedItem->setPosition(_mousePosInWorld);
+        EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
+        if ( selectedEntity == EntityType::SHERIFF )
         {
-            Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-            bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
-            if ( !isClickedResizeButton )
+            _selectedItem->setSpriteFrame("HumanFistIdleLoop0.png");
+            _selectedItem->setOpacity(128);
+            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !titleClicked )
             {
-                EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
-                if ( selectedEntity == EntityType::SHERIFF )
+                Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
+                bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+                if ( !isClickedResizeButton )
                 {
                     Sheriff* ent = Sheriff::create(*this, getNextValidID(), cocos2d::ui::Widget::TextureResType::PLIST);
-                    ent->setWorldPosition(_mousePosInWorld);
+                    ent->setPosition(_mousePosInWorld);
                     ent->setRotation(random(0.0f, 360.0f));
+                    ent->setPlayerType(PlayerType::PLAYER1);
                     addEntity(ent);
                 }
             }
@@ -308,9 +334,6 @@ void GMXLayer2::showWindow()
     _tileRoot->setPosition(_layerSize / 2);
     
     _clipNode->setClippingRegion(Rect(0, 0, _layerSize.width, _layerSize.height));
-    
-    _localDebugNode->clear();
-    _localDebugNode->drawDot(Vec2(_layerSize / 2), 5.0f, Color4F::YELLOW);
     
     if ( _isShowWindow == false )
     {
@@ -637,7 +660,7 @@ bool GMXLayer2::addEntity(EntityBase* entity)
     {
         //if ( ... aabb intersection )
         _cellSpacePartition->addEntity(entity);
-        _clipNode->addChild(entity);
+        _rootNode->addChild(entity);
         
         _navigatorLayer->addEntity(entity);
         

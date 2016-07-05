@@ -12,7 +12,7 @@
 
 inline void CellSpacePartition::addEntity(EntityBase* ent)
 {
-    int idx = positionToIndex(ent->getWorldPosition());
+    int idx = positionToIndex(ent->getPosition());
     _cells[idx].members.push_back(ent);
 }
 
@@ -30,7 +30,7 @@ inline bool CellSpacePartition::isUpdateChunk(const cocos2d::Vec2& oldPos, const
 
 inline void CellSpacePartition::removeEntityFromCell(EntityBase* ent)
 {
-    int index = positionToIndex(ent->getWorldPosition());
+    int index = positionToIndex(ent->getPosition());
     auto iter = std::find(std::begin(_cells[index].members), std::end(_cells[index].members), ent);
     if(iter == std::end(_cells[index].members))
     {

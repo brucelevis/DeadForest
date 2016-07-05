@@ -52,11 +52,6 @@ bool NavigatorLayer::init()
     else if ( _defaultTile == TileType::WATER ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_water.png")->getName();
     else if ( _defaultTile == TileType::HILL ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_hill.png")->getName();
     
-    _dirtMarkTextureName = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("dirt_mark.png")->getName());
-    _grassMarkTextureName = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("grass_mark.png")->getName());
-    _waterMarkTextureName = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("water_mark.png")->getName());
-    _hillMarkTextureName = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("hill_mark.png")->getName());
-    
     return true;
 }
 
@@ -151,6 +146,18 @@ void NavigatorLayer::showLayer(bool* opened)
         list->AddImage(tile.second, origin, ImVec2(origin.x + size.x, origin.y - size.y));
     }
     
+    for(auto &ent : _entityMarks)
+    {
+        auto entity = ent.second;
+        std::string type = "player" + std::to_string(static_cast<int>(entity->getPlayerType())) + ".png";
+        auto texID = reinterpret_cast<ImTextureID>(Director::getInstance()->getTextureCache()->addImage(type)->getName());
+        
+        ImVec2 param = ImVec2(entity->getPosition().x / worldSize.x, entity->getPosition().y / worldSize.y);
+        ImVec2 origin = ImVec2(canvasOrigin.x + param.x * _boundingBoxPadding.size.width, canvasOrigin.y - param.y * _boundingBoxPadding.size.height);
+        
+        list->AddImage(texID, origin, ImVec2(origin.x + 2, origin.y - 2));
+    }
+    
     _centerViewParam = _gmxLayer.getCenterViewParameter();
     list->AddRect(ImVec2(movableRect.origin.x + (movableRect.size.width * _centerViewParam.x) - selectRegionSize.width / 2,
                          movableRect.origin.y - (movableRect.size.height * _centerViewParam.y) - selectRegionSize.height / 2),
@@ -207,19 +214,19 @@ void NavigatorLayer::setTile(int x, int y, const TileBase& tile)
     {
         if ( tile.getType() == TileType::DIRT)
         {
-            _tileMarks[key] = _dirtMarkTextureName;
+            _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("dirt_mark.png")->getName());
         }
         else if ( tile.getType() == TileType::GRASS )
         {
-            _tileMarks[key] = _grassMarkTextureName;
+            _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("grass_mark.png")->getName());
         }
         else if ( tile.getType() == TileType::WATER )
         {
-            _tileMarks[key] = _waterMarkTextureName;
+            _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("water_mark.png")->getName());
         }
         else if ( tile.getType() == TileType::HILL )
         {
-            _tileMarks[key] = _hillMarkTextureName;
+            _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("hill_mark.png")->getName());
         }
     }
 }
@@ -227,7 +234,7 @@ void NavigatorLayer::setTile(int x, int y, const TileBase& tile)
 
 void NavigatorLayer::addEntity(EntityBase* ent)
 {
-    
+    _entityMarks.insert({ ent->getID(), ent });
 }
 
 

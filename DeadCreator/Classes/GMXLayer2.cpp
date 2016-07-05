@@ -17,6 +17,7 @@
 #include "HistoryLayer.hpp"
 #include "TileToolCommand.hpp"
 #include "AddEntityToolCommand.hpp"
+#include "RemoveEntityToolCommand.hpp"
 #include "Sheriff.hpp"
 #include "Items.hpp"
 #include "CellSpacePartition.hpp"
@@ -46,6 +47,7 @@ GMXLayer2::~GMXLayer2()
 {
     CC_SAFE_DELETE(_tileToolCommand);
     CC_SAFE_DELETE(_addEntityToolCommand);
+    CC_SAFE_DELETE(_removeEntityToolCommand);
 }
 
 
@@ -121,6 +123,7 @@ bool GMXLayer2::init()
     
     _tileToolCommand = new TileToolCommand(this);
     _addEntityToolCommand = new AddEntityToolCommand(this);
+    _removeEntityToolCommand = new RemoveEntityToolCommand(this);
     
     return true;
 }
@@ -254,11 +257,11 @@ void GMXLayer2::showWindow()
             
             if ( _currCommand )
             {
-                _currCommand->end();
                 if ( !_currCommand->empty() )
                 {
                     _historyLayer->pushCommand(_currCommand->clone());
                 }
+                _currCommand->end();
             }
         }
     }
@@ -274,12 +277,10 @@ void GMXLayer2::showWindow()
     if ( ImGui::GetIO().MouseClicked[1] && ImGui::IsMouseHoveringWindow() )
     {
         _paletteLayer->setSelectedItem(-1);
-        for (auto& ent : _selectedEntities )
-        {
-            ent->setSelected(false);
-        }
-        _selectedEntities.clear();
+        clearSelectedEntites();
     }
+    
+    log("size: %d", static_cast<int>(_selectedEntities.size()));
     
     if ( _imguiLayer.getLayerType() == LayerType::ENTITY )
     {
@@ -301,15 +302,6 @@ void GMXLayer2::showWindow()
             
             if ( isSelecting && ImGui::GetIO().MouseReleased[0] )
             {
-                if ( std::abs(_selectRect.size.width) < 1 && std::abs(_selectRect.size.height) < 1 )
-                {
-                    for (auto& ent : _selectedEntities)
-                    {
-                        ent->setSelected(false);
-                    }
-                    _selectedEntities.clear();
-                }
-                
                 Vec2 origin = _selectRect.origin;
                 Size dimension = Size(std::abs(_selectRect.size.width), std::abs(_selectRect.size.height));
                 if ( _selectRect.size.width < 0 )
@@ -321,10 +313,11 @@ void GMXLayer2::showWindow()
                     origin.y = _selectRect.origin.y + _selectRect.size.height;
                 }
                 
+                clearSelectedEntites();
                 Rect selectRect(origin, dimension);
                 for( auto &ent : _entities )
                 {
-                    if ( selectRect.containsPoint(ent.second->getPosition()) )
+                    if ( ent.second->isVisible() && selectRect.containsPoint(ent.second->getPosition()) )
                     {
                         ent.second->setSelected(true);
                         _selectedEntities.push_back(ent.second);
@@ -621,12 +614,20 @@ void GMXLayer2::update(float dt)
     
     if ( ImGui::IsKeyPressed(259) || ImGui::IsKeyPressed(261) ) // back space, delete
     {
-        for(auto &e : _selectedEntities)
+        auto prevCommand = _currCommand;
+        _currCommand = _removeEntityToolCommand;
+    
+        _currCommand->begin();
+        
+        static_cast<RemoveEntityToolCommand*>(_currCommand)->pushEntity(_selectedEntities);
+        removeSelectedEntities(true);
+        if ( !_currCommand->empty() )
         {
-            e->setSelected(false);
-            e->setVisible(false);
-            eraseEntity(e->getID(), true);
+            _historyLayer->pushCommand(_currCommand->clone());
         }
+        
+        _currCommand->end();
+        _currCommand = prevCommand;
     }
 }
 
@@ -880,10 +881,10 @@ bool GMXLayer2::addEntity(EntityBase* entity, int localZOrder, bool isExecComman
     
     if ( isExecCommand )
     {
+        iter->second->setVisible(true);
         _navigatorLayer->addEntity(entity);
         return true;
     }
-    
     
     return false;
 }
@@ -895,6 +896,8 @@ bool GMXLayer2::eraseEntity(int id, bool isExecCommand)
     if ( iter != std::end(_entities))
     {
         _navigatorLayer->eraseEntity(id);
+        iter->second->setVisible(false);
+        iter->second->setSelected(false);
         if ( !isExecCommand)
         {
             _entities.erase(id);
@@ -920,6 +923,10 @@ void GMXLayer2::setCommand(CommandBase* newCommand)
     {
         _imguiLayer.setLayerType(LayerType::ENTITY);
     }
+    else if ( dynamic_cast<RemoveEntityToolCommand*>(newCommand) )
+    {
+        // ... //
+    }
 }
 
 
@@ -929,6 +936,26 @@ void GMXLayer2::enableEntityBoundingBoxNode(bool enable)
     {
         ent.second->setVisibleAABB(enable);
     }
+}
+
+
+void GMXLayer2::removeSelectedEntities(bool isExecCommand)
+{
+    for ( auto& ent : _selectedEntities )
+    {
+        eraseEntity(ent->getID(), isExecCommand);
+    }
+    clearSelectedEntites();
+}
+
+
+void GMXLayer2::clearSelectedEntites()
+{
+    for (auto& ent : _selectedEntities )
+    {
+        if ( ent ) ent->setSelected(false);
+    }
+    _selectedEntities.clear();
 }
 
 

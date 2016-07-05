@@ -31,6 +31,18 @@ void EntityBase::setBoundingBox(const cocos2d::Rect& aabb)
 }
 
 
+bool EntityBase::init()
+{
+    if ( !Node::init() )
+        return false;
+    
+    _selectedCircle = Sprite::create("circle.png");
+    _selectedCircle->setVisible(false);
+    addChild(_selectedCircle);
+    
+    return true;
+}
+
 
 
 

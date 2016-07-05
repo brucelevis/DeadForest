@@ -63,10 +63,6 @@ bool Sheriff::init(cocos2d::ui::Widget::TextureResType resType)
     _boundingBoxNode->drawRect(Vec2(-_boundingBox.size.width / 2, -_boundingBox.size.height / 2), Vec2(_boundingBox.size.width, _boundingBox.size.height), Color4F::RED);
     addChild(_boundingBoxNode);
     
-    _selectedCircle = Sprite::create("circle.png");
-    _selectedCircle->setVisible(false);
-    addChild(_selectedCircle);
-    
     return true;
 }
 

@@ -8,7 +8,6 @@
 
 #include "AddEntityToolCommand.hpp"
 #include "GMXLayer2.hpp"
-using namespace cocos2d;
 
 
 AddEntityToolCommand::~AddEntityToolCommand()
@@ -22,15 +21,12 @@ AddEntityToolCommand::~AddEntityToolCommand()
 
 void AddEntityToolCommand::execute()
 {
-    _entity->setVisible(true);
     _layer->addEntity(_entity, _entity->getLocalZOrder(), true);
 }
 
 
 void AddEntityToolCommand::undo()
 {
-    _entity->setVisible(false);
-    _entity->setSelected(false);
     _layer->eraseEntity(_entity->getID(), true);
 }
 
@@ -46,6 +42,10 @@ void AddEntityToolCommand::beginImpl()
     _entity = nullptr;
 }
 
+void AddEntityToolCommand::endImpl()
+{
+    _entity = nullptr;
+}
 
 
 

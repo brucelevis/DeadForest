@@ -48,13 +48,15 @@ public:
     
     virtual ~EntityBase();
     
+    virtual bool init() override;
+    
     int getID() const { return _id; }
     
     void setPlayerType(PlayerType type) { _playerType = type; }
     
     PlayerType getPlayerType() const { return _playerType; }
     
-    cocos2d::Rect getBoundingBox() const
+    virtual cocos2d::Rect getBoundingBox() const override
     {
         return cocos2d::Rect(getPositionX() - _boundingBox.size.width / 2,
                              getPositionY() - _boundingBox.size.height / 2,

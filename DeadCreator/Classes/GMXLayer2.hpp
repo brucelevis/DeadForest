@@ -28,6 +28,7 @@ class NavigatorLayer;
 class EditScene2;
 class CommandBase;
 class AddEntityToolCommand;
+class RemoveEntityToolCommand;
 class TileToolCommand;
 class EntityBase;
 
@@ -116,6 +117,9 @@ public:
     
     void enableEntityBoundingBoxNode(bool enable);
     
+    void removeSelectedEntities(bool isExecCommand = false);
+    void clearSelectedEntites();
+    
 private:
     
     static bool TITLE_CLICKED;
@@ -165,6 +169,7 @@ private:
     CommandBase* _currCommand = nullptr;
     TileToolCommand* _tileToolCommand = nullptr;
     AddEntityToolCommand* _addEntityToolCommand = nullptr;
+    RemoveEntityToolCommand* _removeEntityToolCommand = nullptr;
     
     cocos2d::Rect _selectRect;
     cocos2d::DrawNode* _selectionRectNode;

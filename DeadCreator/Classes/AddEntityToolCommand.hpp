@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include <vector>
-
 #include "CommandBase.hpp"
 #include "EntityBase.hpp"
 
@@ -45,11 +43,13 @@ public:
     
     virtual bool empty() const override { return !_entity; }
     
-    void pushEntity(EntityBase* ent) { _entity = ent; }
+    void pushEntity(EntityBase* ent) { if (_isBegan ) _entity = ent; }
     
 private:
     
     virtual void beginImpl() override;
+    
+    virtual void endImpl() override;
     
 private:
     

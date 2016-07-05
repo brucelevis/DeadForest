@@ -16,7 +16,7 @@
 #include "NavigatorLayer.hpp"
 #include "HistoryLayer.hpp"
 #include "TileToolCommand.hpp"
-#include "EntityToolCommand.hpp"
+#include "AddEntityToolCommand.hpp"
 #include "Sheriff.hpp"
 #include "Items.hpp"
 #include "CellSpacePartition.hpp"
@@ -45,7 +45,7 @@ _viewY(60)
 GMXLayer2::~GMXLayer2()
 {
     CC_SAFE_DELETE(_tileToolCommand);
-    CC_SAFE_DELETE(_entityToolCommand);
+    CC_SAFE_DELETE(_addEntityToolCommand);
 }
 
 
@@ -67,15 +67,6 @@ bool GMXLayer2::init()
     if ( !Layer::init() )
         return false;
     
-    for(int i = 0 ; i < 256 ; ++ i)
-    {
-        _isKeyDown[i] = false;
-    }
-    
-    auto keylistener = EventListenerKeyboard::create();
-    keylistener->onKeyPressed = CC_CALLBACK_2(GMXLayer2::onKeyPressed, this);
-    keylistener->onKeyReleased = CC_CALLBACK_2(GMXLayer2::onKeyReleased, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(keylistener, this);
     
     this->scheduleUpdate();
     
@@ -129,7 +120,7 @@ bool GMXLayer2::init()
     addChild(_historyLayer);
     
     _tileToolCommand = new TileToolCommand(this);
-    _entityToolCommand = new EntityToolCommand(this);
+    _addEntityToolCommand = new AddEntityToolCommand(this);
     
     return true;
 }
@@ -273,7 +264,7 @@ void GMXLayer2::showWindow()
     }
     
     _hoveredTileRegion->clear();
-     
+    
     int selectedItem = _paletteLayer->getSelectedItem();
     if ( selectedItem == -1 )
     {
@@ -283,10 +274,16 @@ void GMXLayer2::showWindow()
     if ( ImGui::GetIO().MouseClicked[1] && ImGui::IsMouseHoveringWindow() )
     {
         _paletteLayer->setSelectedItem(-1);
+        for (auto& ent : _selectedEntities )
+        {
+            ent->setSelected(false);
+        }
+        _selectedEntities.clear();
     }
     
-    if ( _imguiLayer.getLayerType() == LayerType::DOODAD || _imguiLayer.getLayerType() == LayerType::ENTITY )
+    if ( _imguiLayer.getLayerType() == LayerType::ENTITY )
     {
+        static bool isSelecting = false;
         if ( selectedItem == - 1)
         {
             if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
@@ -298,12 +295,45 @@ void GMXLayer2::showWindow()
                 _selectRect.size = _mousePosInWorld - _selectRect.origin;
                 _selectionRectNode->clear();
                 _selectionRectNode->drawRect(_selectRect.origin, _selectRect.origin + Vec2(_selectRect.size), Color4F(0.0, 1.0, 0.0, 0.5));
+               
+                isSelecting = true;
             }
             
-            if ( ImGui::GetIO().MouseReleased[0] )
+            if ( isSelecting && ImGui::GetIO().MouseReleased[0] )
             {
+                if ( std::abs(_selectRect.size.width) < 1 && std::abs(_selectRect.size.height) < 1 )
+                {
+                    for (auto& ent : _selectedEntities)
+                    {
+                        ent->setSelected(false);
+                    }
+                    _selectedEntities.clear();
+                }
+                
+                Vec2 origin = _selectRect.origin;
+                Size dimension = Size(std::abs(_selectRect.size.width), std::abs(_selectRect.size.height));
+                if ( _selectRect.size.width < 0 )
+                {
+                    origin.x = _selectRect.origin.x + _selectRect.size.width;
+                }
+                if ( _selectRect.size.height < 0 )
+                {
+                    origin.y = _selectRect.origin.y + _selectRect.size.height;
+                }
+                
+                Rect selectRect(origin, dimension);
+                for( auto &ent : _entities )
+                {
+                    if ( selectRect.containsPoint(ent.second->getPosition()) )
+                    {
+                        ent.second->setSelected(true);
+                        _selectedEntities.push_back(ent.second);
+                    }
+                }
+                
                 _selectRect = Rect::ZERO;
                 _selectionRectNode->clear();
+                isSelecting = false;
             }
         }
     }
@@ -368,7 +398,7 @@ void GMXLayer2::showWindow()
                     Sheriff* ent = Sheriff::create(*this, getNextValidID(), cocos2d::ui::Widget::TextureResType::PLIST);
                     ent->setPosition(_mousePosInWorld);
                     ent->setPlayerType(PlayerType::PLAYER1);
-                    addEntity(ent);
+                    addEntity(ent, 5);
                 }
             }
         }
@@ -558,26 +588,14 @@ void GMXLayer2::setTile(int x, int y, const TileBase& tile, bool isExecCommand)
 }
 
 
-void GMXLayer2::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
-{
-    _isKeyDown[static_cast<int>(keyCode)] = true;
-}
-
-
-void GMXLayer2::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
-{
-    _isKeyDown[static_cast<int>(keyCode)] = false;
-}
-
-
 void GMXLayer2::update(float dt)
 {
-    if ( _isKeyDown[static_cast<int>(EventKeyboard::KeyCode::KEY_RIGHT_ARROW)] ) _cameraDirection.x = 1.0f;
-    else if ( _isKeyDown[static_cast<int>(EventKeyboard::KeyCode::KEY_LEFT_ARROW)] ) _cameraDirection.x = -1.0f;
+    if ( ImGui::GetIO().KeysDown[262] ) _cameraDirection.x = 1.0f;
+    else if ( ImGui::GetIO().KeysDown[263] ) _cameraDirection.x = -1.0f;
     else _cameraDirection.x = 0.0f;
     
-    if ( _isKeyDown[static_cast<int>(EventKeyboard::KeyCode::KEY_UP_ARROW)] ) _cameraDirection.y = 1.0f;
-    else if ( _isKeyDown[static_cast<int>(EventKeyboard::KeyCode::KEY_DOWN_ARROW)] ) _cameraDirection.y = -1.0f;
+    if ( ImGui::GetIO().KeysDown[265] ) _cameraDirection.y = 1.0f;
+    else if ( ImGui::GetIO().KeysDown[264] ) _cameraDirection.y = -1.0f;
     else _cameraDirection.y = 0.0f;
     
     _centerViewParam.x += (_cameraDirection.x * _windowSpeed * dt) / (_file.worldSize.width - _layerSize.width);
@@ -600,6 +618,16 @@ void GMXLayer2::update(float dt)
     
     _tileRoot->setPosition( Vec2(_layerSize / 2) + _tileRootWorldPosition - _camera->getPosition() );
     _rootNode->setPosition( -_camera->getPosition() + Vec2(_layerSize / 2) );
+    
+    if ( ImGui::IsKeyPressed(259) || ImGui::IsKeyPressed(261) ) // back space, delete
+    {
+        for(auto &e : _selectedEntities)
+        {
+            e->setSelected(false);
+            e->setVisible(false);
+            eraseEntity(e->getID(), true);
+        }
+    }
 }
 
 
@@ -649,7 +677,7 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
                 _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.1f));
                 _worldDebugNode->drawLine(Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Color4F(1, 1, 1, 0.1f));
                 _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.1f));
-                //                _tileIndices[i][j]->setString("(" + std::to_string(y) + ", " + std::to_string(x) + ")");
+                // _tileIndices[i][j]->setString("(" + std::to_string(y) + ", " + std::to_string(x) + ")");
             }
             else
             {
@@ -832,34 +860,46 @@ void GMXLayer2::putTile(TileType type, int x, int y)
 }
 
 
-bool GMXLayer2::addEntity(EntityBase* entity)
+bool GMXLayer2::addEntity(EntityBase* entity, int localZOrder, bool isExecCommand)
 {
     auto iter = _entities.find(entity->getID());
     if ( iter == std::end(_entities))
     {
         // todo
         //if ( ... aabb intersection )
-        _rootNode->addChild(entity);
-        _navigatorLayer->addEntity(entity);
-        _entities.insert( {entity->getID(), entity} );
-        
-        static_cast<EntityToolCommand*>(_currCommand)->pushEntity(entity);
+        if ( !isExecCommand )
+        {
+            _navigatorLayer->addEntity(entity);
+            _rootNode->addChild(entity, localZOrder);
+            _entities.insert( {entity->getID(), entity} );
+            static_cast<AddEntityToolCommand*>(_currCommand)->pushEntity(entity);
+        }
         
         return true;
     }
+    
+    if ( isExecCommand )
+    {
+        _navigatorLayer->addEntity(entity);
+        return true;
+    }
+    
     
     return false;
 }
 
 
-bool GMXLayer2::eraseEntity(EntityBase* entity)
+bool GMXLayer2::eraseEntity(int id, bool isExecCommand)
 {
-    auto iter = _entities.find(entity->getID());
+    auto iter = _entities.find(id);
     if ( iter != std::end(_entities))
     {
-        _entities.erase(entity->getID());
-        _navigatorLayer->eraseEntity(entity);
-        entity->removeFromParent();
+        _navigatorLayer->eraseEntity(id);
+        if ( !isExecCommand)
+        {
+            _entities.erase(id);
+            iter->second->removeFromParent();
+        }
         
         return true;
     }
@@ -876,7 +916,7 @@ void GMXLayer2::setCommand(CommandBase* newCommand)
     {
         _imguiLayer.setLayerType(LayerType::TILE);
     }
-    else if ( dynamic_cast<EntityToolCommand*>(newCommand))
+    else if ( dynamic_cast<AddEntityToolCommand*>(newCommand) )
     {
         _imguiLayer.setLayerType(LayerType::ENTITY);
     }

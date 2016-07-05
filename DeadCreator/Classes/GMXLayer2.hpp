@@ -27,7 +27,7 @@ class PaletteLayer;
 class NavigatorLayer;
 class EditScene2;
 class CommandBase;
-class EntityToolCommand;
+class AddEntityToolCommand;
 class TileToolCommand;
 class EntityBase;
 
@@ -39,10 +39,6 @@ public:
     explicit GMXLayer2(EditScene2& _imguiLayer, GMXFile& file);
     
     virtual ~GMXLayer2();
-    
-    virtual void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) override;
-    
-    virtual void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) override;
     
     static GMXLayer2* create(EditScene2& imguiLayer, GMXFile& file);
     
@@ -102,11 +98,11 @@ public:
     
     TileToolCommand* getTileToolCommand() const { return _tileToolCommand; }
     
-    EntityToolCommand* getEntityToolCommand() const { return _entityToolCommand; }
+    AddEntityToolCommand* getAddEntityToolCommand() const { return _addEntityToolCommand; }
     
-    bool addEntity(EntityBase* entity);
+    bool addEntity(EntityBase* entity, int localZOrder = 0, bool isExecCommand = false);
     
-    bool eraseEntity(EntityBase* entity);
+    bool eraseEntity(int id, bool isExecCommand = false);
     
     static int getNextValidID()
     {
@@ -147,11 +143,11 @@ private:
     std::vector<std::vector<TileBase>> _tiles;
     std::vector< std::vector<TileImage*> > _tileImages;
     std::vector< std::vector<cocos2d::ui::Text*> > _tileIndices;
+    std::vector< EntityBase* > _selectedEntities;
     int _viewX;
     int _viewY;
     
     bool _isShowWindow = true;
-    bool _isKeyDown[256];
     bool _isLeftMouseClickEventDone = false;
     
     cocos2d::Vec2 _mousePosInWorld;
@@ -168,7 +164,7 @@ private:
     
     CommandBase* _currCommand = nullptr;
     TileToolCommand* _tileToolCommand = nullptr;
-    EntityToolCommand* _entityToolCommand = nullptr;
+    AddEntityToolCommand* _addEntityToolCommand = nullptr;
     
     cocos2d::Rect _selectRect;
     cocos2d::DrawNode* _selectionRectNode;

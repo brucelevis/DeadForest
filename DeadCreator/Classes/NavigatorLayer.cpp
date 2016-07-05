@@ -246,13 +246,13 @@ void NavigatorLayer::setTile(int x, int y, const TileBase& tile)
 
 void NavigatorLayer::addEntity(EntityBase* ent)
 {
-    _entityMarks.insert({ ent->getID(), ent });
+    _entityMarks[ent->getID()] = ent;
 }
 
 
-void NavigatorLayer::eraseEntity(EntityBase* ent)
+void NavigatorLayer::eraseEntity(int id)
 {
-    _entityMarks.erase(ent->getID());
+    _entityMarks.erase(id);
 }
 
 

@@ -11,13 +11,6 @@
 
 CommandQueue::~CommandQueue()
 {
-    while ( !_commands.empty() )
-    {
-        auto remove = _commands.back();
-        delete remove;
-        remove = nullptr;
-        _commands.pop_back();
-    }
 }
 
 

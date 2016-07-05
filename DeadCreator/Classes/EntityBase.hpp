@@ -50,8 +50,6 @@ public:
     
     int getID() const { return _id; }
     
-    virtual EntityBase* clone() const = 0;
-    
     void setPlayerType(PlayerType type) { _playerType = type; }
     
     PlayerType getPlayerType() const { return _playerType; }
@@ -68,6 +66,11 @@ public:
     
     void setVisibleAABB(bool enable) { if ( _boundingBoxNode ) _boundingBoxNode->setVisible(enable); }
     
+    void setSelected(bool enable)
+    {
+        if ( _selectedCircle ) _selectedCircle->setVisible(enable);
+    }
+    
 protected:
     
     GMXLayer2& _gmxLayer;
@@ -80,6 +83,7 @@ protected:
     PlayerType _playerType;
     cocos2d::Rect _boundingBox;
     cocos2d::DrawNode* _boundingBoxNode = nullptr;
+    cocos2d::Sprite* _selectedCircle = nullptr;
     
 };
 

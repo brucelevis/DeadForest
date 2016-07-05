@@ -60,11 +60,6 @@ public:
     
     virtual void end() final
     {
-        if ( !_isBegan )
-        {
-            throw std::runtime_error("Command is already ended.");
-        }
-        
         _isBegan = false;
         endImpl();
     }

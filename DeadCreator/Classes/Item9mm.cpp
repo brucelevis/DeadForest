@@ -54,10 +54,7 @@ bool Item9mm::init(const std::string& fileName, cocos2d::ui::Widget::TextureResT
 }
 
 
-Item9mm* Item9mm::clone() const
-{
-    return Item9mm::create(_gmxLayer, _id, _fileName, _resType);
-}
+
 
 
 

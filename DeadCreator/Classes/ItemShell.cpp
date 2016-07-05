@@ -54,7 +54,10 @@ bool ItemShell::init(const std::string& fileName, cocos2d::ui::Widget::TextureRe
 }
 
 
-ItemShell* ItemShell::clone() const
-{
-    return ItemShell::create(_gmxLayer, _id, _fileName, _resType);
-}
+
+
+
+
+
+
+

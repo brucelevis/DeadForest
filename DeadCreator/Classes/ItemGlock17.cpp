@@ -54,10 +54,10 @@ bool ItemGlock17::init(const std::string& fileName, cocos2d::ui::Widget::Texture
 }
 
 
-ItemGlock17* ItemGlock17::clone() const
-{
-    return ItemGlock17::create(_gmxLayer, _id, _fileName, _resType);
-}
+
+
+
+
 
 
 

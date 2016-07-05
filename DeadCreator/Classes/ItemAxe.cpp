@@ -54,7 +54,11 @@ bool ItemAxe::init(const std::string& fileName, cocos2d::ui::Widget::TextureResT
 }
 
 
-ItemAxe* ItemAxe::clone() const
-{
-    return ItemAxe::create(_gmxLayer, _id, _fileName, _resType);
-}
+
+
+
+
+
+
+
+

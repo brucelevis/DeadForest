@@ -1,5 +1,5 @@
 //
-//  EntityToolCommand.hpp
+//  AddEntityToolCommand.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 7. 4..
@@ -13,38 +13,39 @@
 #include "CommandBase.hpp"
 #include "EntityBase.hpp"
 
-class EntityToolCommand : public CommandBase
+
+class AddEntityToolCommand : public CommandBase
 {
     
 public:
     
-    explicit EntityToolCommand(GMXLayer2* layer) :
+    explicit AddEntityToolCommand(GMXLayer2* layer) :
     CommandBase(layer)
     {
-        _commandName = "Entity Tool";
+        _commandName = "Add Entity";
     }
     
-    EntityToolCommand(const EntityToolCommand& rhs) : CommandBase(rhs)
+    AddEntityToolCommand(const AddEntityToolCommand& rhs) : CommandBase(rhs)
     {
         copyFrom(rhs);
     }
     
-    void copyFrom(const EntityToolCommand& rhs)
+    void copyFrom(const AddEntityToolCommand& rhs)
     {
         _entity = rhs._entity;
     }
     
-    virtual ~EntityToolCommand() = default;
+    virtual ~AddEntityToolCommand();
     
     virtual void execute() override;
     
     virtual void undo() override;
     
-    virtual EntityToolCommand* clone() const override;
+    virtual AddEntityToolCommand* clone() const override;
     
     virtual bool empty() const override { return !_entity; }
     
-    void pushEntity(EntityBase* ent) { _entity = ent; _entity->retain(); }
+    void pushEntity(EntityBase* ent) { _entity = ent; }
     
 private:
     
@@ -52,6 +53,15 @@ private:
     
 private:
     
-    EntityBase* _entity;
+    EntityBase* _entity = nullptr;
     
 };
+
+
+
+
+
+
+
+
+

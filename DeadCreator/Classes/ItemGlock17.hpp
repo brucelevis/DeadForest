@@ -22,7 +22,6 @@ public:
     
     bool init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType);
     
-    virtual ItemGlock17* clone() const override;
     
 private:
     

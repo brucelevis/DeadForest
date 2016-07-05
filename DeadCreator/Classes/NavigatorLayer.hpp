@@ -33,7 +33,7 @@ public:
     
     void addEntity(EntityBase* ent);
     
-    void eraseEntity(EntityBase* ent);
+    void eraseEntity(int id);
     
 private:
     

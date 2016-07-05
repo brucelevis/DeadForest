@@ -54,7 +54,10 @@ bool Item556mm::init(const std::string& fileName, cocos2d::ui::Widget::TextureRe
 }
 
 
-Item556mm* Item556mm::clone() const
-{
-    return Item556mm::create(_gmxLayer, _id, _fileName, _resType);
-}
+
+
+
+
+
+
+

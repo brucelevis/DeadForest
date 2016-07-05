@@ -36,6 +36,9 @@ Sheriff* Sheriff::create(GMXLayer2& layer, int id, cocos2d::ui::Widget::TextureR
 
 bool Sheriff::init(cocos2d::ui::Widget::TextureResType resType)
 {
+    if ( !EntityBase::init() )
+        return false;
+    
     _resType = resType;
     
     if ( resType == cocos2d::ui::Widget::TextureResType::LOCAL )
@@ -58,16 +61,13 @@ bool Sheriff::init(cocos2d::ui::Widget::TextureResType resType)
     _boundingBoxNode = DrawNode::create();
     setBoundingBox(Rect(0, 0, 10, 10));
     _boundingBoxNode->drawRect(Vec2(-_boundingBox.size.width / 2, -_boundingBox.size.height / 2), Vec2(_boundingBox.size.width, _boundingBox.size.height), Color4F::RED);
-    _boundingBoxNode->setPosition( _body->getContentSize() / 2);
-    _body->addChild(_boundingBoxNode);
+    addChild(_boundingBoxNode);
+    
+    _selectedCircle = Sprite::create("circle.png");
+    _selectedCircle->setVisible(false);
+    addChild(_selectedCircle);
     
     return true;
-}
-
-
-Sheriff* Sheriff::clone() const
-{
-    return Sheriff::create(_gmxLayer, _id, _resType);
 }
 
 

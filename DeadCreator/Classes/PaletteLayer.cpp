@@ -10,7 +10,7 @@
 #include "ImGuiLayer.h"
 #include "GMXLayer2.hpp"
 #include "TileToolCommand.hpp"
-#include "EntityToolCommand.hpp"
+#include "AddEntityToolCommand.hpp"
 using namespace cocos2d;
 
 PaletteLayer::PaletteLayer(GMXLayer2& layer):
@@ -155,7 +155,7 @@ void PaletteLayer::showLayer(bool* opened)
         
         if ( itemSelected )
         {
-            _gmxLayer.setCommand(_gmxLayer.getEntityToolCommand());
+            _gmxLayer.setCommand(_gmxLayer.getAddEntityToolCommand());
             _gmxLayer.enableEntityBoundingBoxNode(true);
         }
     }
@@ -210,7 +210,7 @@ void PaletteLayer::showLayer(bool* opened)
         
         if ( itemSelected )
         {
-            _gmxLayer.setCommand(_gmxLayer.getEntityToolCommand());
+            _gmxLayer.setCommand(_gmxLayer.getAddEntityToolCommand());
             _gmxLayer.enableEntityBoundingBoxNode(false);
         }
     }

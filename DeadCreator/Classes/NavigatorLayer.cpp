@@ -238,6 +238,11 @@ void NavigatorLayer::addEntity(EntityBase* ent)
 }
 
 
+void NavigatorLayer::eraseEntity(EntityBase* ent)
+{
+    _entityMarks.erase(ent->getID());
+}
+
 
 
 

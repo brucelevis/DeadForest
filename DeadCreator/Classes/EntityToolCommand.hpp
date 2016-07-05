@@ -31,14 +31,7 @@ public:
     
     void copyFrom(const EntityToolCommand& rhs)
     {
-        while ( !_entities.empty() )
-        {
-            auto remove = _entities.back();
-            CC_SAFE_DELETE(remove);
-            _entities.popBack();
-        }
-        
-        _entities = rhs._entities;
+        _entity = rhs._entity;
     }
     
     virtual ~EntityToolCommand() = default;
@@ -49,9 +42,9 @@ public:
     
     virtual EntityToolCommand* clone() const override;
     
-    virtual bool empty() const override { return _entities.empty(); }
+    virtual bool empty() const override { return !_entity; }
     
-    void pushEntity(EntityBase* ent) { _entities.pushBack(ent); }
+    void pushEntity(EntityBase* ent) { _entity = ent; _entity->retain(); }
     
 private:
     
@@ -59,7 +52,6 @@ private:
     
 private:
     
-    
-    cocos2d::Vector<EntityBase*> _entities;
+    EntityBase* _entity;
     
 };

@@ -33,6 +33,8 @@ public:
     
     void addEntity(EntityBase* ent);
     
+    void eraseEntity(EntityBase* ent);
+    
 private:
     
     GMXLayer2& _gmxLayer;

@@ -230,7 +230,7 @@ void GMXLayer2::showWindow()
     mousePosInCocos2dMatrix = Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
     
     static bool titleClicked = false;
-    if ( ImGui::GetIO().MouseClicked[0] )
+    if ( ImGui::IsMouseHoveringWindow() && ImGui::GetIO().MouseClicked[0] )
     {
         Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerPosition.y - height, _layerSize.width, height);
         if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
@@ -245,7 +245,7 @@ void GMXLayer2::showWindow()
         }
         
     }
-    else if ( ImGui::GetIO().MouseReleased[0] )
+    else if ( ImGui::IsMouseHoveringWindow() && ImGui::GetIO().MouseReleased[0] )
     {
         titleClicked = false;
         
@@ -254,7 +254,7 @@ void GMXLayer2::showWindow()
             _currCommand->end();
             _isLeftMouseClickEventDone = false;
             
-            if ( !_tileToolCommand->empty() )
+            if ( !_currCommand->empty() )
             {
                 _historyLayer->pushCommand(_currCommand->clone());
             }
@@ -317,6 +317,7 @@ void GMXLayer2::showWindow()
                 if ( !isClickedResizeButton )
                 {
                     Sheriff* ent = Sheriff::create(*this, getNextValidID(), cocos2d::ui::Widget::TextureResType::PLIST);
+                    log("%d", ent->getTag());
                     ent->setPosition(_mousePosInWorld);
                     ent->setRotation(random(0.0f, 360.0f));
                     ent->setPlayerType(PlayerType::PLAYER1);
@@ -659,10 +660,11 @@ bool GMXLayer2::addEntity(EntityBase* entity)
     if ( iter == std::end(_entities))
     {
         //if ( ... aabb intersection )
-        _cellSpacePartition->addEntity(entity);
         _rootNode->addChild(entity);
-        
         _navigatorLayer->addEntity(entity);
+        _entities.insert( {entity->getID(), entity} );
+        
+        static_cast<EntityToolCommand*>(_currCommand)->pushEntity(entity);
         
         return true;
     }
@@ -676,7 +678,8 @@ bool GMXLayer2::eraseEntity(EntityBase* entity)
     auto iter = _entities.find(entity->getID());
     if ( iter != std::end(_entities))
     {
-        _cellSpacePartition->removeEntityFromCell(entity);
+        _entities.erase(entity->getID());
+        _navigatorLayer->eraseEntity(entity);
         entity->removeFromParent();
         
         return true;

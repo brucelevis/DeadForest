@@ -75,7 +75,6 @@ void PaletteLayer::showLayer(bool* opened)
                  ImGuiWindowFlags_NoResize |
                  ImGuiWindowFlags_NoScrollWithMouse |
                  ImGuiWindowFlags_ShowBorders);
-
     
     _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
     _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
@@ -85,10 +84,24 @@ void PaletteLayer::showLayer(bool* opened)
                                 _layerSize.width - g.Style.WindowPadding.x * 2.0f,
                                 _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
     
+    static Vec2 mousePosInCocos2dMatrix;
+    mousePosInCocos2dMatrix = Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
+    
+    if ( ImGui::IsMouseHoveringWindow() && ImGui::GetIO().MouseClicked[0] )
+    {
+        Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerSize.height - _layerPosition.y, _layerSize.width, _layerSize.height);
+        if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
+        {
+            GMXLayer2::enableTitleClicked();
+        }
+    }
+    
+    bool itemSelected = false;
     
     if (ImGui::Combo("type", &_paletteType, "tile\0human\0item\0doodad\0"))
     {
-        _selectedItem = 0;
+        itemSelected = false;
+        _selectedItem = -1;
     }
     
     ImGui::Separator();
@@ -99,64 +112,106 @@ void PaletteLayer::showLayer(bool* opened)
     
     if ( _paletteType == 0)
     {
-        _gmxLayer.setCommand(_gmxLayer.getTileToolCommand());
-        
         if ( ImGuiLayer::imageButton("1_1_1234.png", 50, 50) )
         {
             _selectedItem = static_cast<int>(TileType::DIRT);
+            itemSelected = true;
         }
         ImGui::SameLine();
         
         if ( ImGuiLayer::imageButton("2_1_1234.png", 50, 50) )
         {
             _selectedItem = static_cast<int>(TileType::GRASS);
+            itemSelected = true;
         }
         ImGui::SameLine();
         
         if ( ImGuiLayer::imageButton("3_1_1234.png", 50, 50) )
         {
             _selectedItem = static_cast<int>(TileType::WATER);
+            itemSelected = true;
         }
         
         if ( ImGuiLayer::imageButton("5_1_1234.png", 50, 50) )
         {
             _selectedItem = static_cast<int>(TileType::HILL);
+            itemSelected = true;
+        }
+        
+        if ( itemSelected )
+        {
+            _gmxLayer.setCommand(_gmxLayer.getTileToolCommand());
         }
     }
     
     else if ( _paletteType == 1)
     {
-        _gmxLayer.setCommand(_gmxLayer.getEntityToolCommand());
-        
         if ( ImGuiLayer::imageButton("human.png", 50, 50) )
         {
             _selectedItem = static_cast<int>(EntityType::SHERIFF);
+            itemSelected = true;
+        }
+        
+        if ( itemSelected )
+        {
+            _gmxLayer.setCommand(_gmxLayer.getEntityToolCommand());
         }
     }
     
     else if ( _paletteType == 2)
     {
-        _gmxLayer.setCommand(_gmxLayer.getEntityToolCommand());
+        if ( ImGuiLayer::imageButton("5_56mm.png", 50, 50) )
+        {
+            _selectedItem = static_cast<int>(EntityType::ITEM_556MM);
+            itemSelected = true;
+        }
         
-        if (ImGuiLayer::imageButton("5_56mm.png", 50, 50)) _selectedItem = 0;
         ImGui::SameLine();
-        if (ImGuiLayer::imageButton("9mm.png", 50, 50)) _selectedItem = 1;
-        ImGui::SameLine();
-        if (ImGuiLayer::imageButton("Shell.png", 50, 50)) _selectedItem = 2;
+        if ( ImGuiLayer::imageButton("9mm.png", 50, 50) )
+        {
+            _selectedItem = static_cast<int>(EntityType::ITEM_9MM);
+            itemSelected = true;
+        }
         
-        if (ImGuiLayer::imageButton("Axe.png", 50, 50)) _selectedItem = 3;
         ImGui::SameLine();
-        if (ImGuiLayer::imageButton("Glock17.png", 50, 50)) _selectedItem = 4;
-        ImGui::SameLine();
-        if (ImGuiLayer::imageButton("M16A2.png", 50, 50)) _selectedItem = 5;
+        if ( ImGuiLayer::imageButton("Shell.png", 50, 50) )
+        {
+            _selectedItem = static_cast<int>(EntityType::ITEM_SHELL);
+            itemSelected = true;
+        }
         
-        if (ImGuiLayer::imageButton("M1897.png", 50, 50)) _selectedItem = 6;
+        if ( ImGuiLayer::imageButton("Axe.png", 50, 50) )
+        {
+            _selectedItem = static_cast<int>(EntityType::ITEM_AXE);
+            itemSelected = true;
+        }
+        
         ImGui::SameLine();
-        if (ImGuiLayer::imageButton("MeatCan.png", 50, 50)) _selectedItem = 7;
+        if ( ImGuiLayer::imageButton("Glock17.png", 50, 50) )
+        {
+            _selectedItem = static_cast<int>(EntityType::ITEM_GLOCK17);
+            itemSelected = true;
+        }
+        
         ImGui::SameLine();
-        if (ImGuiLayer::imageButton("Bandage.png", 50, 50)) _selectedItem = 8;
+        if ( ImGuiLayer::imageButton("M16A2.png", 50, 50) )
+        {
+            _selectedItem = static_cast<int>(EntityType::ITEM_M16A2);
+            itemSelected = true;
+        }
+        
+        if ( ImGuiLayer::imageButton("M1897.png", 50, 50) )
+        {
+            _selectedItem = static_cast<int>(EntityType::ITEM_M1897);
+            itemSelected = true;
+        }
+        
+        if ( itemSelected )
+        {
+            _gmxLayer.setCommand(_gmxLayer.getEntityToolCommand());
+        }
     }
-    
+
     ImGui::PopStyleColor(3);
     ImGui::End();
 }

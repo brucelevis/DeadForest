@@ -90,7 +90,8 @@ bool EditScene2::init()
                 if (ImGui::MenuItem("Player 7")) {}
                 if (ImGui::MenuItem("Player 8")) {}
                 ImGui::Separator();
-                if (ImGui::MenuItem("Setting")) {}
+                if (ImGui::MenuItem("Player Setting")) {}
+                if (ImGui::MenuItem("Force Setting")) {}
                 ImGui::EndMenu();
             }
             
@@ -227,34 +228,13 @@ bool EditScene2::init()
         }
         ImGui::PopStyleColor(2);
         
-        
         ImGui::SameLine();
-        static int layerType = -1;
-
         ImGui::PushItemWidth(200);
-        ImGui::Combo("##layer", &layerType, "Tile Layer\0Entity Layer\0Doodad Layer\0Location Layer\0");
-        
-        if ( _layer )
+        if (ImGui::Combo("##layer", &_layerType, "Tile Layer\0Entity Layer\0Doodad Layer\0Location Layer\0", 4))
         {
-            PaletteLayer* paletteLayer = _layer->getPaletteLayer();
-            if ( paletteLayer )
+            if ( _layer )
             {
-                if ( layerType == 0 )
-                {
-//                    _layer->getPaletteLayer()->setPaletteType(PaletteType::TILE);
-                }
-                else if ( layerType == 1)
-                {
-//                    _layer->getPaletteLayer()->setPaletteType(PaletteType::ENTITY);
-                }
-                else if ( layerType == 2)
-                {
-//                    _layer->getPaletteLayer()->setPaletteType(PaletteType::DOODAD);
-                }
-                else if ( layerType == 3)
-                {
-//                    _layer->getPaletteLayer()->setPaletteType(PaletteType::ENTITY);
-                }
+                _layer->getPaletteLayer()->setSelectedItem(-1);
             }
         }
         
@@ -262,6 +242,7 @@ bool EditScene2::init()
         static int playerType = -1;
         if (ImGui::Combo("##player", &playerType, "Player 1\0Player 2\0Player 3\0Player 4\0Player 5\0Player 6\0Player 7\0Player 8\0", 8))
         {
+            if ( _layer ) { /* ... */ }
         }
         ImGui::PopItemWidth();
         
@@ -324,6 +305,7 @@ void EditScene2::createGMXLayer(GMXFile* file)
     
     setEnableEditMenu(true);
     setEnablePlayerMenu(true);
+    setEnableWindowMenu(true);
 }
 
 

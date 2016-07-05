@@ -92,6 +92,18 @@ void HistoryLayer::showLayer(bool* opened)
                                 _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
     
     ImGui::BeginChild("##child", ImVec2(0, _layerSize.height - height - g.Style.FramePadding.y * 2.0f), true);
+    
+    static Vec2 mousePosInCocos2dMatrix;
+    mousePosInCocos2dMatrix = Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
+    if ( ImGui::IsMouseHoveringWindow() && ImGui::GetIO().MouseClicked[0] )
+    {
+        Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerSize.height - _layerPosition.y, _layerSize.width, _layerSize.height);
+        if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
+        {
+            GMXLayer2::enableTitleClicked();
+        }
+    }
+    
     int currIndex = _commandQueue.getIndex();
     for(int i = 0 ; i < _commandQueue.size() ; ++ i)
     {

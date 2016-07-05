@@ -74,8 +74,6 @@ public:
     
     void setCenterViewParameter(const cocos2d::Vec2& p);
     
-    cocos2d::Size getCanvasSize() const { return _canvasSize; }
-    
     cocos2d::Size getLayerSize() const { return _layerSize; }
     
     cocos2d::Size getWorldSize() const { return _file.worldSize; }
@@ -100,7 +98,7 @@ public:
     
     PaletteLayer* getPaletteLayer() const { return _paletteLayer; }
     
-    void setCommand(CommandBase* newCommand) { _currCommand = newCommand; }
+    void setCommand(CommandBase* newCommand);
     
     TileToolCommand* getTileToolCommand() const { return _tileToolCommand; }
     
@@ -116,7 +114,13 @@ public:
         return validID++;
     }
     
+    static void enableTitleClicked() { TITLE_CLICKED = true; }
+    static void disableTitleClicked() { TITLE_CLICKED = false; }
+    static bool isTitleClicked() { return TITLE_CLICKED; }
+    
 private:
+    
+    static bool TITLE_CLICKED;
     
     EditScene2& _imguiLayer;
     GMXFile& _file;
@@ -125,7 +129,6 @@ private:
     cocos2d::DrawNode* _localDebugNode;
     cocos2d::DrawNode* _hoveredTileRegion;
     cocos2d::ClippingRectangleNode* _clipNode;
-    cocos2d::Size _canvasSize;
     cocos2d::Size _layerSize;
     cocos2d::Vec2 _layerPosition;
     cocos2d::Vec2 _centerViewParam;

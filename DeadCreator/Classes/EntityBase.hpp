@@ -28,7 +28,8 @@ enum class EntityType : int
     
 enum class PlayerType : int
 {
-    PLAYER1 = 1,
+    NEUTRAL = 0,
+    PLAYER1,
     PLAYER2,
     PLAYER3,
     PLAYER4,

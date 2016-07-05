@@ -15,6 +15,15 @@ class GMXFile;
 class GMXLayer2;
 class NewFileWindow2;
 
+enum LayerType
+{
+    INVALID = -1,
+    TILE ,
+    ENTITY,
+    DOODAD,
+    LOCATION,
+};
+
 class EditScene2 : public ImGuiLayer
 {
     
@@ -40,6 +49,8 @@ public:
     
     void revertNewButton();
     
+    void setLayerType(LayerType type) { _layerType = type; }
+    
 private:
     
     GMXLayer2* _layer;
@@ -60,4 +71,15 @@ private:
     
     bool _isWindowEnable = false;
     
+    int _layerType = LayerType::INVALID;
+    
 };
+
+
+
+
+
+
+
+
+

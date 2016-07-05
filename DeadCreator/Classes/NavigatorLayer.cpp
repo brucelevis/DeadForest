@@ -104,6 +104,18 @@ void NavigatorLayer::showLayer(bool* opened)
                                 _layerSize.width - g.Style.WindowPadding.x * 2.0f,
                                 _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
     
+    static Vec2 mousePosInCocos2dMatrix;
+    mousePosInCocos2dMatrix = Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
+    
+    if ( ImGui::IsMouseHoveringWindow() && ImGui::GetIO().MouseClicked[0] )
+    {
+        Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerSize.height - _layerPosition.y, _layerSize.width, _layerSize.height);
+        if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
+        {
+            GMXLayer2::enableTitleClicked();
+        }
+    }
+    
     ImVec2 size(_layerSize.width - g.Style.WindowPadding.x * 2.0f, _layerSize.height - height - g.Style.WindowPadding.y * 2.0f);
     ImGui::InvisibleButton("##dummy", size);
     

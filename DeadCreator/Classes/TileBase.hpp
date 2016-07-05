@@ -16,6 +16,7 @@
 
 enum class TileType : int
 {
+    INVALID = -1,
     DIRT,
     GRASS,
     WATER,

@@ -134,8 +134,10 @@ public:
 private:
     
     std::string getConvertDirData(int dir);
-    std::string getOutDirection(int x, int y);
-    
+    std::string getInDirection(int x, int y);
+    std::string getOutDirection(const std::string& tail);
+    std::pair<int, int> getNextTileIndex(const std::string& tailWithInputDir, int x, int y);
+        
 private:
     
     static bool TITLE_CLICKED;
@@ -192,6 +194,7 @@ private:
     
     std::map<std::string, std::vector<cocos2d::Vec2>> _tileCollisions;
     std::vector< std::vector<cocos2d::Vec2> > _collisionRegions;
+    cocos2d::DrawNode* _collisionNode;
     
 };
 

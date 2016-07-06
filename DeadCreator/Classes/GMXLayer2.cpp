@@ -100,6 +100,9 @@ bool GMXLayer2::init()
     _hoveredTileRegion = DrawNode::create();
     _rootNode->addChild(_hoveredTileRegion);
     
+    _collisionNode = DrawNode::create();
+    _rootNode->addChild(_collisionNode);
+    
     _selectedItem = Sprite::create();
     _rootNode->addChild(_selectedItem, 10);
     
@@ -111,6 +114,7 @@ bool GMXLayer2::init()
     addChild(_camera);
     
     initFile();
+    initCollisionData();
     
     _paletteLayer = PaletteLayer::create(*this);
     addChild(_paletteLayer);
@@ -548,6 +552,21 @@ void GMXLayer2::showWindow()
     if ( _isShowPalette ) _paletteLayer->showLayer(&_isShowPalette);
     if ( _isShowNavigator ) _navigatorLayer->showLayer(&_isShowNavigator);
     if ( _isShowHistory ) _historyLayer->showLayer(&_isShowHistory);
+    
+    
+    if ( ImGui::IsKeyReleased(257) )
+    {
+        updateCollisionRegion();
+        _collisionNode->clear();
+        for(auto& poly : _collisionRegions)
+        {
+            for(int i = 0 ; i < poly.size() - 1; ++ i)
+            {
+                _collisionNode->drawDot(poly[i], 2.0f, Color4F::RED);
+            }
+        }
+    }
+    
 }
 
 
@@ -959,39 +978,39 @@ void GMXLayer2::clearSelectedEntites()
 
 void GMXLayer2::initCollisionData()
 {
-    _tileCollisions["5_1_1"].push_back(Vec2(88, 25));
-    _tileCollisions["5_1_1"].push_back(Vec2(83, 30));
-    _tileCollisions["5_1_1"].push_back(Vec2(77, 39));
-    _tileCollisions["5_1_1"].push_back(Vec2(68, 36));
-    _tileCollisions["5_1_1"].push_back(Vec2(61, 39));
-    _tileCollisions["5_1_1"].push_back(Vec2(47, 34));
-    _tileCollisions["5_1_1"].push_back(Vec2(44, 27));
+    _tileCollisions["5_1_1_LD"].push_back(Vec2(88, 25));
+    _tileCollisions["5_1_1_LD"].push_back(Vec2(83, 30));
+    _tileCollisions["5_1_1_LD"].push_back(Vec2(77, 39));
+    _tileCollisions["5_1_1_LD"].push_back(Vec2(68, 36));
+    _tileCollisions["5_1_1_LD"].push_back(Vec2(61, 39));
+    _tileCollisions["5_1_1_LD"].push_back(Vec2(47, 34));
+    _tileCollisions["5_1_1_LD"].push_back(Vec2(44, 27));
     
-    _tileCollisions["5_1_2"].push_back(Vec2(106, 84));
-    _tileCollisions["5_1_2"].push_back(Vec2(101, 82));
-    _tileCollisions["5_1_2"].push_back(Vec2(94, 70));
-    _tileCollisions["5_1_2"].push_back(Vec2(101, 42));
+    _tileCollisions["5_1_2_LU"].push_back(Vec2(106, 84));
+    _tileCollisions["5_1_2_LU"].push_back(Vec2(101, 82));
+    _tileCollisions["5_1_2_LU"].push_back(Vec2(94, 70));
+    _tileCollisions["5_1_2_LU"].push_back(Vec2(101, 42));
     
-    _tileCollisions["5_1_3"].push_back(Vec2(39, 102));
-    _tileCollisions["5_1_3"].push_back(Vec2(48, 89));
-    _tileCollisions["5_1_3"].push_back(Vec2(56, 86));
-    _tileCollisions["5_1_3"].push_back(Vec2(67, 88));
-    _tileCollisions["5_1_3"].push_back(Vec2(71, 92));
-    _tileCollisions["5_1_3"].push_back(Vec2(79, 89));
-    _tileCollisions["5_1_3"].push_back(Vec2(88, 96));
+    _tileCollisions["5_1_3_RU"].push_back(Vec2(39, 102));
+    _tileCollisions["5_1_3_RU"].push_back(Vec2(48, 89));
+    _tileCollisions["5_1_3_RU"].push_back(Vec2(56, 86));
+    _tileCollisions["5_1_3_RU"].push_back(Vec2(67, 88));
+    _tileCollisions["5_1_3_RU"].push_back(Vec2(71, 92));
+    _tileCollisions["5_1_3_RU"].push_back(Vec2(79, 89));
+    _tileCollisions["5_1_3_RU"].push_back(Vec2(88, 96));
     
-    _tileCollisions["5_1_4"].push_back(Vec2(25, 39));
-    _tileCollisions["5_1_4"].push_back(Vec2(36, 57));
-    _tileCollisions["5_1_4"].push_back(Vec2(28, 64));
-    _tileCollisions["5_1_4"].push_back(Vec2(33, 77));
-    _tileCollisions["5_1_4"].push_back(Vec2(29, 85));
+    _tileCollisions["5_1_4_RD"].push_back(Vec2(25, 39));
+    _tileCollisions["5_1_4_RD"].push_back(Vec2(36, 57));
+    _tileCollisions["5_1_4_RD"].push_back(Vec2(28, 64));
+    _tileCollisions["5_1_4_RD"].push_back(Vec2(33, 77));
+    _tileCollisions["5_1_4_RD"].push_back(Vec2(29, 85));
     
-    _tileCollisions["5_1_12"].push_back(Vec2(103, 88));
-    _tileCollisions["5_1_12"].push_back(Vec2(95, 84));
-    _tileCollisions["5_1_12"].push_back(Vec2(87, 72));
-    _tileCollisions["5_1_12"].push_back(Vec2(69, 66));
-    _tileCollisions["5_1_12"].push_back(Vec2(66, 44));
-    _tileCollisions["5_1_12"].push_back(Vec2(44, 27));
+    _tileCollisions["5_1_12_LU"].push_back(Vec2(103, 88));
+    _tileCollisions["5_1_12_LU"].push_back(Vec2(95, 84));
+    _tileCollisions["5_1_12_LU"].push_back(Vec2(87, 72));
+    _tileCollisions["5_1_12_LU"].push_back(Vec2(69, 66));
+    _tileCollisions["5_1_12_LU"].push_back(Vec2(66, 44));
+    _tileCollisions["5_1_12_LU"].push_back(Vec2(44, 27));
     
     _tileCollisions["5_1_13_LD"].push_back(Vec2(88, 26));
     _tileCollisions["5_1_13_LD"].push_back(Vec2(87, 41));
@@ -1012,20 +1031,20 @@ void GMXLayer2::initCollisionData()
     _tileCollisions["5_1_13_RU"].push_back(Vec2(82, 86));
     _tileCollisions["5_1_13_RU"].push_back(Vec2(88, 97));
     
-    _tileCollisions["5_1_14"].push_back(Vec2(87, 24));
-    _tileCollisions["5_1_14"].push_back(Vec2(66, 49));
-    _tileCollisions["5_1_14"].push_back(Vec2(61, 51));
-    _tileCollisions["5_1_14"].push_back(Vec2(55, 58));
-    _tileCollisions["5_1_14"].push_back(Vec2(52, 58));
-    _tileCollisions["5_1_14"].push_back(Vec2(40, 77));
-    _tileCollisions["5_1_14"].push_back(Vec2(26, 81));
-    _tileCollisions["5_1_14"].push_back(Vec2(27, 84));
+    _tileCollisions["5_1_14_LD"].push_back(Vec2(87, 24));
+    _tileCollisions["5_1_14_LD"].push_back(Vec2(66, 49));
+    _tileCollisions["5_1_14_LD"].push_back(Vec2(61, 51));
+    _tileCollisions["5_1_14_LD"].push_back(Vec2(55, 58));
+    _tileCollisions["5_1_14_LD"].push_back(Vec2(52, 58));
+    _tileCollisions["5_1_14_LD"].push_back(Vec2(40, 77));
+    _tileCollisions["5_1_14_LD"].push_back(Vec2(26, 81));
+    _tileCollisions["5_1_14_LD"].push_back(Vec2(27, 84));
     
-    _tileCollisions["5_1_23"].push_back(Vec2(39, 102));
-    _tileCollisions["5_1_23"].push_back(Vec2(62, 75));
-    _tileCollisions["5_1_23"].push_back(Vec2(79, 67));
-    _tileCollisions["5_1_23"].push_back(Vec2(91, 47));
-    _tileCollisions["5_1_23"].push_back(Vec2(98, 43));
+    _tileCollisions["5_1_23_RU"].push_back(Vec2(39, 102));
+    _tileCollisions["5_1_23_RU"].push_back(Vec2(62, 75));
+    _tileCollisions["5_1_23_RU"].push_back(Vec2(79, 67));
+    _tileCollisions["5_1_23_RU"].push_back(Vec2(91, 47));
+    _tileCollisions["5_1_23_RU"].push_back(Vec2(98, 43));
     
     _tileCollisions["5_1_24_RD"].push_back(Vec2(24, 39));
     _tileCollisions["5_1_24_RD"].push_back(Vec2(38, 35));
@@ -1047,67 +1066,67 @@ void GMXLayer2::initCollisionData()
     _tileCollisions["5_1_24_LU"].push_back(Vec2(91, 38));
     _tileCollisions["5_1_24_LU"].push_back(Vec2(98, 38));
     
-    _tileCollisions["5_1_34"].push_back(Vec2(26, 37));
-    _tileCollisions["5_1_34"].push_back(Vec2(37, 44));
-    _tileCollisions["5_1_34"].push_back(Vec2(43, 54));
-    _tileCollisions["5_1_34"].push_back(Vec2(61, 62));
-    _tileCollisions["5_1_34"].push_back(Vec2(72, 80));
-    _tileCollisions["5_1_34"].push_back(Vec2(72, 90));
-    _tileCollisions["5_1_34"].push_back(Vec2(86, 97));
+    _tileCollisions["5_1_34_RD"].push_back(Vec2(26, 37));
+    _tileCollisions["5_1_34_RD"].push_back(Vec2(37, 44));
+    _tileCollisions["5_1_34_RD"].push_back(Vec2(43, 54));
+    _tileCollisions["5_1_34_RD"].push_back(Vec2(61, 62));
+    _tileCollisions["5_1_34_RD"].push_back(Vec2(72, 80));
+    _tileCollisions["5_1_34_RD"].push_back(Vec2(72, 90));
+    _tileCollisions["5_1_34_RD"].push_back(Vec2(86, 97));
     
-    _tileCollisions["5_1_123"].push_back(Vec2(37, 101));
-    _tileCollisions["5_1_123"].push_back(Vec2(49, 94));
-    _tileCollisions["5_1_123"].push_back(Vec2(63, 75));
-    _tileCollisions["5_1_123"].push_back(Vec2(70, 71));
-    _tileCollisions["5_1_123"].push_back(Vec2(66, 44));
-    _tileCollisions["5_1_123"].push_back(Vec2(44, 27));
+    _tileCollisions["5_1_123_RU"].push_back(Vec2(37, 101));
+    _tileCollisions["5_1_123_RU"].push_back(Vec2(49, 94));
+    _tileCollisions["5_1_123_RU"].push_back(Vec2(63, 75));
+    _tileCollisions["5_1_123_RU"].push_back(Vec2(70, 71));
+    _tileCollisions["5_1_123_RU"].push_back(Vec2(66, 44));
+    _tileCollisions["5_1_123_RU"].push_back(Vec2(44, 27));
     
-    _tileCollisions["5_1_124"].push_back(Vec2(103, 87));
-    _tileCollisions["5_1_124"].push_back(Vec2(87, 70));
-    _tileCollisions["5_1_124"].push_back(Vec2(69, 66));
-    _tileCollisions["5_1_124"].push_back(Vec2(66, 48));
-    _tileCollisions["5_1_124"].push_back(Vec2(57, 57));
-    _tileCollisions["5_1_124"].push_back(Vec2(51, 57));
-    _tileCollisions["5_1_124"].push_back(Vec2(38, 77));
-    _tileCollisions["5_1_124"].push_back(Vec2(25, 81));
+    _tileCollisions["5_1_124_LU"].push_back(Vec2(103, 87));
+    _tileCollisions["5_1_124_LU"].push_back(Vec2(87, 70));
+    _tileCollisions["5_1_124_LU"].push_back(Vec2(69, 66));
+    _tileCollisions["5_1_124_LU"].push_back(Vec2(66, 48));
+    _tileCollisions["5_1_124_LU"].push_back(Vec2(57, 57));
+    _tileCollisions["5_1_124_LU"].push_back(Vec2(51, 57));
+    _tileCollisions["5_1_124_LU"].push_back(Vec2(38, 77));
+    _tileCollisions["5_1_124_LU"].push_back(Vec2(25, 81));
     
-    _tileCollisions["5_1_134"].push_back(Vec2(86, 23));
-    _tileCollisions["5_1_134"].push_back(Vec2(56, 57));
-    _tileCollisions["5_1_134"].push_back(Vec2(73, 85));
-    _tileCollisions["5_1_134"].push_back(Vec2(72, 89));
-    _tileCollisions["5_1_134"].push_back(Vec2(86, 97));
+    _tileCollisions["5_1_134_LD"].push_back(Vec2(86, 23));
+    _tileCollisions["5_1_134_LD"].push_back(Vec2(56, 57));
+    _tileCollisions["5_1_134_LD"].push_back(Vec2(73, 85));
+    _tileCollisions["5_1_134_LD"].push_back(Vec2(72, 89));
+    _tileCollisions["5_1_134_LD"].push_back(Vec2(86, 97));
     
-    _tileCollisions["5_1_234"].push_back(Vec2(26, 37));
-    _tileCollisions["5_1_234"].push_back(Vec2(44, 55));
-    _tileCollisions["5_1_234"].push_back(Vec2(57, 58));
-    _tileCollisions["5_1_234"].push_back(Vec2(68, 72));
-    _tileCollisions["5_1_234"].push_back(Vec2(81, 65));
-    _tileCollisions["5_1_234"].push_back(Vec2(88, 49));
-    _tileCollisions["5_1_234"].push_back(Vec2(98, 44));
+    _tileCollisions["5_1_234_RD"].push_back(Vec2(26, 37));
+    _tileCollisions["5_1_234_RD"].push_back(Vec2(44, 55));
+    _tileCollisions["5_1_234_RD"].push_back(Vec2(57, 58));
+    _tileCollisions["5_1_234_RD"].push_back(Vec2(68, 72));
+    _tileCollisions["5_1_234_RD"].push_back(Vec2(81, 65));
+    _tileCollisions["5_1_234_RD"].push_back(Vec2(88, 49));
+    _tileCollisions["5_1_234_RD"].push_back(Vec2(98, 44));
     
     // seed 2
-    _tileCollisions["5_2_1"].push_back(Vec2(89, 26));
-    _tileCollisions["5_2_1"].push_back(Vec2(71, 37));
-    _tileCollisions["5_2_1"].push_back(Vec2(64, 28));
-    _tileCollisions["5_2_1"].push_back(Vec2(50, 33));
+    _tileCollisions["5_2_1_LD"].push_back(Vec2(89, 26));
+    _tileCollisions["5_2_1_LD"].push_back(Vec2(71, 37));
+    _tileCollisions["5_2_1_LD"].push_back(Vec2(64, 28));
+    _tileCollisions["5_2_1_LD"].push_back(Vec2(50, 33));
     
-    _tileCollisions["5_2_2"].push_back(Vec2(105, 86));
-    _tileCollisions["5_2_2"].push_back(Vec2(90, 78));
-    _tileCollisions["5_2_2"].push_back(Vec2(92, 51));
+    _tileCollisions["5_2_2_LU"].push_back(Vec2(105, 86));
+    _tileCollisions["5_2_2_LU"].push_back(Vec2(90, 78));
+    _tileCollisions["5_2_2_LU"].push_back(Vec2(92, 51));
     
-    _tileCollisions["5_2_3"].push_back(Vec2(38, 103));
-    _tileCollisions["5_2_3"].push_back(Vec2(58, 95));
+    _tileCollisions["5_2_3_RU"].push_back(Vec2(38, 103));
+    _tileCollisions["5_2_3_RU"].push_back(Vec2(58, 95));
     
-    _tileCollisions["5_2_4"].push_back(Vec2(25, 40));
-    _tileCollisions["5_2_4"].push_back(Vec2(42, 53));
-    _tileCollisions["5_2_4"].push_back(Vec2(44, 59));
-    _tileCollisions["5_2_4"].push_back(Vec2(36, 72));
-    _tileCollisions["5_2_4"].push_back(Vec2(40, 80));
+    _tileCollisions["5_2_4_RD"].push_back(Vec2(25, 40));
+    _tileCollisions["5_2_4_RD"].push_back(Vec2(42, 53));
+    _tileCollisions["5_2_4_RD"].push_back(Vec2(44, 59));
+    _tileCollisions["5_2_4_RD"].push_back(Vec2(36, 72));
+    _tileCollisions["5_2_4_RD"].push_back(Vec2(40, 80));
     
-    _tileCollisions["5_2_12"].push_back(Vec2(104, 87));
-    _tileCollisions["5_2_12"].push_back(Vec2(81, 71));
-    _tileCollisions["5_2_12"].push_back(Vec2(65, 48));
-    _tileCollisions["5_2_12"].push_back(Vec2(51, 41));
+    _tileCollisions["5_2_12_LU"].push_back(Vec2(104, 87));
+    _tileCollisions["5_2_12_LU"].push_back(Vec2(81, 71));
+    _tileCollisions["5_2_12_LU"].push_back(Vec2(65, 48));
+    _tileCollisions["5_2_12_LU"].push_back(Vec2(51, 41));
     
     _tileCollisions["5_2_13_LD"].push_back(Vec2(89, 25));
     _tileCollisions["5_2_13_LD"].push_back(Vec2(87, 40));
@@ -1128,22 +1147,22 @@ void GMXLayer2::initCollisionData()
     _tileCollisions["5_2_13_RU"].push_back(Vec2(86, 82));
     _tileCollisions["5_2_13_RU"].push_back(Vec2(81, 87));
     
-    _tileCollisions["5_2_14"].push_back(Vec2(90, 27));
-    _tileCollisions["5_2_14"].push_back(Vec2(87, 35));
-    _tileCollisions["5_2_14"].push_back(Vec2(74, 45));
-    _tileCollisions["5_2_14"].push_back(Vec2(67, 61));
-    _tileCollisions["5_2_14"].push_back(Vec2(38, 74));
-    _tileCollisions["5_2_14"].push_back(Vec2(32, 86));
+    _tileCollisions["5_2_14_LD"].push_back(Vec2(90, 27));
+    _tileCollisions["5_2_14_LD"].push_back(Vec2(87, 35));
+    _tileCollisions["5_2_14_LD"].push_back(Vec2(74, 45));
+    _tileCollisions["5_2_14_LD"].push_back(Vec2(67, 61));
+    _tileCollisions["5_2_14_LD"].push_back(Vec2(38, 74));
+    _tileCollisions["5_2_14_LD"].push_back(Vec2(32, 86));
     
-    _tileCollisions["5_2_23"].push_back(Vec2(39, 102));
-    _tileCollisions["5_2_23"].push_back(Vec2(44, 94));
-    _tileCollisions["5_2_23"].push_back(Vec2(57, 86));
-    _tileCollisions["5_2_23"].push_back(Vec2(56, 81));
-    _tileCollisions["5_2_23"].push_back(Vec2(61, 77));
-    _tileCollisions["5_2_23"].push_back(Vec2(61, 70));
-    _tileCollisions["5_2_23"].push_back(Vec2(79, 67));
-    _tileCollisions["5_2_23"].push_back(Vec2(88, 62));
-    _tileCollisions["5_2_23"].push_back(Vec2(97, 47));
+    _tileCollisions["5_2_23_RU"].push_back(Vec2(39, 102));
+    _tileCollisions["5_2_23_RU"].push_back(Vec2(44, 94));
+    _tileCollisions["5_2_23_RU"].push_back(Vec2(57, 86));
+    _tileCollisions["5_2_23_RU"].push_back(Vec2(56, 81));
+    _tileCollisions["5_2_23_RU"].push_back(Vec2(61, 77));
+    _tileCollisions["5_2_23_RU"].push_back(Vec2(61, 70));
+    _tileCollisions["5_2_23_RU"].push_back(Vec2(79, 67));
+    _tileCollisions["5_2_23_RU"].push_back(Vec2(88, 62));
+    _tileCollisions["5_2_23_RU"].push_back(Vec2(97, 47));
     
     _tileCollisions["5_2_24_RD"].push_back(Vec2(25, 40));
     _tileCollisions["5_2_24_RD"].push_back(Vec2(47, 31));
@@ -1163,87 +1182,87 @@ void GMXLayer2::initCollisionData()
     _tileCollisions["5_2_24_LU"].push_back(Vec2(79, 53));
     _tileCollisions["5_2_24_LU"].push_back(Vec2(85, 40));
     
-    _tileCollisions["5_2_34"].push_back(Vec2(26, 38));
-    _tileCollisions["5_2_34"].push_back(Vec2(31, 42));
-    _tileCollisions["5_2_34"].push_back(Vec2(33, 49));
-    _tileCollisions["5_2_34"].push_back(Vec2(53, 62));
-    _tileCollisions["5_2_34"].push_back(Vec2(63, 80));
-    _tileCollisions["5_2_34"].push_back(Vec2(77, 88));
+    _tileCollisions["5_2_34_RD"].push_back(Vec2(26, 38));
+    _tileCollisions["5_2_34_RD"].push_back(Vec2(31, 42));
+    _tileCollisions["5_2_34_RD"].push_back(Vec2(33, 49));
+    _tileCollisions["5_2_34_RD"].push_back(Vec2(53, 62));
+    _tileCollisions["5_2_34_RD"].push_back(Vec2(63, 80));
+    _tileCollisions["5_2_34_RD"].push_back(Vec2(77, 88));
     
-    _tileCollisions["5_2_123"].push_back(Vec2(39, 103));
-    _tileCollisions["5_2_123"].push_back(Vec2(46, 93));
-    _tileCollisions["5_2_123"].push_back(Vec2(57, 85));
-    _tileCollisions["5_2_123"].push_back(Vec2(56, 81));
-    _tileCollisions["5_2_123"].push_back(Vec2(61, 77));
-    _tileCollisions["5_2_123"].push_back(Vec2(61, 69));
-    _tileCollisions["5_2_123"].push_back(Vec2(79, 66));
-    _tileCollisions["5_2_123"].push_back(Vec2(70, 56));
-    _tileCollisions["5_2_123"].push_back(Vec2(67, 49));
-    _tileCollisions["5_2_123"].push_back(Vec2(52, 42));
-    _tileCollisions["5_2_123"].push_back(Vec2(43, 27));
+    _tileCollisions["5_2_123_RU"].push_back(Vec2(39, 103));
+    _tileCollisions["5_2_123_RU"].push_back(Vec2(46, 93));
+    _tileCollisions["5_2_123_RU"].push_back(Vec2(57, 85));
+    _tileCollisions["5_2_123_RU"].push_back(Vec2(56, 81));
+    _tileCollisions["5_2_123_RU"].push_back(Vec2(61, 77));
+    _tileCollisions["5_2_123_RU"].push_back(Vec2(61, 69));
+    _tileCollisions["5_2_123_RU"].push_back(Vec2(79, 66));
+    _tileCollisions["5_2_123_RU"].push_back(Vec2(70, 56));
+    _tileCollisions["5_2_123_RU"].push_back(Vec2(67, 49));
+    _tileCollisions["5_2_123_RU"].push_back(Vec2(52, 42));
+    _tileCollisions["5_2_123_RU"].push_back(Vec2(43, 27));
     
-    _tileCollisions["5_2_124"].push_back(Vec2(103, 88));
-    _tileCollisions["5_2_124"].push_back(Vec2(70, 56));
-    _tileCollisions["5_2_124"].push_back(Vec2(43, 73));
-    _tileCollisions["5_2_124"].push_back(Vec2(38, 72));
-    _tileCollisions["5_2_124"].push_back(Vec2(31, 86));
+    _tileCollisions["5_2_124_LU"].push_back(Vec2(103, 88));
+    _tileCollisions["5_2_124_LU"].push_back(Vec2(70, 56));
+    _tileCollisions["5_2_124_LU"].push_back(Vec2(43, 73));
+    _tileCollisions["5_2_124_LU"].push_back(Vec2(38, 72));
+    _tileCollisions["5_2_124_LU"].push_back(Vec2(31, 86));
     
-    _tileCollisions["5_2_134"].push_back(Vec2(90, 27));
-    _tileCollisions["5_2_134"].push_back(Vec2(74, 45));
-    _tileCollisions["5_2_134"].push_back(Vec2(66, 62));
-    _tileCollisions["5_2_134"].push_back(Vec2(60, 64));
-    _tileCollisions["5_2_134"].push_back(Vec2(57, 71));
-    _tileCollisions["5_2_134"].push_back(Vec2(65, 83));
-    _tileCollisions["5_2_134"].push_back(Vec2(82, 91));
-    _tileCollisions["5_2_134"].push_back(Vec2(88, 98));
+    _tileCollisions["5_2_134_LD"].push_back(Vec2(90, 27));
+    _tileCollisions["5_2_134_LD"].push_back(Vec2(74, 45));
+    _tileCollisions["5_2_134_LD"].push_back(Vec2(66, 62));
+    _tileCollisions["5_2_134_LD"].push_back(Vec2(60, 64));
+    _tileCollisions["5_2_134_LD"].push_back(Vec2(57, 71));
+    _tileCollisions["5_2_134_LD"].push_back(Vec2(65, 83));
+    _tileCollisions["5_2_134_LD"].push_back(Vec2(82, 91));
+    _tileCollisions["5_2_134_LD"].push_back(Vec2(88, 98));
     
-    _tileCollisions["5_2_234"].push_back(Vec2(26, 37));
-    _tileCollisions["5_2_234"].push_back(Vec2(38, 45));
-    _tileCollisions["5_2_234"].push_back(Vec2(38, 53));
-    _tileCollisions["5_2_234"].push_back(Vec2(51, 61));
-    _tileCollisions["5_2_234"].push_back(Vec2(61, 77));
-    _tileCollisions["5_2_234"].push_back(Vec2(63, 72));
-    _tileCollisions["5_2_234"].push_back(Vec2(70, 68));
-    _tileCollisions["5_2_234"].push_back(Vec2(89, 62));
-    _tileCollisions["5_2_234"].push_back(Vec2(98, 48));
-    _tileCollisions["5_2_234"].push_back(Vec2(97, 43));
+    _tileCollisions["5_2_234_RD"].push_back(Vec2(26, 37));
+    _tileCollisions["5_2_234_RD"].push_back(Vec2(38, 45));
+    _tileCollisions["5_2_234_RD"].push_back(Vec2(38, 53));
+    _tileCollisions["5_2_234_RD"].push_back(Vec2(51, 61));
+    _tileCollisions["5_2_234_RD"].push_back(Vec2(61, 77));
+    _tileCollisions["5_2_234_RD"].push_back(Vec2(63, 72));
+    _tileCollisions["5_2_234_RD"].push_back(Vec2(70, 68));
+    _tileCollisions["5_2_234_RD"].push_back(Vec2(89, 62));
+    _tileCollisions["5_2_234_RD"].push_back(Vec2(98, 48));
+    _tileCollisions["5_2_234_RD"].push_back(Vec2(97, 43));
     
     // seed 3
-    _tileCollisions["5_3_1"].push_back(Vec2(88, 26));
-    _tileCollisions["5_3_1"].push_back(Vec2(76, 39));
-    _tileCollisions["5_3_1"].push_back(Vec2(68, 36));
-    _tileCollisions["5_3_1"].push_back(Vec2(60, 39));
-    _tileCollisions["5_3_1"].push_back(Vec2(45, 30));
+    _tileCollisions["5_3_1_LD"].push_back(Vec2(88, 26));
+    _tileCollisions["5_3_1_LD"].push_back(Vec2(76, 39));
+    _tileCollisions["5_3_1_LD"].push_back(Vec2(68, 36));
+    _tileCollisions["5_3_1_LD"].push_back(Vec2(60, 39));
+    _tileCollisions["5_3_1_LD"].push_back(Vec2(45, 30));
     
     
-    _tileCollisions["5_3_2"].push_back(Vec2(107, 85));
-    _tileCollisions["5_3_2"].push_back(Vec2(99, 84));
-    _tileCollisions["5_3_2"].push_back(Vec2(95, 78));
-    _tileCollisions["5_3_2"].push_back(Vec2(101, 66));
-    _tileCollisions["5_3_2"].push_back(Vec2(100, 61));
-    _tileCollisions["5_3_2"].push_back(Vec2(91, 55));
-    _tileCollisions["5_3_2"].push_back(Vec2(99, 41));
+    _tileCollisions["5_3_2_LU"].push_back(Vec2(107, 85));
+    _tileCollisions["5_3_2_LU"].push_back(Vec2(99, 84));
+    _tileCollisions["5_3_2_LU"].push_back(Vec2(95, 78));
+    _tileCollisions["5_3_2_LU"].push_back(Vec2(101, 66));
+    _tileCollisions["5_3_2_LU"].push_back(Vec2(100, 61));
+    _tileCollisions["5_3_2_LU"].push_back(Vec2(91, 55));
+    _tileCollisions["5_3_2_LU"].push_back(Vec2(99, 41));
     
-    _tileCollisions["5_3_3"].push_back(Vec2(38, 102));
-    _tileCollisions["5_3_3"].push_back(Vec2(53, 91));
-    _tileCollisions["5_3_3"].push_back(Vec2(63, 88));
-    _tileCollisions["5_3_3"].push_back(Vec2(72, 91));
-    _tileCollisions["5_3_3"].push_back(Vec2(77, 88));
-    _tileCollisions["5_3_3"].push_back(Vec2(84, 91));
+    _tileCollisions["5_3_3_RU"].push_back(Vec2(38, 102));
+    _tileCollisions["5_3_3_RU"].push_back(Vec2(53, 91));
+    _tileCollisions["5_3_3_RU"].push_back(Vec2(63, 88));
+    _tileCollisions["5_3_3_RU"].push_back(Vec2(72, 91));
+    _tileCollisions["5_3_3_RU"].push_back(Vec2(77, 88));
+    _tileCollisions["5_3_3_RU"].push_back(Vec2(84, 91));
     
-    _tileCollisions["5_3_4"].push_back(Vec2(24, 40));
-    _tileCollisions["5_3_4"].push_back(Vec2(33, 69));
+    _tileCollisions["5_3_4_RD"].push_back(Vec2(24, 40));
+    _tileCollisions["5_3_4_RD"].push_back(Vec2(33, 69));
     
-    _tileCollisions["5_3_12"].push_back(Vec2(103, 88));
-    _tileCollisions["5_3_12"].push_back(Vec2(100, 86));
-    _tileCollisions["5_3_12"].push_back(Vec2(93, 86));
-    _tileCollisions["5_3_12"].push_back(Vec2(84, 73));
-    _tileCollisions["5_3_12"].push_back(Vec2(78, 74));
-    _tileCollisions["5_3_12"].push_back(Vec2(66, 66));
-    _tileCollisions["5_3_12"].push_back(Vec2(56, 49));
-    _tileCollisions["5_3_12"].push_back(Vec2(54, 37));
-    _tileCollisions["5_3_12"].push_back(Vec2(47, 36));
-    _tileCollisions["5_3_12"].push_back(Vec2(43, 31));
+    _tileCollisions["5_3_12_LU"].push_back(Vec2(103, 88));
+    _tileCollisions["5_3_12_LU"].push_back(Vec2(100, 86));
+    _tileCollisions["5_3_12_LU"].push_back(Vec2(93, 86));
+    _tileCollisions["5_3_12_LU"].push_back(Vec2(84, 73));
+    _tileCollisions["5_3_12_LU"].push_back(Vec2(78, 74));
+    _tileCollisions["5_3_12_LU"].push_back(Vec2(66, 66));
+    _tileCollisions["5_3_12_LU"].push_back(Vec2(56, 49));
+    _tileCollisions["5_3_12_LU"].push_back(Vec2(54, 37));
+    _tileCollisions["5_3_12_LU"].push_back(Vec2(47, 36));
+    _tileCollisions["5_3_12_LU"].push_back(Vec2(43, 31));
     
     _tileCollisions["5_3_13_LD"].push_back(Vec2(88, 24));
     _tileCollisions["5_3_13_LD"].push_back(Vec2(88, 48));
@@ -1264,18 +1283,18 @@ void GMXLayer2::initCollisionData()
     _tileCollisions["5_3_13_RU"].push_back(Vec2(78, 65));
     _tileCollisions["5_3_13_RU"].push_back(Vec2(89, 79));
     
-    _tileCollisions["5_3_14"].push_back(Vec2(89, 26));
-    _tileCollisions["5_3_14"].push_back(Vec2(65, 54));
-    _tileCollisions["5_3_14"].push_back(Vec2(50, 61));
-    _tileCollisions["5_3_14"].push_back(Vec2(39, 80));
+    _tileCollisions["5_3_14_LD"].push_back(Vec2(89, 26));
+    _tileCollisions["5_3_14_LD"].push_back(Vec2(65, 54));
+    _tileCollisions["5_3_14_LD"].push_back(Vec2(50, 61));
+    _tileCollisions["5_3_14_LD"].push_back(Vec2(39, 80));
     
-    _tileCollisions["5_3_23"].push_back(Vec2(41, 103));
-    _tileCollisions["5_3_23"].push_back(Vec2(59, 80));
-    _tileCollisions["5_3_23"].push_back(Vec2(72, 70));
-    _tileCollisions["5_3_23"].push_back(Vec2(81, 63));
-    _tileCollisions["5_3_23"].push_back(Vec2(84, 52));
-    _tileCollisions["5_3_23"].push_back(Vec2(99, 47));
-    _tileCollisions["5_3_23"].push_back(Vec2(99, 42));
+    _tileCollisions["5_3_23_RU"].push_back(Vec2(41, 103));
+    _tileCollisions["5_3_23_RU"].push_back(Vec2(59, 80));
+    _tileCollisions["5_3_23_RU"].push_back(Vec2(72, 70));
+    _tileCollisions["5_3_23_RU"].push_back(Vec2(81, 63));
+    _tileCollisions["5_3_23_RU"].push_back(Vec2(84, 52));
+    _tileCollisions["5_3_23_RU"].push_back(Vec2(99, 47));
+    _tileCollisions["5_3_23_RU"].push_back(Vec2(99, 42));
     
     _tileCollisions["5_3_24_RD"].push_back(Vec2(25, 41));
     _tileCollisions["5_3_24_RD"].push_back(Vec2(31, 40));
@@ -1299,64 +1318,65 @@ void GMXLayer2::initCollisionData()
     _tileCollisions["5_3_24_LU"].push_back(Vec2(85, 42));
     _tileCollisions["5_3_24_LU"].push_back(Vec2(91, 37));
     
-    _tileCollisions["5_3_34"].push_back(Vec2(27, 37));
-    _tileCollisions["5_3_34"].push_back(Vec2(40, 56));
-    _tileCollisions["5_3_34"].push_back(Vec2(47, 57));
-    _tileCollisions["5_3_34"].push_back(Vec2(53, 62));
-    _tileCollisions["5_3_34"].push_back(Vec2(60, 61));
-    _tileCollisions["5_3_34"].push_back(Vec2(61, 80));
-    _tileCollisions["5_3_34"].push_back(Vec2(68, 91));
-    _tileCollisions["5_3_34"].push_back(Vec2(85, 99));
+    _tileCollisions["5_3_34_RD"].push_back(Vec2(27, 37));
+    _tileCollisions["5_3_34_RD"].push_back(Vec2(40, 56));
+    _tileCollisions["5_3_34_RD"].push_back(Vec2(47, 57));
+    _tileCollisions["5_3_34_RD"].push_back(Vec2(53, 62));
+    _tileCollisions["5_3_34_RD"].push_back(Vec2(60, 61));
+    _tileCollisions["5_3_34_RD"].push_back(Vec2(61, 80));
+    _tileCollisions["5_3_34_RD"].push_back(Vec2(68, 91));
+    _tileCollisions["5_3_34_RD"].push_back(Vec2(85, 99));
     
-    _tileCollisions["5_3_123"].push_back(Vec2(40, 104));
-    _tileCollisions["5_3_123"].push_back(Vec2(60, 81));
-    _tileCollisions["5_3_123"].push_back(Vec2(71, 73));
-    _tileCollisions["5_3_123"].push_back(Vec2(54, 45));
-    _tileCollisions["5_3_123"].push_back(Vec2(54, 37));
-    _tileCollisions["5_3_123"].push_back(Vec2(47, 35));
-    _tileCollisions["5_3_123"].push_back(Vec2(41, 31));
+    _tileCollisions["5_3_123_RU"].push_back(Vec2(40, 104));
+    _tileCollisions["5_3_123_RU"].push_back(Vec2(60, 81));
+    _tileCollisions["5_3_123_RU"].push_back(Vec2(71, 73));
+    _tileCollisions["5_3_123_RU"].push_back(Vec2(54, 45));
+    _tileCollisions["5_3_123_RU"].push_back(Vec2(54, 37));
+    _tileCollisions["5_3_123_RU"].push_back(Vec2(47, 35));
+    _tileCollisions["5_3_123_RU"].push_back(Vec2(41, 31));
     
-    _tileCollisions["5_3_124"].push_back(Vec2(103, 89));
-    _tileCollisions["5_3_124"].push_back(Vec2(100, 86));
-    _tileCollisions["5_3_124"].push_back(Vec2(92, 86));
-    _tileCollisions["5_3_124"].push_back(Vec2(82, 73));
-    _tileCollisions["5_3_124"].push_back(Vec2(71, 71));
-    _tileCollisions["5_3_124"].push_back(Vec2(65, 66));
-    _tileCollisions["5_3_124"].push_back(Vec2(61, 57));
-    _tileCollisions["5_3_124"].push_back(Vec2(49, 62));
-    _tileCollisions["5_3_124"].push_back(Vec2(37, 82));
-    _tileCollisions["5_3_124"].push_back(Vec2(30, 84));
+    _tileCollisions["5_3_124_LU"].push_back(Vec2(103, 89));
+    _tileCollisions["5_3_124_LU"].push_back(Vec2(100, 86));
+    _tileCollisions["5_3_124_LU"].push_back(Vec2(92, 86));
+    _tileCollisions["5_3_124_LU"].push_back(Vec2(82, 73));
+    _tileCollisions["5_3_124_LU"].push_back(Vec2(71, 71));
+    _tileCollisions["5_3_124_LU"].push_back(Vec2(65, 66));
+    _tileCollisions["5_3_124_LU"].push_back(Vec2(61, 57));
+    _tileCollisions["5_3_124_LU"].push_back(Vec2(49, 62));
+    _tileCollisions["5_3_124_LU"].push_back(Vec2(37, 82));
+    _tileCollisions["5_3_124_LU"].push_back(Vec2(30, 84));
     
-    _tileCollisions["5_3_134"].push_back(Vec2(89, 25));
-    _tileCollisions["5_3_134"].push_back(Vec2(65, 54));
-    _tileCollisions["5_3_134"].push_back(Vec2(56, 59));
-    _tileCollisions["5_3_134"].push_back(Vec2(60, 63));
-    _tileCollisions["5_3_134"].push_back(Vec2(61, 80));
-    _tileCollisions["5_3_134"].push_back(Vec2(67, 90));
-    _tileCollisions["5_3_134"].push_back(Vec2(86, 100));
+    _tileCollisions["5_3_134_LD"].push_back(Vec2(89, 25));
+    _tileCollisions["5_3_134_LD"].push_back(Vec2(65, 54));
+    _tileCollisions["5_3_134_LD"].push_back(Vec2(56, 59));
+    _tileCollisions["5_3_134_LD"].push_back(Vec2(60, 63));
+    _tileCollisions["5_3_134_LD"].push_back(Vec2(61, 80));
+    _tileCollisions["5_3_134_LD"].push_back(Vec2(67, 90));
+    _tileCollisions["5_3_134_LD"].push_back(Vec2(86, 100));
     
-    _tileCollisions["5_3_234"].push_back(Vec2(27, 37));
-    _tileCollisions["5_3_234"].push_back(Vec2(41, 57));
-    _tileCollisions["5_3_234"].push_back(Vec2(47, 56));
-    _tileCollisions["5_3_234"].push_back(Vec2(51, 61));
-    _tileCollisions["5_3_234"].push_back(Vec2(60, 61));
-    _tileCollisions["5_3_234"].push_back(Vec2(61, 78));
-    _tileCollisions["5_3_234"].push_back(Vec2(72, 70));
-    _tileCollisions["5_3_234"].push_back(Vec2(84, 55));
-    _tileCollisions["5_3_234"].push_back(Vec2(90, 49));
-    _tileCollisions["5_3_234"].push_back(Vec2(101, 47));
+    _tileCollisions["5_3_234_RD"].push_back(Vec2(27, 37));
+    _tileCollisions["5_3_234_RD"].push_back(Vec2(41, 57));
+    _tileCollisions["5_3_234_RD"].push_back(Vec2(47, 56));
+    _tileCollisions["5_3_234_RD"].push_back(Vec2(51, 61));
+    _tileCollisions["5_3_234_RD"].push_back(Vec2(60, 61));
+    _tileCollisions["5_3_234_RD"].push_back(Vec2(61, 78));
+    _tileCollisions["5_3_234_RD"].push_back(Vec2(72, 70));
+    _tileCollisions["5_3_234_RD"].push_back(Vec2(84, 55));
+    _tileCollisions["5_3_234_RD"].push_back(Vec2(90, 49));
+    _tileCollisions["5_3_234_RD"].push_back(Vec2(101, 47));
 }
 
 
 void GMXLayer2::updateCollisionRegion()
 {
-    for (int i = 0 ; i < _file.numOfTileY; ++ i)
+    for (int i = 0 ; i < _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4; ++ i)
     {
-        for(int j = 0 ; j < _file.numOfTileX; ++ j)
+        for(int j = 0 ; j < _file.numOfTileX + DUMMY_TILE_SIZE * 2; ++ j)
         {
-            if (_tiles[i][j].getType() == TileType::HILL && _tiles[i][j].getTileTail() != "1234")
+            if (_tiles[i][j].getType() == TileType::HILL)
             {
-                _tiles[i][j].setInputState(TileInputState::VALID);
+                if ( _tiles[i][j].getTileTail() != "1234" ) _tiles[i][j].setInputState(TileInputState::VALID);
+                else _tiles[i][j].setInputState(TileInputState::INVALID);
             }
             else
             {
@@ -1366,19 +1386,94 @@ void GMXLayer2::updateCollisionRegion()
     }
     
     _collisionRegions.clear();
-    for (int i = 0 ; i < _file.numOfTileY; ++ i)
+    for (int i = 0 ; i < _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4; ++ i)
     {
-        for (int j = 0 ; j < _file.numOfTileX; ++ j)
+        for(int j = 0 ; j < _file.numOfTileX + DUMMY_TILE_SIZE * 2; ++ j)
         {
             if ( _tiles[i][j].getInputState() != TileInputState::INVALID )
             {
                 std::vector<Vec2> polygon;
-                int x = j;
-                int y = i;
+                int x = j; int y = i;
                 
-                while ( 1 )
+                std::string tail = _tiles[y][x].getTileTail();
+                std::string in = getInDirection(x, y);
+                std::string key = _tiles[y][x].getNumber() + in;
+                
+                bool isSpecial = false;
+                if ( tail == "13" )
                 {
-                   
+                    TileInputState inputState = _tiles[y][x].getInputState();
+                    if ( inputState == TileInputState::VALID ) _tiles[y][x].setInputState( TileInputState::RIGHT_UP );
+                    else if ( inputState == TileInputState::LEFT_DOWN || inputState == TileInputState::RIGHT_UP ) _tiles[y][x].setInputState( TileInputState::INVALID );
+                    isSpecial = true;
+                }
+                else if ( tail == "24" )
+                {
+                    TileInputState inputState = _tiles[y][x].getInputState();
+                    if ( inputState == TileInputState::VALID ) _tiles[y][x].setInputState( TileInputState::RIGHT_DOWN );
+                    else if ( inputState == TileInputState::LEFT_UP || inputState == TileInputState::RIGHT_DOWN ) _tiles[y][x].setInputState( TileInputState::INVALID );
+                    isSpecial = true;
+                }
+            
+                if ( !isSpecial )
+                {
+                    _tiles[y][x].setInputState(TileInputState::INVALID);
+                }
+                
+                auto collisions = _tileCollisions[key];
+                for( auto& vert : collisions )
+                {
+                    polygon.push_back(_tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y));
+                }
+                
+                Vec2 startPoint = collisions.front();
+                
+                while ( true )
+                {
+                    std::string prevTailWithInput = tail + in;
+                    x = getNextTileIndex(prevTailWithInput, x, y).first;
+                    y = getNextTileIndex(prevTailWithInput, x, y).second;
+                    
+                    tail = _tiles[y][x].getTileTail();
+                    in = getOutDirection(prevTailWithInput);
+                    key = _tiles[y][x].getNumber() + in;
+                    
+                    auto collisions = _tileCollisions[key];
+                    if ( collisions.front() == startPoint )
+                    {
+                        break;
+                    }
+                    
+                    for( auto& vert : collisions )
+                    {
+                        polygon.push_back(_tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y));
+                    }
+
+                    bool isSpecial = false;
+                    if ( tail == "13" )
+                    {
+                        TileInputState inputState = _tiles[y][x].getInputState();
+                        if ( inputState == TileInputState::VALID && in == "_RU" ) _tiles[y][x].setInputState(TileInputState::LEFT_DOWN);
+                        else if ( inputState == TileInputState::RIGHT_UP && in == "_RU" ) _tiles[y][x].setInputState(TileInputState::INVALID);
+                        else if ( inputState == TileInputState::VALID && in == "_LD" ) _tiles[y][x].setInputState(TileInputState::RIGHT_UP);
+                        else if ( inputState == TileInputState::LEFT_DOWN && in == "_LD" ) _tiles[y][x].setInputState(TileInputState::INVALID);
+                        isSpecial = true;
+                    }
+                    else if ( tail == "24" )
+                    {
+                        TileInputState inputState = _tiles[y][x].getInputState();
+                        if ( inputState == TileInputState::VALID && in == "_LU" ) _tiles[y][x].setInputState(TileInputState::RIGHT_DOWN);
+                        else if ( inputState == TileInputState::LEFT_UP && in == "_LU") _tiles[y][x].setInputState(TileInputState::INVALID);
+                        else if ( inputState == TileInputState::VALID && in == "_RD" ) _tiles[y][x].setInputState(TileInputState::LEFT_UP);
+                        else if ( inputState == TileInputState::RIGHT_DOWN && in == "_RD") _tiles[y][x].setInputState(TileInputState::INVALID);
+                        
+                        isSpecial = true;
+                    }
+            
+                    if ( !isSpecial )
+                    {
+                        _tiles[y][x].setInputState( TileInputState::INVALID );
+                    }
                 }
                 
                 _collisionRegions.push_back(polygon);
@@ -1399,38 +1494,112 @@ std::string GMXLayer2::getConvertDirData(int dir)
 }
 
 
-std::string GMXLayer2::getOutDirection(int x, int y)
+std::string GMXLayer2::getInDirection(int x, int y)
 {
     std::string tail = _tiles[y][x].getTileTail();
     
-    if ( tail == "1" ) return "_LU";
-    else if ( tail == "2" ) return "_RU";
-    else if ( tail == "3" ) return "_RD";
-    else if ( tail == "4" ) return "_LD";
-    else if ( tail == "12" ) return "_LU";
-    else if ( tail == "14" ) return "_LD";
-    else if (tail == "23") return "_RU";
+    if (tail == "1") return "_LD";
+    else if (tail == "2") return "_LU";
+    else if (tail == "3") return "_RU";
+    else if (tail == "4") return "_RD";
+    else if (tail == "12") return "_LU";
+    else if (tail == "14") return "_LD";
+    else if (tail == "23") return "_RD";
     else if (tail == "34") return "_RD";
-    else if (tail == "123") return "_LU";
-    else if (tail == "124") return "_LD";
-    else if (tail == "134") return "_RD";
-    else if (tail == "234") return "_RU";
+    else if (tail == "123") return "_RU";
+    else if (tail == "124") return "_LU";
+    else if (tail == "134") return "_LD";
+    else if (tail == "234") return "_RD";
     else if (tail == "13")
     {
-        if ( _tiles[y][x].getInputState() == TileInputState::VALID ) return "_LU";
-        else if ( _tiles[y][x].getInputState() == TileInputState::LEFT_DOWN ) return "_LU";
-        else if ( _tiles[y][x].getInputState() == TileInputState::RIGHT_UP ) return "_RD";
-        else return "#INVALID INPUT";
+        if (_tiles[y][x].getInputState() == TileInputState::VALID) return "_LD";
+        else if (_tiles[y][x].getInputState() == TileInputState::LEFT_DOWN) return "_LD";
+        else if (_tiles[y][x].getInputState() == TileInputState::RIGHT_UP) return "_RU";
     }
-    else if ( tail == "24")
+    else if (tail == "24")
     {
-        if ( _tiles[y][x].getInputState() == TileInputState::VALID ) return "_RU";
-        else if ( _tiles[y][x].getInputState() == TileInputState::LEFT_UP ) return "_RU";
-        else if ( _tiles[y][x].getInputState() == TileInputState::RIGHT_DOWN ) return "_LD";
-        else return "#INVALID INPUT";
+        if (_tiles[y][x].getInputState() == TileInputState::VALID) return "_RD";
+        else if (_tiles[y][x].getInputState() == TileInputState::LEFT_UP) return "_LU";
+        else if (_tiles[y][x].getInputState() == TileInputState::RIGHT_DOWN) return "_RD";
     }
     
     return "#INVALID INPUT";
+}
+
+
+std::string GMXLayer2::getOutDirection(const std::string& tail)
+{
+    if ( tail == "1_LD" ) return "_LU";
+    else if ( tail == "2_LU" ) return "_RU";
+    else if ( tail == "3_RU" ) return "_RD";
+    else if ( tail == "4_RD" ) return "_LD";
+    
+    else if ( tail == "12_LU" ) return "_LU";
+    else if ( tail == "14_LD" ) return "_LD";
+    else if (tail == "23_RU") return "_RU";
+    else if (tail == "34_RD") return "_RD";
+    
+    else if (tail == "123_RU") return "_LU";
+    else if (tail == "124_LU") return "_LD";
+    else if (tail == "134_LD") return "_RD";
+    else if (tail == "234_RD") return "_RU";
+    
+    else if (tail == "13_LD") return "_LU";
+    else if (tail == "13_RU") return "_RD";
+    else if ( tail == "24_LU") return "_RU";
+    else if ( tail == "24_RD") return "_LD";
+    
+    return "#INVALID INPUT";
+}
+
+
+std::pair<int, int> GMXLayer2::getNextTileIndex(const std::string& tailWithInputDir, int x, int y)
+{
+    enum { LEFT_DOWN = 0, LEFT_UP = 1, RIGHT_DOWN = 2, RIGHT_UP = 3 };
+    int nextDir;
+    
+    if ( tailWithInputDir == "1_LD" ) nextDir = LEFT_UP;
+    else if ( tailWithInputDir == "2_LU" ) nextDir = RIGHT_UP;
+    else if ( tailWithInputDir == "3_RU" ) nextDir = RIGHT_DOWN;
+    else if ( tailWithInputDir == "4_RD" ) nextDir = LEFT_DOWN;
+    
+    else if ( tailWithInputDir == "12_LU" ) nextDir = LEFT_UP;
+    else if ( tailWithInputDir == "13_LD" ) nextDir = LEFT_UP;
+    else if ( tailWithInputDir == "13_RU" ) nextDir = RIGHT_DOWN;
+    else if ( tailWithInputDir == "14_LD" ) nextDir =  LEFT_DOWN ;
+    else if ( tailWithInputDir == "23_RU" ) nextDir =  RIGHT_UP;
+    else if ( tailWithInputDir == "24_RD" ) nextDir = LEFT_DOWN;
+    else if ( tailWithInputDir == "24_LU" ) nextDir = RIGHT_UP;
+    else if ( tailWithInputDir == "34_RD" ) nextDir = RIGHT_DOWN;
+    else if ( tailWithInputDir == "123_RU" ) nextDir = LEFT_UP;
+    else if ( tailWithInputDir == "124_LU" ) nextDir = LEFT_DOWN;
+    
+    else if ( tailWithInputDir == "134_LD" ) nextDir = RIGHT_DOWN;
+    else if ( tailWithInputDir == "234_RD" ) nextDir = RIGHT_UP;
+    else std::runtime_error("invalid tile tail.");
+    
+    if (y % 2 == 0)
+    {
+        std::pair<int, int> table[4];
+        table[0] = std::make_pair(-1, -1);
+        table[1] = std::make_pair(-1, 1);
+        table[2] = std::make_pair(0, -1);
+        table[3] = std::make_pair(0, 1);
+        
+        auto dxdy = table[nextDir];
+        return std::make_pair(x + dxdy.first, y + dxdy.second);
+    }
+    else
+    {
+        std::pair<int, int> table[4];
+        table[0] = std::make_pair(0, -1);
+        table[1] = std::make_pair(0, 1);
+        table[2] = std::make_pair(1, -1);
+        table[3] = std::make_pair(1, 1);
+        
+        auto dxdy = table[nextDir];
+        return std::make_pair(x + dxdy.first, y + dxdy.second);
+    }
 }
 
 

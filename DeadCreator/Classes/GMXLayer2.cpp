@@ -557,14 +557,6 @@ void GMXLayer2::showWindow()
     if ( ImGui::IsKeyReleased(257) )
     {
         updateCollisionRegion();
-        _collisionNode->clear();
-        for(auto& poly : _collisionRegions)
-        {
-            for(int i = 0 ; i < poly.size() - 1; ++ i)
-            {
-                _collisionNode->drawDot(poly[i], 2.0f, Color4F::RED);
-            }
-        }
     }
     
 }
@@ -875,6 +867,9 @@ void GMXLayer2::putTile(TileType type, int x, int y)
             }
         }
     }
+    
+    updateCollisionRegion();
+    
 }
 
 
@@ -1427,6 +1422,7 @@ void GMXLayer2::updateCollisionRegion()
                 }
                 
                 Vec2 startPoint = collisions.front();
+                auto startIndex = std::make_pair(x, y);
                 
                 while ( true )
                 {
@@ -1439,7 +1435,7 @@ void GMXLayer2::updateCollisionRegion()
                     key = _tiles[y][x].getNumber() + in;
                     
                     auto collisions = _tileCollisions[key];
-                    if ( collisions.front() == startPoint )
+                    if ( startIndex == std::make_pair(x, y) && startPoint.equals(collisions.front()) )
                     {
                         break;
                     }
@@ -1480,6 +1476,17 @@ void GMXLayer2::updateCollisionRegion()
             }
         }
     }
+    
+    _collisionNode->clear();
+    for(auto& poly : _collisionRegions)
+    {
+        for(int i = 0 ; i < poly.size()-1; ++ i)
+        {
+            _collisionNode->drawSegment(poly[i], poly[i+1], 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
+        }
+        _collisionNode->drawSegment(poly.back(), poly.front(), 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
+    }
+    
 }
 
 

@@ -124,8 +124,56 @@ namespace
         return {0, 0};
     }
     
+    std::pair<int, int> getNextTileIndex(const std::string tileTail, int x, int y, bool isCW = true /* is clock wise */)
+    {
+       
+        enum { LEFT_DOWN = 0, LEFT_UP, RIGHT_DOWN, RIGHT_UP };
+        
+        int dir;
+        if ( tileTail == "1" ) dir = (isCW ? LEFT_UP : RIGHT_UP);
+        else if ( tileTail == "2" ) dir = (isCW ? RIGHT_UP : RIGHT_DOWN);
+        else if ( tileTail == "3" ) dir = (isCW ? RIGHT_DOWN : LEFT_DOWN);
+        else if ( tileTail == "4" ) dir = (isCW ? LEFT_DOWN : LEFT_UP);
+        
+        else if ( tileTail == "12" ) dir = (isCW ? LEFT_UP : RIGHT_DOWN);
+        else if ( tileTail == "13#" ) dir = (isCW ? LEFT_UP : RIGHT_UP);
+        else if ( tileTail == "13" ) dir = (isCW ? RIGHT_DOWN : LEFT_DOWN);
+        else if ( tileTail == "14" ) dir = (isCW ? LEFT_DOWN : RIGHT_UP);
+        else if ( tileTail == "23" ) dir = (isCW ? RIGHT_UP : LEFT_DOWN);
+        else if ( tileTail == "24#" ) dir = (isCW ? LEFT_DOWN : LEFT_UP);
+        else if ( tileTail == "24" ) dir = (isCW ? RIGHT_UP : RIGHT_DOWN);
+        else if ( tileTail == "34" ) dir = (isCW ? RIGHT_DOWN : LEFT_UP);
+        else if ( tileTail == "123" ) dir = (isCW ? LEFT_UP : LEFT_DOWN);
+        else if ( tileTail == "124" ) dir = (isCW ? LEFT_DOWN : RIGHT_DOWN);
+        
+        else if ( tileTail == "134" ) dir = (isCW ? RIGHT_DOWN : RIGHT_UP);
+        else if ( tileTail == "234" ) dir = (isCW ? RIGHT_UP : LEFT_UP);
+        else std::runtime_error("invalid tile tail.");
+            
+        if (y % 2 == 0)
+        {
+            std::pair<int, int> table[4];
+            table[0] = std::make_pair(-1, -1);
+            table[1] = std::make_pair(-1, 1);
+            table[2] = std::make_pair(0, -1);
+            table[3] = std::make_pair(0, 1);
+            
+            auto dxdy = table[dir];
+            return std::make_pair(x + dxdy.first, y + dxdy.second);
+        }
+        else
+        {
+            std::pair<int, int> table[4];
+            table[0] = std::make_pair(0, -1);
+            table[1] = std::make_pair(0, 1);
+            table[2] = std::make_pair(1, -1);
+            table[3] = std::make_pair(1, 1);
+            
+            auto dxdy = table[dir];
+            return std::make_pair(x + dxdy.first, y + dxdy.second);
+        }
+    }
 }
-
 
 
 

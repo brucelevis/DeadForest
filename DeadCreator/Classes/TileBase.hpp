@@ -6,13 +6,22 @@
 //
 //
 
-#ifndef TileBase_hpp
-#define TileBase_hpp
+#pragma once
 
 #include <string>
 
 #include "cocos2d.h"
 #include "TileHelperFunctions.hpp"
+
+enum class TileInputState : int
+{
+    VALID,
+    INVALID,
+    RIGHT_UP,
+    LEFT_DOWN,
+    RIGHT_DOWN,
+    LEFT_UP,
+};
 
 enum class TileType : int
 {
@@ -134,6 +143,10 @@ public:
     
     int getIndexY() const { return _yIndex; }
     
+    TileInputState getInputState() const { return _inputState; }
+    
+    void setInputState(TileInputState state) { _inputState = state; }
+    
 private:
     
     int _xIndex;
@@ -146,7 +159,17 @@ private:
     
     cocos2d::Vec2 _position;
     
+private:
+    
+    TileInputState _inputState = TileInputState::VALID;
+    
 };
 
 
-#endif /* TileBase_hpp */
+    
+    
+    
+    
+    
+    
+    

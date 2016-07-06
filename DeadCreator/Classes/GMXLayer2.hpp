@@ -23,6 +23,7 @@
 
 #define DUMMY_TILE_SIZE 4
 
+
 class PaletteLayer;
 class NavigatorLayer;
 class EditScene2;
@@ -34,6 +35,13 @@ class EntityBase;
 
 class GMXLayer2 : public cocos2d::Layer
 {
+    
+public:
+    
+    const int RIGHT_UP  = 0;
+    const int RIGHT_DOWN = 1;
+    const int LEFT_UP = 2;
+    const int LEFT_DOWN = 3;
     
 public:
     
@@ -120,6 +128,14 @@ public:
     void removeSelectedEntities(bool isExecCommand = false);
     void clearSelectedEntites();
     
+    void initCollisionData();
+    void updateCollisionRegion();
+    
+private:
+    
+    std::string getConvertDirData(int dir);
+    std::string getOutDirection(int x, int y);
+    
 private:
     
     static bool TITLE_CLICKED;
@@ -173,6 +189,9 @@ private:
     
     cocos2d::Rect _selectRect;
     cocos2d::DrawNode* _selectionRectNode;
+    
+    std::map<std::string, std::vector<cocos2d::Vec2>> _tileCollisions;
+    std::vector< std::vector<cocos2d::Vec2> > _collisionRegions;
     
 };
 

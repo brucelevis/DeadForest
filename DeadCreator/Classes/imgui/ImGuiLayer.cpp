@@ -57,6 +57,7 @@ bool ImGuiLayer::init()
     style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.2600000, 0.5900000, 0.9800000, 0.3500000);
     style.Colors[ImGuiCol_TooltipBg] = ImVec4(1.0000000, 1.0000000, 1.0000000, 0.9400000);
     style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.2000000, 0.2000000, 0.2000000, 0.3500000);
+
     
     style.WindowFillAlphaDefault = 0.98f;
     style.WindowPadding.x = 4.0f;

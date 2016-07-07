@@ -1,30 +1,30 @@
 //
-//  ItemGlock17.cpp
+//  EditorItemM1897.cpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 7. 4..
 //
 //
 
-#include "ItemGlock17.hpp"
-using namespace cocos2d;
+#include "EditorItemM1897.hpp"
 using namespace realtrick;
+using namespace cocos2d;
 
-ItemGlock17::ItemGlock17(GMXLayer2& layer, int id) :
-EntityBase(layer, id)
+EditorItemM1897::EditorItemM1897(GMXLayer2& layer, int id) :
+EditorEntityBase(layer, id)
 {
-    _type = EntityType::ITEM_GLOCK17;
+    _type = EntityType::ITEM_M1897;
 }
 
 
-ItemGlock17::~ItemGlock17()
+EditorItemM1897::~EditorItemM1897()
 {
 }
 
 
-ItemGlock17* ItemGlock17::create(GMXLayer2& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
+EditorItemM1897* EditorItemM1897::create(GMXLayer2& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
 {
-    auto ret = new (std::nothrow) ItemGlock17(layer, id);
+    auto ret = new (std::nothrow) EditorItemM1897(layer, id);
     if ( ret && ret->init(fileName, resType) )
     {
         ret->autorelease();
@@ -35,7 +35,7 @@ ItemGlock17* ItemGlock17::create(GMXLayer2& layer, int id, const std::string& fi
 }
 
 
-bool ItemGlock17::init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
+bool EditorItemM1897::init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
 {
     _resType = resType;
     _fileName = fileName;
@@ -53,6 +53,7 @@ bool ItemGlock17::init(const std::string& fileName, cocos2d::ui::Widget::Texture
     
     return true;
 }
+
 
 
 

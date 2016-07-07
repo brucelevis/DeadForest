@@ -1,5 +1,5 @@
 //
-//  Sheriff.hpp
+//  EditorSheriff.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 7. 4..
@@ -8,22 +8,22 @@
 
 #pragma once
 
-#include "EntityBase.hpp"
+#include "EditorEntityBase.hpp"
 #include "ui/CocosGUI.h"
 
 namespace realtrick
 {
     
-    class Sheriff : public EntityBase
+    class EditorSheriff : public EditorEntityBase
     {
         
     public:
         
-        Sheriff(GMXLayer2& layer, int id);
+        EditorSheriff(GMXLayer2& layer, int id);
         
-        virtual ~Sheriff();
+        virtual ~EditorSheriff();
         
-        static Sheriff* create(GMXLayer2& layer, int id, cocos2d::ui::Widget::TextureResType resType);
+        static EditorSheriff* create(GMXLayer2& layer, int id, cocos2d::ui::Widget::TextureResType resType);
         
         bool init(cocos2d::ui::Widget::TextureResType resType);
         

@@ -1,5 +1,5 @@
 //
-//  EntityBase.hpp
+//  EditorEntityBase.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 7. 4..
@@ -42,14 +42,14 @@ namespace realtrick
             PLAYER8,
             };
             
-            class EntityBase : public cocos2d::Node
+            class EditorEntityBase : public cocos2d::Node
             {
                 
             public:
                 
-                EntityBase(GMXLayer2& layer, int id);
+                EditorEntityBase(GMXLayer2& layer, int id);
                 
-                virtual ~EntityBase();
+                virtual ~EditorEntityBase();
                 
                 virtual bool init() override;
                 

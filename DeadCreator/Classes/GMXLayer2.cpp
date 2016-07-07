@@ -18,8 +18,8 @@
 #include "TileToolCommand.hpp"
 #include "AddEntityToolCommand.hpp"
 #include "RemoveEntityToolCommand.hpp"
-#include "Sheriff.hpp"
-#include "Items.hpp"
+#include "EditorSheriff.hpp"
+#include "EditorItems.hpp"
 #include "CellSpacePartition.hpp"
 using namespace cocos2d;
 using namespace realtrick;
@@ -391,7 +391,7 @@ void GMXLayer2::showWindow()
                 bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
-                    Sheriff* ent = Sheriff::create(*this, getNextValidID(), cocos2d::ui::Widget::TextureResType::PLIST);
+                    EditorSheriff* ent = EditorSheriff::create(*this, getNextValidID(), cocos2d::ui::Widget::TextureResType::PLIST);
                     ent->setPosition(_mousePosInWorld);
                     ent->setPlayerType(PlayerType::PLAYER1);
                     addEntity(ent, 5);
@@ -418,7 +418,7 @@ void GMXLayer2::showWindow()
                 bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
-                    Item556mm* ent = Item556mm::create(*this, getNextValidID(), "5_56mm.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
+                    EditorItem556mm* ent = EditorItem556mm::create(*this, getNextValidID(), "5_56mm.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
                     ent->setPosition(_mousePosInWorld);
                     ent->setPlayerType(PlayerType::NEUTRAL);
                     addEntity(ent);
@@ -435,7 +435,7 @@ void GMXLayer2::showWindow()
                 bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
-                    Item9mm* ent = Item9mm::create(*this, getNextValidID(), "9mm.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
+                    EditorItem9mm* ent = EditorItem9mm::create(*this, getNextValidID(), "9mm.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
                     ent->setPosition(_mousePosInWorld);
                     ent->setPlayerType(PlayerType::NEUTRAL);
                     addEntity(ent);
@@ -452,7 +452,7 @@ void GMXLayer2::showWindow()
                 bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
-                    ItemAxe* ent = ItemAxe::create(*this, getNextValidID(), "Axe.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
+                    EditorItemAxe* ent = EditorItemAxe::create(*this, getNextValidID(), "Axe.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
                     ent->setPosition(_mousePosInWorld);
                     ent->setPlayerType(PlayerType::NEUTRAL);
                     addEntity(ent);
@@ -469,7 +469,7 @@ void GMXLayer2::showWindow()
                 bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
-                    ItemShell* ent = ItemShell::create(*this, getNextValidID(), "Shell.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
+                    EditorItemShell* ent = EditorItemShell::create(*this, getNextValidID(), "Shell.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
                     ent->setPosition(_mousePosInWorld);
                     ent->setPlayerType(PlayerType::NEUTRAL);
                     addEntity(ent);
@@ -486,7 +486,7 @@ void GMXLayer2::showWindow()
                 bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
-                    ItemM16A2* ent = ItemM16A2::create(*this, getNextValidID(), "M16A2.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
+                    EditorItemM16A2* ent = EditorItemM16A2::create(*this, getNextValidID(), "M16A2.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
                     ent->setPosition(_mousePosInWorld);
                     ent->setPlayerType(PlayerType::NEUTRAL);
                     addEntity(ent);
@@ -504,7 +504,7 @@ void GMXLayer2::showWindow()
                 bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
-                    ItemGlock17* ent = ItemGlock17::create(*this, getNextValidID(), "Glock17.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
+                    EditorItemGlock17* ent = EditorItemGlock17::create(*this, getNextValidID(), "Glock17.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
                     ent->setPosition(_mousePosInWorld);
                     ent->setPlayerType(PlayerType::NEUTRAL);
                     addEntity(ent);
@@ -522,7 +522,7 @@ void GMXLayer2::showWindow()
                 bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
-                    ItemM1897* ent = ItemM1897::create(*this, getNextValidID(), "M1897.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
+                    EditorItemM1897* ent = EditorItemM1897::create(*this, getNextValidID(), "M1897.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
                     ent->setPosition(_mousePosInWorld);
                     ent->setPlayerType(PlayerType::NEUTRAL);
                     addEntity(ent);
@@ -874,7 +874,7 @@ void GMXLayer2::putTile(TileType type, int x, int y)
 }
 
 
-bool GMXLayer2::addEntity(EntityBase* entity, int localZOrder, bool isExecCommand)
+bool GMXLayer2::addEntity(EditorEntityBase* entity, int localZOrder, bool isExecCommand)
 {
     auto iter = _entities.find(entity->getID());
     if ( iter == std::end(_entities))

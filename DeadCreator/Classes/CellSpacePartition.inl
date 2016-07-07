@@ -7,12 +7,12 @@
 //
 
 #include "CellSpacePartition.hpp"
-#include "EntityBase.hpp"
+#include "EditorEntityBase.hpp"
 
 namespace realtrick
 {
     
-    inline void CellSpacePartition::addEntity(EntityBase* ent)
+    inline void CellSpacePartition::addEntity(EditorEntityBase* ent)
     {
         int idx = positionToIndex(ent->getPosition());
         _cells[idx].members.push_back(ent);
@@ -30,7 +30,7 @@ namespace realtrick
     }
     
     
-    inline void CellSpacePartition::removeEntityFromCell(EntityBase* ent)
+    inline void CellSpacePartition::removeEntityFromCell(EditorEntityBase* ent)
     {
         int index = positionToIndex(ent->getPosition());
         auto iter = std::find(std::begin(_cells[index].members), std::end(_cells[index].members), ent);

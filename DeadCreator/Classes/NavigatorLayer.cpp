@@ -245,7 +245,7 @@ void NavigatorLayer::setTile(int x, int y, const TileBase& tile)
 }
 
 
-void NavigatorLayer::addEntity(EntityBase* ent)
+void NavigatorLayer::addEntity(EditorEntityBase* ent)
 {
     _entityMarks[ent->getID()] = ent;
 }

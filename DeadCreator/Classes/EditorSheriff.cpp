@@ -1,30 +1,30 @@
 //
-//  Sheriff.cpp
+//  EditorSheriff.cpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 7. 4..
 //
 //
 
-#include "Sheriff.hpp"
+#include "EditorSheriff.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 
-Sheriff::Sheriff(GMXLayer2& layer, int id) :
-EntityBase(layer, id)
+EditorSheriff::EditorSheriff(GMXLayer2& layer, int id) :
+EditorEntityBase(layer, id)
 {
     _type = EntityType::SHERIFF;
 }
 
 
-Sheriff::~Sheriff()
+EditorSheriff::~EditorSheriff()
 {
 }
 
 
-Sheriff* Sheriff::create(GMXLayer2& layer, int id, cocos2d::ui::Widget::TextureResType resType)
+EditorSheriff* EditorSheriff::create(GMXLayer2& layer, int id, cocos2d::ui::Widget::TextureResType resType)
 {
-    auto ret = new (std::nothrow) Sheriff(layer, id);
+    auto ret = new (std::nothrow) EditorSheriff(layer, id);
     if ( ret && ret->init(resType) )
     {
         ret->autorelease();
@@ -35,9 +35,9 @@ Sheriff* Sheriff::create(GMXLayer2& layer, int id, cocos2d::ui::Widget::TextureR
 }
 
 
-bool Sheriff::init(cocos2d::ui::Widget::TextureResType resType)
+bool EditorSheriff::init(cocos2d::ui::Widget::TextureResType resType)
 {
-    if ( !EntityBase::init() )
+    if ( !EditorEntityBase::init() )
         return false;
     
     _resType = resType;
@@ -68,11 +68,11 @@ bool Sheriff::init(cocos2d::ui::Widget::TextureResType resType)
 }
 
 
-void Sheriff::setBoundingBox(const cocos2d::Rect& aabb)
+void EditorSheriff::setBoundingBox(const cocos2d::Rect& aabb)
 {
     _boundingBoxNode->clear();
     _boundingBoxNode->drawRect(Vec2(-aabb.size.width / 2, -aabb.size.height / 2), Vec2(aabb.size.width, aabb.size.height), Color4F::RED);
-    EntityBase::setBoundingBox(aabb);
+    EditorEntityBase::setBoundingBox(aabb);
 }
 
 

@@ -32,7 +32,7 @@ namespace realtrick
     class AddEntityToolCommand;
     class RemoveEntityToolCommand;
     class TileToolCommand;
-    class EntityBase;
+    class EditorEntityBase;
     
     class GMXLayer2 : public cocos2d::Layer
     {
@@ -103,7 +103,7 @@ namespace realtrick
         
         AddEntityToolCommand* getAddEntityToolCommand() const { return _addEntityToolCommand; }
         
-        bool addEntity(EntityBase* entity, int localZOrder = 0, bool isExecCommand = false);
+        bool addEntity(EditorEntityBase* entity, int localZOrder = 0, bool isExecCommand = false);
         
         bool eraseEntity(int id, bool isExecCommand = false);
         
@@ -154,11 +154,11 @@ namespace realtrick
         cocos2d::Sprite* _selectedItem;
         
         CellSpacePartition* _cellSpacePartition;
-        std::map<int, EntityBase*> _entities;
+        std::map<int, EditorEntityBase*> _entities;
         std::vector<std::vector<TileBase>> _tiles;
         std::vector< std::vector<TileImage*> > _tileImages;
         std::vector< std::vector<cocos2d::ui::Text*> > _tileIndices;
-        std::vector< EntityBase* > _selectedEntities;
+        std::vector< EditorEntityBase* > _selectedEntities;
         int _viewX;
         int _viewY;
         

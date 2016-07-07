@@ -1,30 +1,30 @@
 //
-//  ItemAxe.cpp
+//  EditorItemM16A2.cpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 7. 4..
 //
 //
 
-#include "ItemAxe.hpp"
+#include "EditorItemM16A2.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 
-ItemAxe::ItemAxe(GMXLayer2& layer, int id) :
-EntityBase(layer, id)
+EditorItemM16A2::EditorItemM16A2(GMXLayer2& layer, int id) :
+EditorEntityBase(layer, id)
 {
-    _type = EntityType::ITEM_AXE;
+    _type = EntityType::ITEM_M16A2;
 }
 
 
-ItemAxe::~ItemAxe()
+EditorItemM16A2::~EditorItemM16A2()
 {
 }
 
 
-ItemAxe* ItemAxe::create(GMXLayer2& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
+EditorItemM16A2* EditorItemM16A2::create(GMXLayer2& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
 {
-    auto ret = new (std::nothrow) ItemAxe(layer, id);
+    auto ret = new (std::nothrow) EditorItemM16A2(layer, id);
     if ( ret && ret->init(fileName, resType) )
     {
         ret->autorelease();
@@ -35,7 +35,7 @@ ItemAxe* ItemAxe::create(GMXLayer2& layer, int id, const std::string& fileName, 
 }
 
 
-bool ItemAxe::init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
+bool EditorItemM16A2::init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
 {
     _resType = resType;
     _fileName = fileName;
@@ -53,6 +53,11 @@ bool ItemAxe::init(const std::string& fileName, cocos2d::ui::Widget::TextureResT
     
     return true;
 }
+
+
+
+
+
 
 
 

@@ -9,7 +9,7 @@
 #pragma once
 
 #include "CommandBase.hpp"
-#include "EntityBase.hpp"
+#include "EditorEntityBase.hpp"
 
 namespace realtrick
 {
@@ -45,7 +45,7 @@ namespace realtrick
         
         virtual bool empty() const override { return !_entity; }
         
-        void pushEntity(EntityBase* ent) { if (_isBegan ) _entity = ent; }
+        void pushEntity(EditorEntityBase* ent) { if (_isBegan ) _entity = ent; }
         
     private:
         
@@ -55,7 +55,7 @@ namespace realtrick
         
     private:
         
-        EntityBase* _entity = nullptr;
+        EditorEntityBase* _entity = nullptr;
         
     };
     

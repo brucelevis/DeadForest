@@ -8,6 +8,7 @@
 
 #include "ItemShell.hpp"
 using namespace cocos2d;
+using namespace realtrick;
 
 ItemShell::ItemShell(GMXLayer2& layer, int id) :
 EntityBase(layer, id)

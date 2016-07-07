@@ -15,6 +15,7 @@ using namespace cocos2d;
 #include "NewFileWindow2.hpp"
 #include "PaletteLayer.hpp"
 #include "SizeProtocol.h"
+using namespace realtrick;
 
 Scene* EditScene2::createScene()
 {

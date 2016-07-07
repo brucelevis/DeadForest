@@ -6,28 +6,30 @@
 //
 //
 
-#ifndef TileImage_hpp
-#define TileImage_hpp
+#pragma once
 
 #include "cocos2d.h"
 
-class TileImage : public cocos2d::Sprite
+namespace realtrick
 {
     
-public:
+    class TileImage : public cocos2d::Sprite
+    {
+        
+    public:
+        
+        TileImage();
+        
+        virtual ~TileImage();
+        
+        static TileImage* create();
+        
+        static TileImage* create(const std::string& fileName);
+        
+        static TileImage* createWithFrameName(const std::string& frameName);
+        
+    private:
+        
+    };
     
-    TileImage();
-    
-    virtual ~TileImage();
-    
-    static TileImage* create();
-    
-    static TileImage* create(const std::string& fileName);
-    
-    static TileImage* createWithFrameName(const std::string& frameName);
-    
-private:
-    
-};
-
-#endif /* TileImage_hpp */
+}

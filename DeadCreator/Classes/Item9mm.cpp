@@ -8,6 +8,7 @@
 
 #include "Item9mm.hpp"
 using namespace cocos2d;
+using namespace realtrick;
 
 Item9mm::Item9mm(GMXLayer2& layer, int id) :
 EntityBase(layer, id)

@@ -11,6 +11,7 @@
 #include "SizeProtocol.h"
 #include "TileHelperFunctions.hpp"
 using namespace cocos2d;
+using namespace realtrick;
 
 NavigatorLayer::NavigatorLayer(GMXLayer2& gmxLayer) :
 _gmxLayer(gmxLayer),

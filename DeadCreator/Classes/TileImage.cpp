@@ -9,6 +9,8 @@
 #include "TileImage.hpp"
 #include "GMXLayer2.hpp"
 
+using namespace realtrick;
+
 TileImage::TileImage()
 {
 }

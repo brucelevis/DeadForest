@@ -3,30 +3,34 @@
 //  TheDeadForest
 //
 //  Created by 남준현 on 2015. 11. 12..
-//  
+//
 //
 
 #pragma once
 
-
-template <typename Derived>
-class Singleton
+namespace realtrick
 {
     
-public:
-    
-    Singleton(const Singleton&) = delete;
-    Singleton& operator=(const Singleton&) = delete;
-    
-    static Derived& getInstance()
+    template <typename Derived>
+    class Singleton
     {
-        static Derived instance;
-        return instance;
-    }
+        
+    public:
+        
+        Singleton(const Singleton&) = delete;
+        Singleton& operator=(const Singleton&) = delete;
+        
+        static Derived& getInstance()
+        {
+            static Derived instance;
+            return instance;
+        }
+        
+    protected:
+        
+        Singleton() = default;
+        virtual ~Singleton() = default;
+        
+    };
     
-protected:
-    
-    Singleton() = default;
-    virtual ~Singleton() = default;
-    
-};
+}

@@ -8,6 +8,7 @@
 
 #include "Item556mm.hpp"
 using namespace cocos2d;
+using namespace realtrick;
 
 Item556mm::Item556mm(GMXLayer2& layer, int id) :
 EntityBase(layer, id)

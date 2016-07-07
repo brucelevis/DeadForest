@@ -9,7 +9,7 @@
 #include "EntityBase.hpp"
 #include "GMXLayer2.hpp"
 using namespace cocos2d;
-
+using namespace realtrick;
 
 EntityBase::EntityBase(GMXLayer2& layer, int id) :
 _gmxLayer(layer),

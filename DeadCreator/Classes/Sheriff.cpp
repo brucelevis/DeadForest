@@ -8,6 +8,7 @@
 
 #include "Sheriff.hpp"
 using namespace cocos2d;
+using namespace realtrick;
 
 Sheriff::Sheriff(GMXLayer2& layer, int id) :
 EntityBase(layer, id)

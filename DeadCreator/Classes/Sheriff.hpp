@@ -11,23 +11,28 @@
 #include "EntityBase.hpp"
 #include "ui/CocosGUI.h"
 
-class Sheriff : public EntityBase
+namespace realtrick
 {
     
-public:
+    class Sheriff : public EntityBase
+    {
+        
+    public:
+        
+        Sheriff(GMXLayer2& layer, int id);
+        
+        virtual ~Sheriff();
+        
+        static Sheriff* create(GMXLayer2& layer, int id, cocos2d::ui::Widget::TextureResType resType);
+        
+        bool init(cocos2d::ui::Widget::TextureResType resType);
+        
+        virtual void setBoundingBox(const cocos2d::Rect& aabb) override;
+        
+    private:
+        
+        
+        
+    };
     
-    Sheriff(GMXLayer2& layer, int id);
-    
-    virtual ~Sheriff();
-    
-    static Sheriff* create(GMXLayer2& layer, int id, cocos2d::ui::Widget::TextureResType resType);
-    
-    bool init(cocos2d::ui::Widget::TextureResType resType);
-    
-    virtual void setBoundingBox(const cocos2d::Rect& aabb) override;
-
-private:
-    
-    
-    
-};
+}

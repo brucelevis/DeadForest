@@ -14,6 +14,7 @@
 #include "GMXFile.hpp"
 #include "FileSystem.hpp"
 using namespace cocos2d;
+using namespace realtrick;
 
 NewFileWindow2::NewFileWindow2(EditScene2* layer) :
 _imguiLayer(layer)

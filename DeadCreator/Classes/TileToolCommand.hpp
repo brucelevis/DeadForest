@@ -13,53 +13,55 @@
 #include "CommandBase.hpp"
 #include "TileBase.hpp"
 
-
-class TileToolCommand : public CommandBase
+namespace realtrick
 {
     
-public:
-    
-    explicit TileToolCommand(GMXLayer2* layer) :
-    CommandBase(layer)
+    class TileToolCommand : public CommandBase
     {
-        _commandName = "Tile Tool";
-    }
+        
+    public:
+        
+        explicit TileToolCommand(GMXLayer2* layer) :
+        CommandBase(layer)
+        {
+            _commandName = "Tile Tool";
+        }
+        
+        TileToolCommand(const TileToolCommand& rhs) : CommandBase(rhs)
+        {
+            copyFrom(rhs);
+        }
+        
+        void copyFrom(const TileToolCommand& rhs)
+        {
+            _prevTiles = rhs._prevTiles;
+            _currTiles = rhs._currTiles;
+        }
+        
+        virtual ~TileToolCommand() = default;
+        
+        virtual void execute() override;
+        
+        virtual void undo() override;
+        
+        virtual TileToolCommand* clone() const override;
+        
+        void pushTile(const TileBase& prevTile, const TileBase& currTile);
+        
+        virtual bool empty() const override { return _prevTiles.empty(); }
+        
+    private:
+        
+        virtual void beginImpl() override;
+        
+    private:
+        
+        std::vector<TileBase> _prevTiles;
+        std::vector<TileBase> _currTiles;
+        
+    };
     
-    TileToolCommand(const TileToolCommand& rhs) : CommandBase(rhs)
-    {
-        copyFrom(rhs);
-    }
-    
-    void copyFrom(const TileToolCommand& rhs)
-    {
-        _prevTiles = rhs._prevTiles;
-        _currTiles = rhs._currTiles;
-    }
-    
-    virtual ~TileToolCommand() = default;
-    
-    virtual void execute() override;
-    
-    virtual void undo() override;
-    
-    virtual TileToolCommand* clone() const override;
-    
-    void pushTile(const TileBase& prevTile, const TileBase& currTile);
-    
-    virtual bool empty() const override { return _prevTiles.empty(); }
-    
-private:
-    
-    virtual void beginImpl() override;
-    
-private:
-    
-    std::vector<TileBase> _prevTiles;
-    std::vector<TileBase> _currTiles;
-    
-};
-
-
+}
 
 
 

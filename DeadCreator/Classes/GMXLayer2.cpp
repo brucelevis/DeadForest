@@ -22,6 +22,7 @@
 #include "Items.hpp"
 #include "CellSpacePartition.hpp"
 using namespace cocos2d;
+using namespace realtrick;
 
 bool GMXLayer2::TITLE_CLICKED = false;
 
@@ -1487,17 +1488,6 @@ void GMXLayer2::updateCollisionRegion()
         _collisionNode->drawSegment(poly.back(), poly.front(), 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
     }
     
-}
-
-
-std::string GMXLayer2::getConvertDirData(int dir)
-{
-    if ( dir < 0 || dir > 3 ) return "#INVALID DIRECTION";
-    
-    if (dir == RIGHT_UP) return "_RU";
-    else if (dir == RIGHT_DOWN) return "_RD";
-    else if (dir == LEFT_UP) return "_LU";
-    else return "_LD"; // LEFT_DOWN
 }
 
 

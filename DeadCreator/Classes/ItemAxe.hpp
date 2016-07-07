@@ -9,21 +9,26 @@
 #include "EntityBase.hpp"
 #include "ui/CocosGUI.h"
 
-class ItemAxe : public EntityBase
+namespace realtrick
 {
     
-public:
+    class ItemAxe : public EntityBase
+    {
+        
+    public:
+        
+        ItemAxe(GMXLayer2& layer, int id);
+        
+        virtual ~ItemAxe();
+        
+        static ItemAxe* create(GMXLayer2& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType = cocos2d::ui::Widget::TextureResType::LOCAL);
+        
+        bool init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType);
+        
+    private:
+        
+        std::string _fileName;
+        
+    };
     
-    ItemAxe(GMXLayer2& layer, int id);
-    
-    virtual ~ItemAxe();
-    
-    static ItemAxe* create(GMXLayer2& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType = cocos2d::ui::Widget::TextureResType::LOCAL);
-    
-    bool init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType);
-    
-private:
-    
-    std::string _fileName;
-    
-};
+}

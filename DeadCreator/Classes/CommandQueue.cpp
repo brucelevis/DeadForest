@@ -8,6 +8,7 @@
 
 #include "CommandQueue.hpp"
 #include "CommandBase.hpp"
+using namespace realtrick;
 
 CommandQueue::~CommandQueue()
 {

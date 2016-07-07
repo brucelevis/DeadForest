@@ -7,6 +7,7 @@
 //
 
 #include "ItemM1897.hpp"
+using namespace realtrick;
 using namespace cocos2d;
 
 ItemM1897::ItemM1897(GMXLayer2& layer, int id) :

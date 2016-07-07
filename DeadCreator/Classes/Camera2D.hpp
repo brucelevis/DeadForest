@@ -6,22 +6,25 @@
 //
 //
 
-#ifndef Camera2D_hpp
-#define Camera2D_hpp
+#pragma once
 
 #include "cocos2d.h"
 
-class Camera2D : public cocos2d::Node
+namespace realtrick
 {
     
-public:
+    class Camera2D : public cocos2d::Node
+    {
+        
+    public:
+        
+        Camera2D() = default;
+        
+        virtual ~Camera2D() = default;
+        
+        CREATE_FUNC(Camera2D);
+        
+    };
     
-    Camera2D() = default;
-    
-    virtual ~Camera2D() = default;
-    
-    CREATE_FUNC(Camera2D);
-    
-};
+}
 
-#endif /* Camera2D_hpp */

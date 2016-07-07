@@ -8,7 +8,7 @@
 
 #include "RemoveEntityToolCommand.hpp"
 #include "GMXLayer2.hpp"
-
+using namespace realtrick;
 
 RemoveEntityToolCommand::~RemoveEntityToolCommand()
 {

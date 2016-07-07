@@ -3,7 +3,7 @@
 //  TheDeadForest
 //
 //  Created by 남준현 on 2015. 11. 12..
-//  
+//
 //
 
 #pragma once
@@ -14,41 +14,45 @@
 #include "MessageTypes.hpp"
 #include "Singleton.hpp"
 
-class Telegram;
-class MessageNode;
 
-#define Dispatch MessageDispatcher::getInstance()
-
-class MessageDispatcher : public Singleton<MessageDispatcher>
+namespace realtrick
 {
     
-public:
+    class Telegram;
+    class MessageNode;
     
-    void pushMessage(double delaySeconds, MessageNode* receiver, MessageNode* sender, MessageType type, void* extraInfo);
+#define Dispatch MessageDispatcher::getInstance()
     
-    void dispatchDelayedMessages();
+    class MessageDispatcher : public Singleton<MessageDispatcher>
+    {
+        
+    public:
+        
+        void pushMessage(double delaySeconds, MessageNode* receiver, MessageNode* sender, MessageType type, void* extraInfo);
+        
+        void dispatchDelayedMessages();
+        
+        void clearQueue();
+        
+        bool registerNode(int nodeType, MessageNode* ptr);
+        
+        MessageNode* getNodePtr(int type) const;
+        
+        bool removeNode(int nodeType);
+        
+    private:
+        
+        void discharge(const Telegram& msg);
+        
+    private:
+        
+        std::priority_queue<Telegram> _pq;
+        
+        std::map<int, MessageNode*> _nodes;
+        
+    };
     
-    void clearQueue();
-    
-    bool registerNode(int nodeType, MessageNode* ptr);
-    
-    MessageNode* getNodePtr(int type) const;
-    
-    bool removeNode(int nodeType);
-    
-private:
-    
-    void discharge(const Telegram& msg);
-    
-private:
-    
-    std::priority_queue<Telegram> _pq;
-    
-    std::map<int, MessageNode*> _nodes;
-    
-};
-
-
+}
 
 
 

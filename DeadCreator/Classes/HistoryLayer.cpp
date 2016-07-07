@@ -9,6 +9,7 @@
 #include "HistoryLayer.hpp"
 #include "GMXLayer2.hpp"
 #include "CommandBase.hpp"
+using namespace realtrick;
 using namespace cocos2d;
 
 HistoryLayer::HistoryLayer(GMXLayer2& gmxLayer) :

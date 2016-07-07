@@ -6,32 +6,35 @@
 //
 //
 
-#ifndef GMXFile_hpp
-#define GMXFile_hpp
+#pragma once
 
 #include <string>
 #include <vector>
 
-
-struct GMXFile
+namespace realtrick
 {
     
-    std::string fileName;
-    int tileWidth = -1;
-    int tileHeight = -1;
-    int numOfTileX = -1;
-    int numOfTileY = -1;
-    std::vector<std::vector<std::string>> tileInfos;
-    cocos2d::Size worldSize;
-    int defaultTile = -1;
+    struct GMXFile
+    {
+        
+        std::string fileName;
+        int tileWidth = -1;
+        int tileHeight = -1;
+        int numOfTileX = -1;
+        int numOfTileY = -1;
+        std::vector<std::vector<std::string>> tileInfos;
+        cocos2d::Size worldSize;
+        int defaultTile = -1;
+        
+        GMXFile() = default;
+        
+        virtual ~GMXFile() = default;
+        
+    };
     
-    GMXFile() = default;
-    
-    virtual ~GMXFile() = default;
-    
-};
+}
 
-#endif /* GMXFile_hpp */
+
 
 
 

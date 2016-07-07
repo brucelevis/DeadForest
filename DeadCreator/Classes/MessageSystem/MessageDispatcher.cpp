@@ -8,12 +8,13 @@
 
 #include <chrono>
 
+#include "cocos2d.h"
+using namespace cocos2d;
+
 #include "MessageDispatcher.hpp"
 #include "MessageNode.hpp"
 #include "Telegram.hpp"
-
-#include "cocos2d.h"
-
+using namespace realtrick;
 
 void MessageDispatcher::discharge(const Telegram& msg)
 {

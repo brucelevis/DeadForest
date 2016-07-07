@@ -11,6 +11,7 @@
 #include "GMXLayer2.hpp"
 #include "TileToolCommand.hpp"
 #include "AddEntityToolCommand.hpp"
+using namespace realtrick;
 using namespace cocos2d;
 
 PaletteLayer::PaletteLayer(GMXLayer2& layer):

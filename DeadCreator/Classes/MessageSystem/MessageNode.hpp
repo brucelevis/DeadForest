@@ -12,11 +12,16 @@
 
 class Telegram;
 
-class MessageNode
+namespace realtrick
 {
     
-public:
+    class MessageNode
+    {
+        
+    public:
+        
+        virtual bool handleMessage(const Telegram& msg) { return false; }
+        
+    };
     
-    virtual bool handleMessage(const Telegram& msg) { return false; }
-    
-};
+}

@@ -12,20 +12,22 @@
 
 #include "cocos2d.h"
 
-
-enum MessageNodeType
+namespace realtrick
 {
-    PALETTE_WINDOW,
-    TRIGGER_WINDOW,
-    GMX_LAYER,
-};
-
-enum MessageType : int
-{
-    REDO_TILE, // 앞으로 가기 Ctrl + Y
-    UNDO_TILE, // 뒤로 가기 Ctrl + Z
-};
-
-
+    
+    enum MessageNodeType
+    {
+        PALETTE_WINDOW,
+        TRIGGER_WINDOW,
+        GMX_LAYER,
+    };
+    
+    enum MessageType : int
+    {
+        REDO_TILE, // 앞으로 가기 Ctrl + Y
+        UNDO_TILE, // 뒤로 가기 Ctrl + Z
+    };
+    
+}
 
 

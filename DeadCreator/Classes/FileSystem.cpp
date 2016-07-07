@@ -6,8 +6,11 @@
 //
 //
 
-#include "FileSystem.hpp"
 #include "cocos2d.h"
+using namespace cocos2d;
+
+#include "FileSystem.hpp"
+using namespace realtrick;
 
 std::string FileSystem::getInitialPath()
 {

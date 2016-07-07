@@ -8,6 +8,7 @@
 
 #include "ItemAxe.hpp"
 using namespace cocos2d;
+using namespace realtrick;
 
 ItemAxe::ItemAxe(GMXLayer2& layer, int id) :
 EntityBase(layer, id)

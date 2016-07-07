@@ -8,6 +8,7 @@
 
 #include "ItemM16A2.hpp"
 using namespace cocos2d;
+using namespace realtrick;
 
 ItemM16A2::ItemM16A2(GMXLayer2& layer, int id) :
 EntityBase(layer, id)

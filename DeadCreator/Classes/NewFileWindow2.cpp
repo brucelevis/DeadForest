@@ -131,10 +131,10 @@ void NewFileWindow2::showNewFileWindow(bool* opened)
             {
                 std::string tileName;
                 
-                if ( _currentTile == static_cast<int>(TileType::DIRT)) tileName = "1_" + std::to_string(random(1, 3)) + "_1234";
-                else if ( _currentTile == static_cast<int>(TileType::GRASS)) tileName = "2_" + std::to_string(random(1, 3)) + "_1234";
-                else if ( _currentTile == static_cast<int>(TileType::WATER)) tileName = "3_" + std::to_string(random(1, 3)) + "_1234";
-                else if ( _currentTile == static_cast<int>(TileType::HILL)) tileName = "5_" + std::to_string(random(1, 3)) + "_1234";
+                if ( _currentTile == static_cast<int>(EditorTileType::DIRT)) tileName = "1_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( _currentTile == static_cast<int>(EditorTileType::GRASS)) tileName = "2_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( _currentTile == static_cast<int>(EditorTileType::WATER)) tileName = "3_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( _currentTile == static_cast<int>(EditorTileType::HILL)) tileName = "5_" + std::to_string(random(1, 3)) + "_1234";
                 
                 file->tileInfos[i][j] = tileName;
             }

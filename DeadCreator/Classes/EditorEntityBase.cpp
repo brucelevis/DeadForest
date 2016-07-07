@@ -16,7 +16,7 @@ _gmxLayer(layer),
 _id(id)
 {
     setTag(id);
-    _type = EntityType::INVALID;
+    _type = EditorEntityType::INVALID;
 }
 
 

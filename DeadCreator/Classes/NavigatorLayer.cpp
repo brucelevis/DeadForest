@@ -46,12 +46,12 @@ bool NavigatorLayer::init()
     if ( !Node::init() )
         return false;
     
-    _defaultTile = static_cast<TileType>(_gmxLayer.getFile().defaultTile);
+    _defaultTile = static_cast<EditorTileType>(_gmxLayer.getFile().defaultTile);
     
-    if ( _defaultTile == TileType::DIRT ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_dirt.png")->getName();
-    else if ( _defaultTile == TileType::GRASS ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_grass.png")->getName();
-    else if ( _defaultTile == TileType::WATER ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_water.png")->getName();
-    else if ( _defaultTile == TileType::HILL ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_hill.png")->getName();
+    if ( _defaultTile == EditorTileType::DIRT ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_dirt.png")->getName();
+    else if ( _defaultTile == EditorTileType::GRASS ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_grass.png")->getName();
+    else if ( _defaultTile == EditorTileType::WATER ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_water.png")->getName();
+    else if ( _defaultTile == EditorTileType::HILL ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_hill.png")->getName();
     
     return true;
 }
@@ -225,19 +225,19 @@ void NavigatorLayer::setTile(int x, int y, const TileBase& tile)
     }
     else
     {
-        if ( tile.getType() == TileType::DIRT)
+        if ( tile.getType() == EditorTileType::DIRT)
         {
             _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("dirt_mark.png")->getName());
         }
-        else if ( tile.getType() == TileType::GRASS )
+        else if ( tile.getType() == EditorTileType::GRASS )
         {
             _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("grass_mark.png")->getName());
         }
-        else if ( tile.getType() == TileType::WATER )
+        else if ( tile.getType() == EditorTileType::WATER )
         {
             _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("water_mark.png")->getName());
         }
-        else if ( tile.getType() == TileType::HILL )
+        else if ( tile.getType() == EditorTileType::HILL )
         {
             _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("hill_mark.png")->getName());
         }

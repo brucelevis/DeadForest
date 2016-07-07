@@ -12,9 +12,8 @@
 #include "ui/CocosGUI.h"
 
 #include "GMXFile.hpp"
-#include "CellSpacePartition.hpp"
+#include "EditorCellSpacePartition.hpp"
 #include "TileImage.hpp"
-#include "Camera2D.hpp"
 #include "TileBase.hpp"
 #include "CommandQueue.hpp"
 #include "SizeProtocol.h"
@@ -59,7 +58,7 @@ namespace realtrick
         
         bool isUpdateChunk(const cocos2d::Vec2& newPos, const cocos2d::Vec2& oldPos);
         
-        void putTile(TileType type, int x, int y);
+        void putTile(EditorTileType type, int x, int y);
         
         void setLayerPosition(const cocos2d::Vec2& pos) { _layerPosition = pos; }
         
@@ -147,13 +146,13 @@ namespace realtrick
         cocos2d::Vec2 _centerViewParam;
         cocos2d::Vec2 _tileRootWorldPosition;
         cocos2d::Vec2 _cameraDirection;
-        Camera2D* _camera;
+        cocos2d::Node* _camera;
         float _windowSpeed;
         cocos2d::Node* _tileRoot;
         cocos2d::Node* _rootNode;
         cocos2d::Sprite* _selectedItem;
         
-        CellSpacePartition* _cellSpacePartition;
+        EditorCellSpacePartition* _cellSpacePartition;
         std::map<int, EditorEntityBase*> _entities;
         std::vector<std::vector<TileBase>> _tiles;
         std::vector< std::vector<TileImage*> > _tileImages;

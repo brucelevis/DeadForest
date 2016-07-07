@@ -21,6 +21,9 @@
 #include "EditorSheriff.hpp"
 #include "EditorItems.hpp"
 #include "CellSpacePartition.hpp"
+#include "GameWorld.hpp"
+#include "TestScene.hpp"
+#include "MainMenu3.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 
@@ -107,10 +110,10 @@ bool GMXLayer2::init()
     _selectedItem = Sprite::create();
     _rootNode->addChild(_selectedItem, 10);
     
-    _cellSpacePartition = CellSpacePartition::create(_file.worldSize, Size(_file.tileWidth * 5, _file.tileHeight * 5));
+    _cellSpacePartition = EditorCellSpacePartition::create(_file.worldSize, Size(_file.tileWidth * 5, _file.tileHeight * 5));
     addChild(_cellSpacePartition);
     
-    _camera = Camera2D::create();
+    _camera = Node::create();
     _camera->setPosition(_layerSize / 2);
     addChild(_camera);
     
@@ -234,7 +237,7 @@ void GMXLayer2::showWindow()
     
     if ( ImGui::IsMouseHoveringWindow() && ImGui::GetIO().MouseClicked[0] )
     {
-        Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerPosition.y - height, _layerSize.width, height);
+        cocos2d::Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerPosition.y - height, _layerSize.width, height);
         if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
         {
             GMXLayer2::enableTitleClicked();
@@ -317,7 +320,7 @@ void GMXLayer2::showWindow()
                 }
                 
                 clearSelectedEntites();
-                Rect selectRect(origin, dimension);
+                cocos2d::Rect selectRect(origin, dimension);
                 for( auto &ent : _entities )
                 {
                     if ( ent.second->isVisible() && selectRect.containsPoint(ent.second->getPosition()) )
@@ -327,7 +330,7 @@ void GMXLayer2::showWindow()
                     }
                 }
                 
-                _selectRect = Rect::ZERO;
+                _selectRect = cocos2d::Rect::ZERO;
                 _selectionRectNode->clear();
                 isSelecting = false;
             }
@@ -337,23 +340,23 @@ void GMXLayer2::showWindow()
     
     if ( _imguiLayer.getLayerType() == LayerType::TILE )
     {
-        TileType selectedTile = static_cast<TileType>(_paletteLayer->getSelectedItem());
+        EditorTileType selectedTile = static_cast<EditorTileType>(_paletteLayer->getSelectedItem());
         auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
-        if ( selectedTile != TileType::INVALID )
+        if ( selectedTile != EditorTileType::INVALID )
         {
-            if ( selectedTile == TileType::DIRT )
+            if ( selectedTile == EditorTileType::DIRT )
             {
                 _selectedItem->setTexture("1_1_1234.png");
             }
-            else if ( selectedTile == TileType::GRASS )
+            else if ( selectedTile == EditorTileType::GRASS )
             {
                 _selectedItem->setTexture("selected_grass.png");
             }
-            else if ( selectedTile == TileType::WATER )
+            else if ( selectedTile == EditorTileType::WATER )
             {
                 _selectedItem->setTexture("3_1_1234.png");
             }
-            else if ( selectedTile == TileType::HILL )
+            else if ( selectedTile == EditorTileType::HILL )
             {
                 _selectedItem->setTexture("5_1_1234.png");
             }
@@ -361,7 +364,7 @@ void GMXLayer2::showWindow()
             if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
                     putTile(selectedTile, indices.first, indices.second);
@@ -380,15 +383,15 @@ void GMXLayer2::showWindow()
     else if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN )
     {
         _selectedItem->setPosition(_mousePosInWorld);
-        EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
-        if ( selectedEntity == EntityType::SHERIFF )
+        EditorEntityType selectedEntity = static_cast<EditorEntityType>(_paletteLayer->getSelectedItem());
+        if ( selectedEntity == EditorEntityType::SHERIFF )
         {
             _selectedItem->setSpriteFrame("HumanFistIdleLoop0.png");
             _selectedItem->setOpacity(128);
             if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
                     EditorSheriff* ent = EditorSheriff::create(*this, getNextValidID(), cocos2d::ui::Widget::TextureResType::PLIST);
@@ -406,16 +409,16 @@ void GMXLayer2::showWindow()
     else if ( _paletteLayer->getPaletteType() == PaletteType::ITEM )
     {
         _selectedItem->setPosition(_mousePosInWorld);
-        EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
+        EditorEntityType selectedEntity = static_cast<EditorEntityType>(_paletteLayer->getSelectedItem());
         
-        if ( selectedEntity == EntityType::ITEM_556MM )
+        if ( selectedEntity == EditorEntityType::ITEM_556MM )
         {
             _selectedItem->setSpriteFrame("5_56mm.png");
             _selectedItem->setOpacity(128);
             if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
                     EditorItem556mm* ent = EditorItem556mm::create(*this, getNextValidID(), "5_56mm.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
@@ -425,14 +428,14 @@ void GMXLayer2::showWindow()
                 }
             }
         }
-        else if ( selectedEntity == EntityType::ITEM_9MM )
+        else if ( selectedEntity == EditorEntityType::ITEM_9MM )
         {
             _selectedItem->setSpriteFrame("9mm.png");
             _selectedItem->setOpacity(128);
             if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
                     EditorItem9mm* ent = EditorItem9mm::create(*this, getNextValidID(), "9mm.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
@@ -442,14 +445,14 @@ void GMXLayer2::showWindow()
                 }
             }
         }
-        else if ( selectedEntity == EntityType::ITEM_AXE )
+        else if ( selectedEntity == EditorEntityType::ITEM_AXE )
         {
             _selectedItem->setSpriteFrame("Axe.png");
             _selectedItem->setOpacity(128);
             if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
                     EditorItemAxe* ent = EditorItemAxe::create(*this, getNextValidID(), "Axe.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
@@ -459,14 +462,14 @@ void GMXLayer2::showWindow()
                 }
             }
         }
-        else if ( selectedEntity == EntityType::ITEM_SHELL )
+        else if ( selectedEntity == EditorEntityType::ITEM_SHELL )
         {
             _selectedItem->setSpriteFrame("Shell.png");
             _selectedItem->setOpacity(128);
             if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
                     EditorItemShell* ent = EditorItemShell::create(*this, getNextValidID(), "Shell.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
@@ -476,14 +479,14 @@ void GMXLayer2::showWindow()
                 }
             }
         }
-        else if ( selectedEntity == EntityType::ITEM_M16A2 )
+        else if ( selectedEntity == EditorEntityType::ITEM_M16A2 )
         {
             _selectedItem->setSpriteFrame("M16A2.png");
             _selectedItem->setOpacity(128);
             if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
                     EditorItemM16A2* ent = EditorItemM16A2::create(*this, getNextValidID(), "M16A2.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
@@ -494,14 +497,14 @@ void GMXLayer2::showWindow()
             }
 
         }
-        else if ( selectedEntity == EntityType::ITEM_GLOCK17 )
+        else if ( selectedEntity == EditorEntityType::ITEM_GLOCK17 )
         {
             _selectedItem->setSpriteFrame("Glock17.png");
             _selectedItem->setOpacity(128);
             if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
                     EditorItemGlock17* ent = EditorItemGlock17::create(*this, getNextValidID(), "Glock17.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
@@ -512,14 +515,14 @@ void GMXLayer2::showWindow()
             }
 
         }
-        else if ( selectedEntity == EntityType::ITEM_M1897 )
+        else if ( selectedEntity == EditorEntityType::ITEM_M1897 )
         {
             _selectedItem->setSpriteFrame("M1897.png");
             _selectedItem->setOpacity(128);
             if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
                     EditorItemM1897* ent = EditorItemM1897::create(*this, getNextValidID(), "M1897.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
@@ -531,6 +534,13 @@ void GMXLayer2::showWindow()
         }
     }
     
+    if ( ImGui::IsKeyReleased(257) )
+    {
+        log("dddd");
+        Director::getInstance()->replaceScene(MainMenu3::createScene());
+    }
+    
+    
     ImGui::End();
     ImGui::PopStyleVar(2);
     ImGui::PopStyleColor();
@@ -538,7 +548,7 @@ void GMXLayer2::showWindow()
     setPosition(_layerPosition.x, Director::getInstance()->getVisibleSize().height - _layerPosition.y - _layerSize.height);
     _tileRoot->setPosition(_layerSize / 2);
     
-    _clipNode->setClippingRegion(Rect(0, 0, _layerSize.width, _layerSize.height));
+    _clipNode->setClippingRegion(cocos2d::Rect(0, 0, _layerSize.width, _layerSize.height));
     
     if ( _isShowWindow == false )
     {
@@ -554,11 +564,6 @@ void GMXLayer2::showWindow()
     if ( _isShowNavigator ) _navigatorLayer->showLayer(&_isShowNavigator);
     if ( _isShowHistory ) _historyLayer->showLayer(&_isShowHistory);
     
-    
-    if ( ImGui::IsKeyReleased(257) )
-    {
-        updateCollisionRegion();
-    }
     
 }
 
@@ -639,6 +644,7 @@ void GMXLayer2::update(float dt)
         _currCommand->end();
         _currCommand = prevCommand;
     }
+    
 }
 
 
@@ -699,7 +705,7 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
     
     for(int i = 0 ; i < _cellSpacePartition->getNumOfCellY() * _cellSpacePartition->getNumOfCellX() ; ++ i)
     {
-        Rect cellRect = _cellSpacePartition->getCell(i).boundingBox;
+        cocos2d::Rect cellRect = _cellSpacePartition->getCell(i).boundingBox;
         _worldDebugNode->drawRect(cellRect.origin, cellRect.origin + cellRect.size, Color4F(1, 0, 0, 0.3f));
     }
     
@@ -712,7 +718,7 @@ void GMXLayer2::setCenterViewParameter(const cocos2d::Vec2& p)
 }
 
 
-void GMXLayer2::putTile(TileType type, int x, int y)
+void GMXLayer2::putTile(EditorTileType type, int x, int y)
 {
     if ( _tiles[y][x].getType() == type && _tiles[y][x].getTileTail() == "1234" )
     {
@@ -784,43 +790,43 @@ void GMXLayer2::putTile(TileType type, int x, int y)
                     std::string tail = temp.getTileTail();
                     if ( tail == "2")
                     {
-                        s.push(TileBase(nei[0].first, nei[0].second, TileBase::getTileHeader(TileType::DIRT) + "2", indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[0].first, nei[0].second, TileBase::getTileHeader(EditorTileType::DIRT) + "2", indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(EditorTileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(EditorTileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "23")
                     {
-                        s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(EditorTileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "3")
                     {
-                        s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[2].first, nei[2].second, TileBase::getTileHeader(TileType::DIRT) + "3", indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(EditorTileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[2].first, nei[2].second, TileBase::getTileHeader(EditorTileType::DIRT) + "3", indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(EditorTileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "34")
                     {
-                        s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(EditorTileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "4")
                     {
-                        s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[4].first, nei[4].second, TileBase::getTileHeader(TileType::DIRT) + "4", indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(EditorTileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[4].first, nei[4].second, TileBase::getTileHeader(EditorTileType::DIRT) + "4", indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(EditorTileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "14")
                     {
-                        s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(EditorTileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "1")
                     {
-                        s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[6].first, nei[6].second, TileBase::getTileHeader(TileType::DIRT) + "1", indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(EditorTileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[6].first, nei[6].second, TileBase::getTileHeader(EditorTileType::DIRT) + "1", indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(EditorTileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "12")
                     {
-                        s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                        s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(EditorTileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
                     }
                     
                     setTile(xx, yy, temp);
@@ -860,7 +866,7 @@ void GMXLayer2::putTile(TileType type, int x, int y)
                 }
                 
                 std::string finalTile;
-                if ( originalTail.empty() ) finalTile = TileBase::getTileHeader(TileType::DIRT) + "1234";
+                if ( originalTail.empty() ) finalTile = TileBase::getTileHeader(EditorTileType::DIRT) + "1234";
                 else finalTile = _tiles[yy][xx].getTileHeader() + originalTail;
                 
                 temp.setNumber(finalTile);
@@ -1369,7 +1375,7 @@ void GMXLayer2::updateCollisionRegion()
     {
         for(int j = 0 ; j < _file.numOfTileX + DUMMY_TILE_SIZE * 2; ++ j)
         {
-            if (_tiles[i][j].getType() == TileType::HILL)
+            if (_tiles[i][j].getType() == EditorTileType::HILL)
             {
                 if ( _tiles[i][j].getTileTail() != "1234" ) _tiles[i][j].setInputState(TileInputState::VALID);
                 else _tiles[i][j].setInputState(TileInputState::INVALID);

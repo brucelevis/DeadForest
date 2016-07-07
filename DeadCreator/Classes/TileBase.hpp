@@ -27,7 +27,7 @@ namespace realtrick
         LEFT_UP,
     };
     
-    enum class TileType : int
+    enum class EditorTileType : int
     {
         INVALID = -1,
         DIRT,
@@ -49,10 +49,10 @@ namespace realtrick
             _number(number),
             _position(pos)
             {
-                if ( number[0] == '1') _type = TileType::DIRT;
-                else if ( number[0] == '2' ) _type = TileType::GRASS;
-                else if ( number[0] == '3' ) _type = TileType::WATER;
-                else if ( number[0] == '5' ) _type = TileType::HILL;
+                if ( number[0] == '1') _type = EditorTileType::DIRT;
+                else if ( number[0] == '2' ) _type = EditorTileType::GRASS;
+                else if ( number[0] == '3' ) _type = EditorTileType::WATER;
+                else if ( number[0] == '5' ) _type = EditorTileType::HILL;
             }
             
             TileBase(const TileBase& rhs)
@@ -79,26 +79,26 @@ namespace realtrick
             
             virtual ~TileBase() = default;
             
-            TileType getType() const { return _type; }
+            EditorTileType getType() const { return _type; }
             
             std::string getNumber() const { return _number; }
             
             void setNumber(const std::string& number)
             {
                 _number = number;
-                if ( _number[0] == '1') _type = TileType::DIRT;
-                else if ( _number[0] == '2' ) _type = TileType::GRASS;
-                else if ( _number[0] == '3' ) _type = TileType::WATER;
-                else if ( _number[0] == '5' ) _type = TileType::HILL;
+                if ( _number[0] == '1') _type = EditorTileType::DIRT;
+                else if ( _number[0] == '2' ) _type = EditorTileType::GRASS;
+                else if ( _number[0] == '3' ) _type = EditorTileType::WATER;
+                else if ( _number[0] == '5' ) _type = EditorTileType::HILL;
             }
             
             std::string getTileHeader() const
             {
                 std::string ret;
-                if ( _type == TileType::DIRT ) ret += "1_";
-                if ( _type == TileType::GRASS ) ret += "2_";
-                if ( _type == TileType::WATER ) ret += "3_";
-                if ( _type == TileType::HILL ) ret += "5_";
+                if ( _type == EditorTileType::DIRT ) ret += "1_";
+                if ( _type == EditorTileType::GRASS ) ret += "2_";
+                if ( _type == EditorTileType::WATER ) ret += "3_";
+                if ( _type == EditorTileType::HILL ) ret += "5_";
                 ret += std::to_string(cocos2d::random(1,3)) + "_";
                 
                 return ret;
@@ -109,13 +109,13 @@ namespace realtrick
                 return _number.substr(4, _number.size() - 4);
             }
             
-            static std::string getTileHeader(TileType type)
+            static std::string getTileHeader(EditorTileType type)
             {
                 std::string ret;
-                if ( type == TileType::DIRT ) ret += "1_";
-                if ( type == TileType::GRASS ) ret += "2_";
-                if ( type == TileType::WATER ) ret += "3_";
-                if ( type == TileType::HILL ) ret += "5_";
+                if ( type == EditorTileType::DIRT ) ret += "1_";
+                if ( type == EditorTileType::GRASS ) ret += "2_";
+                if ( type == EditorTileType::WATER ) ret += "3_";
+                if ( type == EditorTileType::HILL ) ret += "5_";
                 ret += std::to_string(cocos2d::random(1,3)) + "_";
                 
                 return ret;
@@ -157,7 +157,7 @@ namespace realtrick
             
             int _yIndex;
             
-            TileType _type;
+            EditorTileType _type;
             
             std::string _number;
             

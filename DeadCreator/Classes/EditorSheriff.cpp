@@ -13,7 +13,7 @@ using namespace realtrick;
 EditorSheriff::EditorSheriff(GMXLayer2& layer, int id) :
 EditorEntityBase(layer, id)
 {
-    _type = EntityType::SHERIFF;
+    _type = EditorEntityType::SHERIFF;
 }
 
 

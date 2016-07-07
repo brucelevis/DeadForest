@@ -51,7 +51,7 @@ namespace realtrick
         std::map<int, ImTextureID> _tileMarks;
         std::map<int, EditorEntityBase*> _entityMarks;
         
-        TileType _defaultTile;
+        EditorTileType _defaultTile;
         GLint _defaultTileTextureName;
         
     };

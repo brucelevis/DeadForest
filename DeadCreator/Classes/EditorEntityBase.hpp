@@ -16,7 +16,7 @@ namespace realtrick
     
     class GMXLayer2;
     
-    enum class EntityType : int
+    enum class EditorEntityType : int
     {
         INVALID = -1,
         SHERIFF = 0,
@@ -27,7 +27,7 @@ namespace realtrick
         ITEM_M16A2,
         ITEM_M1897,
         ITEM_AXE,
-        };
+    };
         
         enum class PlayerType : int
         {
@@ -81,7 +81,7 @@ namespace realtrick
                 GMXLayer2& _gmxLayer;
                 
                 int _id;
-                EntityType _type;
+                EditorEntityType _type;
                 cocos2d::Sprite* _body;
                 cocos2d::Sprite* _shadow;
                 cocos2d::ui::Widget::TextureResType _resType;

@@ -1,6 +1,6 @@
 #include "AppDelegate.h"
-#include "EditScene.h"
 #include "EditScene2.hpp"
+#include "GameWorld.hpp"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 #include "ImGuiGLViewImpl.h"

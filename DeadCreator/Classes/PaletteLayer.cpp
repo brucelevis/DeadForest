@@ -115,27 +115,27 @@ void PaletteLayer::showLayer(bool* opened)
     {
         if ( ImGuiLayer::imageButton("1_1_1234.png", 50, 50) )
         {
-            _selectedItem = static_cast<int>(TileType::DIRT);
+            _selectedItem = static_cast<int>(EditorTileType::DIRT);
             itemSelected = true;
         }
         ImGui::SameLine();
         
         if ( ImGuiLayer::imageButton("2_1_1234.png", 50, 50) )
         {
-            _selectedItem = static_cast<int>(TileType::GRASS);
+            _selectedItem = static_cast<int>(EditorTileType::GRASS);
             itemSelected = true;
         }
         ImGui::SameLine();
         
         if ( ImGuiLayer::imageButton("3_1_1234.png", 50, 50) )
         {
-            _selectedItem = static_cast<int>(TileType::WATER);
+            _selectedItem = static_cast<int>(EditorTileType::WATER);
             itemSelected = true;
         }
         
         if ( ImGuiLayer::imageButton("5_1_1234.png", 50, 50) )
         {
-            _selectedItem = static_cast<int>(TileType::HILL);
+            _selectedItem = static_cast<int>(EditorTileType::HILL);
             itemSelected = true;
         }
         
@@ -150,7 +150,7 @@ void PaletteLayer::showLayer(bool* opened)
     {
         if ( ImGuiLayer::imageButton("human.png", 50, 50) )
         {
-            _selectedItem = static_cast<int>(EntityType::SHERIFF);
+            _selectedItem = static_cast<int>(EditorEntityType::SHERIFF);
             itemSelected = true;
         }
         
@@ -165,47 +165,47 @@ void PaletteLayer::showLayer(bool* opened)
     {
         if ( ImGuiLayer::imageButton("5_56mm.png", 50, 50) )
         {
-            _selectedItem = static_cast<int>(EntityType::ITEM_556MM);
+            _selectedItem = static_cast<int>(EditorEntityType::ITEM_556MM);
             itemSelected = true;
         }
         
         ImGui::SameLine();
         if ( ImGuiLayer::imageButton("9mm.png", 50, 50) )
         {
-            _selectedItem = static_cast<int>(EntityType::ITEM_9MM);
+            _selectedItem = static_cast<int>(EditorEntityType::ITEM_9MM);
             itemSelected = true;
         }
         
         ImGui::SameLine();
         if ( ImGuiLayer::imageButton("Shell.png", 50, 50) )
         {
-            _selectedItem = static_cast<int>(EntityType::ITEM_SHELL);
+            _selectedItem = static_cast<int>(EditorEntityType::ITEM_SHELL);
             itemSelected = true;
         }
         
         if ( ImGuiLayer::imageButton("Axe.png", 50, 50) )
         {
-            _selectedItem = static_cast<int>(EntityType::ITEM_AXE);
+            _selectedItem = static_cast<int>(EditorEntityType::ITEM_AXE);
             itemSelected = true;
         }
         
         ImGui::SameLine();
         if ( ImGuiLayer::imageButton("Glock17.png", 50, 50) )
         {
-            _selectedItem = static_cast<int>(EntityType::ITEM_GLOCK17);
+            _selectedItem = static_cast<int>(EditorEntityType::ITEM_GLOCK17);
             itemSelected = true;
         }
         
         ImGui::SameLine();
         if ( ImGuiLayer::imageButton("M16A2.png", 50, 50) )
         {
-            _selectedItem = static_cast<int>(EntityType::ITEM_M16A2);
+            _selectedItem = static_cast<int>(EditorEntityType::ITEM_M16A2);
             itemSelected = true;
         }
         
         if ( ImGuiLayer::imageButton("M1897.png", 50, 50) )
         {
-            _selectedItem = static_cast<int>(EntityType::ITEM_M1897);
+            _selectedItem = static_cast<int>(EditorEntityType::ITEM_M1897);
             itemSelected = true;
         }
         

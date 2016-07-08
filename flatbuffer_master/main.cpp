@@ -7,14 +7,17 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 using namespace std;
 
 #include "monster_generated.h"
+#include "flatbuffers/util.h"
 using namespace MyGame::Sample;
 
 int main()
 {
+    
     flatbuffers::FlatBufferBuilder builder;
     auto weapon_one_name = builder.CreateString("Sword");
     short weapon_one_damage = 3;
@@ -26,8 +29,6 @@ int main()
     auto axe = CreateWeapon(builder, weapon_two_name, weapon_two_damage);
     
     auto name = builder.CreateString("Orc");
-    unsigned char treasure[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    auto inventory = builder.CreateVector(treasure, 10);
     
     std::vector<flatbuffers::Offset<Weapon>> weapons_vector;
     weapons_vector.push_back(sword);
@@ -43,36 +44,29 @@ int main()
     monster_builder.add_hp(hp);
     monster_builder.add_mana(mana);
     monster_builder.add_name(name);
-    monster_builder.add_inventory(inventory);
     monster_builder.add_color(Color_Red);
     monster_builder.add_weapons(weapons);
     auto orc = monster_builder.Finish();
     builder.Finish(orc);
- 
+    
+    flatbuffers::SaveFile("/Users/jun/Desktop/untitled.txt",
+                          reinterpret_cast<const char*>(builder.GetBufferPointer()),
+                          builder.GetSize(),
+                          false);
+    
+    std::string loaded_file;
+    int ret = flatbuffers::LoadFile("/Users/jun/Desktop/untitled.txt", false, &loaded_file);
+    if ( ret )
     {
-        auto buffer_pointer = builder.GetBufferPointer();
-        auto monster = GetMonster(buffer_pointer);
-        
+        auto monster = GetMonster(loaded_file.c_str());
         cout << monster->hp() << endl;
         cout << monster->mana() << endl;
         cout << monster->pos()->x() << " " << monster->pos()->y() << " " << monster->pos()->z() << endl;
-        
-        auto inv = monster->inventory();
-        auto inv_len = inv->Length();
-        for(auto i = 0; i < inv_len; ++ i)
-        {
-            cout << inv->Get(i) << " ";
-        }
-        cout << endl;
-        
         auto weapons = monster->weapons();
-        auto weapon_len = weapons->Length();
-        auto second_weapon_name = weapons->Get(1)->name()->str();
-        auto second_weapon_damage = weapons->Get(1)->damage();
-        
-        cout << weapon_len << endl;
-        cout << second_weapon_name << endl;
-        cout << second_weapon_damage << endl;
+        for (auto iter2 = weapons->begin() ; iter2 != weapons->end() ; ++iter2)
+        {
+            cout << iter2->name()->str() << " " << iter2->damage() << endl;
+        }
     }
     
 }

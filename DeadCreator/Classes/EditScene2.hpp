@@ -56,6 +56,9 @@ namespace realtrick
         
         int getLayerType() const { return _layerType; }
         
+        bool isUndo();
+        bool isRedo();
+        
     private:
         
         GMXLayer2* _layer = nullptr;
@@ -68,6 +71,8 @@ namespace realtrick
         bool _enableNewMap = true;
         bool _enableOpenMap = true;
         bool _enableSaveMap = false;
+        bool _enableRedo = false;
+        bool _enableUndo = false;
         
         
         bool _isEditEnable = false;

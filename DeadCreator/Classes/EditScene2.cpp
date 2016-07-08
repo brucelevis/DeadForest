@@ -70,13 +70,13 @@ bool EditScene2::init()
             }
             if (ImGui::BeginMenu("Edit", _isEditEnable))
             {
-                if (ImGui::MenuItem("Undo", "CTRL+Z", false, _layer->isUndo())) { _layer->undo(); }
-                if (ImGui::MenuItem("Redo", "CTRL+Y", false, _layer->isRedo())) { _layer->redo(); }
+                if ( ImGui::MenuItem("Undo", "CTRL+Z", false, isUndo()) ) { _layer->undo(); }
+                if ( ImGui::MenuItem("Redo", "CTRL+Y", false, isRedo()) ) { _layer->redo(); }
                 
                 ImGui::Separator();
-                if (ImGui::MenuItem("Cut", "CTRL+X", false, false)) {}
-                if (ImGui::MenuItem("Copy", "CTRL+C", false, false)) {}
-                if (ImGui::MenuItem("Paste", "CTRL+V", false, false)) {}
+                if ( ImGui::MenuItem("Cut", "CTRL+X", false, false) ) {}
+                if ( ImGui::MenuItem("Copy", "CTRL+C", false, false) ) {}
+                if ( ImGui::MenuItem("Paste", "CTRL+V", false, false) ) {}
                 ImGui::EndMenu();
             }
             
@@ -191,7 +191,7 @@ bool EditScene2::init()
         
         ImGui::SameLine();
         static float undoAlpha;
-        if ( _layer && _layer->isUndo() )
+        if ( isUndo() )
         {
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
@@ -205,13 +205,13 @@ bool EditScene2::init()
         }
         if (ImGuiLayer::imageButton("undo.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, undoAlpha)))
         {
-            if ( _layer) _layer->undo();
+            if ( isUndo() ) _layer->undo();
         }
         ImGui::PopStyleColor(2);
         
         ImGui::SameLine();
         static float redoAlpha;
-        if ( _layer && _layer->isRedo() )
+        if ( isRedo() )
         {
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
@@ -225,7 +225,7 @@ bool EditScene2::init()
         }
         if (ImGuiLayer::imageButton("redo.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, redoAlpha)))
         {
-            if ( _layer) _layer->redo();
+            if ( isRedo() ) _layer->redo();
         }
         ImGui::PopStyleColor(2);
         
@@ -312,20 +312,43 @@ void EditScene2::createGMXLayer(GMXFile* file)
 
 void EditScene2::doNewButton()
 {
-    _isFileEnable = false;
+    setEnableFileMenu(false);
+    setEnableEditMenu(false);
+    setEnablePlayerMenu(false);
+    setEnableWindowMenu(false);
+    
     _showNewMap = true;
     _enableOpenMap = false;
     _enableNewMap = false;
+    _enableSaveMap = false;
+    _enableUndo = false;
+    _enableRedo = false;
 }
 
 
 void EditScene2::revertNewButton()
 {
     setEnableFileMenu(true);
+    setEnableEditMenu(true);
+    setEnablePlayerMenu(true);
+    setEnableWindowMenu(true);
     _enableOpenMap = true;
     _enableNewMap = true;
+    _enableSaveMap = true;
+    _enableRedo = true;
+    _enableUndo = true;
 }
 
+
+bool EditScene2::isUndo()
+{
+    return (_layer &&  _layer->isUndo() && _enableUndo);
+}
+
+bool EditScene2::isRedo()
+{
+    return (_layer &&  _layer->isRedo() && _enableRedo);
+}
 
 
 

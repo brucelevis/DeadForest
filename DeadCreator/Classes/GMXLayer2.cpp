@@ -536,10 +536,8 @@ void GMXLayer2::showWindow()
     
     if ( ImGui::IsKeyReleased(257) )
     {
-        log("dddd");
-        Director::getInstance()->replaceScene(MainMenu3::createScene());
+        //Director::getInstance()->replaceScene(MainMenu3::createScene());
     }
-    
     
     ImGui::End();
     ImGui::PopStyleVar(2);
@@ -563,7 +561,6 @@ void GMXLayer2::showWindow()
     if ( _isShowPalette ) _paletteLayer->showLayer(&_isShowPalette);
     if ( _isShowNavigator ) _navigatorLayer->showLayer(&_isShowNavigator);
     if ( _isShowHistory ) _historyLayer->showLayer(&_isShowHistory);
-    
     
 }
 

@@ -13,6 +13,7 @@ using namespace cocos2d;
 #include "GMXLayer2.hpp"
 #include "GMXFile.hpp"
 #include "NewFileWindow2.hpp"
+#include "SaveAsLayer.hpp"
 #include "PaletteLayer.hpp"
 #include "SizeProtocol.h"
 using namespace realtrick;
@@ -41,15 +42,19 @@ bool EditScene2::init()
     _newFileWindow = NewFileWindow2::create(this);
     addChild(_newFileWindow);
 
+    _saveAsLayer = SaveAsLayer::create(this);
+    addChild(_saveAsLayer);
+    
     addImGUI([this] {
         
         if ( _showNewMap ) _newFileWindow->showNewFileWindow(&_showNewMap);
+        if ( _showSaveAs ) _saveAsLayer->showLayer(&_showSaveAs);
         
         if (ImGui::BeginMainMenuBar())
         {
             if (ImGui::BeginMenu("File", _isFileEnable))
             {
-                if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap, _enableNewMap))
+                if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap, true))
                 {
                     if ( _showNewMap ) doNewButton();
                 }
@@ -61,8 +66,8 @@ bool EditScene2::init()
                     ImGui::MenuItem("fish_hat.h");
                     ImGui::EndMenu();
                 }
-                if (ImGui::MenuItem("Save", "Ctrl+S", false, _enableSaveMap)) { }
-                if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", false, _enableSaveMap)) { }
+                if (ImGui::MenuItem("Save", "Ctrl+S", false, _enableSaveMap)) { saveFile(_layer->getCurrFilePath()); }
+                if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", &_showSaveAs, _enableSaveMap)) { saveAsFile(); }
                 ImGui::Separator();
                 if (ImGui::MenuItem("Quit", "Alt+F4")) {}
                 
@@ -116,7 +121,7 @@ bool EditScene2::init()
             ImGui::EndMainMenuBar();
         }
 
-        ImGuiState& g = *GImGui;
+        ImGuiContext& g = *GImGui;
         float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
         
         ImGuiIO& io = ImGui::GetIO();
@@ -138,20 +143,13 @@ bool EditScene2::init()
                      ImGuiWindowFlags_NoBringToFrontOnFocus|
                      ImGuiWindowFlags_ShowBorders);
         
-        static float newAlpha;
-        if ( _enableNewMap )
-        {
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
-            newAlpha = 1.0f;
-        }
-        else
-        {
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0, 0.0, 0.0, 0.0));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
-            newAlpha = 0.2f;
-        }
-        if ( ImGuiLayer::imageButton("new.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, newAlpha)) )
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
+        if ( ImGuiLayer::imageButton("new.png", 20, 20,
+                                     ImVec2(0,0),
+                                     ImVec2(1,1), -1,
+                                     ImVec4(0,0,0,0),
+                                     ImVec4(1, 1, 1, 1.0)) )
         {
             doNewButton();
         }
@@ -186,7 +184,13 @@ bool EditScene2::init()
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
             saveAlpha = 0.2f;
         }
-        ImGui::SameLine(); ImGuiLayer::imageButton("save.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, saveAlpha));
+        ImGui::SameLine();
+        if (ImGuiLayer::imageButton("save.png", 20, 20,
+                                    ImVec2(0,0),
+                                    ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, saveAlpha)) )
+        {
+            doSaveButton();
+        }
         ImGui::PopStyleColor(2);
         
         ImGui::SameLine();
@@ -302,56 +306,57 @@ void EditScene2::createGMXLayer(GMXFile* file)
 {
     _layer = GMXLayer2::create(*this, *file);
     addChild(_layer);
-    revertNewButton();
     
+    // menu
     setEnableEditMenu(true);
     setEnablePlayerMenu(true);
     setEnableWindowMenu(true);
+    
+    // button
+    setEnableSaveButton(true);
 }
 
 
 void EditScene2::doNewButton()
 {
-    setEnableFileMenu(false);
-    setEnableEditMenu(false);
-    setEnablePlayerMenu(false);
-    setEnableWindowMenu(false);
-    
     _showNewMap = true;
-    _enableOpenMap = false;
-    _enableNewMap = false;
-    _enableSaveMap = false;
-    _enableUndo = false;
-    _enableRedo = false;
-}
-
-
-void EditScene2::revertNewButton()
-{
-    setEnableFileMenu(true);
-    setEnableEditMenu(true);
-    setEnablePlayerMenu(true);
-    setEnableWindowMenu(true);
-    _enableOpenMap = true;
-    _enableNewMap = true;
-    _enableSaveMap = true;
-    _enableRedo = true;
-    _enableUndo = true;
 }
 
 
 bool EditScene2::isUndo()
 {
-    return (_layer &&  _layer->isUndo() && _enableUndo);
+    return (_layer &&  _layer->isUndo());
 }
 
 bool EditScene2::isRedo()
 {
-    return (_layer &&  _layer->isRedo() && _enableRedo);
+    return (_layer &&  _layer->isRedo());
 }
 
 
+void EditScene2::doSaveButton()
+{
+    if ( _layer->isFirstFile() )
+    {
+        saveAsFile();
+    }
+    else
+    {
+        saveFile(_layer->getCurrFilePath());
+    }
+}
 
+
+void EditScene2::saveFile(const std::string& filePath)
+{
+    _layer->save(filePath);
+}
+
+
+void EditScene2::saveAsFile()
+{
+    _showSaveAs = true;
+}
 
 
 

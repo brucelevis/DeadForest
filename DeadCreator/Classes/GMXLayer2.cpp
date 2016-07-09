@@ -120,6 +120,7 @@ bool GMXLayer2::init()
     initFile();
     initCollisionData();
     
+    
     _paletteLayer = PaletteLayer::create(*this);
     addChild(_paletteLayer);
     
@@ -184,30 +185,14 @@ void GMXLayer2::initFile()
 
 void GMXLayer2::showWindow()
 {
-    ImGuiState& g = *GImGui;
+    auto& g = *GImGui;
     float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
-    
-    if ( _layerSize.width + _layerPosition.x > g.IO.DisplaySize.x - WINDOW_PADDING )
-        _layerSize.width = g.IO.DisplaySize.x - WINDOW_PADDING - _layerPosition.x;
-    
-    if ( _layerSize.height + _layerPosition.y > g.IO.DisplaySize.y - WINDOW_PADDING - height )
-        _layerSize.height = g.IO.DisplaySize.y - WINDOW_PADDING - _layerPosition.y - height;
-    
-    if ( _layerPosition.x < WINDOW_PADDING )
-        _layerPosition.x = WINDOW_PADDING;
-    
-    if ( _layerPosition.y < height + WINDOW_PADDING + ICONBAR_HEIGHT )
-        _layerPosition.y = height + WINDOW_PADDING + ICONBAR_HEIGHT;
-    
-    if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - WINDOW_PADDING )
-        _layerPosition.x = g.IO.DisplaySize.x - _layerSize.width - WINDOW_PADDING;
-    
-    if ( _layerPosition.y + _layerSize.height > g.IO.DisplaySize.y - WINDOW_PADDING - STATUSBAR_HEIGHT )
-        _layerPosition.y = g.IO.DisplaySize.y - _layerSize.height - WINDOW_PADDING - STATUSBAR_HEIGHT;
-    
-    
-    ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Always);
+
+    ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100),
+                                        ImVec2(ImGui::GetIO().DisplaySize.x - WINDOW_PADDING * 4,
+                                               ImGui::GetIO().DisplaySize.y - height - ICONBAR_HEIGHT - STATUSBAR_HEIGHT - WINDOW_PADDING * 4));
+    ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Once);
     
     ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
@@ -221,8 +206,68 @@ void GMXLayer2::showWindow()
     auto canvasSize = Size(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
     ImGui::InvisibleButton("##dummy", ImVec2(canvasSize.width, canvasSize.height));
     
+    bool positionDirty = false;
+    
+    if ( _layerPosition.x < WINDOW_PADDING )
+    {
+        _layerPosition.x = WINDOW_PADDING * 1.5f;
+        positionDirty = true;
+    }
+    else if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - WINDOW_PADDING )
+    {
+        _layerPosition.x = g.IO.DisplaySize.x - _layerSize.width - WINDOW_PADDING * 1.5f;
+        positionDirty = true;
+    }
+
+    if ( _layerPosition.y < height + WINDOW_PADDING + ICONBAR_HEIGHT )
+    {
+        _layerPosition.y = height + WINDOW_PADDING  * 1.5f + ICONBAR_HEIGHT;
+        positionDirty = true;
+    }
+    
+    else if ( _layerPosition.y + _layerSize.height > g.IO.DisplaySize.y - WINDOW_PADDING - STATUSBAR_HEIGHT )
+    {
+        _layerPosition.y = g.IO.DisplaySize.y - _layerSize.height - WINDOW_PADDING* 1.5f - STATUSBAR_HEIGHT;
+        positionDirty = true;
+    }
+    
+    if ( positionDirty ) ImGui::SetWindowPos(ImVec2(_layerPosition.x, _layerPosition.y));
+    
     _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
     _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+    
+    setPosition(_layerPosition.x, Director::getInstance()->getVisibleSize().height - _layerPosition.y - _layerSize.height);
+    _tileRoot->setPosition(_layerSize / 2);
+    _clipNode->setClippingRegion(cocos2d::Rect(0, 0, _layerSize.width, _layerSize.height));
+    
+    if ( !_imguiLayer.isModal() ) updateCocosLogic();
+    
+    ImGui::End();
+    ImGui::PopStyleVar(2);
+    ImGui::PopStyleColor();
+    
+    if ( _isShowWindow == false )
+    {
+        setVisible(false);
+        _isShowPalette = false;
+        _isShowNavigator = false;
+        _imguiLayer.setEnableEditMenu(false);
+        _imguiLayer.setEnablePlayerMenu(false);
+        _imguiLayer.setEnableWindowMenu(false);
+        _imguiLayer.setEnableSaveButton(false);
+    }
+    
+    if ( _isShowPalette ) _paletteLayer->showLayer(&_isShowPalette);
+    if ( _isShowNavigator ) _navigatorLayer->showLayer(&_isShowNavigator);
+    if ( _isShowHistory ) _historyLayer->showLayer(&_isShowHistory);
+    
+}
+
+
+void GMXLayer2::updateCocosLogic()
+{
+    ImGuiContext& g = *GImGui;
+    float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
     
     _mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - ImGui::GetCursorScreenPos().x,
                              ImGui::GetContentRegionAvail().y - (ImGui::GetIO().MousePos.y - ImGui::GetCursorScreenPos().y));
@@ -255,7 +300,7 @@ void GMXLayer2::showWindow()
             if ( _currCommand ) _currCommand->begin();
             _isLeftMouseClickEventDone = true;
         }
-
+        
     }
     else if ( ImGui::GetIO().MouseReleased[0] && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
     {
@@ -302,7 +347,7 @@ void GMXLayer2::showWindow()
                 _selectRect.size = _mousePosInWorld - _selectRect.origin;
                 _selectionRectNode->clear();
                 _selectionRectNode->drawRect(_selectRect.origin, _selectRect.origin + Vec2(_selectRect.size), Color4F(0.0, 1.0, 0.0, 0.5));
-               
+                
                 isSelecting = true;
             }
             
@@ -336,7 +381,6 @@ void GMXLayer2::showWindow()
             }
         }
     }
-
     
     if ( _imguiLayer.getLayerType() == LayerType::TILE )
     {
@@ -495,7 +539,7 @@ void GMXLayer2::showWindow()
                     addEntity(ent);
                 }
             }
-
+            
         }
         else if ( selectedEntity == EditorEntityType::ITEM_GLOCK17 )
         {
@@ -513,7 +557,7 @@ void GMXLayer2::showWindow()
                     addEntity(ent);
                 }
             }
-
+            
         }
         else if ( selectedEntity == EditorEntityType::ITEM_M1897 )
         {
@@ -538,30 +582,6 @@ void GMXLayer2::showWindow()
     {
         //Director::getInstance()->replaceScene(MainMenu3::createScene());
     }
-    
-    ImGui::End();
-    ImGui::PopStyleVar(2);
-    ImGui::PopStyleColor();
-    
-    setPosition(_layerPosition.x, Director::getInstance()->getVisibleSize().height - _layerPosition.y - _layerSize.height);
-    _tileRoot->setPosition(_layerSize / 2);
-    
-    _clipNode->setClippingRegion(cocos2d::Rect(0, 0, _layerSize.width, _layerSize.height));
-    
-    if ( _isShowWindow == false )
-    {
-        setVisible(false);
-        _isShowPalette = false;
-        _isShowNavigator = false;
-        _imguiLayer.setEnableEditMenu(false);
-        _imguiLayer.setEnablePlayerMenu(false);
-        _imguiLayer.setEnableWindowMenu(false);
-    }
-    
-    if ( _isShowPalette ) _paletteLayer->showLayer(&_isShowPalette);
-    if ( _isShowNavigator ) _navigatorLayer->showLayer(&_isShowNavigator);
-    if ( _isShowHistory ) _historyLayer->showLayer(&_isShowHistory);
-    
 }
 
 
@@ -1603,7 +1623,10 @@ std::pair<int, int> GMXLayer2::getNextTileIndex(const std::string& tailWithInput
 }
 
 
-
+void GMXLayer2::save(const std::string& path)
+{
+    log("save! path: %s", path.c_str());
+}
 
 
 

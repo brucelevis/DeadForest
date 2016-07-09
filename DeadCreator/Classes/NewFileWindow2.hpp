@@ -9,7 +9,7 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "imgui.h"
+#include "ImGuiLayer.h"
 
 namespace realtrick
 {
@@ -37,6 +37,10 @@ namespace realtrick
         
         EditScene2* _imguiLayer;
         
+        cocos2d::Size _layerSize;
+        cocos2d::Vec2 _layerPosition;
+        cocos2d::Rect _boundingBoxPadding;
+
         int _tileSizeXItem = 0;
         
         int _tileSizeYItem = 0;

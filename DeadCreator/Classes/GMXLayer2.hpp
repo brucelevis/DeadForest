@@ -48,6 +48,8 @@ namespace realtrick
         
         virtual void update(float dt) override;
         
+        void updateCocosLogic();
+        
         const GMXFile& getFile() const { return _file; }
         
         void setTile(int x, int y, const TileBase& tile, bool isExecCommand = false);
@@ -81,25 +83,18 @@ namespace realtrick
         void initFile();
         
         bool& isShowPalette() { return _isShowPalette; }
-        
         bool& isShowNavigator() { return _isShowNavigator; }
-        
         bool& isShowHistory() { return _isShowHistory; }
         
         bool isRedo() const { return _historyLayer->isRedo(); }
-        
         bool isUndo() const { return _historyLayer->isUndo(); }
-        
         void redo() { _historyLayer->redo(); }
-        
         void undo() { _historyLayer->undo(); }
         
         PaletteLayer* getPaletteLayer() const { return _paletteLayer; }
         
         void setCommand(CommandBase* newCommand);
-        
         TileToolCommand* getTileToolCommand() const { return _tileToolCommand; }
-        
         AddEntityToolCommand* getAddEntityToolCommand() const { return _addEntityToolCommand; }
         
         bool addEntity(EditorEntityBase* entity, int localZOrder = 0, bool isExecCommand = false);
@@ -123,6 +118,11 @@ namespace realtrick
         
         void initCollisionData();
         void updateCollisionRegion();
+        
+        bool isFirstFile() const { return _isFirstFile; }
+        std::string getCurrFilePath() const { return _currFilePath; }
+        
+        void save(const std::string& path);
         
     private:
         
@@ -187,6 +187,9 @@ namespace realtrick
         std::map<std::string, std::vector<cocos2d::Vec2>> _tileCollisions;
         std::vector< std::vector<cocos2d::Vec2> > _collisionRegions;
         cocos2d::DrawNode* _collisionNode;
+        
+        bool _isFirstFile = true;
+        std::string _currFilePath;
         
     };
     

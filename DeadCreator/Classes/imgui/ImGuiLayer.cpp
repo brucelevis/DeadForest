@@ -55,11 +55,11 @@ bool ImGuiLayer::init()
     style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.9000000, 0.7000000, 0.0000000, 1.0000000);
     style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.0000000, 0.6000000, 0.0000000, 1.0000000);
     style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.2600000, 0.5900000, 0.9800000, 0.3500000);
-    style.Colors[ImGuiCol_TooltipBg] = ImVec4(1.0000000, 1.0000000, 1.0000000, 0.9400000);
+    style.Colors[ImGuiCol_PopupBg] = ImVec4(1.0000000, 1.0000000, 1.0000000, 0.9400000);
     style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.2000000, 0.2000000, 0.2000000, 0.3500000);
 
     
-    style.WindowFillAlphaDefault = 0.98f;
+    style.Alpha = 0.98f;
     style.WindowPadding.x = 4.0f;
     style.WindowPadding.y = 4.0f;
     style.FramePadding = ImVec2(4.0f, 4.0f);

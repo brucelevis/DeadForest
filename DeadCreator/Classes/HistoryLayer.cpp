@@ -50,30 +50,10 @@ bool HistoryLayer::init()
 
 void HistoryLayer::showLayer(bool* opened)
 {
-    ImGuiState& g = *GImGui;
+    ImGuiContext& g = *GImGui;
     float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
-    
-    if ( _layerPosition.x < WINDOW_PADDING )
-    {
-        _layerPosition.x = WINDOW_PADDING;
-    }
-    
-    if ( _layerPosition.y < height + WINDOW_PADDING + ICONBAR_HEIGHT)
-    {
-        _layerPosition.y = height + WINDOW_PADDING + ICONBAR_HEIGHT;
-    }
-    
-    if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - WINDOW_PADDING )
-    {
-        _layerPosition.x = g.IO.DisplaySize.x - _layerSize.width - WINDOW_PADDING;
-    }
-    
-    if ( _layerPosition.y + _layerSize.height > g.IO.DisplaySize.y - WINDOW_PADDING - STATUSBAR_HEIGHT )
-    {
-        _layerPosition.y = g.IO.DisplaySize.y - _layerSize.height - WINDOW_PADDING - STATUSBAR_HEIGHT;
-    }
 
-    ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Always);
+    ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Once);
     ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Once);
     
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);

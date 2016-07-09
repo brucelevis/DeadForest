@@ -17,7 +17,10 @@ using namespace cocos2d;
 using namespace realtrick;
 
 NewFileWindow2::NewFileWindow2(EditScene2* layer) :
-_imguiLayer(layer)
+_imguiLayer(layer),
+_layerSize(430, 430),
+_layerPosition((Director::getInstance()->getVisibleSize().width - 430) / 2,
+               (Director::getInstance()->getVisibleSize().height - 430) / 2)
 {
 }
 
@@ -42,129 +45,135 @@ NewFileWindow2* NewFileWindow2::create(EditScene2* layer)
 
 void NewFileWindow2::showNewFileWindow(bool* opened)
 {
-    auto visibleSize = _director->getVisibleSize();
+    ImGuiContext& g = *GImGui;
+    float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
     
-    Vec2 windowSize = Vec2(430, 430);
-    ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
-    ImGui::SetNextWindowPos(ImVec2((visibleSize.width - windowSize.x) / 2, (visibleSize.height - windowSize.y) / 2), ImGuiSetCond_Appearing);
-    if (!ImGui::Begin("New", opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+    ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Once);
+    ImGui::OpenPopup("New");
+    if (ImGui::BeginPopupModal("New", NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::End();
-        return;
-    }
-    
-    ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
-    ImGui::BeginChild("##TileSize", ImVec2(0,60), true);
-    ImGui::Text("Tile Size");
-    ImGui::Columns(2, "##col1", false);
-    
-    const char* items1[] = {"128"};
-    ImGui::Combo("width", &_tileSizeXItem, items1, 1);
-    ImGui::NextColumn();
-    
-    const char* items2[] = {"128"};
-    ImGui::Combo("height", &_tileSizeYItem, items2, 1);
-    
-    ImGui::EndChild();
-    ImGui::PopStyleVar();
-    
-    ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
-    ImGui::BeginChild("##Number Of Tiles", ImVec2(0,60), true);
-    
-    ImGui::Text("Number Of Tiles");
-    ImGui::Columns(2, "##col2", false);
-    
-    const char* items3[] = {"32", "64", "128", "192", "256" };
-    ImGui::Combo("x", &_numOfTileX, items3, 5);
-    ImGui::NextColumn();
-    
-    const char* items4[] = {"32", "64", "128", "192", "256" };
-    ImGui::Combo("y", &_numOfTileY, items4, 5);
-    
-    ImGui::EndChild();
-    ImGui::PopStyleVar();
-    
-    ImGui::Text("World size is (%d) x (%d)",
-                atoi(items1[_tileSizeXItem]) * atoi(items3[_numOfTileX]),
-                atoi(items2[_tileSizeYItem]) * atoi(items4[_numOfTileY]));
-    
-    ImGui::Text("\n");
-    
-    ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
-    ImGui::BeginChild("##Default Tile", ImVec2(0,180), true);
-    
-    ImGui::Text("Default Tile");
-    
-    const char* tiles[] = { "Dirt", "Grass", "Water", "Hill" };
-    ImGui::ListBox("select\ndefault tile", &_currentTile, tiles, 4, 6);
-    
-    ImGui::EndChild();
-    ImGui::PopStyleVar();
-    
-    static int nextNumber = 0;
-    
-    if (ImGui::Button("Create"))
-    {
-        // create map
-        GMXFile* file = new GMXFile();
+        _imguiLayer->enableModal(true);
         
-        file->fileName = "untitled_map_" + std::to_string(nextNumber++);
-        file->tileWidth = atoi(items1[_tileSizeXItem]);
-        file->tileHeight = atoi(items2[_tileSizeYItem]);
-        file->numOfTileX = atoi(items3[_numOfTileX]);
-        file->numOfTileY = atoi(items4[_numOfTileY]);
-        file->worldSize = Size(file->tileWidth * file->numOfTileX, file->tileHeight * file->numOfTileY);
-        file->defaultTile = _currentTile;
+        _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
+        _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
         
-        int x = file->numOfTileX + DUMMY_TILE_SIZE * 2;
-        int y = file->numOfTileY * 2 + DUMMY_TILE_SIZE * 4;
+        log("%f %f", _layerPosition.x, _layerPosition.y);
         
-        file->tileInfos.resize(y);
-        for(int i = 0 ; i < y ; ++ i)
+        _boundingBoxPadding.setRect(_layerPosition.x + g.Style.WindowPadding.x,
+                                    _layerPosition.y + g.Style.WindowPadding.y + height,
+                                    _layerSize.width - g.Style.WindowPadding.x * 2.0f,
+                                    _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
+        
+        ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
+        ImGui::BeginChild("##TileSize", ImVec2(0,60), true);
+        ImGui::Text("Tile Size");
+        ImGui::Columns(2, "##col1", false);
+        
+        const char* items1[] = {"128"};
+        ImGui::Combo("width", &_tileSizeXItem, items1, 1);
+        ImGui::NextColumn();
+        
+        const char* items2[] = {"128"};
+        ImGui::Combo("height", &_tileSizeYItem, items2, 1);
+        
+        ImGui::EndChild();
+        ImGui::PopStyleVar();
+        
+        ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
+        ImGui::BeginChild("##Number Of Tiles", ImVec2(0,60), true);
+        
+        ImGui::Text("Number Of Tiles");
+        ImGui::Columns(2, "##col2", false);
+        
+        const char* items3[] = {"32", "64", "128", "192", "256" };
+        ImGui::Combo("x", &_numOfTileX, items3, 5);
+        ImGui::NextColumn();
+        
+        const char* items4[] = {"32", "64", "128", "192", "256" };
+        ImGui::Combo("y", &_numOfTileY, items4, 5);
+        
+        ImGui::EndChild();
+        ImGui::PopStyleVar();
+        
+        ImGui::Text("World size is (%d) x (%d)",
+                    atoi(items1[_tileSizeXItem]) * atoi(items3[_numOfTileX]),
+                    atoi(items2[_tileSizeYItem]) * atoi(items4[_numOfTileY]));
+        
+        ImGui::Text("\n");
+        
+        ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
+        ImGui::BeginChild("##Default Tile", ImVec2(0,180), true);
+        
+        ImGui::Text("Default Tile");
+        
+        const char* tiles[] = { "Dirt", "Grass", "Water", "Hill" };
+        ImGui::ListBox("select\ndefault tile", &_currentTile, tiles, 4, 6);
+        
+        ImGui::EndChild();
+        ImGui::PopStyleVar();
+        
+        static int nextNumber = 0;
+        
+        if (ImGui::Button("Create"))
         {
-            file->tileInfos[i].resize(x);
-        }
-        
-        for(int i = 0 ; i < y; ++ i)
-        {
-            for(int j = 0 ; j < x ; ++ j)
+            // create map
+            GMXFile* file = new GMXFile();
+            
+            file->fileName = "untitled_map_" + std::to_string(nextNumber++);
+            file->tileWidth = atoi(items1[_tileSizeXItem]);
+            file->tileHeight = atoi(items2[_tileSizeYItem]);
+            file->numOfTileX = atoi(items3[_numOfTileX]);
+            file->numOfTileY = atoi(items4[_numOfTileY]);
+            file->worldSize = Size(file->tileWidth * file->numOfTileX, file->tileHeight * file->numOfTileY);
+            file->defaultTile = _currentTile;
+            
+            int x = file->numOfTileX + DUMMY_TILE_SIZE * 2;
+            int y = file->numOfTileY * 2 + DUMMY_TILE_SIZE * 4;
+            
+            file->tileInfos.resize(y);
+            for(int i = 0 ; i < y ; ++ i)
             {
-                std::string tileName;
-                
-                if ( _currentTile == static_cast<int>(EditorTileType::DIRT)) tileName = "1_" + std::to_string(random(1, 3)) + "_1234";
-                else if ( _currentTile == static_cast<int>(EditorTileType::GRASS)) tileName = "2_" + std::to_string(random(1, 3)) + "_1234";
-                else if ( _currentTile == static_cast<int>(EditorTileType::WATER)) tileName = "3_" + std::to_string(random(1, 3)) + "_1234";
-                else if ( _currentTile == static_cast<int>(EditorTileType::HILL)) tileName = "5_" + std::to_string(random(1, 3)) + "_1234";
-                
-                file->tileInfos[i][j] = tileName;
+                file->tileInfos[i].resize(x);
             }
+            
+            for(int i = 0 ; i < y; ++ i)
+            {
+                for(int j = 0 ; j < x ; ++ j)
+                {
+                    std::string tileName;
+                    
+                    if ( _currentTile == static_cast<int>(EditorTileType::DIRT)) tileName = "1_" + std::to_string(random(1, 3)) + "_1234";
+                    else if ( _currentTile == static_cast<int>(EditorTileType::GRASS)) tileName = "2_" + std::to_string(random(1, 3)) + "_1234";
+                    else if ( _currentTile == static_cast<int>(EditorTileType::WATER)) tileName = "3_" + std::to_string(random(1, 3)) + "_1234";
+                    else if ( _currentTile == static_cast<int>(EditorTileType::HILL)) tileName = "5_" + std::to_string(random(1, 3)) + "_1234";
+                    
+                    file->tileInfos[i][j] = tileName;
+                }
+            }
+            
+            _imguiLayer->createGMXLayer(file);
+            
+            *opened = false;
+            closeWindow();
         }
         
-        _imguiLayer->createGMXLayer(file);
-        
-        *opened = false;
-        closeWindow();
+        ImGui::SameLine();
+        if ( ImGui::Button("Cancel") )
+        {
+            *opened = false;
+            closeWindow();
+        }
+
+        ImGui::EndPopup();
     }
-    
-    ImGui::SameLine();
-    if ( ImGui::Button("Cancel") )
-    {
-        *opened = false;
-        closeWindow();
-    }
-    
-    if (*opened == false)
-    {
-        closeWindow();
-    }
-    
-    ImGui::End();
 }
 
 
 void NewFileWindow2::closeWindow()
 {
-    _imguiLayer->revertNewButton();
+    ImGui::CloseCurrentPopup();
+    _imguiLayer->enableModal(false);
     
     _tileSizeXItem = 0;
     _tileSizeYItem = 0;

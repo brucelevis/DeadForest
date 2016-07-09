@@ -17,6 +17,7 @@ namespace realtrick
     class GMXFile;
     class GMXLayer2;
     class NewFileWindow2;
+    class SaveAsLayer;
     
     enum LayerType
     {
@@ -39,49 +40,49 @@ namespace realtrick
         virtual bool init() override;
         
         void setEnableFileMenu(bool enable) { _isFileEnable = enable; }
-        
         void setEnableEditMenu(bool enable) { _isEditEnable = enable; }
-        
         void setEnableWindowMenu(bool enable) { _isWindowEnable = enable; }
-        
         void setEnablePlayerMenu(bool enable) { _isPlayerEnable = enable; }
+        void setEnableSaveButton(bool enable) { _enableSaveMap = enable; }
         
         void createGMXLayer(GMXFile* file);
         
-        void doNewButton();
-        
-        void revertNewButton();
-        
         void setLayerType(LayerType type) { _layerType = type; }
-        
         int getLayerType() const { return _layerType; }
-        
+    
         bool isUndo();
         bool isRedo();
+        
+        void doNewButton();
+        void doSaveButton();
+        
+        void saveFile(const std::string& filePath);
+        void saveAsFile();
+        
+        bool isModal() const { return _isModal; }
+        void enableModal(bool enable) { _isModal = enable; }
         
     private:
         
         GMXLayer2* _layer = nullptr;
         
         NewFileWindow2* _newFileWindow = nullptr;
+        SaveAsLayer* _saveAsLayer = nullptr;
         
         bool _showNewMap = false;
+        bool _showSaveAs = false;
         
-        bool _isFileEnable = true;
-        bool _enableNewMap = true;
         bool _enableOpenMap = true;
         bool _enableSaveMap = false;
-        bool _enableRedo = false;
-        bool _enableUndo = false;
         
-        
+        bool _isFileEnable = true;
         bool _isEditEnable = false;
-        
         bool _isPlayerEnable = false;
-        
         bool _isWindowEnable = false;
         
         int _layerType = LayerType::INVALID;
+        
+        bool _isModal = false;
         
     };
     

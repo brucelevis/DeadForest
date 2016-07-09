@@ -59,34 +59,14 @@ bool NavigatorLayer::init()
 
 void NavigatorLayer::showLayer(bool* opened)
 {
-    ImGuiState& g = *GImGui;
+    ImGuiContext& g = *GImGui;
     float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
-    
-    if ( _layerPosition.x < WINDOW_PADDING )
-    {
-        _layerPosition.x = WINDOW_PADDING;
-    }
-    
-    if ( _layerPosition.y < height + WINDOW_PADDING + ICONBAR_HEIGHT )
-    {
-        _layerPosition.y = height + WINDOW_PADDING + ICONBAR_HEIGHT;
-    }
-    
-    if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - WINDOW_PADDING )
-    {
-        _layerPosition.x = g.IO.DisplaySize.x - _layerSize.width - WINDOW_PADDING;
-    }
-    
-    if ( _layerPosition.y + _layerSize.height > g.IO.DisplaySize.y - WINDOW_PADDING - STATUSBAR_HEIGHT )
-    {
-        _layerPosition.y = g.IO.DisplaySize.y - _layerSize.height - WINDOW_PADDING - STATUSBAR_HEIGHT;
-    }
     
     _layerSize = Size(Director::getInstance()->getVisibleSize().width * 0.15f, Director::getInstance()->getVisibleSize().width * 0.15f + height + g.Style.WindowPadding.y * 2);
     _layerSize.width = std::min(_layerSize.width, 300.0f);
     _layerSize.height = std::min(_layerSize.height, 300.0f);
     
-    ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Always);
+    ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Once);
     ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Always);
     
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
@@ -143,7 +123,8 @@ void NavigatorLayer::showLayer(bool* opened)
     ImGui::PushClipRect(ImVec2(_boundingBoxPadding.origin.x,
                                _boundingBoxPadding.origin.y),
                         ImVec2(_boundingBoxPadding.origin.x + _boundingBoxPadding.size.width,
-                               _boundingBoxPadding.origin.y + _boundingBoxPadding.size.height - 2));
+                               _boundingBoxPadding.origin.y + _boundingBoxPadding.size.height - 2),
+                        false);
     
     static auto file = _gmxLayer.getFile();
     static ImVec2 worldSize = ImVec2(file.worldSize.width, file.worldSize.height);

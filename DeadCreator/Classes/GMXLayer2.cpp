@@ -27,6 +27,10 @@
 using namespace cocos2d;
 using namespace realtrick;
 
+#include "flatbuffers.h"
+#include "util.h"
+#include "GMXFile_generated.h"
+
 bool GMXLayer2::TITLE_CLICKED = false;
 
 GMXLayer2::GMXLayer2(EditScene2& imguiLayer, GMXFile& file) :
@@ -737,7 +741,7 @@ void GMXLayer2::setCenterViewParameter(const cocos2d::Vec2& p)
 
 void GMXLayer2::putTile(EditorTileType type, int x, int y)
 {
-    if ( _tiles[y][x].getType() == type && _tiles[y][x].getTileTail() == "1234" )
+    if ( _tiles[y][x].getTileType() == type && _tiles[y][x].getTileTail() == "1234" )
     {
         return ;
     }
@@ -1392,7 +1396,7 @@ void GMXLayer2::updateCollisionRegion()
     {
         for(int j = 0 ; j < _file.numOfTileX + DUMMY_TILE_SIZE * 2; ++ j)
         {
-            if (_tiles[i][j].getType() == EditorTileType::HILL)
+            if (_tiles[i][j].getTileType() == EditorTileType::HILL)
             {
                 if ( _tiles[i][j].getTileTail() != "1234" ) _tiles[i][j].setInputState(TileInputState::VALID);
                 else _tiles[i][j].setInputState(TileInputState::INVALID);
@@ -1625,7 +1629,52 @@ std::pair<int, int> GMXLayer2::getNextTileIndex(const std::string& tailWithInput
 
 void GMXLayer2::save(const std::string& path)
 {
+    _isFirstFile = false;
+    
     log("save! path: %s", path.c_str());
+    log("file name: %s", _file.fileName.c_str());
+    log("default tile: %d", _file.defaultTile);
+    log("number of tile x: %d", _file.numOfTileX);
+    log("number of tile y: %d", _file.numOfTileY);
+    log("tile width: %d", _file.tileWidth);
+    log("tile height: %d", _file.tileHeight);
+    log("world size: %.f, %.f", _file.worldSize.width, _file.worldSize.height);
+    
+    for (int i = 0 ; i < _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4; ++ i)
+    {
+        for(int j = 0 ; j < _file.numOfTileX + DUMMY_TILE_SIZE * 2; ++ j)
+        {
+            if ( _tiles[i][j].getTileType() != static_cast<EditorTileType>(_file.defaultTile) )
+            {
+                log("[%d, %d]: %s", i, j, _file.tileInfos[i][j].c_str());
+            }
+        }
+    }
+    
+    flatbuffers::FlatBufferBuilder builder;
+    std::vector<flatbuffers::Offset<DeadCreator::TileInfo>> tileInfos;
+    for (int i = 0 ; i < _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4; ++ i)
+    {
+        for(int j = 0 ; j < _file.numOfTileX + DUMMY_TILE_SIZE * 2; ++ j)
+        {
+            if ( _tiles[i][j].getTileType() != static_cast<EditorTileType>(_file.defaultTile) )
+            {
+                DeadCreator::Coord coord(j ,i);
+                auto tile = DeadCreator::CreateTileInfo(builder, builder.CreateString(_tiles[i][j].getNumber()), &coord);
+                tileInfos.push_back(tile);
+            }
+        }
+    }
+    DeadCreator::Coord numOfTiles(_file.numOfTileX, _file.numOfTileY);
+    DeadCreator::Size tileSize(_file.tileWidth, _file.tileHeight);
+    auto file = DeadCreator::CreateGMXFile(builder,
+                                           static_cast<DeadCreator::TileType>(_file.defaultTile),
+                                           builder.CreateVector(tileInfos), &numOfTiles, &tileSize);
+    builder.Finish(file);
+    flatbuffers::SaveFile(path.c_str(),
+                          reinterpret_cast<const char*>(builder.GetBufferPointer()),
+                          builder.GetSize(),
+                          true);
 }
 
 

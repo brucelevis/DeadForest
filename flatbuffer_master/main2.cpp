@@ -22,7 +22,7 @@ int main()
     tiles.push_back(tile);
     Coord numOfTiles(30, 30);
     Size tileSize(128, 128);
-    auto file = CreateGMXFile(builder,TileType::TileType_Dirt, builder.CreateVector(tiles), &numOfTiles, &tileSize);
+    auto file = CreateGMXFile(builder, TileType::TileType_Dirt, builder.CreateVector(tiles), &numOfTiles, &tileSize);
     builder.Finish(file);
 
     auto GMXFile = GetGMXFile(builder.GetBufferPointer());

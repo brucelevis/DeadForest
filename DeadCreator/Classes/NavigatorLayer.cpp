@@ -200,25 +200,25 @@ void NavigatorLayer::setTile(int x, int y, const TileBase& tile)
     static int numOfTileX = _gmxLayer.getFile().numOfTileX;
     int key = indexToNumber(x, y, numOfTileX, DUMMY_TILE_SIZE);
     
-    if ( tile.getType() == _defaultTile )
+    if ( tile.getTileType() == _defaultTile )
     {
         _tileMarks.erase(key);
     }
     else
     {
-        if ( tile.getType() == EditorTileType::DIRT)
+        if ( tile.getTileType() == EditorTileType::DIRT)
         {
             _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("dirt_mark.png")->getName());
         }
-        else if ( tile.getType() == EditorTileType::GRASS )
+        else if ( tile.getTileType() == EditorTileType::GRASS )
         {
             _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("grass_mark.png")->getName());
         }
-        else if ( tile.getType() == EditorTileType::WATER )
+        else if ( tile.getTileType() == EditorTileType::WATER )
         {
             _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("water_mark.png")->getName());
         }
-        else if ( tile.getType() == EditorTileType::HILL )
+        else if ( tile.getTileType() == EditorTileType::HILL )
         {
             _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("hill_mark.png")->getName());
         }

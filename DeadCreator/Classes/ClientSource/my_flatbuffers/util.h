@@ -39,7 +39,7 @@
 #include <limits.h>
 #endif
 
-#include "flatbuffers/flatbuffers.h"
+#include "flatbuffers.h"
 
 namespace flatbuffers {
 

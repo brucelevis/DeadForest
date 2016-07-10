@@ -79,7 +79,7 @@ namespace realtrick
             
             virtual ~TileBase() = default;
             
-            EditorTileType getType() const { return _type; }
+            EditorTileType getTileType() const { return _type; }
             
             std::string getNumber() const { return _number; }
             

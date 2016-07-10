@@ -18,6 +18,7 @@ namespace realtrick
     class GMXLayer2;
     class NewFileWindow2;
     class SaveAsLayer;
+    class OpenLayer;
     
     enum LayerType
     {
@@ -46,6 +47,7 @@ namespace realtrick
         void setEnableSaveButton(bool enable) { _enableSaveMap = enable; }
         
         void createGMXLayer(GMXFile* file);
+        void createGMXLayer(const std::string& filePath);
         
         void setLayerType(LayerType type) { _layerType = type; }
         int getLayerType() const { return _layerType; }
@@ -55,6 +57,7 @@ namespace realtrick
         
         void doNewButton();
         void doSaveButton();
+        void doOpenButton();
         
         void saveFile(const std::string& filePath);
         void saveAsFile();
@@ -68,9 +71,11 @@ namespace realtrick
         
         NewFileWindow2* _newFileWindow = nullptr;
         SaveAsLayer* _saveAsLayer = nullptr;
+        OpenLayer* _openLayer = nullptr;
         
         bool _showNewMap = false;
         bool _showSaveAs = false;
+        bool _showOpenMap = false;
         
         bool _enableOpenMap = true;
         bool _enableSaveMap = false;

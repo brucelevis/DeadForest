@@ -6,6 +6,9 @@
 //
 //
 
+#include <boost/filesystem.hpp>
+using namespace boost::filesystem;
+
 #include "ui/CocosGUI.h"
 using namespace cocos2d;
 
@@ -14,9 +17,13 @@ using namespace cocos2d;
 #include "GMXFile.hpp"
 #include "NewFileWindow2.hpp"
 #include "SaveAsLayer.hpp"
+#include "OpenLayer.hpp"
 #include "PaletteLayer.hpp"
 #include "SizeProtocol.h"
 using namespace realtrick;
+
+#include "GMXFile_generated.h"
+#include "util.h"
 
 Scene* EditScene2::createScene()
 {
@@ -45,10 +52,14 @@ bool EditScene2::init()
     _saveAsLayer = SaveAsLayer::create(this);
     addChild(_saveAsLayer);
     
+    _openLayer = OpenLayer::create(this);
+    addChild(_openLayer);
+    
     addImGUI([this] {
         
         if ( _showNewMap ) _newFileWindow->showNewFileWindow(&_showNewMap);
         if ( _showSaveAs ) _saveAsLayer->showLayer(&_showSaveAs);
+        if ( _showOpenMap ) _openLayer->showLayer(&_showOpenMap);
         
         if (ImGui::BeginMainMenuBar())
         {
@@ -58,7 +69,10 @@ bool EditScene2::init()
                 {
                     if ( _showNewMap ) doNewButton();
                 }
-                if (ImGui::MenuItem("Open", "Ctrl+O", false, _enableOpenMap)) {}
+                if (ImGui::MenuItem("Open", "Ctrl+O", false, _enableOpenMap))
+                {
+                    if ( _showOpenMap ) doOpenButton();
+                }
                 if (ImGui::BeginMenu("Open Recent"))
                 {
                     ImGui::MenuItem("fish_hat.c");
@@ -168,7 +182,13 @@ bool EditScene2::init()
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
             openAlpha = 0.2f;
         }
-        ImGui::SameLine(); ImGuiLayer::imageButton("open.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, openAlpha));
+        ImGui::SameLine();
+        if (ImGuiLayer::imageButton("open.png", 20, 20,
+                                    ImVec2(0,0),
+                                    ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, openAlpha)))
+        {
+            doOpenButton();
+        }
         ImGui::PopStyleColor(2);
         
         static float saveAlpha;
@@ -317,9 +337,91 @@ void EditScene2::createGMXLayer(GMXFile* file)
 }
 
 
+void EditScene2::createGMXLayer(const std::string& filePath)
+{
+    std::string loadData;
+    auto ret =  flatbuffers::LoadFile(filePath.c_str(), true, &loadData);
+    if ( ret )
+    {
+        auto gmxFile = DeadCreator::GetGMXFile(loadData.c_str());
+        
+        auto file = new GMXFile();
+        file->fileName = path(filePath).leaf().native();
+        file->defaultTile = gmxFile->default_type();
+        file->numOfTileX = gmxFile->number_of_tiles()->x();
+        file->numOfTileY = gmxFile->number_of_tiles()->y();
+        file->tileWidth = gmxFile->tile_size()->width();
+        file->tileHeight = gmxFile->tile_size()->height();
+        file->worldSize = Size(file->numOfTileX * file->tileWidth, file->numOfTileY * file->tileHeight);
+        
+        int x = file->numOfTileX + DUMMY_TILE_SIZE * 2;
+        int y = file->numOfTileY * 2 + DUMMY_TILE_SIZE * 4;
+        
+        file->tileInfos.resize(y);
+        for(int i = 0 ; i < y ; ++ i)
+        {
+            file->tileInfos[i].resize(x);
+        }
+        
+        for(int i = 0 ; i < y; ++ i)
+        {
+            for(int j = 0 ; j < x ; ++ j)
+            {
+                std::string tileName;
+                
+                if ( file->defaultTile == static_cast<int>(EditorTileType::DIRT))
+                    tileName = "1_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( file->defaultTile == static_cast<int>(EditorTileType::GRASS))
+                    tileName = "2_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( file->defaultTile == static_cast<int>(EditorTileType::WATER))
+                    tileName = "3_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( file->defaultTile == static_cast<int>(EditorTileType::HILL))
+                    tileName = "5_" + std::to_string(random(1, 3)) + "_1234";
+                
+                file->tileInfos[i][j] = tileName;
+            }
+        }
+
+        
+        for ( auto iter = gmxFile->tiles()->begin(); iter != gmxFile->tiles()->end() ; ++ iter)
+        {
+            int xx = iter->indices()->x();
+            int yy = iter->indices()->y();
+            file->tileInfos[yy][xx] = iter->number()->str();
+        }
+        
+        _layer = GMXLayer2::create(*this, *file);
+        addChild(_layer);
+        
+        for ( auto iter = gmxFile->tiles()->begin(); iter != gmxFile->tiles()->end() ; ++ iter)
+        {
+            int xx = iter->indices()->x();
+            int yy = iter->indices()->y();
+            TileBase tile = TileBase(xx, yy, iter->number()->str(),
+                                     indexToPosition(xx, yy, file->tileWidth, file->tileHeight, DUMMY_TILE_SIZE));
+            _layer->setTile(xx, yy, tile, true);
+        }
+        
+        // menu
+        setEnableEditMenu(true);
+        setEnablePlayerMenu(true);
+        setEnableWindowMenu(true);
+        
+        // button
+        setEnableSaveButton(true);
+    }
+}
+
+
 void EditScene2::doNewButton()
 {
     _showNewMap = true;
+}
+
+
+void EditScene2::doOpenButton()
+{
+    _showOpenMap = true;
 }
 
 

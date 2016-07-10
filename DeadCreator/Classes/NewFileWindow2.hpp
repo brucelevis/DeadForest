@@ -36,19 +36,11 @@ namespace realtrick
     private:
         
         EditScene2* _imguiLayer;
-        
-        cocos2d::Size _layerSize;
-        cocos2d::Vec2 _layerPosition;
-        cocos2d::Rect _boundingBoxPadding;
 
         int _tileSizeXItem = 0;
-        
         int _tileSizeYItem = 0;
-        
         int _numOfTileX = 0;
-        
         int _numOfTileY = 0;
-        
         int _currentTile = 0;
         
     };

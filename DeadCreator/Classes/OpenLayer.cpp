@@ -1,5 +1,5 @@
 //
-//  SaveAsLayer.cpp
+//  OpenLayer.cpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 7. 9..
@@ -9,29 +9,29 @@
 #include <boost/filesystem.hpp>
 using namespace boost::filesystem;
 
-#include "SaveAsLayer.hpp"
+#include "OpenLayer.hpp"
 #include "EditScene2.hpp"
 #include "SizeProtocol.h"
 using namespace cocos2d;
 using namespace realtrick;
 
-SaveAsLayer::SaveAsLayer(EditScene2* layer) :
+OpenLayer::OpenLayer(EditScene2* layer) :
 _imguiLayer(layer),
 _filePath("")
 {
-    strncpy(_filePath, UserDefault::getInstance()->getStringForKey("recent_save_path", "").c_str(), 256);
-    checkIsSaveFile();
+    strncpy(_filePath, UserDefault::getInstance()->getStringForKey("recent_open_path", "").c_str(), 256);
+    checkIsOpenFile();
 }
 
 
-SaveAsLayer::~SaveAsLayer()
+OpenLayer::~OpenLayer()
 {
 }
 
 
-SaveAsLayer* SaveAsLayer::create(EditScene2* layer)
+OpenLayer* OpenLayer::create(EditScene2* layer)
 {
-    auto ret = new (std::nothrow) SaveAsLayer(layer);
+    auto ret = new (std::nothrow) OpenLayer(layer);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -42,33 +42,33 @@ SaveAsLayer* SaveAsLayer::create(EditScene2* layer)
 }
 
 
-void SaveAsLayer::showLayer(bool* opened)
+void OpenLayer::showLayer(bool* opened)
 {
     ImGuiContext& g = *GImGui;
     ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 430) / 2, (g.IO.DisplaySize.x - 200) / 2), ImGuiSetCond_Once);
-    ImGui::OpenPopup("Save As");
-    if (ImGui::BeginPopupModal("Save As", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    ImGui::OpenPopup("Open");
+    if (ImGui::BeginPopupModal("Open", NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
         _imguiLayer->enableModal(true);
         
         if (ImGui::InputText("", _filePath, 256))
         {
-            checkIsSaveFile();
+            checkIsOpenFile();
         }
         
-        ImGui::TextColored(_isPossibleSave ? ImVec4(0,0.6,0,1) : ImVec4(0.6,0,0,1),
-                           _isPossibleSave ? "can" : "can not");
+        ImGui::TextColored(_isPossibleOpen ? ImVec4(0,0.6,0,1) : ImVec4(0.6,0,0,1),
+                           _isPossibleOpen ? "can" : "can not");
         
         auto style = ImGui::GetStyle();
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(style.Colors[ImGuiCol_Text].x,
                                                     style.Colors[ImGuiCol_Text].y,
                                                     style.Colors[ImGuiCol_Text].z,
-                                                    _saveButtonTextAlpha));
+                                                    _openButtonTextAlpha));
         
-        if (ImGui::ButtonEx("Save", ImVec2(60, 20), _saveButtonFlags))
+        if (ImGui::ButtonEx("Open", ImVec2(60, 20), _openButtonFlags))
         {
-            _imguiLayer->saveFile(std::string(_filePath) + ".gmx");
-            UserDefault::getInstance()->setStringForKey("recent_save_path", _filePath);
+            _imguiLayer->createGMXLayer(_filePath);
+            UserDefault::getInstance()->setStringForKey("recent_open_path", _filePath);
             UserDefault::getInstance()->flush();
             *opened = false;
             closeWindow();
@@ -79,6 +79,7 @@ void SaveAsLayer::showLayer(bool* opened)
         if (ImGui::Button("Cancel", ImVec2(100, 20)))
         {
             closeWindow();
+            strncpy(_filePath, UserDefault::getInstance()->getStringForKey("recent_open_path", "").c_str(), 256);
             *opened = false;
         }
         ImGui::EndPopup();
@@ -86,37 +87,36 @@ void SaveAsLayer::showLayer(bool* opened)
 }
 
 
-void SaveAsLayer::closeWindow()
+void OpenLayer::closeWindow()
 {
-    
     ImGui::CloseCurrentPopup();
     _imguiLayer->enableModal(false);
 }
 
 
-void SaveAsLayer::checkIsSaveFile()
+void OpenLayer::checkIsOpenFile()
 {
     std::string temp = _filePath;
-    auto idx = temp.find_last_of('/');
-    temp = temp.substr(0, idx);
-    temp += '/';
-    
-    path parentPath = path(temp);
-    _isPossibleSave = (_filePath[0] != '\0' &&
-                       exists(parentPath) && is_directory(parentPath) && !exists(path(_filePath)));
-    
-    if ( _isPossibleSave )
+    std::string ext;
+    if ( temp.size() > 4 )
     {
-        _saveButtonTextAlpha = 1.0f;
-        _saveButtonFlags = 0;
+        ext = temp.substr(temp.size() - 4, 4);
+    }
+    
+    path leaf = path(temp).leaf().native();
+    _isPossibleOpen = (exists(_filePath) && ext == ".gmx");
+    
+    if ( _isPossibleOpen )
+    {
+        _openButtonTextAlpha = 1.0f;
+        _openButtonFlags = 0;
     }
     else
     {
-        _saveButtonTextAlpha = 0.5f;
-        _saveButtonFlags = ImGuiButtonFlags_Disabled;
+        _openButtonTextAlpha = 0.5f;
+        _openButtonFlags = ImGuiButtonFlags_Disabled;
     }
 }
-
 
 
 

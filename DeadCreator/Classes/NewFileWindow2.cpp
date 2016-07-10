@@ -17,10 +17,7 @@ using namespace cocos2d;
 using namespace realtrick;
 
 NewFileWindow2::NewFileWindow2(EditScene2* layer) :
-_imguiLayer(layer),
-_layerSize(430, 430),
-_layerPosition((Director::getInstance()->getVisibleSize().width - 430) / 2,
-               (Director::getInstance()->getVisibleSize().height - 430) / 2)
+_imguiLayer(layer)
 {
 }
 
@@ -46,24 +43,12 @@ NewFileWindow2* NewFileWindow2::create(EditScene2* layer)
 void NewFileWindow2::showNewFileWindow(bool* opened)
 {
     ImGuiContext& g = *GImGui;
-    float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
     
-    ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Once);
-    ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Once);
+    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 430) / 2, (g.IO.DisplaySize.y - 430) / 2), ImGuiSetCond_Once);
     ImGui::OpenPopup("New");
     if (ImGui::BeginPopupModal("New", NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
         _imguiLayer->enableModal(true);
-        
-        _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-        _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
-        
-        log("%f %f", _layerPosition.x, _layerPosition.y);
-        
-        _boundingBoxPadding.setRect(_layerPosition.x + g.Style.WindowPadding.x,
-                                    _layerPosition.y + g.Style.WindowPadding.y + height,
-                                    _layerSize.width - g.Style.WindowPadding.x * 2.0f,
-                                    _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
         
         ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
         ImGui::BeginChild("##TileSize", ImVec2(0,60), true);

@@ -1,8 +1,8 @@
 //
-//  SaveAsLayer.hpp
+//  OpenLayer.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 7. 9..
+//  Created by mac on 2016. 7. 10..
 //
 //
 
@@ -17,43 +17,32 @@ namespace realtrick
     
     class EditScene2;
     
-    class SaveAsLayer : public cocos2d::Node
+    class OpenLayer : public cocos2d::Node
     {
         
     public:
         
-        explicit SaveAsLayer(EditScene2* layer);
+        explicit OpenLayer(EditScene2* layer);
         
-        virtual ~SaveAsLayer();
+        virtual ~OpenLayer();
         
-        static SaveAsLayer* create(EditScene2* layer);
+        static OpenLayer* create(EditScene2* layer);
         
         void showLayer(bool* opened);
         
         void closeWindow();
         
-        void checkIsSaveFile();
+        void checkIsOpenFile();
         
     private:
         
         EditScene2* _imguiLayer;
         
         char _filePath[256];
-        ImGuiButtonFlags _saveButtonFlags = ImGuiButtonFlags_Disabled;
-        float _saveButtonTextAlpha = 0.5f;
-        bool _isPossibleSave = false;
+        ImGuiButtonFlags _openButtonFlags = ImGuiButtonFlags_Disabled;
+        float _openButtonTextAlpha = 0.5f;
+        bool _isPossibleOpen = false;
         
     };
     
 }
-
-
-
-
-
-
-
-
-
-
-

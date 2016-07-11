@@ -29,70 +29,71 @@ namespace realtrick
         ITEM_AXE,
     };
         
-        enum class PlayerType : int
+    enum class PlayerType : int
+    {
+        INVALID = -1,
+        PLAYER1 = 0,
+        PLAYER2,
+        PLAYER3,
+        PLAYER4,
+        PLAYER5,
+        PLAYER6,
+        PLAYER7,
+        PLAYER8,
+        NEUTRAL = 12,
+    };
+            
+    class EditorEntityBase : public cocos2d::Node
+    {
+        
+    public:
+        
+        EditorEntityBase(GMXLayer2& layer, int id);
+        
+        virtual ~EditorEntityBase();
+        
+        virtual bool init() override;
+        
+        int getID() const { return _id; }
+        
+        void setPlayerType(PlayerType type) { _playerType = type; }
+        
+        PlayerType getPlayerType() const { return _playerType; }
+        
+        virtual cocos2d::Rect getBoundingBox() const override
         {
-            NEUTRAL = 0,
-            PLAYER1,
-            PLAYER2,
-            PLAYER3,
-            PLAYER4,
-            PLAYER5,
-            PLAYER6,
-            PLAYER7,
-            PLAYER8,
-            };
-            
-            class EditorEntityBase : public cocos2d::Node
-            {
-                
-            public:
-                
-                EditorEntityBase(GMXLayer2& layer, int id);
-                
-                virtual ~EditorEntityBase();
-                
-                virtual bool init() override;
-                
-                int getID() const { return _id; }
-                
-                void setPlayerType(PlayerType type) { _playerType = type; }
-                
-                PlayerType getPlayerType() const { return _playerType; }
-                
-                virtual cocos2d::Rect getBoundingBox() const override
-                {
-                    return cocos2d::Rect(getPositionX() - _boundingBox.size.width / 2,
-                                         getPositionY() - _boundingBox.size.height / 2,
-                                         _boundingBox.size.width,
-                                         _boundingBox.size.height);
-                }
-                
-                virtual void setBoundingBox(const cocos2d::Rect& aabb);
-                
-                void setVisibleAABB(bool enable) { if ( _boundingBoxNode ) _boundingBoxNode->setVisible(enable); }
-                
-                void setSelected(bool enable)
-                {
-                    if ( _selectedCircle ) _selectedCircle->setVisible(enable);
-                }
-                
-            protected:
-                
-                GMXLayer2& _gmxLayer;
-                
-                int _id;
-                EditorEntityType _type;
-                cocos2d::Sprite* _body;
-                cocos2d::Sprite* _shadow;
-                cocos2d::ui::Widget::TextureResType _resType;
-                PlayerType _playerType;
-                cocos2d::Rect _boundingBox;
-                cocos2d::DrawNode* _boundingBoxNode = nullptr;
-                cocos2d::Sprite* _selectedCircle = nullptr;
-                
-            };
-            
+            return cocos2d::Rect(getPositionX() - _boundingBox.size.width / 2,
+                                 getPositionY() - _boundingBox.size.height / 2,
+                                 _boundingBox.size.width,
+                                 _boundingBox.size.height);
         }
+            
+        virtual void setBoundingBox(const cocos2d::Rect& aabb);
+        
+        void setVisibleAABB(bool enable) { if ( _boundingBoxNode ) _boundingBoxNode->setVisible(enable); }
+        
+        void setSelected(bool enable)
+        {
+            if ( _selectedCircle ) _selectedCircle->setVisible(enable);
+        }
+            
+    protected:
+            
+        GMXLayer2& _gmxLayer;
+        
+        int _id;
+        EditorEntityType _type;
+        cocos2d::Sprite* _body;
+        cocos2d::Sprite* _shadow;
+        cocos2d::ui::Widget::TextureResType _resType;
+        PlayerType _playerType;
+        cocos2d::Rect _boundingBox;
+        cocos2d::DrawNode* _boundingBoxNode = nullptr;
+        cocos2d::Sprite* _selectedCircle = nullptr;
+        
+    };
+        
+}
         
         
         

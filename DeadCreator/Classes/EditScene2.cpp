@@ -101,14 +101,14 @@ bool EditScene2::init()
             
             if (ImGui::BeginMenu("Players", _isPlayerEnable))
             {
-                if (ImGui::MenuItem("Player 1")) {}
-                if (ImGui::MenuItem("Player 2")) {}
-                if (ImGui::MenuItem("Player 3")) {}
-                if (ImGui::MenuItem("Player 4")) {}
-                if (ImGui::MenuItem("Player 5")) {}
-                if (ImGui::MenuItem("Player 6")) {}
-                if (ImGui::MenuItem("Player 7")) {}
-                if (ImGui::MenuItem("Player 8")) {}
+                if (ImGui::MenuItem("Player 1")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER1); }
+                if (ImGui::MenuItem("Player 2")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER2); }
+                if (ImGui::MenuItem("Player 3")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER3); }
+                if (ImGui::MenuItem("Player 4")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER4); }
+                if (ImGui::MenuItem("Player 5")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER5); }
+                if (ImGui::MenuItem("Player 6")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER6); }
+                if (ImGui::MenuItem("Player 7")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER7); }
+                if (ImGui::MenuItem("Player 8")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER8); }
                 ImGui::Separator();
                 if (ImGui::MenuItem("Player Setting")) {}
                 if (ImGui::MenuItem("Force Setting")) {}
@@ -264,11 +264,9 @@ bool EditScene2::init()
         }
         
         ImGui::SameLine();
-        static int playerType = -1;
-        if (ImGui::Combo("##player", &playerType, "Player 1\0Player 2\0Player 3\0Player 4\0Player 5\0Player 6\0Player 7\0Player 8\0", 8))
-        {
-            if ( _layer ) { /* ... */ }
-        }
+        if (ImGui::Combo("##player", &_selectedPlayerType,
+                         "Player 1\0Player 2\0Player 3\0Player 4\0Player 5\0Player 6\0Player 7\0Player 8\0", 8))
+        {}
         ImGui::PopItemWidth();
         
         ImGui::End();
@@ -334,6 +332,8 @@ void EditScene2::createGMXLayer(GMXFile* file)
     
     // button
     setEnableSaveButton(true);
+    
+    _selectedPlayerType = 0;
 }
 
 
@@ -391,6 +391,9 @@ void EditScene2::createGMXLayer(const std::string& filePath)
         }
         
         _layer = GMXLayer2::create(*this, *file);
+        _layer->setCurrFilePath(filePath);
+        _layer->enableFirstFile(false);
+        
         addChild(_layer);
         
         for ( auto iter = gmxFile->tiles()->begin(); iter != gmxFile->tiles()->end() ; ++ iter)
@@ -409,6 +412,7 @@ void EditScene2::createGMXLayer(const std::string& filePath)
         
         // button
         setEnableSaveButton(true);
+        _selectedPlayerType = 0;
     }
 }
 

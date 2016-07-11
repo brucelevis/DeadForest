@@ -124,7 +124,6 @@ bool GMXLayer2::init()
     initFile();
     initCollisionData();
     
-    
     _paletteLayer = PaletteLayer::create(*this);
     addChild(_paletteLayer);
     
@@ -444,7 +443,7 @@ void GMXLayer2::updateCocosLogic()
                 {
                     EditorSheriff* ent = EditorSheriff::create(*this, getNextValidID(), cocos2d::ui::Widget::TextureResType::PLIST);
                     ent->setPosition(_mousePosInWorld);
-                    ent->setPlayerType(PlayerType::PLAYER1);
+                    ent->setPlayerType(_imguiLayer.getSelectedPlayerType());
                     addEntity(ent, 5);
                 }
             }
@@ -665,7 +664,6 @@ void GMXLayer2::update(float dt)
         _currCommand->end();
         _currCommand = prevCommand;
     }
-    
 }
 
 
@@ -1514,7 +1512,6 @@ void GMXLayer2::updateCollisionRegion()
         }
         _collisionNode->drawSegment(poly.back(), poly.front(), 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
     }
-    
 }
 
 
@@ -1630,6 +1627,7 @@ std::pair<int, int> GMXLayer2::getNextTileIndex(const std::string& tailWithInput
 void GMXLayer2::save(const std::string& path)
 {
     _isFirstFile = false;
+    _currFilePath = path;
     
     log("save! path: %s", path.c_str());
     log("file name: %s", _file.fileName.c_str());

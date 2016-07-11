@@ -88,8 +88,8 @@ namespace realtrick
         
         bool isRedo() const { return _historyLayer->isRedo(); }
         bool isUndo() const { return _historyLayer->isUndo(); }
-        void redo() { _historyLayer->redo(); }
-        void undo() { _historyLayer->undo(); }
+        void redo() { _historyLayer->redo(); updateCollisionRegion(); }
+        void undo() { _historyLayer->undo(); updateCollisionRegion(); }
         
         PaletteLayer* getPaletteLayer() const { return _paletteLayer; }
         
@@ -120,7 +120,10 @@ namespace realtrick
         void updateCollisionRegion();
         
         bool isFirstFile() const { return _isFirstFile; }
+        void enableFirstFile(bool enable) { _isFirstFile = enable; }
+
         std::string getCurrFilePath() const { return _currFilePath; }
+        void setCurrFilePath(const std::string& path) { _currFilePath = path; }
         
         void save(const std::string& path);
         

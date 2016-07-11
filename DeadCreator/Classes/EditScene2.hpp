@@ -10,6 +10,7 @@
 
 #include "cocos2d.h"
 #include "ImGuiLayer.h"
+#include "EditorEntityBase.hpp"
 
 namespace realtrick
 {
@@ -65,6 +66,9 @@ namespace realtrick
         bool isModal() const { return _isModal; }
         void enableModal(bool enable) { _isModal = enable; }
         
+        void setSelectedPlayerType(PlayerType type) { _selectedPlayerType = static_cast<int>(type); }
+        PlayerType getSelectedPlayerType() const { return static_cast<PlayerType>(_selectedPlayerType); }
+        
     private:
         
         GMXLayer2* _layer = nullptr;
@@ -88,6 +92,8 @@ namespace realtrick
         int _layerType = LayerType::INVALID;
         
         bool _isModal = false;
+        
+        int _selectedPlayerType = -1;
         
     };
     

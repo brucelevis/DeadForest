@@ -27,8 +27,6 @@ namespace realtrick
         
         bool init(cocos2d::ui::Widget::TextureResType resType);
         
-        virtual void setBoundingBox(const cocos2d::Rect& aabb) override;
-        
     private:
         
         

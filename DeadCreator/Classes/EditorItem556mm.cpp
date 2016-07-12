@@ -37,6 +37,9 @@ EditorItem556mm* EditorItem556mm::create(GMXLayer2& layer, int id, const std::st
 
 bool EditorItem556mm::init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
 {
+    if ( !EditorEntityBase::init() )
+        return false;
+
     _resType = resType;
     _fileName = fileName;
     

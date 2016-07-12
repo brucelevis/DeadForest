@@ -53,28 +53,15 @@ bool EditorSheriff::init(cocos2d::ui::Widget::TextureResType resType)
         _shadow = Sprite::createWithSpriteFrameName("HumanFistIdleLoop0.png");
     }
     
+    
     _shadow->setColor(Color3B::BLACK);
     _shadow->setPosition(Vec2(10, -5));
     
     addChild(_shadow);
     addChild(_body);
     
-    _boundingBoxNode = DrawNode::create();
-    setBoundingBox(Rect(0, 0, 10, 10));
-    _boundingBoxNode->drawRect(Vec2(-_boundingBox.size.width / 2, -_boundingBox.size.height / 2), Vec2(_boundingBox.size.width, _boundingBox.size.height), Color4F::RED);
-    addChild(_boundingBoxNode);
-    
     return true;
 }
-
-
-void EditorSheriff::setBoundingBox(const cocos2d::Rect& aabb)
-{
-    _boundingBoxNode->clear();
-    _boundingBoxNode->drawRect(Vec2(-aabb.size.width / 2, -aabb.size.height / 2), Vec2(aabb.size.width, aabb.size.height), Color4F::RED);
-    EditorEntityBase::setBoundingBox(aabb);
-}
-
 
 
 

@@ -448,10 +448,6 @@ void GMXLayer2::updateCocosLogic()
                 }
             }
         }
-        else
-        {
-            enableEntityBoundingBoxNode(false);
-        }
     }
     else if ( _paletteLayer->getPaletteType() == PaletteType::ITEM )
     {
@@ -928,6 +924,22 @@ bool GMXLayer2::addEntity(EditorEntityBase* entity, int localZOrder, bool isExec
 }
 
 
+bool GMXLayer2::addEntityForce(EditorEntityBase* entity, int localZOrder)
+{
+    auto iter = _entities.find(entity->getID());
+    if ( iter == std::end(_entities))
+    {
+        _navigatorLayer->addEntity(entity);
+        _rootNode->addChild(entity, localZOrder);
+        _entities.insert( {entity->getID(), entity} );
+        
+        return true;
+    }
+    
+    return false;
+}
+
+
 bool GMXLayer2::eraseEntity(int id, bool isExecCommand)
 {
     auto iter = _entities.find(id);
@@ -964,15 +976,6 @@ void GMXLayer2::setCommand(CommandBase* newCommand)
     else if ( dynamic_cast<RemoveEntityToolCommand*>(newCommand) )
     {
         // ... //
-    }
-}
-
-
-void GMXLayer2::enableEntityBoundingBoxNode(bool enable)
-{
-    for ( auto& ent :_entities )
-    {
-        ent.second->setVisibleAABB(enable);
     }
 }
 
@@ -1644,12 +1647,14 @@ void GMXLayer2::save(const std::string& path)
         {
             if ( _tiles[i][j].getTileType() != static_cast<EditorTileType>(_file.defaultTile) )
             {
-                log("[%d, %d]: %s", i, j, _file.tileInfos[i][j].c_str());
+                log("[%d, %d]: %s", i, j, _tiles[i][j].getNumber().c_str());
             }
         }
     }
     
     flatbuffers::FlatBufferBuilder builder;
+    
+    // tile infos
     std::vector<flatbuffers::Offset<DeadCreator::TileInfo>> tileInfos;
     for (int i = 0 ; i < _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4; ++ i)
     {
@@ -1663,10 +1668,11 @@ void GMXLayer2::save(const std::string& path)
             }
         }
     }
+    
     DeadCreator::Coord numOfTiles(_file.numOfTileX, _file.numOfTileY);
     DeadCreator::Size tileSize(_file.tileWidth, _file.tileHeight);
     
-    
+    // collision regions
     std::vector<flatbuffers::Offset<DeadCreator::Polygon>> collisionRegions;
     for(int i = 0 ; i < _collisionRegions.size() ; ++ i)
     {
@@ -1679,16 +1685,23 @@ void GMXLayer2::save(const std::string& path)
         collisionRegions.push_back(poly);
     }
     
-    std::vector<DeadCreator::Entity> entities;
+    // entities
+    std::vector<flatbuffers::Offset<DeadCreator::Entity>> entities;
     for( auto& ent : _entities )
     {
-//        auto e = DeadCreator::CreateEntity(builder, static_cast<int>(ent.second->getPlayerType()), static_cast<int>(ent.second->getE)
+        DeadCreator::Vector2 v(ent.second->getPosition().x, ent.second->getPosition().y);
+        auto e = DeadCreator::CreateEntity(builder,
+                                           static_cast<int>(ent.second->getPlayerType()),
+                                           static_cast<int>(ent.second->getEntityType()),
+                                           &v);
+        entities.push_back(e);
     }
     
     auto file = DeadCreator::CreateGMXFile(builder,
                                            static_cast<DeadCreator::TileType>(_file.defaultTile),
                                            builder.CreateVector(tileInfos), &numOfTiles, &tileSize,
-                                           builder.CreateVector(collisionRegions));
+                                           builder.CreateVector(collisionRegions),
+                                           builder.CreateVector(entities));
     builder.Finish(file);
     flatbuffers::SaveFile(path.c_str(),
                           reinterpret_cast<const char*>(builder.GetBufferPointer()),

@@ -25,12 +25,6 @@ EditorEntityBase::~EditorEntityBase()
 }
 
 
-void EditorEntityBase::setBoundingBox(const cocos2d::Rect& aabb)
-{
-    _boundingBox = aabb;
-}
-
-
 bool EditorEntityBase::init()
 {
     if ( !Node::init() )

@@ -121,7 +121,6 @@ void PaletteLayer::showLayer(bool* opened)
         if ( itemSelected )
         {
             _gmxLayer.setCommand(_gmxLayer.getTileToolCommand());
-            _gmxLayer.enableEntityBoundingBoxNode(false);
         }
     }
     
@@ -136,7 +135,6 @@ void PaletteLayer::showLayer(bool* opened)
         if ( itemSelected )
         {
             _gmxLayer.setCommand(_gmxLayer.getAddEntityToolCommand());
-            _gmxLayer.enableEntityBoundingBoxNode(true);
         }
     }
     
@@ -191,7 +189,6 @@ void PaletteLayer::showLayer(bool* opened)
         if ( itemSelected )
         {
             _gmxLayer.setCommand(_gmxLayer.getAddEntityToolCommand());
-            _gmxLayer.enableEntityBoundingBoxNode(false);
         }
     }
 

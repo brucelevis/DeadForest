@@ -20,6 +20,8 @@ using namespace cocos2d;
 #include "OpenLayer.hpp"
 #include "PaletteLayer.hpp"
 #include "SizeProtocol.h"
+#include "EditorSheriff.hpp"
+#include "EditorItems.hpp"
 using namespace realtrick;
 
 #include "GMXFile_generated.h"
@@ -48,7 +50,7 @@ bool EditScene2::init()
     
     _newFileWindow = NewFileWindow2::create(this);
     addChild(_newFileWindow);
-
+    
     _saveAsLayer = SaveAsLayer::create(this);
     addChild(_saveAsLayer);
     
@@ -134,7 +136,7 @@ bool EditScene2::init()
             
             ImGui::EndMainMenuBar();
         }
-
+        
         ImGuiContext& g = *GImGui;
         float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
         
@@ -147,7 +149,7 @@ bool EditScene2::init()
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(219/255.0, 219/255.0, 219/255.0, 1.0));
-
+        
         ImGui::Begin("##IconMenuBar", NULL,
                      ImGuiWindowFlags_NoTitleBar|
                      ImGuiWindowFlags_NoResize|
@@ -272,7 +274,7 @@ bool EditScene2::init()
         ImGui::End();
         ImGui::PopStyleColor(4);
         ImGui::PopStyleVar(1);
-
+        
         
         ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - STATUSBAR_HEIGHT));
         ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, STATUSBAR_HEIGHT));
@@ -381,7 +383,7 @@ void EditScene2::createGMXLayer(const std::string& filePath)
                 file->tileInfos[i][j] = tileName;
             }
         }
-
+        
         
         for ( auto iter = gmxFile->tiles()->begin(); iter != gmxFile->tiles()->end() ; ++ iter)
         {
@@ -403,6 +405,95 @@ void EditScene2::createGMXLayer(const std::string& filePath)
             TileBase tile = TileBase(xx, yy, iter->number()->str(),
                                      indexToPosition(xx, yy, file->tileWidth, file->tileHeight, DUMMY_TILE_SIZE));
             _layer->setTile(xx, yy, tile, true);
+        }
+        
+        
+        for ( auto iter = gmxFile->collision_regions()->begin(); iter != gmxFile->collision_regions()->end(); ++ iter )
+        {
+            auto polygon = iter;
+            for( auto vert = polygon->vertices()->begin() ; vert != polygon->vertices()->end() ; ++ vert )
+            {
+                log("[%f, %f]", vert->x(), vert->y());
+            }
+        }
+        
+        for ( auto iter = gmxFile->entities()->begin(); iter != gmxFile->entities()->end() ; ++ iter )
+        {
+            Vec2 pos(iter->pos()->x(), iter->pos()->y());
+            PlayerType playerType = static_cast<PlayerType>(iter->player_type());
+            auto entType = static_cast<EditorEntityType>(iter->entity_type());
+            
+            if ( entType == EditorEntityType::SHERIFF )
+            {
+                EditorSheriff* ent = EditorSheriff::create(*_layer, _layer->getNextValidID(), cocos2d::ui::Widget::TextureResType::PLIST);
+                ent->setPosition(pos);
+                ent->setPlayerType(playerType);
+                _layer->addEntityForce(ent, 5);
+            }
+            
+            else if ( entType == EditorEntityType::ITEM_556MM )
+            {
+                EditorItem556mm* ent = EditorItem556mm::create(*_layer, _layer->getNextValidID(), "5_56mm.png",
+                                                               cocos2d::ui::Widget::TextureResType::PLIST);
+                ent->setPosition(pos);
+                ent->setPlayerType(PlayerType::NEUTRAL);
+                _layer->addEntityForce(ent, 5);
+            }
+            
+            else if ( entType == EditorEntityType::ITEM_9MM )
+            {
+                EditorItem9mm* ent = EditorItem9mm::create(*_layer, _layer->getNextValidID(), "9mm.png",
+                                                           cocos2d::ui::Widget::TextureResType::PLIST);
+                ent->setPosition(pos);
+                ent->setPlayerType(PlayerType::NEUTRAL);
+                _layer->addEntityForce(ent, 5);
+            }
+            
+            else if ( entType == EditorEntityType::ITEM_AXE )
+            {
+                EditorItemAxe* ent = EditorItemAxe::create(*_layer, _layer->getNextValidID(), "Axe.png",
+                                                           cocos2d::ui::Widget::TextureResType::PLIST);
+                ent->setPosition(pos);
+                ent->setPlayerType(PlayerType::NEUTRAL);
+                _layer->addEntityForce(ent, 5);
+            }
+            
+            else if ( entType == EditorEntityType::ITEM_GLOCK17 )
+            {
+                EditorItemGlock17* ent = EditorItemGlock17::create(*_layer, _layer->getNextValidID(), "Glock17.png",
+                                                                   cocos2d::ui::Widget::TextureResType::PLIST);
+                ent->setPosition(pos);
+                ent->setPlayerType(PlayerType::NEUTRAL);
+                _layer->addEntityForce(ent, 5);
+            }
+            
+            else if ( entType == EditorEntityType::ITEM_M16A2 )
+            {
+                EditorItemM16A2* ent = EditorItemM16A2::create(*_layer, _layer->getNextValidID(), "M16A2.png",
+                                                               cocos2d::ui::Widget::TextureResType::PLIST);
+                ent->setPosition(pos);
+                ent->setPlayerType(PlayerType::NEUTRAL);
+                _layer->addEntityForce(ent, 5);
+            }
+            
+            else if ( entType == EditorEntityType::ITEM_M1897 )
+            {
+                EditorItemM1897* ent = EditorItemM1897::create(*_layer, _layer->getNextValidID(), "M1897.png",
+                                                               cocos2d::ui::Widget::TextureResType::PLIST);
+                ent->setPosition(pos);
+                ent->setPlayerType(PlayerType::NEUTRAL);
+                _layer->addEntityForce(ent, 5);
+            }
+            
+            else if ( entType == EditorEntityType::ITEM_SHELL )
+            {
+                EditorItemShell* ent = EditorItemShell::create(*_layer, _layer->getNextValidID(), "Shell.png",
+                                                               cocos2d::ui::Widget::TextureResType::PLIST);
+                ent->setPosition(pos);
+                ent->setPlayerType(PlayerType::NEUTRAL);
+                _layer->addEntityForce(ent, 5);
+            }
+            
         }
         
         // menu

@@ -98,6 +98,7 @@ namespace realtrick
         AddEntityToolCommand* getAddEntityToolCommand() const { return _addEntityToolCommand; }
         
         bool addEntity(EditorEntityBase* entity, int localZOrder = 0, bool isExecCommand = false);
+        bool addEntityForce(EditorEntityBase* entity, int localZOrder = 0);
         
         bool eraseEntity(int id, bool isExecCommand = false);
         
@@ -110,8 +111,6 @@ namespace realtrick
         static void enableTitleClicked() { TITLE_CLICKED = true; }
         static void disableTitleClicked() { TITLE_CLICKED = false; }
         static bool isTitleClicked() { return TITLE_CLICKED; }
-        
-        void enableEntityBoundingBoxNode(bool enable);
         
         void removeSelectedEntities(bool isExecCommand = false);
         void clearSelectedEntites();

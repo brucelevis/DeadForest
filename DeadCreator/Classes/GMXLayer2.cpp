@@ -1665,9 +1665,30 @@ void GMXLayer2::save(const std::string& path)
     }
     DeadCreator::Coord numOfTiles(_file.numOfTileX, _file.numOfTileY);
     DeadCreator::Size tileSize(_file.tileWidth, _file.tileHeight);
+    
+    
+    std::vector<flatbuffers::Offset<DeadCreator::Polygon>> collisionRegions;
+    for(int i = 0 ; i < _collisionRegions.size() ; ++ i)
+    {
+        std::vector<DeadCreator::Vector2> polygon;
+        for(int j = 0; j < _collisionRegions[i].size(); ++ j)
+        {
+            polygon.push_back(DeadCreator::Vector2(_collisionRegions[i][j].x, _collisionRegions[i][j].y));
+        }
+        auto poly = DeadCreator::CreatePolygon(builder, builder.CreateVectorOfStructs(polygon));
+        collisionRegions.push_back(poly);
+    }
+    
+    std::vector<DeadCreator::Entity> entities;
+    for( auto& ent : _entities )
+    {
+//        auto e = DeadCreator::CreateEntity(builder, static_cast<int>(ent.second->getPlayerType()), static_cast<int>(ent.second->getE)
+    }
+    
     auto file = DeadCreator::CreateGMXFile(builder,
                                            static_cast<DeadCreator::TileType>(_file.defaultTile),
-                                           builder.CreateVector(tileInfos), &numOfTiles, &tileSize);
+                                           builder.CreateVector(tileInfos), &numOfTiles, &tileSize,
+                                           builder.CreateVector(collisionRegions));
     builder.Finish(file);
     flatbuffers::SaveFile(path.c_str(),
                           reinterpret_cast<const char*>(builder.GetBufferPointer()),

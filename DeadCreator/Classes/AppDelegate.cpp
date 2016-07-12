@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
 #include "EditScene2.hpp"
 #include "GameWorld.hpp"
+#include "MainMenu3.hpp"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 #include "ImGuiGLViewImpl.h"
@@ -53,7 +54,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images.plist");
     
-    auto scene = realtrick::EditScene2::createScene();
+    auto scene = realtrick::MainMenu3::createScene();
     director->runWithScene(scene);
     
     return true;

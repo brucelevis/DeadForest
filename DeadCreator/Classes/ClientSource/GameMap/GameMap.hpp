@@ -86,23 +86,16 @@ namespace realtrick
         std::vector<std::vector<Sprite*>>               _currTiles;
         
         int                                             _numOfTileX;
-        
         int                                             _numOfTileY;
-        
         int                                             _sizeOfTile;
-        
         int                                             _worldWidth;
-        
         int                                             _worldHeight;
-        
         int                                             _maxEntity;
         
         int                                             _cellWidth;
-        
         int                                             _cellHeight;
         
         int                                             _numOfViewableTileX;
-        
         int                                             _numOfViewableTileY;
         
         std::pair<int, int>                             _pivotIndex;
@@ -144,12 +137,6 @@ namespace realtrick
         void _parseStartingLocationList();
         
         void _parseItemData();
-        
-        void _parseIndoorTileData();
-        
-        void _parseWallsData();
-        
-        void _parseDoodadData();
         
         void _parseFromFile(const char* fileName);
         

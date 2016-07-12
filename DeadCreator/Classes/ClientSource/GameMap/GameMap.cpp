@@ -91,12 +91,9 @@ namespace realtrick
         _doc.Parse<0>(_data.c_str());
         
         _parseCollisionData();
-        _parseDoodadData();
-        _parseIndoorTileData();
         _parseItemData();
         _parseStartingLocationList();
         _parseTileData();
-        _parseWallsData();
     }
     
     
@@ -166,42 +163,6 @@ namespace realtrick
     }
     
     
-    void GameMap::_parseIndoorTileData()
-    {
-        const rapidjson::Value& indoorTiles = _doc["InDoorTiles"];
-        for(SizeType i = 0 ; i < indoorTiles.Size() ; ++ i)
-        {
-            const rapidjson::Value& data = indoorTiles[i];
-            _indoorTileData.push_back(NameCoord(data["name"].GetString(), Vec2(data["x"].GetInt(), data["y"].GetInt())));
-        }
-    }
-    
-    
-    
-    void GameMap::_parseWallsData()
-    {
-        const rapidjson::Value& walls = _doc["Walls"];
-        for(SizeType i = 0 ; i < walls.Size() ; ++ i)
-        {
-            const rapidjson::Value& data = walls[i];
-            _wallsData.push_back(NameCoord(data["name"].GetString(), Vec2(data["x"].GetInt(), data["y"].GetInt())));
-        }
-    }
-    
-    
-    
-    void GameMap::_parseDoodadData()
-    {
-        const rapidjson::Value& objects = _doc["Doodads"];
-        for(SizeType i = 0 ; i < objects.Size() ; ++ i)
-        {
-            const rapidjson::Value& data = objects[i];
-            _doodadData.push_back(NameCoord(data["name"].GetString(), Vec2(data["x"].GetInt(), data["y"].GetInt())));
-        }
-    }
-    
-    
-    
     std::pair<int,int> GameMap::getExactTileIndex(const Vec2& pos)
     {
         int centerTileIndexX = (int)((pos.x) / _sizeOfTile);        // not exact index!
@@ -227,7 +188,6 @@ namespace realtrick
         }
         return std::make_pair(0,0);
     }
-    
     
     
     void GameMap::updateChunk(const Vec2& position)

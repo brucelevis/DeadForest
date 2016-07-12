@@ -18,8 +18,6 @@
 #include "Inventory.hpp"
 #include "WeaponStatus.hpp"
 #include "UiLayer.hpp"
-
-
 using namespace cocos2d;
 using namespace realtrick;
 

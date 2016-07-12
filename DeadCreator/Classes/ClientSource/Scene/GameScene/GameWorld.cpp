@@ -69,15 +69,13 @@ namespace realtrick
         pauseGame();
         
         // single or network (?)
-        if( Prm.getValueAsBool("useNetwork") ) {
-            
+        if( Prm.getValueAsBool("useNetwork") )
+        {
             _logicStream = new NetworkStream(_gameMgr);
-            
         }
-        else {
-            
+        else
+        {
             _logicStream = new SingleStream(_gameMgr);
-            
         }
         
         this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);

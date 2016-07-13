@@ -28,7 +28,6 @@ namespace realtrick
     _reservedBullet(0)
     {
         ADD_FAMILY_MASK(_familyMask, WEAPON_BASE);
-        setMaxBandedNumber(1);
     }
     
     
@@ -88,6 +87,7 @@ namespace realtrick
         if ( leftRounds != maxRounds )
         {
             int ownedRound = _owner->getInventory()->getItemAmount(getBulletType());
+            log("ownedRound: %d", ownedRound);
             if ( ownedRound != 0 )
             {
                 int offset = getReloadedBulletOnce(); // 재장전할 수 있는 총알의 수

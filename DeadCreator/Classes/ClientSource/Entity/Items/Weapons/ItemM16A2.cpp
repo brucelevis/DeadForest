@@ -32,12 +32,10 @@ namespace realtrick
     {}
     
     
-    ItemM16A2* ItemM16A2::create(GameManager* mgr,
-                                 const char* inGameImage_n, const char* inGameImage_s, const char* inSlotImage,
-                                 cocos2d::ui::Widget::TextureResType texResType)
+    ItemM16A2* ItemM16A2::create(GameManager* mgr)
     {
         ItemM16A2* ret = new (std::nothrow)ItemM16A2(mgr);
-        if( ret && ret->init(inGameImage_n, inGameImage_s, inSlotImage, texResType))
+        if( ret && ret->init("M16A2.png", "M16A2.png", "M16A2.png", cocos2d::ui::Widget::TextureResType::PLIST))
         {
             ret->autorelease();
             return ret;
@@ -174,7 +172,7 @@ namespace realtrick
     
     void ItemM16A2::discard()
     {
-        ItemM16A2* item = ItemM16A2::create(_gameMgr, getInGameFrameName_n().c_str(), getInGameFrameName_s().c_str(), getInSlotFrameName().c_str(), ui::Widget::TextureResType::PLIST);
+        ItemM16A2* item = ItemM16A2::create(_gameMgr);
         item->setAmount( getAmount() );
         item->setNumOfLeftRounds(getNumOfLeftRounds());
         item->setPosition(Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));

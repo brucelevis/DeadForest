@@ -16,7 +16,7 @@ namespace realtrick
     BulletShell::BulletShell(GameManager* mgr) : BulletBase(mgr)
     {
         setEntityType(BULLET_SHELL);
-        setMaxBandedNumber(30);
+        setAmount(30);
     }
     
     
@@ -24,12 +24,10 @@ namespace realtrick
     {}
     
     
-    BulletShell* BulletShell::create(GameManager* mgr,
-                                 const char* inGameImage_n, const char* inGameImage_s, const char* inSlotImage,
-                                 cocos2d::ui::Widget::TextureResType texResType)
+    BulletShell* BulletShell::create(GameManager* mgr)
     {
         BulletShell* ret = new (std::nothrow)BulletShell(mgr);
-        if( ret && ret->init(inGameImage_n, inGameImage_s, inSlotImage, texResType))
+        if( ret && ret->init("Shell.png", "Shell.png", "Shell.png", cocos2d::ui::Widget::TextureResType::PLIST))
         {
             ret->autorelease();
             return ret;
@@ -47,7 +45,7 @@ namespace realtrick
     
     void BulletShell::discard()
     {
-        BulletShell* item = BulletShell::create(_gameMgr, getInGameFrameName_n().c_str(), getInGameFrameName_s().c_str(), getInSlotFrameName().c_str(), ui::Widget::TextureResType::PLIST);
+        BulletShell* item = BulletShell::create(_gameMgr);
         item->setAmount( getAmount() );
         item->setPosition(Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));
         _gameMgr->addDynamicEntity(item, Z_ORDER_ITEMS, _gameMgr->getNextValidID());

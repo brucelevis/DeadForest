@@ -30,10 +30,6 @@ namespace realtrick
         
         virtual void discard() override = 0;
         
-    protected:
-        
-        
-        
     };
     
 }

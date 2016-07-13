@@ -192,9 +192,12 @@ namespace realtrick
             
             EntityHuman* player = _gameMgr->getPlayerPtr();
             WeaponBase* equipedWeapon = player->getEquipedWeapon();
-            
-            if ( equipedWeapon != nullptr && equipedWeapon->getEntityType() != EntityType::ITEM_AXE )
+        
+            if ( equipedWeapon != nullptr &&
+                equipedWeapon->getEntityType() != EntityType::ITEM_AXE )
+            {
                 equipedWeapon->reload();
+            }
             
             return true;
         }
@@ -207,17 +210,17 @@ namespace realtrick
             userinterface::Inventory* inventory = player->getInventory();
             if ( equipedWeapon->getEntityType() == EntityType::ITEM_GLOCK17 )
             {
-                inventory->setItemAmount(Bullet9mm::create(nullptr, "9mm.png", "9mm.png", "9mm.png", ui::Widget::TextureResType::PLIST),
+                inventory->setItemAmount(Bullet9mm::create(nullptr),
                                          inventory->getItemAmount(equipedWeapon->getBulletType()) -  equipedWeapon->getReservedBullets());
             }
             else if ( equipedWeapon->getEntityType() == EntityType::ITEM_M16A2 )
             {
-                inventory->setItemAmount(Bullet556mm::create(nullptr, "5_56mm.png", "5_56mm.png", "5_56mm.png", ui::Widget::TextureResType::PLIST),
+                inventory->setItemAmount(Bullet556mm::create(nullptr),
                                          inventory->getItemAmount(equipedWeapon->getBulletType()) -  equipedWeapon->getReservedBullets());
             }
             else if ( equipedWeapon->getEntityType() == EntityType::ITEM_M1897 )
             {
-                inventory->setItemAmount(BulletShell::create(nullptr, "Shell.png", "Shell.png", "Shell.png", ui::Widget::TextureResType::PLIST),
+                inventory->setItemAmount(BulletShell::create(nullptr),
                                          inventory->getItemAmount(equipedWeapon->getBulletType()) -  equipedWeapon->getReservedBullets());
             }
             

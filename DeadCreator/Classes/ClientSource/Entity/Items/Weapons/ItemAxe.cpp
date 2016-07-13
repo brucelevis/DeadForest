@@ -33,10 +33,10 @@ namespace realtrick
     {}
     
     
-    ItemAxe* ItemAxe::create(GameManager* mgr, const char* inGameImage_n, const char* inGameImage_s, const char* inSlotImage, cocos2d::ui::Widget::TextureResType texResType)
+    ItemAxe* ItemAxe::create(GameManager* mgr)
     {
         ItemAxe* ret = new (std::nothrow)ItemAxe(mgr);
-        if( ret && ret->init(inGameImage_n, inGameImage_s, inSlotImage, texResType))
+        if( ret && ret->init("Axe.png", "Axe.png", "Axe.png", cocos2d::ui::Widget::TextureResType::PLIST))
         {
             ret->autorelease();
             return ret;
@@ -127,7 +127,7 @@ namespace realtrick
     
     void ItemAxe::discard()
     {
-        ItemAxe* item = ItemAxe::create(_gameMgr, getInGameFrameName_n().c_str(), getInGameFrameName_s().c_str(), getInSlotFrameName().c_str(), ui::Widget::TextureResType::PLIST);
+        ItemAxe* item = ItemAxe::create(_gameMgr);
         item->setAmount( getAmount() );
         item->setNumOfLeftRounds(getNumOfLeftRounds());
         item->setPosition(Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));

@@ -71,14 +71,8 @@ namespace realtrick
         pauseGame();
         
         // single or network (?)
-        if( Prm.getValueAsBool("useNetwork") )
-        {
-            _logicStream = new NetworkStream(_gameMgr);
-        }
-        else
-        {
-            _logicStream = new SingleStream(_gameMgr);
-        }
+        if( Prm.getValueAsBool("useNetwork") ) { _logicStream = new NetworkStream(_gameMgr); }
+        else { _logicStream = new SingleStream(_gameMgr); }
         
         this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
         
@@ -133,8 +127,9 @@ namespace realtrick
                                              DUMMY_TILE_SIZE))
         {
             _gameMgr->getGameMap()->updateChunk(oldCameraPos);
-            Dispatch.dispatchDelayedMessages();
         }
+        
+        Dispatch.dispatchDelayedMessages();
     }
     
     void GameWorld::pushLogic(double delaySeconds, MessageType type, void* extraInfo)

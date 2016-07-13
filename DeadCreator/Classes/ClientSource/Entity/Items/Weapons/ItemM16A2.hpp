@@ -19,9 +19,7 @@ namespace realtrick
         
     public:
         
-        static ItemM16A2* create(GameManager* mgr,
-                                 const char* inGameImage_n, const char* inGameImage_s, const char* inSlotImage,
-                                 cocos2d::ui::Widget::TextureResType texResType = cocos2d::ui::Widget::TextureResType::LOCAL);
+        static ItemM16A2* create(GameManager* mgr);
         
         virtual ItemBase* clone() const override;
         

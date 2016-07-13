@@ -17,7 +17,6 @@ namespace realtrick
     EntityBase(mgr),
     _owner(nullptr),
     _amount(0),
-    _maxBandedNumber(0),
     _inSlotFrameName("#NO NAME"),
     _inSlotSpriteSize(Size::ZERO),
     _inGameImageName_n("#NO NAME"),
@@ -45,7 +44,6 @@ namespace realtrick
     {
         _owner = rhs._owner;
         _amount = rhs._amount;
-        _maxBandedNumber = rhs._maxBandedNumber;
         _inSlotFrameName = rhs._inSlotFrameName;
         _inSlotSpriteSize = rhs._inSlotSpriteSize;
         _inGameImageName_n = rhs._inGameImageName_n;

@@ -16,7 +16,7 @@ namespace realtrick
     Bullet9mm::Bullet9mm(GameManager* mgr) : BulletBase(mgr)
     {
         setEntityType(BULLET_9MM);
-        setMaxBandedNumber(30);
+        setAmount(21);
     }
     
     
@@ -24,12 +24,10 @@ namespace realtrick
     {}
     
     
-    Bullet9mm* Bullet9mm::create(GameManager* mgr,
-                                 const char* inGameImage_n, const char* inGameImage_s, const char* inSlotImage,
-                                 cocos2d::ui::Widget::TextureResType texResType)
+    Bullet9mm* Bullet9mm::create(GameManager* mgr)
     {
         Bullet9mm* ret = new (std::nothrow)Bullet9mm(mgr);
-        if( ret && ret->init(inGameImage_n, inGameImage_s, inSlotImage, texResType))
+        if( ret && ret->init("9mm.png", "9mm.png", "9mm.png", cocos2d::ui::Widget::TextureResType::PLIST))
         {
             ret->autorelease();
             return ret;
@@ -47,7 +45,7 @@ namespace realtrick
     
     void Bullet9mm::discard()
     {
-        Bullet9mm* item = Bullet9mm::create(_gameMgr, getInGameFrameName_n().c_str(), getInGameFrameName_s().c_str(), getInSlotFrameName().c_str(), ui::Widget::TextureResType::PLIST);
+        Bullet9mm* item = Bullet9mm::create(_gameMgr);
         item->setAmount( getAmount() );
         item->setPosition(Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));
         _gameMgr->addDynamicEntity(item, Z_ORDER_ITEMS, _gameMgr->getNextValidID());

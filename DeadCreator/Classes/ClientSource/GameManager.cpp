@@ -352,6 +352,61 @@ namespace realtrick
                 }
                 else
                 {
+                    if ( entityType == EntityType::BULLET_556MM )
+                    {
+                        Bullet556mm* item = Bullet556mm::create(this);
+                        item->setWorldPosition(position);
+                        item->setPlayerType(PlayerType::NEUTRAL);
+                        addDynamicEntity(item, Z_ORDER_ITEMS, getNextValidID());
+                    }
+                    
+                    else if ( entityType == EntityType::BULLET_9MM )
+                    {
+                        Bullet9mm* item = Bullet9mm::create(this);
+                        item->setWorldPosition(position);
+                        item->setPlayerType(PlayerType::NEUTRAL);
+                        addDynamicEntity(item, Z_ORDER_ITEMS, getNextValidID());
+                    }
+                    
+                    else if ( entityType == EntityType::BULLET_SHELL )
+                    {
+                        BulletShell* item = BulletShell::create(this);
+                        item->setWorldPosition(position);
+                        item->setPlayerType(PlayerType::NEUTRAL);
+                        addDynamicEntity(item, Z_ORDER_ITEMS, getNextValidID());
+                    }
+                    
+                    else if ( entityType == EntityType::ITEM_AXE )
+                    {
+                        ItemAxe* item = ItemAxe::create(this);
+                        item->setWorldPosition(position);
+                        item->setPlayerType(PlayerType::NEUTRAL);
+                        addDynamicEntity(item, Z_ORDER_ITEMS, getNextValidID());
+                    }
+                    
+                    else if ( entityType == EntityType::ITEM_GLOCK17 )
+                    {
+                        ItemGlock17* item = ItemGlock17::create(this);
+                        item->setWorldPosition(position);
+                        item->setPlayerType(PlayerType::NEUTRAL);
+                        addDynamicEntity(item, Z_ORDER_ITEMS, getNextValidID());
+                    }
+                    
+                    else if ( entityType == EntityType::ITEM_M16A2 )
+                    {
+                        ItemM16A2* item = ItemM16A2::create(this);
+                        item->setWorldPosition(position);
+                        item->setPlayerType(PlayerType::NEUTRAL);
+                        addDynamicEntity(item, Z_ORDER_ITEMS, getNextValidID());
+                    }
+                    
+                    else if ( entityType == EntityType::ITEM_M1897 )
+                    {
+                        ItemM1897* item = ItemM1897::create(this);
+                        item->setWorldPosition(position);
+                        item->setPlayerType(PlayerType::NEUTRAL);
+                        addDynamicEntity(item, Z_ORDER_ITEMS, getNextValidID());
+                    }
                     
                 }
             }

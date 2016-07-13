@@ -496,6 +496,8 @@ void EditScene2::createGMXLayer(const std::string& filePath)
             
         }
         
+        _layer->updateCollisionRegion();
+        
         // menu
         setEnableEditMenu(true);
         setEnablePlayerMenu(true);

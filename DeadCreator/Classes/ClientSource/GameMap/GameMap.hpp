@@ -38,7 +38,10 @@ namespace realtrick
         
         static GameMap* createWithGMXFile(GameManager* gameMgr, const DeadCreator::GMXFile* file);
         
+        virtual void visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags) override;
+        
         void updateChunk(const Vec2& position);
+        TileType getStepOnTileType(const cocos2d::Vec2& pos);
         
         int getTileWidth() const                                                    { return _tileWidth; }
         int getTileHeight() const                                                   { return _tileHeight; }
@@ -47,29 +50,13 @@ namespace realtrick
         int getCellWidth() const                                                    { return _cellWidth; }
         int getCellHeight() const                                                   { return _cellHeight; }
         
-        const std::vector<Polygon>&              getCollisionData() const           { return _collisionData; }
-        
-        const std::vector<std::vector<std::string>>&       getTileData() const      { return _tileData; }
-        
-        const std::vector<cocos2d::Vec2>&       getStartingLocationData() const     { return _startingLocationList; }
-        
-        const std::vector<NameCoordAmount>&      getItemData() const                { return _itemData; }
-        
-        const std::vector<NameCoord>&            getIndoorTileData() const          { return _indoorTileData; }
-        
-        const std::vector<NameCoord>&            getWallsData() const               { return _wallsData; }
-        
-        const std::vector<NameCoord>&            getDoodadData() const              { return _doodadData; }
-
-        virtual void visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags) override;
+        const std::vector<Polygon>& getCollisionData() const                        { return _collisionData; }
+        const std::vector<std::vector<std::string>>& getTileData() const            { return _tileData; }
         
         cocos2d::Vec2 getWorldPosition() const                                      { return _worldPosition; }
-        
         void setWorldPosition(const cocos2d::Vec2& worldPos)                        { _worldPosition = worldPos; }
         
         std::vector<Segment> getNeighborWall(const cocos2d::Vec2 position) const;
-        
-        TileType getStepOnTileType(const cocos2d::Vec2& pos);
         
     private:
         
@@ -97,19 +84,7 @@ namespace realtrick
         rapidjson::Document                             _doc;
         
         std::vector<Polygon>                            _collisionData;
-        
         std::vector<std::vector<std::string>>           _tileData;
-        
-        std::vector<Vec2>                               _startingLocationList;
-        
-        std::vector<NameCoordAmount>                    _itemData;
-        
-        std::vector<NameCoord>                          _indoorTileData;
-        
-        std::vector<NameCoord>                          _wallsData;
-        
-        std::vector<NameCoord>                          _doodadData;
-        
         cocos2d::Vec2                                   _worldPosition;
         
         bool                                            _isNormal;

@@ -199,7 +199,8 @@ namespace DeadCreator {
             VT_NUMBER_OF_TILES = 8,
             VT_TILE_SIZE = 10,
             VT_COLLISION_REGIONS = 12,
-            VT_ENTITIES = 14
+            VT_ENTITIES = 14,
+            VT_CELL_SPACE_SIZE = 16
         };
         TileType default_type() const { return static_cast<TileType>(GetField<int32_t>(VT_DEFAULT_TYPE, 0)); }
         const flatbuffers::Vector<flatbuffers::Offset<TileInfo>> *tiles() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<TileInfo>> *>(VT_TILES); }
@@ -207,6 +208,7 @@ namespace DeadCreator {
         const Size *tile_size() const { return GetStruct<const Size *>(VT_TILE_SIZE); }
         const flatbuffers::Vector<flatbuffers::Offset<Polygon>> *collision_regions() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Polygon>> *>(VT_COLLISION_REGIONS); }
         const flatbuffers::Vector<flatbuffers::Offset<Entity>> *entities() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Entity>> *>(VT_ENTITIES); }
+        const Size *cell_space_size() const { return GetStruct<const Size *>(VT_CELL_SPACE_SIZE); }
         bool Verify(flatbuffers::Verifier &verifier) const {
             return VerifyTableStart(verifier) &&
             VerifyField<int32_t>(verifier, VT_DEFAULT_TYPE) &&
@@ -221,6 +223,7 @@ namespace DeadCreator {
             VerifyField<flatbuffers::uoffset_t>(verifier, VT_ENTITIES) &&
             verifier.Verify(entities()) &&
             verifier.VerifyVectorOfTables(entities()) &&
+            VerifyField<Size>(verifier, VT_CELL_SPACE_SIZE) &&
             verifier.EndTable();
         }
     };
@@ -234,10 +237,11 @@ namespace DeadCreator {
         void add_tile_size(const Size *tile_size) { fbb_.AddStruct(GMXFile::VT_TILE_SIZE, tile_size); }
         void add_collision_regions(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Polygon>>> collision_regions) { fbb_.AddOffset(GMXFile::VT_COLLISION_REGIONS, collision_regions); }
         void add_entities(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Entity>>> entities) { fbb_.AddOffset(GMXFile::VT_ENTITIES, entities); }
+        void add_cell_space_size(const Size *cell_space_size) { fbb_.AddStruct(GMXFile::VT_CELL_SPACE_SIZE, cell_space_size); }
         GMXFileBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
         GMXFileBuilder &operator=(const GMXFileBuilder &);
         flatbuffers::Offset<GMXFile> Finish() {
-            auto o = flatbuffers::Offset<GMXFile>(fbb_.EndTable(start_, 6));
+            auto o = flatbuffers::Offset<GMXFile>(fbb_.EndTable(start_, 7));
             return o;
         }
     };
@@ -248,8 +252,10 @@ namespace DeadCreator {
                                                       const Coord *number_of_tiles = 0,
                                                       const Size *tile_size = 0,
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Polygon>>> collision_regions = 0,
-                                                      flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Entity>>> entities = 0) {
+                                                      flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Entity>>> entities = 0,
+                                                      const Size *cell_space_size = 0) {
         GMXFileBuilder builder_(_fbb);
+        builder_.add_cell_space_size(cell_space_size);
         builder_.add_entities(entities);
         builder_.add_collision_regions(collision_regions);
         builder_.add_tile_size(tile_size);

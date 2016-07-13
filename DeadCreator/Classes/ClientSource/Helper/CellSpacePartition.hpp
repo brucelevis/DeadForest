@@ -44,7 +44,7 @@ namespace realtrick
         
         CellSpacePartition() = delete;
         
-        explicit CellSpacePartition(float worldWidth, float worldHeight, int cellWidth, int cellHeight, int maxEntities) :
+        explicit CellSpacePartition(float worldWidth, float worldHeight, int cellWidth, int cellHeight) :
         _worldWidth(worldWidth),
         _worldHeight(worldHeight),
         _cellWidth(cellWidth),
@@ -62,7 +62,6 @@ namespace realtrick
                     _cells.push_back(Cell(cocos2d::Rect(left - _cellWidth, bot - _cellHeight, cellWidth, cellHeight)));
                 }
             }
-            
         }
     
         inline void                     addEntity(EntityBase* ent);

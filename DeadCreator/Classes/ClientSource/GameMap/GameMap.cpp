@@ -11,6 +11,7 @@
 #include "GameMap.hpp"
 #include "GameManager.hpp"
 #include "Camera2D.hpp"
+#include "TileBase.hpp"
 
 
 namespace realtrick
@@ -22,7 +23,6 @@ namespace realtrick
     _sizeOfTile(0),
     _worldWidth(0),
     _worldHeight(0),
-    _maxEntity(0),
     _cellWidth(0),
     _cellHeight(0),
     _numOfViewableTileX(0),
@@ -37,7 +37,7 @@ namespace realtrick
     
     GameMap* GameMap::create(GameManager* gameMgr, const char* fileName)
     {
-        GameMap *ret = new (std::nothrow) GameMap(gameMgr);
+        GameMap* ret = new (std::nothrow) GameMap(gameMgr);
         if (ret && ret->initGameMap(fileName))
         {
             ret->autorelease();
@@ -60,7 +60,6 @@ namespace realtrick
         _sizeOfTile             = Prm.getValueAsInt("sizeOfTile");
         _worldWidth             = Prm.getValueAsInt("worldWidth");
         _worldHeight            = Prm.getValueAsInt("worldHeight");
-        _maxEntity              = Prm.getValueAsInt("maxEntity");
         _cellWidth              = Prm.getValueAsInt("cellWidth");
         _cellHeight             = Prm.getValueAsInt("cellHeight");
         
@@ -81,6 +80,88 @@ namespace realtrick
         
         _parseFromFile(fileName);
         
+        return true;
+    }
+    
+    
+    GameMap* GameMap::createWithGMXFile(GameManager* gameMgr, const DeadCreator::GMXFile* file)
+    {
+        auto ret = new (std::nothrow) GameMap(gameMgr);
+        if ( ret && ret->initGMXFile(file) )
+        {
+            ret->autorelease();
+            return ret;
+        }
+        CC_SAFE_DELETE(ret);
+        return nullptr;
+    }
+    
+    
+    bool GameMap::initGMXFile(const DeadCreator::GMXFile *file)
+    {
+        if ( !Node::init() )
+            return false;
+        
+        _numOfViewableTileX     = Prm.getValueAsInt("numOfViewableTileX");
+        _numOfViewableTileY     = Prm.getValueAsInt("numOfViewableTileY");
+        _sizeOfTile             = file->tile_size()->width();
+        _worldWidth             = file->tile_size()->width() * file->number_of_tiles()->x();
+        _worldHeight            = file->tile_size()->height() * file->number_of_tiles()->y();
+        _cellWidth              = file->cell_space_size()->width();
+        _cellHeight             = file->cell_space_size()->height();
+        
+        _currTiles.resize(_numOfViewableTileY);
+        for (int i = 0; i < _numOfViewableTileY; ++i)
+        {
+            _currTiles[i].resize(_numOfViewableTileX);
+        }
+        
+        for (int i = 0; i < _numOfViewableTileY; ++i)
+        {
+            for (int j = 0; j < _numOfViewableTileX; ++j)
+            {
+                _currTiles[i][j] = Sprite::create();
+                addChild(_currTiles[i][j] , 1);
+            }
+        }
+
+        for ( auto poly = file->collision_regions()->begin() ; poly != file->collision_regions()->end() ; ++ poly )
+        {
+            Polygon p;
+            for( auto vert = poly->vertices()->begin(); vert != poly->vertices()->end() ; ++ vert )
+            {
+                p.pushVertex(Vec2(vert->x(), vert->y()));
+            }
+            _collisionData.push_back(p);
+            _gameMgr->getCellSpace()->addWall(p);
+        }
+        
+        _numOfTileX = file->number_of_tiles()->x() + DUMMY_TILE_SIZE * 2;
+        _numOfTileY = file->number_of_tiles()->y() * 2 + DUMMY_TILE_SIZE * 4;
+        
+        _tileData.resize(_numOfTileY);
+        for(int i = 0 ; i < _numOfTileY; ++ i)
+        {
+            _tileData[i].resize(_numOfTileX);
+        }
+        
+        auto defaultTile = static_cast<EditorTileType>(file->default_type());
+        for(int i = 0; i < _numOfTileY; ++ i)
+        {
+            for(int j = 0; j < _numOfTileX; ++ j)
+            {
+                if ( EditorTileType::DIRT == defaultTile ) _tileData[i][j] = "1_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( EditorTileType::GRASS == defaultTile ) _tileData[i][j] = "2_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( EditorTileType::WATER == defaultTile ) _tileData[i][j] = "3_" + std::to_string(random(1, 3)) + "_1234";
+                else if ( EditorTileType::HILL == defaultTile ) _tileData[i][j] = "5_" + std::to_string(random(1, 3)) + "_1234";
+            }
+        }
+        
+        for ( auto tile = file->tiles()->begin(); tile != file->tiles()->end() ; ++ tile )
+        {
+            _tileData[tile->indices()->y()][tile->indices()->x()] =  tile->number()->str();
+        }
+  
         return true;
     }
     

@@ -26,7 +26,7 @@ namespace realtrick
         FINITE_BASE         = 0x00000000000080
     };
     
-    enum EntityType
+    enum EntityType : int
     {
         DEFAULT = -1,
         ITEM_AXE = 0,
@@ -46,11 +46,23 @@ namespace realtrick
         ENTITY_RAIN_DROP
     };
     
+    enum PlayerType : int
+    {
+        INVALID = -1,
+        PLAYER1 = 0,
+        PLAYER2,
+        PLAYER3,
+        PLAYER4,
+        PLAYER5,
+        PLAYER6,
+        PLAYER7,
+        PLAYER8,
+        NEUTRAL = 12,
+    };
+    
     inline void addMask(int& src, int mask)                         { src |= mask; }
-    
-    inline bool isMasked(int src, int mask)                          { return ((src & mask) == mask); }
-    
-    inline void removeMask(int& src, int mask)                       { if ( isMasked(src, mask) ) src ^= mask; }
+    inline bool isMasked(int src, int mask)                         { return ((src & mask) == mask); }
+    inline void removeMask(int& src, int mask)                      { if ( isMasked(src, mask) ) src ^= mask; }
     
     enum TileType : short
     {

@@ -124,30 +124,6 @@ namespace realtrick
         _gameMgr->update(dt);
         _gameCamera->setCameraPos(_player->getWorldPosition());
         
-        static AimingNode* aimNode = _uiLayer->getAimingNode();
-        aimNode->setRotation(_player->getBodyRot());
-        
-        
-        if ( isMasked(_player->getInputMask(), HumanBehaviorType::ATTACK_BEGAN) ||  isMasked(_player->getInputMask(), HumanBehaviorType::TURN) )
-        {
-            aimNode->showOutter();
-            
-            _player->getAimingSystem()->update();
-            if ( _player->getAimingSystem()->isHitableEntity() )
-            {
-                aimNode->showInner();
-            }
-            else
-            {
-                aimNode->hideInner();
-            }
-        }
-        else
-        {
-            aimNode->hideOutter();
-            aimNode->hideInner();
-        }
-        
         if ( oldIndex != _gameMgr->getGameMap()->getModerateTileIndex(_gameCamera->getCameraPos()) )
             _gameMgr->getGameMap()->updateChunk(oldCameraPos);
         

@@ -16,8 +16,11 @@
 #include "EntityEmptyCartridge.hpp"
 #include "EntityBase.hpp"
 #include "LogicStream.hpp"
-
 using namespace cocos2d;
+using namespace std;
+
+#include "GMXFile_generated.h"
+#include "util.h"
 
 namespace realtrick
 {
@@ -66,7 +69,7 @@ namespace realtrick
         _debugNode = DrawNode::create();
         _debugNode->setPosition(_winSize / 2);
         _debugNode->setVisible(Prm.getValueAsBool("useDebug"));
-        _gameWorld->addChild(_debugNode, numeric_limits<int>::max() - 1);
+        _gameWorld->addChild(_debugNode, std::numeric_limits<int>::max() - 1);
     }
     
     
@@ -86,8 +89,7 @@ namespace realtrick
         _cellSpace = new CellSpacePartition(Prm.getValueAsInt("worldWidth"),
                                             Prm.getValueAsInt("worldHeight"),
                                             Prm.getValueAsInt("cellWidth"),
-                                            Prm.getValueAsInt("cellHeight"),
-                                            Prm.getValueAsInt("maxEntity"));
+                                            Prm.getValueAsInt("cellHeight"));
         
         _gameMap = GameMap::create(this, fileName);
         addStaticEntity(_gameMap, Z_ORDER_GAME_MAP, getNextValidID());
@@ -180,8 +182,7 @@ namespace realtrick
         _cellSpace = new CellSpacePartition(Prm.getValueAsInt("worldWidth"),
                                             Prm.getValueAsInt("worldHeight"),
                                             Prm.getValueAsInt("cellWidth"),
-                                            Prm.getValueAsInt("cellHeight"),
-                                            Prm.getValueAsInt("maxEntity"));
+                                            Prm.getValueAsInt("cellHeight"));
         
         _gameMap = GameMap::create(this, fileName);
         addStaticEntity(_gameMap, Z_ORDER_GAME_MAP, 1000000 + getNextValidID());
@@ -474,6 +475,49 @@ namespace realtrick
     void GameManager::pushLogic(double delaySeconds, MessageType type, void* extraInfo)
     {
         Dispatch.pushMessage(delaySeconds, _gameWorld->getLogicStream(), nullptr, type, extraInfo);
+    }
+    
+    
+    void GameManager::loadGMXFile(const std::string& filePath)
+    {
+        std::string loadedData;
+        auto ret = flatbuffers::LoadFile(filePath.c_str(), true, &loadedData);
+        if ( ret )
+        {
+            const DeadCreator::GMXFile* file = DeadCreator::GetGMXFile(loadedData.c_str());
+            log("default tile: %d", file->default_type());
+            log("tile width: %d", file->tile_size()->width());
+            log("tile height: %d", file->tile_size()->height());
+            log("number of tile x: %d", file->number_of_tiles()->x());
+            log("number of tile y: %d", file->number_of_tiles()->y());
+            log("cell space size: %d, %d", file->cell_space_size()->width(), file->cell_space_size()->height());
+            
+            Size worldSize = Size(file->tile_size()->width() * file->number_of_tiles()->x(),
+                                  file->tile_size()->height() * file->number_of_tiles()->y());
+            
+            _cellSpace = new CellSpacePartition(worldSize.width, worldSize.height,
+                                                file->cell_space_size()->width(),
+                                                file->cell_space_size()->height());
+            
+            _gameMap = GameMap::createWithGMXFile(this, file);
+            addStaticEntity(_gameMap, Z_ORDER_GAME_MAP, getNextValidID());
+            
+            for ( auto entity = file->entities()->begin(); entity != file->entities()->end(); ++ entity )
+            {
+                int entityType = entity->entity_type();
+                int playerType = entity->player_type();
+                Vec2 position(entity->pos()->x(), entity->pos()->y());
+                if ( entityType == EntityType::ENTITY_HUMAN )
+                {
+                    
+                }
+                else
+                {
+                    
+                }
+            }
+            
+        }
     }
     
 }

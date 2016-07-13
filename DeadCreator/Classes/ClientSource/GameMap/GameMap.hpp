@@ -17,10 +17,9 @@
 #include "ParamLoader.hpp"
 #include "json/document.h"
 #include "ParseStructures.hpp"
-
-using namespace cocos2d;
 using namespace rapidjson;
-using namespace std;
+
+#include "GMXFile_generated.h"
 
 namespace realtrick
 {
@@ -39,13 +38,13 @@ namespace realtrick
         
         static GameMap* create(GameManager* gameMgr, const char* fileName);
         
+        static GameMap* createWithGMXFile(GameManager* gameMgr, const DeadCreator::GMXFile* file);
+        
         void updateChunk(const Vec2& position);
         
         int getWorldWidth() const                                                   { return _worldWidth; }
         
         int getWorldHeight() const                                                  { return _worldHeight; }
-        
-        int getMaxEntity() const                                                    { return _maxEntity; }
         
         int getCellWidth() const                                                    { return _cellWidth; }
         
@@ -53,9 +52,9 @@ namespace realtrick
         
         const std::vector<Polygon>&              getCollisionData() const           { return _collisionData; }
         
-        const std::vector<vector<string>>&       getTileData() const                { return _tileData; }
+        const std::vector<std::vector<std::string>>&       getTileData() const      { return _tileData; }
         
-        const std::vector<Vec2>&                 getStartingLocationData() const    { return _startingLocationList; }
+        const std::vector<cocos2d::Vec2>&       getStartingLocationData() const     { return _startingLocationList; }
         
         const std::vector<NameCoordAmount>&      getItemData() const                { return _itemData; }
         
@@ -90,7 +89,6 @@ namespace realtrick
         int                                             _sizeOfTile;
         int                                             _worldWidth;
         int                                             _worldHeight;
-        int                                             _maxEntity;
         
         int                                             _cellWidth;
         int                                             _cellHeight;
@@ -106,7 +104,7 @@ namespace realtrick
         
         std::vector<Polygon>                            _collisionData;
         
-        std::vector<vector<string>>                     _tileData;
+        std::vector<std::vector<std::string>>           _tileData;
         
         std::vector<Vec2>                               _startingLocationList;
         
@@ -129,6 +127,8 @@ namespace realtrick
         virtual ~GameMap();
         
         bool initGameMap(const char* fileName);
+        
+        bool initGMXFile(const DeadCreator::GMXFile* file);
         
         void _parseCollisionData();
         

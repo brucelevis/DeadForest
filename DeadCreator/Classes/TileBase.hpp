@@ -13,6 +13,7 @@
 #include "cocos2d.h"
 #include "TileHelperFunctions.hpp"
 
+#define DUMMY_TILE_SIZE 4
 
 namespace realtrick
 {

@@ -13,7 +13,7 @@ using namespace realtrick;
 EditorItemAxe::EditorItemAxe(GMXLayer2& layer, int id) :
 EditorEntityBase(layer, id)
 {
-    _type = EditorEntityType::ITEM_AXE;
+    _type = EntityType::ITEM_AXE;
 }
 
 

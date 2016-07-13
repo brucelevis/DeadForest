@@ -13,7 +13,7 @@ using namespace cocos2d;
 EditorItemM1897::EditorItemM1897(GMXLayer2& layer, int id) :
 EditorEntityBase(layer, id)
 {
-    _type = EditorEntityType::ITEM_M1897;
+    _type = EntityType::ITEM_M1897;
 }
 
 

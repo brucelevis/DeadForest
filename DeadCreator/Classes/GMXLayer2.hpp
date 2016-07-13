@@ -19,8 +19,6 @@
 #include "SizeProtocol.h"
 #include "HistoryLayer.hpp"
 
-#define DUMMY_TILE_SIZE 4
-
 namespace realtrick
 {
     

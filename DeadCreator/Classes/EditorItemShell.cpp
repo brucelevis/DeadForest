@@ -13,7 +13,7 @@ using namespace realtrick;
 EditorItemShell::EditorItemShell(GMXLayer2& layer, int id) :
 EditorEntityBase(layer, id)
 {
-    _type = EditorEntityType::ITEM_SHELL;
+    _type = EntityType::BULLET_SHELL;
 }
 
 

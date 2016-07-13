@@ -430,8 +430,8 @@ void GMXLayer2::updateCocosLogic()
     else if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN )
     {
         _selectedItem->setPosition(_mousePosInWorld);
-        EditorEntityType selectedEntity = static_cast<EditorEntityType>(_paletteLayer->getSelectedItem());
-        if ( selectedEntity == EditorEntityType::SHERIFF )
+        EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
+        if ( selectedEntity == EntityType::ENTITY_HUMAN )
         {
             _selectedItem->setSpriteFrame("HumanFistIdleLoop0.png");
             _selectedItem->setOpacity(128);
@@ -452,9 +452,9 @@ void GMXLayer2::updateCocosLogic()
     else if ( _paletteLayer->getPaletteType() == PaletteType::ITEM )
     {
         _selectedItem->setPosition(_mousePosInWorld);
-        EditorEntityType selectedEntity = static_cast<EditorEntityType>(_paletteLayer->getSelectedItem());
+        EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
         
-        if ( selectedEntity == EditorEntityType::ITEM_556MM )
+        if ( selectedEntity == EntityType::BULLET_556MM )
         {
             _selectedItem->setSpriteFrame("5_56mm.png");
             _selectedItem->setOpacity(128);
@@ -471,7 +471,7 @@ void GMXLayer2::updateCocosLogic()
                 }
             }
         }
-        else if ( selectedEntity == EditorEntityType::ITEM_9MM )
+        else if ( selectedEntity == EntityType::BULLET_9MM )
         {
             _selectedItem->setSpriteFrame("9mm.png");
             _selectedItem->setOpacity(128);
@@ -488,7 +488,7 @@ void GMXLayer2::updateCocosLogic()
                 }
             }
         }
-        else if ( selectedEntity == EditorEntityType::ITEM_AXE )
+        else if ( selectedEntity == EntityType::ITEM_AXE )
         {
             _selectedItem->setSpriteFrame("Axe.png");
             _selectedItem->setOpacity(128);
@@ -505,7 +505,7 @@ void GMXLayer2::updateCocosLogic()
                 }
             }
         }
-        else if ( selectedEntity == EditorEntityType::ITEM_SHELL )
+        else if ( selectedEntity == EntityType::BULLET_SHELL )
         {
             _selectedItem->setSpriteFrame("Shell.png");
             _selectedItem->setOpacity(128);
@@ -522,7 +522,7 @@ void GMXLayer2::updateCocosLogic()
                 }
             }
         }
-        else if ( selectedEntity == EditorEntityType::ITEM_M16A2 )
+        else if ( selectedEntity == EntityType::ITEM_M16A2 )
         {
             _selectedItem->setSpriteFrame("M16A2.png");
             _selectedItem->setOpacity(128);
@@ -540,7 +540,7 @@ void GMXLayer2::updateCocosLogic()
             }
             
         }
-        else if ( selectedEntity == EditorEntityType::ITEM_GLOCK17 )
+        else if ( selectedEntity == EntityType::ITEM_GLOCK17 )
         {
             _selectedItem->setSpriteFrame("Glock17.png");
             _selectedItem->setOpacity(128);
@@ -558,7 +558,7 @@ void GMXLayer2::updateCocosLogic()
             }
             
         }
-        else if ( selectedEntity == EditorEntityType::ITEM_M1897 )
+        else if ( selectedEntity == EntityType::ITEM_M1897 )
         {
             _selectedItem->setSpriteFrame("M1897.png");
             _selectedItem->setOpacity(128);
@@ -1689,19 +1689,25 @@ void GMXLayer2::save(const std::string& path)
     std::vector<flatbuffers::Offset<DeadCreator::Entity>> entities;
     for( auto& ent : _entities )
     {
-        DeadCreator::Vector2 v(ent.second->getPosition().x, ent.second->getPosition().y);
-        auto e = DeadCreator::CreateEntity(builder,
-                                           static_cast<int>(ent.second->getPlayerType()),
-                                           static_cast<int>(ent.second->getEntityType()),
-                                           &v);
-        entities.push_back(e);
+        if ( ent.second->isVisible() )
+        {
+            DeadCreator::Vector2 v(ent.second->getPosition().x, ent.second->getPosition().y);
+            auto e = DeadCreator::CreateEntity(builder,
+                                               static_cast<int>(ent.second->getPlayerType()),
+                                               static_cast<int>(ent.second->getEntityType()),
+                                               &v);
+            entities.push_back(e);
+        }
     }
+    
+    DeadCreator::Size cellSpaceSize(_file.tileWidth * 5, _file.tileHeight * 5);
     
     auto file = DeadCreator::CreateGMXFile(builder,
                                            static_cast<DeadCreator::TileType>(_file.defaultTile),
                                            builder.CreateVector(tileInfos), &numOfTiles, &tileSize,
                                            builder.CreateVector(collisionRegions),
-                                           builder.CreateVector(entities));
+                                           builder.CreateVector(entities),
+                                           &cellSpaceSize);
     builder.Finish(file);
     flatbuffers::SaveFile(path.c_str(),
                           reinterpret_cast<const char*>(builder.GetBufferPointer()),

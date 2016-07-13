@@ -23,8 +23,7 @@ namespace realtrick
     
     enum LayerType
     {
-        INVALID = -1,
-        TILE ,
+        TILE = 0,
         ENTITY,
         DOODAD,
         LOCATION,
@@ -89,7 +88,7 @@ namespace realtrick
         bool _isPlayerEnable = false;
         bool _isWindowEnable = false;
         
-        int _layerType = LayerType::INVALID;
+        int _layerType = -1;
         
         bool _isModal = false;
         

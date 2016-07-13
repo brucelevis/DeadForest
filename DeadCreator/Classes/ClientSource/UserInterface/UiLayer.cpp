@@ -171,29 +171,15 @@ bool UiLayer::init()
         addChild(rain, Z_ORDER_UI - 2);
     }
     
-    for(int i = 0 ; i < 300; ++ i)
-    {
-        EntityRainDrop* rain = EntityRainDrop::create(_gameMgr, { "rain0.png", "rain1.png", "rain2.png" }, 1.0f, ui::Widget::TextureResType::PLIST);
-        rain->setWorldPosition(_gameMgr->getGameCamera()->getCameraPos() + Vec2(random(-_winSize.width * 0.5f, _winSize.width * 0.5f), random(-_winSize.height * 0.5f, _winSize.height * 0.5f)));
-        _gameMgr->addDynamicEntity(rain, Z_ORDER_ITEMS, _gameMgr->getNextValidID());
-    }
-    
     
     _inGameUIRoot = Node::create();
     _inGameUIRoot->setPosition(_winSize / 2);
     _inGameUIRoot->setScale(Prm.getValueAsFloat("cameraZoom"));
     addChild(_inGameUIRoot);
     
-    
     _aimingNode = AimingNode::create(_gameMgr);
     _aimingNode->setRange(100.0f);
     _inGameUIRoot->addChild(_aimingNode);
-    
-    
-    _locationText = ui::Text::create("", "SpecialElite.TTF", 40);
-    _locationText->setPosition(Vec2(_winSize.width * 0.92, _winSize.height * 0.9));
-    _locationText->setOpacity(80);
-    addChild(_locationText);
 
     
     _hpBar = userinterface::HpBar::create(_gameMgr);
@@ -201,29 +187,10 @@ bool UiLayer::init()
     addChild(_hpBar);
     
     
-    _infoSystemBottom = userinterface::InfoSystem::create("SpecialElite.TTF", 20.0f , Color3B::WHITE, 2);
-    _infoSystemBottom->setPosition(Vec2(_winSize.width / 2.0f, _winSize.height * 0.15f));
-    addChild(_infoSystemBottom);
-    
-    
-    _infoSystemTop = userinterface::InfoSystem::create("SpecialElite.TTF", 25.0f, Color3B::RED, 1);
-    _infoSystemTop->setPosition(Vec2(_winSize.width / 2.0f, _winSize.height * 0.8f));
-    addChild(_infoSystemTop);
     
     return true;
 }
 
-
-void UiLayer::pushMessageToBottom(const std::string& infoText)
-{
-    _infoSystemBottom->pushMessage(infoText);
-}
-
-
-void UiLayer::pushMessageToTop(const std::string& infoText)
-{
-    _infoSystemTop->pushMessage(infoText);
-}
 
 
 

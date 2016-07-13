@@ -150,11 +150,6 @@ bool EntityHuman::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBa
             data.item = static_cast<ItemBase*>(other);
             _gameMgr->pushLogic(0.0, MessageType::PUSH_ITEM_TO_INVENTORY, &data);
             _gameMgr->removeEntity(other->getTag());
-            
-            if ( getTag() == _gameMgr->getPlayerPtr()->getTag() )
-            {
-                _gameMgr->getGameWorld()->getUiLayer()->pushMessageToBottom("item get!");
-            }
         }
     }
     

@@ -42,10 +42,6 @@ namespace realtrick
         
         AimingNode* getAimingNode() const { return _aimingNode; }
         
-        void pushMessageToBottom(const std::string& infoText);
-        
-        void pushMessageToTop(const std::string& infoText);
-        
     private:
         
         UiLayer(GameManager* mgr);
@@ -70,17 +66,11 @@ namespace realtrick
         
         cocos2d::Node* _inGameUIRoot;
         
-        cocos2d::ui::Text* _locationText;
-        
         userinterface::WeaponStatus* _weaponStatus;
         
         AimingNode* _aimingNode;
         
         userinterface::HpBar* _hpBar;
-        
-        userinterface::InfoSystem* _infoSystemTop;
-        
-        userinterface::InfoSystem* _infoSystemBottom;
         
     };
 }

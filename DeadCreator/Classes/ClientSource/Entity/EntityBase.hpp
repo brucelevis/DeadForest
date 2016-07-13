@@ -34,6 +34,8 @@ namespace realtrick
         void            setEntityType(int type)     { _entityType = type; }
         cocos2d::Vec2   getWorldPosition() const    { return _worldPosition; }
         void            setWorldPosition(const cocos2d::Vec2& pos)  { _worldPosition = pos; }
+        void            setPlayerType(PlayerType type) { _playerType = type; }
+        PlayerType      getPlayerType() const { return _playerType; }
         
         virtual void    visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags) override;
         virtual bool    handleMessage(const Telegram& msg) override { return false; }

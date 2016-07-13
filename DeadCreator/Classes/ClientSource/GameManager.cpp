@@ -79,177 +79,6 @@ namespace realtrick
     }
     
     
-    void GameManager::loadSingleGameMap(const char* fileName)
-    {
-        if( _gameMap != nullptr )
-        {
-            throw std::runtime_error("<GameManager::loadGameMap> GameMap is already exist.");
-        }
-
-        _cellSpace = new CellSpacePartition(Prm.getValueAsInt("worldWidth"),
-                                            Prm.getValueAsInt("worldHeight"),
-                                            Prm.getValueAsInt("cellWidth"),
-                                            Prm.getValueAsInt("cellHeight"));
-        
-        _gameMap = GameMap::create(this, fileName);
-        addStaticEntity(_gameMap, Z_ORDER_GAME_MAP, getNextValidID());
-        
-        std::vector<Vec2> startingPoints = getGameMap()->getStartingLocationData();
-        log("<GameManager::loadGameMap> Created Human at (%.0f, %.0f)", startingPoints.front().x, startingPoints.front().y);
-        EntityHuman* human = EntityHuman::create(this);
-        human->setWorldPosition(startingPoints.front());
-        addDynamicEntity(human, Z_ORDER_HUMAN + 1, getNextValidID());
-        setPlayer(human);
-        
-        for(int i = 1 ; i < startingPoints.size() ; ++ i)
-        {
-            log("<GameManager::loadGameMap> Created Human at (%.0f, %.0f)", startingPoints[i].x, startingPoints[i].y);
-            EntityHuman* human = EntityHuman::create(this);
-            human->setWorldPosition(startingPoints[i]);
-            addDynamicEntity(human, Z_ORDER_HUMAN, getNextValidID());
-        }
-        
-        std::vector<NameCoordAmount> items = getGameMap()->getItemData();
-        for(int i = 0 ; i < items.size() ; ++ i)
-        {
-            log("<GameManager::loadGameMap> Created Items at (%.0f, %.0f)", items[i].pos.x, items[i].pos.y);
-            
-            if ( items[i].name == "Glock22" )
-            {
-                ItemGlock17* glock17 = ItemGlock17::create(this, "Glock17.png", "Glock17.png", "Glock17.png",
-                                                           ui::Widget::TextureResType::PLIST);
-                glock17->setWorldPosition(items[i].pos);
-                glock17->setAmount(items[i].amount);
-                addDynamicEntity(glock17, Z_ORDER_ITEMS, getNextValidID());
-            }
-            else if (items[i].name == "M16A4" )
-            {
-                ItemM16A2* m16a2 = ItemM16A2::create(this, "M16A2.png", "M16A2.png", "M16A2.png",
-                                                     ui::Widget::TextureResType::PLIST);
-                m16a2->setWorldPosition(items[i].pos);
-                m16a2->setAmount(items[i].amount);
-                addDynamicEntity(m16a2, Z_ORDER_ITEMS, getNextValidID());
-            }
-            else if (items[i].name == "Axe" )
-            {
-                ItemAxe* axe = ItemAxe::create(this, "Axe.png", "Axe.png", "Axe.png",
-                                               ui::Widget::TextureResType::PLIST);
-                axe->setWorldPosition(items[i].pos);
-                axe->setAmount(items[i].amount);
-                addDynamicEntity(axe, Z_ORDER_ITEMS, getNextValidID());
-            }
-            else if (items[i].name == "M1897" )
-            {
-                ItemM1897* m1897 = ItemM1897::create(this, "M1897.png", "M1897.png", "M1897.png",
-                                                     ui::Widget::TextureResType::PLIST);
-                m1897->setWorldPosition(items[i].pos);
-                m1897->setAmount(items[i].amount);
-                addDynamicEntity(m1897, Z_ORDER_ITEMS, getNextValidID());
-            }
-            else if (items[i].name == "5_56mm")
-            {
-                Bullet556mm* bullet556mm = Bullet556mm::create(this, "5_56mm.png", "5_56mm.png", "5_56mm.png", ui::Widget::TextureResType::PLIST);
-                bullet556mm->setWorldPosition(items[i].pos);
-                bullet556mm->setAmount(items[i].amount);
-                addDynamicEntity(bullet556mm, Z_ORDER_ITEMS, getNextValidID());
-            }
-            else if (items[i].name == "9mm")
-            {
-                Bullet9mm* bullet9mm = Bullet9mm::create(this, "9mm.png", "9mm.png", "9mm.png", ui::Widget::TextureResType::PLIST);
-                bullet9mm->setWorldPosition(items[i].pos);
-                bullet9mm->setAmount(items[i].amount);
-                addDynamicEntity(bullet9mm, Z_ORDER_ITEMS, getNextValidID());
-            }
-            else if (items[i].name == "Shell")
-            {
-                BulletShell* shotgunShell = BulletShell::create(this, "Shell.png", "Shell.png", "Shell.png", ui::Widget::TextureResType::PLIST);
-                shotgunShell->setWorldPosition(items[i].pos);
-                shotgunShell->setAmount(items[i].amount);
-                addDynamicEntity(shotgunShell, Z_ORDER_ITEMS, getNextValidID());
-            }
-        }
-    
-    }
-    
-    
-    void GameManager::loadMultiGameMap(const char* fileName)
-    {
-        if( _gameMap != nullptr )
-        {
-            throw std::runtime_error("<GameManager::loadGameMap> GameMap is already exist.");
-        }
-        
-        _cellSpace = new CellSpacePartition(Prm.getValueAsInt("worldWidth"),
-                                            Prm.getValueAsInt("worldHeight"),
-                                            Prm.getValueAsInt("cellWidth"),
-                                            Prm.getValueAsInt("cellHeight"));
-        
-        _gameMap = GameMap::create(this, fileName);
-        addStaticEntity(_gameMap, Z_ORDER_GAME_MAP, 1000000 + getNextValidID());
-        
-        std::vector<NameCoordAmount> items = getGameMap()->getItemData();
-        for(int i = 0 ; i < items.size() ; ++ i)
-        {
-            log("<GameManager::loadGameMap> Created Items at (%.0f, %.0f)", items[i].pos.x, items[i].pos.y);
-            
-            if ( items[i].name == "Glock22" )
-            {
-                ItemGlock17* glock17 = ItemGlock17::create(this, "Glock17.png", "Glock17.png", "Glock17.png",
-                                                           ui::Widget::TextureResType::PLIST);
-                glock17->setWorldPosition(items[i].pos);
-                glock17->setAmount(items[i].amount);
-                addDynamicEntity(glock17, Z_ORDER_ITEMS, 1000000 + getNextValidID());
-            }
-            else if (items[i].name == "M16A4" )
-            {
-                ItemM16A2* m16a2 = ItemM16A2::create(this, "M16A2.png", "M16A2.png", "M16A2.png",
-                                                     ui::Widget::TextureResType::PLIST);
-                m16a2->setWorldPosition(items[i].pos);
-                m16a2->setAmount(items[i].amount);
-                addDynamicEntity(m16a2, Z_ORDER_ITEMS, 1000000 + getNextValidID());
-            }
-            else if (items[i].name == "Axe" )
-            {
-                ItemAxe* axe = ItemAxe::create(this, "Axe.png", "Axe.png", "Axe.png",
-                                               ui::Widget::TextureResType::PLIST);
-                axe->setWorldPosition(items[i].pos);
-                axe->setAmount(items[i].amount);
-                addDynamicEntity(axe, Z_ORDER_ITEMS, 1000000 + getNextValidID());
-            }
-            else if (items[i].name == "M1897" )
-            {
-                ItemM1897* m1897 = ItemM1897::create(this, "M1897.png", "M1897.png", "M1897.png",
-                                                     ui::Widget::TextureResType::PLIST);
-                m1897->setWorldPosition(items[i].pos);
-                m1897->setAmount(items[i].amount);
-                addDynamicEntity(m1897, Z_ORDER_ITEMS, 1000000 + getNextValidID());
-            }
-            else if (items[i].name == "5_56mm")
-            {
-                Bullet556mm* bullet556mm = Bullet556mm::create(this, "5_56mm.png", "5_56mm.png", "5_56mm.png", ui::Widget::TextureResType::PLIST);
-                bullet556mm->setWorldPosition(items[i].pos);
-                bullet556mm->setAmount(items[i].amount);
-                addDynamicEntity(bullet556mm, Z_ORDER_ITEMS, 1000000 + getNextValidID());
-            }
-            else if (items[i].name == "9mm")
-            {
-                Bullet9mm* bullet9mm = Bullet9mm::create(this, "9mm.png", "9mm.png", "9mm.png", ui::Widget::TextureResType::PLIST);
-                bullet9mm->setWorldPosition(items[i].pos);
-                bullet9mm->setAmount(items[i].amount);
-                addDynamicEntity(bullet9mm, Z_ORDER_ITEMS, 1000000 + getNextValidID());
-            }
-            else if (items[i].name == "Shell")
-            {
-                BulletShell* shotgunShell = BulletShell::create(this, "Shell.png", "Shell.png", "Shell.png", ui::Widget::TextureResType::PLIST);
-                shotgunShell->setWorldPosition(items[i].pos);
-                shotgunShell->setAmount(items[i].amount);
-                addDynamicEntity(shotgunShell, Z_ORDER_ITEMS, 1000000 + getNextValidID());
-            }
-        }
-        
-    }
-    
-    
     void GameManager::setPlayer(EntityHuman* player)
     {
         _player = player;
@@ -502,14 +331,24 @@ namespace realtrick
             _gameMap = GameMap::createWithGMXFile(this, file);
             addStaticEntity(_gameMap, Z_ORDER_GAME_MAP, getNextValidID());
             
+            bool isFirst = true;
             for ( auto entity = file->entities()->begin(); entity != file->entities()->end(); ++ entity )
             {
-                int entityType = entity->entity_type();
-                int playerType = entity->player_type();
+                EntityType entityType = static_cast<EntityType>(entity->entity_type());
+                PlayerType playerType = static_cast<PlayerType>(entity->player_type());
                 Vec2 position(entity->pos()->x(), entity->pos()->y());
                 if ( entityType == EntityType::ENTITY_HUMAN )
                 {
+                    EntityHuman* human = EntityHuman::create(this);
+                    human->setPlayerType(playerType);
+                    human->setWorldPosition(position);
+                    addDynamicEntity(human, Z_ORDER_HUMAN + 1, getNextValidID());
                     
+                    if ( isFirst )
+                    {
+                        setPlayer(human);
+                        isFirst = false;
+                    }
                 }
                 else
                 {

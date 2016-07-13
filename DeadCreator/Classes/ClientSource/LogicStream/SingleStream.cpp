@@ -24,10 +24,8 @@ namespace realtrick
     {
         if ( msg.msg == MessageType::LOAD_GAME_PLAYER)
         {
-//            _gameMgr->loadSingleGameMap("simple_server_map.txt");
-//            _gameMgr->pushLogic(0.0, MessageType::LOAD_GAME_COMPLETE, nullptr);
-            
             _gameMgr->loadGMXFile("/Users/jun/Desktop/test_map.gmx");
+            _gameMgr->pushLogic(0.0, MessageType::LOAD_GAME_COMPLETE, nullptr);
             
             return true;
         }

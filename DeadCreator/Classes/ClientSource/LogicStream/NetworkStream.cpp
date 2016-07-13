@@ -121,7 +121,7 @@ namespace realtrick
         if ( msg.msg == MessageType::LOAD_GAME_PLAYER)
         {
             // player를 제외하고  받는다.
-            _gameMgr->loadMultiGameMap("simple_server_map.txt");
+            //_gameMgr->loadMultiGameMap("simple_server_map.txt");
             
             return true;
         }

@@ -64,8 +64,6 @@ namespace realtrick
         std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const;
         std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& position, const Segment& ray) const;
         
-        void loadSingleGameMap(const char* fileName);
-        void loadMultiGameMap(const char* fileName);
         void loadGMXFile(const std::string& filePath);
         
         void setGameCamera(Camera2D* camera) { _gameCamera = camera; }

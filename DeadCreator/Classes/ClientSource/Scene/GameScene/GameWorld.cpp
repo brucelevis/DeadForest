@@ -24,6 +24,8 @@
 #include "SingleStream.hpp"
 #include "NetworkStream.hpp"
 #include "AimingNode.hpp"
+#include "TileBase.hpp"
+#include "TileHelperFunctions.hpp"
 
 using namespace cocos2d;
 
@@ -119,17 +121,21 @@ namespace realtrick
         _gameMgr->getDebugNode()->clear();
 
         Vec2 oldCameraPos = _gameCamera->getCameraPos();
-        pair<int, int> oldIndex = _gameMgr->getGameMap()->getModerateTileIndex(oldCameraPos);
+        pair<int, int> oldIndex = getFocusedTileIndex(oldCameraPos, _gameMgr->getGameMap()->getTileWidth(),
+                                                      _gameMgr->getGameMap()->getTileHeight(),
+                                                      DUMMY_TILE_SIZE);
         
         _gameMgr->update(dt);
         _gameCamera->setCameraPos(_player->getWorldPosition());
         
-        if ( oldIndex != _gameMgr->getGameMap()->getModerateTileIndex(_gameCamera->getCameraPos()) )
+        if ( oldIndex != getFocusedTileIndex(_gameCamera->getCameraPos(), _gameMgr->getGameMap()->getTileWidth(),
+                                             _gameMgr->getGameMap()->getTileHeight(),
+                                             DUMMY_TILE_SIZE))
+        {
             _gameMgr->getGameMap()->updateChunk(oldCameraPos);
-        
-        Dispatch.dispatchDelayedMessages();
+            Dispatch.dispatchDelayedMessages();
+        }
     }
-    
     
     void GameWorld::pushLogic(double delaySeconds, MessageType type, void* extraInfo)
     {

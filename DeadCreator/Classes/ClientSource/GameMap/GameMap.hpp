@@ -36,18 +36,15 @@ namespace realtrick
         
     public:
         
-        static GameMap* create(GameManager* gameMgr, const char* fileName);
-        
         static GameMap* createWithGMXFile(GameManager* gameMgr, const DeadCreator::GMXFile* file);
         
         void updateChunk(const Vec2& position);
         
+        int getTileWidth() const                                                    { return _tileWidth; }
+        int getTileHeight() const                                                   { return _tileHeight; }
         int getWorldWidth() const                                                   { return _worldWidth; }
-        
         int getWorldHeight() const                                                  { return _worldHeight; }
-        
         int getCellWidth() const                                                    { return _cellWidth; }
-        
         int getCellHeight() const                                                   { return _cellHeight; }
         
         const std::vector<Polygon>&              getCollisionData() const           { return _collisionData; }
@@ -70,11 +67,7 @@ namespace realtrick
         
         void setWorldPosition(const cocos2d::Vec2& worldPos)                        { _worldPosition = worldPos; }
         
-        inline std::pair<int, int> getModerateTileIndex(const cocos2d::Vec2& pos) const;
-        
         std::vector<Segment> getNeighborWall(const cocos2d::Vec2 position) const;
-        
-        std::pair<int, int> getExactTileIndex(const cocos2d::Vec2& pos);
         
         TileType getStepOnTileType(const cocos2d::Vec2& pos);
         
@@ -86,7 +79,8 @@ namespace realtrick
         
         int                                             _numOfTileX;
         int                                             _numOfTileY;
-        int                                             _sizeOfTile;
+        int                                             _tileWidth;
+        int                                             _tileHeight;
         int                                             _worldWidth;
         int                                             _worldHeight;
         
@@ -126,39 +120,11 @@ namespace realtrick
         
         virtual ~GameMap();
         
-        bool initGameMap(const char* fileName);
-        
         bool initGMXFile(const DeadCreator::GMXFile* file);
-        
-        void _parseCollisionData();
-        
-        void _parseTileData();
-        
-        void _parseStartingLocationList();
-        
-        void _parseItemData();
-        
-        void _parseFromFile(const char* fileName);
-        
-        inline cocos2d::Vec2 _getTilePositionFromIndex(int x, int y);
         
         inline TileType convertToTileType(char c);
         
     };
-    
-    
-    inline cocos2d::Vec2 GameMap::_getTilePositionFromIndex(int x, int y)
-    {
-        return cocos2d::Vec2(y % 2 ? _sizeOfTile * (x + 1) : (_sizeOfTile / 2) + (_sizeOfTile * x), (_sizeOfTile / 2) * y);
-    }
-    
-    
-    inline std::pair<int, int> GameMap::getModerateTileIndex(const cocos2d::Vec2& pos) const
-    {
-        int x = (int)((pos.x) / _sizeOfTile);        // not exact index!
-        int y = (int)((pos.y) / (_sizeOfTile / 2));  // not exact index!
-        return std::make_pair(x, y);
-    }
     
     
     inline GameMap::TileType GameMap::convertToTileType(char c)

@@ -17,7 +17,7 @@ using namespace cocos2d;
 PaletteLayer::PaletteLayer(GMXLayer2& layer):
 _gmxLayer(layer),
 _layerSize(Size(200,200)),
-_layerPosition(Vec2(200, 100)),
+_layerPosition(Vec2(200, 200)),
 _boundingBoxPadding(Rect::ZERO)
 {
 }

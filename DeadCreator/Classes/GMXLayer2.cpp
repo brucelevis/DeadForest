@@ -156,8 +156,6 @@ bool GMXLayer2::init()
     
     LocationNode* locationNode = LocationNode::create(*this);
     locationNode->setPosition(512, 512);
-    locationNode->updateRects();
-    locationNode->setVisible(false);
     addLocation("Location 0", locationNode);
     
     return true;
@@ -933,6 +931,8 @@ void GMXLayer2::putTile(EditorTileType type, int x, int y)
 
 bool GMXLayer2::addEntity(EditorEntityBase* entity, int localZOrder, bool isExecCommand)
 {
+    clearSelectedEntites();
+    
     auto iter = _entities.find(entity->getID());
     if ( iter == std::end(_entities))
     {
@@ -1003,11 +1003,11 @@ void GMXLayer2::setCommand(CommandBase* newCommand)
     
     if ( dynamic_cast<TileToolCommand*>(newCommand) )
     {
-        _imguiLayer.setLayerType(LayerType::TILE);
+        _imguiLayer.changeLayerType(LayerType::TILE);
     }
     else if ( dynamic_cast<AddEntityToolCommand*>(newCommand) )
     {
-        _imguiLayer.setLayerType(LayerType::ENTITY);
+        _imguiLayer.changeLayerType(LayerType::ENTITY);
     }
     else if ( dynamic_cast<RemoveEntityToolCommand*>(newCommand) )
     {
@@ -1784,6 +1784,7 @@ void GMXLayer2::setVisibleLocations(bool visible)
     {
         loc.second->setVisible(visible);
         if ( !visible ) loc.second->setSelected(false);
+        else loc.second->update(Vec2::ZERO);
     }
 }
 

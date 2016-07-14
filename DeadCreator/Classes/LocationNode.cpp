@@ -216,7 +216,18 @@ void LocationNode::setLocationSize(int x, int y)
 }
 
 
+void LocationNode::setPosition(float x, float y)
+{
+    Node::setPosition(x, y);
+    updateRects();
+}
 
+
+void LocationNode::setPosition(const cocos2d::Vec2& pos)
+{
+    Node::setPosition(pos);
+    updateRects();
+}
 
 
 

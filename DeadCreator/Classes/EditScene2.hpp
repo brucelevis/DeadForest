@@ -59,6 +59,8 @@ namespace realtrick
         void doSaveButton();
         void doOpenButton();
         
+        void changeLayerType(LayerType type);
+        
         void saveFile(const std::string& filePath);
         void saveAsFile();
         

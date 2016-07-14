@@ -16,7 +16,7 @@ using namespace realtrick;
 NavigatorLayer::NavigatorLayer(GMXLayer2& gmxLayer) :
 _gmxLayer(gmxLayer),
 _layerSize(Size(200,200)),
-_layerPosition(Vec2(50, 50)),
+_layerPosition(Vec2(70, 100)),
 _boundingBoxPadding(Rect::ZERO),
 _centerViewParam(Vec2::ZERO)
 {

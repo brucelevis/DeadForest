@@ -15,7 +15,7 @@ using namespace cocos2d;
 HistoryLayer::HistoryLayer(GMXLayer2& gmxLayer) :
 _gmxLayer(gmxLayer),
 _layerSize(Size(200, 300)),
-_layerPosition(Vec2(120, 270)),
+_layerPosition(Vec2(120, 370)),
 _boundingBoxPadding(Rect::ZERO)
 {
 }

@@ -42,6 +42,9 @@ namespace realtrick
         
         void renderOutline();
         
+        virtual void setPosition(float x, float y) override;
+        virtual void setPosition(const cocos2d::Vec2& pos) override;
+        
     private:
         
         GMXLayer2& _gmxLayer;

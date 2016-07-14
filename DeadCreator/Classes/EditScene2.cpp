@@ -246,16 +246,8 @@ bool EditScene2::init()
         ImGui::PushItemWidth(200);
         if (ImGui::Combo("##layer", &_layerType, "Tile Layer\0Entity Layer\0Doodad Layer\0Location Layer\0", 4))
         {
-            if ( _layer )
-            {
-                _layer->getPaletteLayer()->setSelectedItem(-1);
-                
-                if ( _layerType != static_cast<int>(LayerType::LOCATION) ) _layer->setVisibleLocations(false);
-                else _layer->setVisibleLocations(true);
-                
-                if ( _layerType != static_cast<int>(LayerType::TILE) ) _layer->setVisibleCollisionRegions(false);
-                else _layer->setVisibleCollisionRegions(true);
-            }
+            if ( _layer ) _layer->getPaletteLayer()->setSelectedItem(-1);
+            changeLayerType( static_cast<LayerType>(_layerType) );
         }
         
         ImGui::SameLine();
@@ -525,10 +517,27 @@ void EditScene2::doOpenButton()
 }
 
 
+void EditScene2::changeLayerType(LayerType type)
+{
+    _layerType = type;
+    if ( _layer )
+    {
+        if ( type == LayerType::LOCATION ) _layer->setVisibleLocations(true);
+        else _layer->setVisibleLocations(false);
+        
+        if ( type == LayerType::TILE ) _layer->setVisibleCollisionRegions(true);
+        else _layer->setVisibleCollisionRegions(false);
+        
+        if ( type != LayerType::ENTITY ) _layer->clearSelectedEntites();
+    }
+}
+
+
 bool EditScene2::isUndo()
 {
     return (_layer &&  _layer->isUndo());
 }
+
 
 bool EditScene2::isRedo()
 {

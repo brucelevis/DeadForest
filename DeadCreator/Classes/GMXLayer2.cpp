@@ -125,6 +125,7 @@ bool GMXLayer2::init()
     _rootNode->addChild(_hoveredTileRegion);
     
     _collisionNode = DrawNode::create();
+    _collisionNode->setVisible(false);
     _rootNode->addChild(_collisionNode);
     
     _selectedItem = Sprite::create();
@@ -156,6 +157,7 @@ bool GMXLayer2::init()
     LocationNode* locationNode = LocationNode::create(*this);
     locationNode->setPosition(512, 512);
     locationNode->updateRects();
+    locationNode->setVisible(false);
     addLocation("Location 0", locationNode);
     
     return true;
@@ -593,9 +595,12 @@ void GMXLayer2::updateCocosLogic()
     }
     
     
-    for ( auto& loc : _locations )
+    if ( _imguiLayer.getLayerType() == LayerType::LOCATION && ImGui::IsWindowHovered() )
     {
-        loc.second->update(_mousePosInWorld);
+        for ( auto& loc : _locations )
+        {
+            loc.second->update(_mousePosInWorld);
+        }
     }
     
     if ( ImGui::IsKeyReleased(257) )
@@ -1770,6 +1775,16 @@ bool GMXLayer2::removeLocation(const std::string& name)
         return true;
     }
     return false;
+}
+
+
+void GMXLayer2::setVisibleLocations(bool visible)
+{
+    for (auto& loc : _locations)
+    {
+        loc.second->setVisible(visible);
+        if ( !visible ) loc.second->setSelected(false);
+    }
 }
 
 

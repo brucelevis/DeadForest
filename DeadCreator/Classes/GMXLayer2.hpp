@@ -101,6 +101,7 @@ namespace realtrick
         
         void initCollisionData();
         void updateCollisionRegion();
+        void setVisibleCollisionRegions(bool visible) { _collisionNode->setVisible(visible); }
         
         bool isFirstFile() const { return _isFirstFile; }
         void enableFirstFile(bool enable) { _isFirstFile = enable; }
@@ -112,6 +113,7 @@ namespace realtrick
         
         bool addLocation(const std::string& name, LocationNode* node);
         bool removeLocation(const std::string& name);
+        void setVisibleLocations(bool visible);
         
     private:
         

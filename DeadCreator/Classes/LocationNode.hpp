@@ -21,7 +21,7 @@ namespace realtrick
         
     public:
         
-        const float DUMMY_CLICK_SPACE = 10.0f;
+        float dummySpace = 10.0f;
         
     public:
         
@@ -34,7 +34,7 @@ namespace realtrick
         bool isSelected() const { return _isSelected; }
         void setSelected(bool selected);
         
-        void setLocationSize(int x, int y) { _sizeX = x; _sizeY = y; }
+        void setLocationSize(int x, int y);
         std::pair<int, int> getLocationSize() const { return { _sizeX, _sizeY }; }
         
         void updateRects();
@@ -53,8 +53,8 @@ namespace realtrick
         cocos2d::DrawNode* _aabbNode;
         cocos2d::ui::Text* _name;
         
-        int _sizeX = 14;
-        int _sizeY = 7;
+        int _sizeX;
+        int _sizeY;
         
         bool _isSelected = false;
         

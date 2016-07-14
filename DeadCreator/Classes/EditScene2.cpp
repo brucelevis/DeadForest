@@ -249,6 +249,12 @@ bool EditScene2::init()
             if ( _layer )
             {
                 _layer->getPaletteLayer()->setSelectedItem(-1);
+                
+                if ( _layerType != static_cast<int>(LayerType::LOCATION) ) _layer->setVisibleLocations(false);
+                else _layer->setVisibleLocations(true);
+                
+                if ( _layerType != static_cast<int>(LayerType::TILE) ) _layer->setVisibleCollisionRegions(false);
+                else _layer->setVisibleCollisionRegions(true);
             }
         }
         

@@ -99,6 +99,7 @@ namespace
         return false;
     }
     
+    
     std::pair<int,int> getFocusedTileIndex(const cocos2d::Vec2& worldPos, float tileWidth, float tileHeight, int numOfDummy)
     {
         int centerTileIndexX = static_cast<int>((worldPos.x) / tileWidth) + numOfDummy;        // not exact index!
@@ -122,6 +123,18 @@ namespace
         }
         
         return {0, 0};
+    }
+    
+    
+    std::pair<int, int> getRectangleTileIndex(const cocos2d::Vec2& worldPos, float tileWidth, float tileHeight)
+    {
+        return { worldPos.x / (tileWidth / 4), worldPos.y / (tileHeight / 4) };
+    }
+    
+    
+    cocos2d::Vec2 getPositionFromRectangleIndex(int x, int y, float tileWidth, float tileHeight)
+    {
+        return cocos2d::Vec2(x * tileWidth / 4, y * tileHeight / 4);
     }
     
 }

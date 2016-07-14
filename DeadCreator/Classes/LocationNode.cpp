@@ -54,7 +54,6 @@ bool LocationNode::init()
 void LocationNode::setSelected(bool selected)
 {
     _isSelected = selected;
-    renderOutline();
 }
 
 
@@ -123,18 +122,30 @@ void LocationNode::update(const Vec2& mouseWorldPosition)
             }
         }
     }
-    
     else
     {
-        if ( ImGui::GetIO().MouseClicked[0] && !_aabb.containsPoint(mouseWorldPosition) )
-        {
-            _isSelected = false;
-        }
-        
         for(int i = 0 ; i < 9 ; ++ i)
         {
-            if ( _rects[i].containsPoint(mouseWorldPosition) ) _colors[i] = Color4F(1,1,1,0.8f);
-            else _colors[i] = Color4F(1,1,1,0.4f);
+            if ( _rects[i].containsPoint(mouseWorldPosition) ) {
+                _colors[i] = Color4F(1, 1, 1, 0.8f);
+                
+                ImGui::GetIO().MouseDrawCursor = true;
+                
+                if ( i == 0 || i == 8) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNWSE);
+                else if ( i == 2 || i == 6 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNESW);
+                else if ( i == 1 || i == 7 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
+                else if ( i == 3 || i == 5 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
+                else if ( i == 4 ) ImGui::SetMouseCursor(ImGuiMouseCursor_Move);
+            }
+            else _colors[i] = Color4F(1, 1, 1, 0.4f);
+        }
+        
+        if ( ImGui::GetIO().MouseClicked[0] )
+        {
+            if ( !_aabb.containsPoint(mouseWorldPosition) )
+            {
+                _isSelected = false;
+            }
         }
     }
     
@@ -202,8 +213,7 @@ void LocationNode::renderOutline()
     _aabbNode->drawLine(p11, p12, _colors[8]);
     
     // inner rect
-    _aabbNode->drawSolidRect(Vec2(2, 2), Vec2(rectSize.width - 2, rectSize.height - 2), Color4F(0.2f, 0.2f, 0.8f, 0.4f));
-    
+    _aabbNode->drawSolidRect(Vec2(2, 2), Vec2(rectSize.width - 2, rectSize.height - 2), Color4F(0.2f, 0.2f, 0.8f, 0.2f));
 }
 
 

@@ -158,6 +158,10 @@ bool GMXLayer2::init()
     locationNode->setPosition(512, 512);
     addLocation("Location 0", locationNode);
     
+    auto locationNode2 = LocationNode::create(*this);
+    locationNode2->setPosition(512, 384);
+    addLocation("Location 1", locationNode2);
+    
     return true;
 }
 

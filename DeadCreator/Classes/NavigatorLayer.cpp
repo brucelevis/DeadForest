@@ -25,6 +25,8 @@ _centerViewParam(Vec2::ZERO)
 
 NavigatorLayer::~NavigatorLayer()
 {
+    _tileMarks.clear();
+    _entityMarks.clear();
 }
 
 
@@ -126,8 +128,8 @@ void NavigatorLayer::showLayer(bool* opened)
                                _boundingBoxPadding.origin.y + _boundingBoxPadding.size.height - 2),
                         false);
     
-    static auto file = _gmxLayer.getFile();
-    static ImVec2 worldSize = ImVec2(file.worldSize.width, file.worldSize.height);
+    auto file = _gmxLayer.getFile();
+    ImVec2 worldSize = ImVec2(file.worldSize.width, file.worldSize.height);
     for(auto &tile : _tileMarks)
     {
         int key = tile.first;
@@ -197,9 +199,8 @@ void NavigatorLayer::showLayer(bool* opened)
 
 void NavigatorLayer::setTile(int x, int y, const TileBase& tile)
 {
-    static int numOfTileX = _gmxLayer.getFile().numOfTileX;
+    int numOfTileX = _gmxLayer.getFile().numOfTileX;
     int key = indexToNumber(x, y, numOfTileX, DUMMY_TILE_SIZE);
-    
     if ( tile.getTileType() == _defaultTile )
     {
         _tileMarks.erase(key);

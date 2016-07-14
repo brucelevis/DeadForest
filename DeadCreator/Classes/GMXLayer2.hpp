@@ -30,6 +30,7 @@ namespace realtrick
     class RemoveEntityToolCommand;
     class TileToolCommand;
     class EditorEntityBase;
+    class LocationNode;
     
     class GMXLayer2 : public cocos2d::Layer
     {
@@ -37,48 +38,33 @@ namespace realtrick
     public:
         
         explicit GMXLayer2(EditScene2& _imguiLayer, GMXFile& file);
-        
         virtual ~GMXLayer2();
         
         static GMXLayer2* create(EditScene2& imguiLayer, GMXFile& file);
-        
         virtual bool init() override;
-        
         virtual void update(float dt) override;
-        
         void updateCocosLogic();
         
         const GMXFile& getFile() const { return _file; }
-        
         void setTile(int x, int y, const TileBase& tile, bool isExecCommand = false);
-        
-        void showWindow();
+        const TileBase& getTile(int x, int y) const { return _tiles[y][x]; }
         
         void updateChunk(const cocos2d::Vec2& pivot);
-        
         bool isUpdateChunk(const cocos2d::Vec2& newPos, const cocos2d::Vec2& oldPos);
         
         void putTile(EditorTileType type, int x, int y);
         
         void setLayerPosition(const cocos2d::Vec2& pos) { _layerPosition = pos; }
-        
         cocos2d::Vec2 getTileRootWorldPosition() const { return _tileRootWorldPosition; }
-        
         cocos2d::Vec2 getCameraPosition() const { return _camera->getPosition(); }
-        
         cocos2d::Vec2 getMousePosInWorld() const { return _mousePosInWorld; }
-        
         cocos2d::Vec2 getCenterViewParameter() const { return _centerViewParam; }
-        
         void setCenterViewParameter(const cocos2d::Vec2& p);
-        
         cocos2d::Size getLayerSize() const { return _layerSize; }
-        
         cocos2d::Size getWorldSize() const { return _file.worldSize; }
         
-        const TileBase& getTile(int x, int y) const { return _tiles[y][x]; }
-        
         void initFile();
+        void showWindow();
         
         bool& isShowPalette() { return _isShowPalette; }
         bool& isShowNavigator() { return _isShowNavigator; }
@@ -124,6 +110,9 @@ namespace realtrick
         
         void save(const std::string& path);
         
+        bool addLocation(const std::string& name, LocationNode* node);
+        bool removeLocation(const std::string& name);
+        
     private:
         
         std::string getInDirection(int x, int y);
@@ -156,8 +145,8 @@ namespace realtrick
         std::map<int, EditorEntityBase*> _entities;
         std::vector<std::vector<TileBase>> _tiles;
         std::vector< std::vector<TileImage*> > _tileImages;
-        std::vector< std::vector<cocos2d::ui::Text*> > _tileIndices;
         std::vector< EditorEntityBase* > _selectedEntities;
+        
         int _viewX;
         int _viewY;
         
@@ -183,6 +172,8 @@ namespace realtrick
         
         cocos2d::Rect _selectRect;
         cocos2d::DrawNode* _selectionRectNode;
+        
+        std::map<std::string, LocationNode*> _locations;
         
         std::map<std::string, std::vector<cocos2d::Vec2>> _tileCollisions;
         std::vector< std::vector<cocos2d::Vec2> > _collisionRegions;

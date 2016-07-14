@@ -24,6 +24,7 @@
 #include "GameWorld.hpp"
 #include "TestScene.hpp"
 #include "MainMenu3.hpp"
+#include "LocationNode.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 
@@ -56,6 +57,21 @@ GMXLayer2::~GMXLayer2()
     CC_SAFE_DELETE(_tileToolCommand);
     CC_SAFE_DELETE(_addEntityToolCommand);
     CC_SAFE_DELETE(_removeEntityToolCommand);
+    
+    _entities.clear();
+    
+    for(auto& tile : _tiles)
+        tile.clear();
+    _tiles.clear();
+    
+    for( auto& tile : _tileImages)
+        tile.clear();
+    _tileImages.clear();
+    
+    _selectedEntities.clear();
+    
+    _currCommand = nullptr;
+
 }
 
 
@@ -137,6 +153,11 @@ bool GMXLayer2::init()
     _addEntityToolCommand = new AddEntityToolCommand(this);
     _removeEntityToolCommand = new RemoveEntityToolCommand(this);
     
+    LocationNode* locationNode = LocationNode::create(*this);
+    locationNode->setPosition(512, 512);
+    locationNode->updateRects();
+    addLocation("Location 0", locationNode);
+    
     return true;
 }
 
@@ -162,11 +183,9 @@ void GMXLayer2::initFile()
     }
     
     _tileImages.resize(_viewY);
-    _tileIndices.resize(_viewY);
     for(int i = 0 ; i < _viewY; ++ i)
     {
         _tileImages[i].resize(_viewX);
-        _tileIndices[i].resize(_viewX);
     }
     
     for(int i = 0 ; i < _viewY; ++ i)
@@ -175,10 +194,6 @@ void GMXLayer2::initFile()
         {
             _tileImages[i][j] = TileImage::create();
             _tileRoot->addChild(_tileImages[i][j]);
-            
-            _tileIndices[i][j] = ui::Text::create("", "", 20);
-            _tileIndices[i][j]->setOpacity(128);
-            _tileRoot->addChild(_tileIndices[i][j]);
         }
     }
     
@@ -577,9 +592,15 @@ void GMXLayer2::updateCocosLogic()
         }
     }
     
+    
+    for ( auto& loc : _locations )
+    {
+        loc.second->update(_mousePosInWorld);
+    }
+    
     if ( ImGui::IsKeyReleased(257) )
     {
-        //Director::getInstance()->replaceScene(MainMenu3::createScene());
+        Director::getInstance()->replaceScene(MainMenu3::createScene());
     }
 }
 
@@ -701,27 +722,37 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
             
             _tileImages[i][j]->setTexture(fileName);
             _tileImages[i][j]->setPosition(pos);
-            _tileIndices[i][j]->setPosition(pos);
             
             if ( viewable )
             {
-                _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Color4F(1, 1, 1, 0.1f));
-                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.1f));
-                _worldDebugNode->drawLine(Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Color4F(1, 1, 1, 0.1f));
-                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.1f));
-                // _tileIndices[i][j]->setString("(" + std::to_string(y) + ", " + std::to_string(x) + ")");
-            }
-            else
-            {
-                _tileIndices[i][j]->setString("");
+                _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y),
+                                          Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2), Color4F(1, 1, 1, 0.1f));
+                
+                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y + _file.tileHeight / 2),
+                                          Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.1f));
+                
+                _worldDebugNode->drawLine(Vec2(worldPos.x + _file.tileWidth / 2, worldPos.y),
+                                          Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2), Color4F(1, 1, 1, 0.1f));
+                
+                _worldDebugNode->drawLine(Vec2(worldPos.x, worldPos.y - _file.tileHeight / 2),
+                                          Vec2(worldPos.x - _file.tileWidth / 2, worldPos.y), Color4F(1, 1, 1, 0.1f));
+                
+                for(int i = 0 ; i < 4 ; ++ i)
+                {
+                _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2 + (_file.tileWidth / 4 * i),
+                                               worldPos.y - _file.tileHeight / 2),
+                                          Vec2(worldPos.x - _file.tileWidth / 2 + (_file.tileWidth / 4 * i),
+                                               worldPos.y + _file.tileHeight / 2),
+                                          Color4F(1, 1, 1, 0.05f));
+                    
+                    _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2,
+                                                   worldPos.y - _file.tileHeight / 2 + (_file.tileHeight / 4 * i)),
+                                              Vec2(worldPos.x + _file.tileWidth / 2,
+                                                   worldPos.y - _file.tileHeight / 2 + (_file.tileHeight / 4 * i)),
+                                              Color4F(1, 1, 1, 0.05f));
+                }
             }
         }
-    }
-    
-    for(int i = 0 ; i < _cellSpacePartition->getNumOfCellY() * _cellSpacePartition->getNumOfCellX() ; ++ i)
-    {
-        cocos2d::Rect cellRect = _cellSpacePartition->getCell(i).boundingBox;
-        _worldDebugNode->drawRect(cellRect.origin, cellRect.origin + cellRect.size, Color4F(1, 0, 0, 0.3f));
     }
     
 }
@@ -1713,6 +1744,32 @@ void GMXLayer2::save(const std::string& path)
                           reinterpret_cast<const char*>(builder.GetBufferPointer()),
                           builder.GetSize(),
                           true);
+}
+
+
+bool GMXLayer2::addLocation(const std::string& name, LocationNode* node)
+{
+    auto iter = _locations.find(name);
+    if ( iter == std::end(_locations) )
+    {
+        _locations.insert({name, node});
+        _rootNode->addChild(node);
+        return true;
+    }
+    return false;
+}
+
+
+bool GMXLayer2::removeLocation(const std::string& name)
+{
+    auto iter = _locations.find(name);
+    if ( iter != std::end(_locations) )
+    {
+        _locations.erase(name);
+        iter->second->removeFromParent();
+        return true;
+    }
+    return false;
 }
 
 

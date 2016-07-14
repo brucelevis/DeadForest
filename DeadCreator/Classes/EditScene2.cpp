@@ -67,21 +67,8 @@ bool EditScene2::init()
         {
             if (ImGui::BeginMenu("File", _isFileEnable))
             {
-                if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap, true))
-                {
-                    if ( _showNewMap ) doNewButton();
-                }
-                if (ImGui::MenuItem("Open", "Ctrl+O", false, _enableOpenMap))
-                {
-                    if ( _showOpenMap ) doOpenButton();
-                }
-                if (ImGui::BeginMenu("Open Recent"))
-                {
-                    ImGui::MenuItem("fish_hat.c");
-                    ImGui::MenuItem("fish_hat.inl");
-                    ImGui::MenuItem("fish_hat.h");
-                    ImGui::EndMenu();
-                }
+                if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap, true)) { doNewButton(); }
+                if (ImGui::MenuItem("Open", "Ctrl+O", false, _enableOpenMap)) { doOpenButton(); }
                 if (ImGui::MenuItem("Save", "Ctrl+S", false, _enableSaveMap)) { saveFile(_layer->getCurrFilePath()); }
                 if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", &_showSaveAs, _enableSaveMap)) { saveAsFile(); }
                 ImGui::Separator();
@@ -324,6 +311,12 @@ bool EditScene2::init()
 
 void EditScene2::createGMXLayer(GMXFile* file)
 {
+    if ( _layer )
+    {
+        _layer->removeFromParent();
+        log("remove from parent");
+    }
+    
     _layer = GMXLayer2::create(*this, *file);
     addChild(_layer);
     
@@ -341,6 +334,11 @@ void EditScene2::createGMXLayer(GMXFile* file)
 
 void EditScene2::createGMXLayer(const std::string& filePath)
 {
+    if ( _layer )
+    {
+        _layer->removeFromParent();
+    }
+    
     std::string loadData;
     auto ret =  flatbuffers::LoadFile(filePath.c_str(), true, &loadData);
     if ( ret )
@@ -395,7 +393,6 @@ void EditScene2::createGMXLayer(const std::string& filePath)
         _layer = GMXLayer2::create(*this, *file);
         _layer->setCurrFilePath(filePath);
         _layer->enableFirstFile(false);
-        
         addChild(_layer);
         
         for ( auto iter = gmxFile->tiles()->begin(); iter != gmxFile->tiles()->end() ; ++ iter)

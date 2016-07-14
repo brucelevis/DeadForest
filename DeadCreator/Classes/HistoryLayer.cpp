@@ -124,6 +124,7 @@ void HistoryLayer::showLayer(bool* opened)
         if ( ImGui::Selectable(commandName.c_str(), isSelected) )
         {
             _commandQueue.setStateToIndex(i);
+            _gmxLayer.updateCollisionRegion();
         }
         
         ImGui::PopStyleColor();

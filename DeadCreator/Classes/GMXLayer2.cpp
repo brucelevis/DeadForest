@@ -154,14 +154,6 @@ bool GMXLayer2::init()
     _addEntityToolCommand = new AddEntityToolCommand(this);
     _removeEntityToolCommand = new RemoveEntityToolCommand(this);
     
-    LocationNode* locationNode = LocationNode::create(*this);
-    locationNode->setPosition(512, 512);
-    addLocation("Location 0", locationNode);
-    
-    auto locationNode2 = LocationNode::create(*this);
-    locationNode2->setPosition(512, 384);
-    addLocation("Location 1", locationNode2);
-    
     return true;
 }
 
@@ -291,6 +283,7 @@ void GMXLayer2::updateCocosLogic()
     ImGuiContext& g = *GImGui;
     static float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
     
+    // mouse events
     static Vec2 mousePosInCanvas(0, 0);
     mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - ImGui::GetCursorScreenPos().x,
                              ImGui::GetContentRegionAvail().y - (ImGui::GetIO().MousePos.y - ImGui::GetCursorScreenPos().y));
@@ -339,6 +332,108 @@ void GMXLayer2::updateCocosLogic()
                 }
                 _currCommand->end();
             }
+        }
+    }
+    
+    
+    // location funcs
+    if ( _imguiLayer.getLayerType() == LayerType::LOCATION && ImGui::IsWindowHovered() )
+    {
+        static bool isExistClickableLocation = false;
+        if ( ImGui::GetIO().MouseClicked[0] )
+        {
+            isExistClickableLocation = false;
+            std::vector<LocationNode*> locationEntry;
+            for( auto& loc : _locations )
+            {
+                if ( loc->getAABBBox().containsPoint(_mousePosInWorld) )
+                {
+                    isExistClickableLocation = true;
+                    locationEntry.push_back(loc);
+                }
+            }
+            
+            if ( isExistClickableLocation )
+            {
+                _grabbedLocation = *max_element(std::begin(locationEntry), std::end(locationEntry),
+                                         [] (LocationNode* l1, LocationNode* l2)
+                                         {
+                                             return (l1->getLocationZOrder() < l2->getLocationZOrder());
+                                         });
+                
+                for( auto& loc : _locations )
+                {
+                    if ( loc->getLocationName() == _grabbedLocation->getLocationName() ) continue;
+                    loc->setSelected(false);
+                }
+                
+                _grabbedLocation->setSelected(true);
+            }
+            else
+            {
+                for( auto& loc : _locations )
+                {
+                    loc->setSelected(false);
+                    _grabbedLocation = nullptr;
+                }
+                
+                auto location = LocationNode::create(*this);
+                location->setPositionFromWorldPosition(_mousePosInWorld);
+                location->setLocationZOrder(_locations.size());
+                location->setSelected(true);
+                addLocation(location);
+                
+                _grabbedLocation = location;
+            }
+        }
+        
+        if ( isExistClickableLocation && ImGui::GetIO().MouseDown[0] )
+        {
+            static auto oldRectangleIndex = getRectangleTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight);
+            auto newRectangleIndex = getRectangleTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight);
+            if ( oldRectangleIndex != newRectangleIndex )
+            {
+                std::vector<LocationNode*> overlappedLocations;
+                for( auto& loc : _locations )
+                {
+                    if ( loc->getLocationName() == _grabbedLocation->getLocationName() ) continue;
+                    if ( _grabbedLocation->getAABBBox().intersectsRect(loc->getAABBBox()) )
+                    {
+                        overlappedLocations.push_back(loc);
+                    }
+                }
+                
+                if ( !overlappedLocations.empty() )
+                {
+                    auto maxZorderNode = *std::max_element(std::begin(overlappedLocations), std::end(overlappedLocations),
+                                                           [](LocationNode* l1, LocationNode* l2)
+                                                           {
+                                                               return l1->getLocationZOrder() < l2->getLocationZOrder();
+                                                           });
+                    
+                    _grabbedLocation->setLocationZOrder(maxZorderNode->getLocationZOrder() + 1);
+                    
+                    std::sort(std::begin(_locations), std::end(_locations), [](LocationNode* l1, LocationNode* l2) {
+                        return (l1->getLocationZOrder() < l2->getLocationZOrder());
+                    });
+                }
+                
+                oldRectangleIndex = newRectangleIndex;
+            }
+        }
+        
+        for ( auto& loc : _locations )
+        {
+            loc->update(_mousePosInWorld);
+        }
+    }
+    
+    if ( ImGui::GetIO().MouseReleased[0] )
+    {
+        for( auto& loc : _locations )
+        {
+            if ( loc->getLocationName() == _grabbedLocation->getLocationName() ) continue;
+            loc->setSelected(false);
         }
     }
     
@@ -597,14 +692,6 @@ void GMXLayer2::updateCocosLogic()
         }
     }
     
-    
-    if ( _imguiLayer.getLayerType() == LayerType::LOCATION && ImGui::IsWindowHovered() )
-    {
-        for ( auto& loc : _locations )
-        {
-            loc.second->update(_mousePosInWorld);
-        }
-    }
     
     if ( ImGui::IsKeyReleased(257) )
     {
@@ -1757,26 +1844,21 @@ void GMXLayer2::save(const std::string& path)
 }
 
 
-bool GMXLayer2::addLocation(const std::string& name, LocationNode* node)
+bool GMXLayer2::addLocation(LocationNode* node)
 {
-    auto iter = _locations.find(name);
-    if ( iter == std::end(_locations) )
-    {
-        _locations.insert({name, node});
-        _rootNode->addChild(node);
-        return true;
-    }
-    return false;
+    _locations.push_back(node);
+    _rootNode->addChild(node, 20);
+    return true;
 }
 
 
-bool GMXLayer2::removeLocation(const std::string& name)
+bool GMXLayer2::removeLocation(LocationNode* node)
 {
-    auto iter = _locations.find(name);
-    if ( iter != std::end(_locations) )
+    auto iter = std::find(_locations.begin(), _locations.end(), node);
+    if ( iter != _locations.end() )
     {
-        _locations.erase(name);
-        iter->second->removeFromParent();
+        _locations.erase(iter);
+        node->removeFromParent();
         return true;
     }
     return false;
@@ -1787,8 +1869,8 @@ void GMXLayer2::setVisibleLocations(bool visible)
 {
     for (auto& loc : _locations)
     {
-        loc.second->setVisible(visible);
-        loc.second->update(Vec2::ZERO);
+        loc->setVisible(visible);
+        loc->update(Vec2::ZERO);
     }
 }
 

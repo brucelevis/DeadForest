@@ -46,7 +46,9 @@ bool LocationNode::init()
     _aabbNode = DrawNode::create();
     addChild(_aabbNode);
     
-    setLocationSize(3, 10);
+    _locationName = ui::Text::create("","",20);
+    addChild(_locationName);
+    
     clearLocationGrabFlags();
     
     resizeFuncs[0] = [this](int offsetX, int offsetY) {
@@ -232,33 +234,47 @@ void LocationNode::updateRects()
     _rects[8].setRect(p.x + rectSize.width - dummySpace, p.y - dummySpace, dummySpace * 2, dummySpace * 2);
 
     _aabb.setRect(p.x, p.y, rectSize.width, rectSize.height);
+    setLocationSize(_sizeX, _sizeY);
 }
 
 
 void LocationNode::update(const Vec2& mouseWorldPosition)
 {
+    if ( _isSelected )
+    {
+        for(int i = 0 ; i < 9 ; ++ i)
+        {
+            _colors[i] = Color4F(1, 1, 1, 0.6f);
+        }
+    }
+    
     for(int i = 0 ; i < 9 ; ++ i)
     {
         if ( _rects[i].containsPoint(mouseWorldPosition) )
         {
-            if ( isOnlyGrabbedLocation(i) )
-                _colors[i] = Color4F(1, 1, 1, 0.8f);
+            if ( isOnlyGrabbedLocation(i) && _isSelected )
+                _colors[i] = Color4F(1, 1, 1, 0.9f);
             
             ImGui::GetIO().MouseDrawCursor = true;
             
-            if ( i == 0 || i == 8) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNWSE);
+            if ( i == 0 || i == 8 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNWSE);
             else if ( i == 2 || i == 6 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNESW);
             else if ( i == 1 || i == 7 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
             else if ( i == 3 || i == 5 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
             else if ( i == 4 ) ImGui::SetMouseCursor(ImGuiMouseCursor_Move);
+            
         }
         else
         {
-            if ( !_isLocationGrabbed[i] ) _colors[i] = Color4F(1, 1, 1, 0.4f);
+            if ( !_isLocationGrabbed[i] )
+            {
+                if ( _isSelected ) _colors[i] = Color4F(1, 1, 1, 0.6f);
+                else _colors[i] = Color4F(1, 1, 1, 0.3f);
+            }
         }
     }
     
-    if ( ImGui::GetIO().MouseClicked[0] )
+    if ( _isSelected && ImGui::GetIO().MouseClicked[0] )
     {
         for(int i = 0 ; i < 9 ; ++ i)
         {
@@ -272,7 +288,13 @@ void LocationNode::update(const Vec2& mouseWorldPosition)
     
     if ( ImGui::GetIO().MouseReleased[0] )
     {
-        for (auto& d : _isLocationGrabbed) d = false;
+        for (int i = 0 ; i < 9 ; ++ i)
+        {
+            _isLocationGrabbed[i] = false;
+            
+            if ( _isSelected ) _colors[i] = Color4F(1, 1, 1, 0.6f);
+            else _colors[i] = Color4F(1, 1, 1, 0.3f);
+        }
     }
     
     for(int i = 0 ; i < 9 ; ++ i)
@@ -365,7 +387,7 @@ void LocationNode::setLocationSize(int x, int y)
     _sizeX = x;
     _sizeY = y;
     
-    dummySpace = 10 + std::min(_sizeX, _sizeY);
+    dummySpace = 10 + std::min(_sizeX, _sizeY) * 0.5f;
 }
 
 
@@ -380,6 +402,25 @@ void LocationNode::setPosition(const cocos2d::Vec2& pos)
 {
     Node::setPosition(pos);
     updateRects();
+}
+
+
+void LocationNode::setPositionFromIndex(int x, int y)
+{
+    setPosition(x * _file.tileWidth / 4, y * _file.tileHeight / 4);
+}
+
+
+void LocationNode::setPositionFromWorldPosition(const cocos2d::Vec2& pos)
+{
+    auto indices = getRectangleTileIndex(pos, _file.tileWidth, _file.tileHeight);
+    setPositionFromIndex(indices.first, indices.second);
+}
+
+
+void LocationNode::setPositionFromWorldPosition(float x, float y)
+{
+    setPositionFromWorldPosition(Vec2(x, y));
 }
 
 
@@ -401,6 +442,11 @@ bool LocationNode::isOnlyGrabbedLocation(int index)
     return ret;
 }
 
+
+cocos2d::Rect LocationNode::getAABBBox() const
+{
+    return Rect(_aabb.origin.x - dummySpace, _aabb.origin.y - dummySpace, _aabb.size.width + dummySpace * 2, _aabb.size.height + dummySpace * 2);
+}
 
 
 

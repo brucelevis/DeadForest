@@ -111,8 +111,8 @@ namespace realtrick
         
         void save(const std::string& path);
         
-        bool addLocation(const std::string& name, LocationNode* node);
-        bool removeLocation(const std::string& name);
+        bool addLocation(LocationNode* node);
+        bool removeLocation(LocationNode* node);
         void setVisibleLocations(bool visible);
         
     private:
@@ -174,7 +174,8 @@ namespace realtrick
         cocos2d::Rect _selectRect;
         cocos2d::DrawNode* _selectionRectNode;
         
-        std::map<std::string, LocationNode*> _locations;
+        std::vector<LocationNode*> _locations;
+        LocationNode* _grabbedLocation;
         
         std::map<std::string, std::vector<cocos2d::Vec2>> _tileCollisions;
         std::vector< std::vector<cocos2d::Vec2> > _collisionRegions;

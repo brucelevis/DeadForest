@@ -28,6 +28,8 @@ namespace realtrick
         
         static TileImage* createWithFrameName(const std::string& frameName);
         
+        virtual bool init() override;
+        
     private:
         
     };

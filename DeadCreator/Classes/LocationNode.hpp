@@ -50,9 +50,9 @@ namespace realtrick
         void setSelected(bool selected) { _isSelected = selected; if ( !selected ) clearLocationGrabFlags(); }
         
         int getLocationZOrder() const { return _locationZOrder; }
-        void setLocationZOrder(int zOrder) { _locationZOrder = zOrder; _locationName->setString(std::to_string(zOrder)); }
+        void setLocationZOrder(int zOrder) { _locationZOrder = zOrder; }
         
-        void setLocationName(const std::string& name) { _locationName->setString(name); }
+        void setLocationName(const std::string& name) { _locationName->setString(name); _nameBackup = name; }
         std::string getLocationName() const { return _locationName->getString(); }
         
     private:
@@ -73,8 +73,11 @@ namespace realtrick
         cocos2d::Rect _rects[9];
         cocos2d::Color4F _colors[9];
         
+        cocos2d::Node* dummy;
+        cocos2d::ClippingRectangleNode* _clipNode;
         cocos2d::DrawNode* _aabbNode;
         cocos2d::ui::Text* _locationName;
+        std::string _nameBackup;
         
         int _sizeX = 1;
         int _sizeY = 1;

@@ -337,81 +337,86 @@ void GMXLayer2::updateCocosLogic()
     
     
     // location funcs
-    if ( _imguiLayer.getLayerType() == LayerType::LOCATION && ImGui::IsWindowHovered() )
+    if ( _imguiLayer.getLayerType() == LayerType::LOCATION && ImGui::IsWindowHovered() && !GMXLayer2::isTitleClicked() )
     {
-        static bool isExistClickableLocation = false;
-        if ( ImGui::GetIO().MouseClicked[0] )
+        Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
+        bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+        if ( !isClickedResizeButton )
         {
-            isExistClickableLocation = false;
-            std::vector<LocationNode*> locationEntry;
-            for( auto& loc : _locations )
+            static bool isExistClickableLocation = false;
+            if ( ImGui::GetIO().MouseClicked[0] )
             {
-                if ( loc->getAABBBox().containsPoint(_mousePosInWorld) )
+                isExistClickableLocation = false;
+                std::vector<LocationNode*> locationEntry;
+                for( auto& loc : _locations )
                 {
-                    isExistClickableLocation = true;
-                    locationEntry.push_back(loc);
+                    if ( loc->getAABBBox().containsPoint(_mousePosInWorld) )
+                    {
+                        isExistClickableLocation = true;
+                        locationEntry.push_back(loc);
+                    }
+                }
+                
+                if ( isExistClickableLocation )
+                {
+                    _grabbedLocation = *max_element(std::begin(locationEntry), std::end(locationEntry),
+                                                    [] (LocationNode* l1, LocationNode* l2)
+                                                    {
+                                                        return (l1->getLocationZOrder() < l2->getLocationZOrder());
+                                                    });
+                    
+                    for( auto& loc : _locations )
+                    {
+                        if ( loc->getLocationName() == _grabbedLocation->getLocationName() ) continue;
+                        loc->setSelected(false);
+                    }
+                    
+                    _grabbedLocation->setSelected(true);
+                    
+                    reorderLocations();
+                }
+                else
+                {
+                    for( auto& loc : _locations )
+                    {
+                        loc->setSelected(false);
+                        _grabbedLocation = nullptr;
+                    }
+                    
+                    auto location = LocationNode::create(*this);
+                    location->setPositionFromWorldPosition(_mousePosInWorld);
+                    location->setLocationZOrder(_locations.size());
+                    location->setSelected(true);
+                    location->setLocationName("Location" + std::to_string(_locations.size()));
+                    addLocation(location);
+                    
+                    _grabbedLocation = location;
                 }
             }
             
-            if ( isExistClickableLocation )
+            if ( ImGui::GetIO().MouseDown[0] )
             {
-                _grabbedLocation = *max_element(std::begin(locationEntry), std::end(locationEntry),
-                                         [] (LocationNode* l1, LocationNode* l2)
-                                         {
-                                             return (l1->getLocationZOrder() < l2->getLocationZOrder());
-                                         });
-                
-                for( auto& loc : _locations )
+                static auto oldRectangleIndex = getRectangleTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight);
+                auto newRectangleIndex = getRectangleTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight);
+                if ( oldRectangleIndex != newRectangleIndex )
                 {
-                    if ( loc->getLocationName() == _grabbedLocation->getLocationName() ) continue;
-                    loc->setSelected(false);
+                    reorderLocations();
+                    oldRectangleIndex = newRectangleIndex;
                 }
-                
-                _grabbedLocation->setSelected(true);
-                
-                reorderLocations();
             }
-            else
+            
+            for ( auto& loc : _locations )
             {
-                for( auto& loc : _locations )
-                {
-                    loc->setSelected(false);
-                    _grabbedLocation = nullptr;
-                }
-                
-                auto location = LocationNode::create(*this);
-                location->setPositionFromWorldPosition(_mousePosInWorld);
-                location->setLocationZOrder(_locations.size());
-                location->setSelected(true);
-                location->setName("Location" + std::to_string(_locations.size()));
-                addLocation(location);
-                
-                _grabbedLocation = location;
+                loc->update(_mousePosInWorld);
             }
-        }
-        
-        if ( ImGui::GetIO().MouseDown[0] )
-        {
-            static auto oldRectangleIndex = getRectangleTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight);
-            auto newRectangleIndex = getRectangleTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight);
-            if ( oldRectangleIndex != newRectangleIndex )
-            {
-                reorderLocations();
-                oldRectangleIndex = newRectangleIndex;
-            }
-        }
-        
-        for ( auto& loc : _locations )
-        {
-            loc->update(_mousePosInWorld);
         }
     }
     
-    if ( ImGui::GetIO().MouseReleased[0] )
+    if ( _imguiLayer.getLayerType() == LayerType::LOCATION && ImGui::GetIO().MouseReleased[0] )
     {
         for( auto& loc : _locations )
         {
-            if ( loc->getName() == _grabbedLocation->getName() ) continue;
+            if ( loc->getLocationName() == _grabbedLocation->getLocationName() ) continue;
             loc->setSelected(false);
         }
     }
@@ -1859,14 +1864,12 @@ void GMXLayer2::reorderLocations()
     std::vector<LocationNode*> overlappedLocations;
     for( auto& loc : _locations )
     {
-        if ( loc->getName() == _grabbedLocation->getName() ) continue;
+        if ( loc->getLocationName() == _grabbedLocation->getLocationName() ) continue;
         if ( _grabbedLocation->getAABBBox().intersectsRect(loc->getAABBBox()) )
         {
             overlappedLocations.push_back(loc);
         }
     }
-    
-    log("overlapped location size: %d [%d]", (int)overlappedLocations.size(), random(10, 100) );
     
     if ( !overlappedLocations.empty() )
     {
@@ -1882,6 +1885,7 @@ void GMXLayer2::reorderLocations()
             return (l1->getLocationZOrder() < l2->getLocationZOrder());
         });
     }
+    
     else
     {
         _grabbedLocation->setLocationZOrder(0);

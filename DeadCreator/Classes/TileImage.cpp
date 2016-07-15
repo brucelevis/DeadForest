@@ -8,8 +8,8 @@
 
 #include "TileImage.hpp"
 #include "GMXLayer2.hpp"
-
 using namespace realtrick;
+using namespace cocos2d;
 
 TileImage::TileImage()
 {
@@ -20,6 +20,14 @@ TileImage::~TileImage()
 {
 }
 
+
+bool TileImage::init()
+{
+    if ( !Sprite::init() )
+        return false;
+    
+    return true;
+}
 
 TileImage* TileImage::create()
 {

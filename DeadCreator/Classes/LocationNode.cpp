@@ -46,7 +46,9 @@ bool LocationNode::init()
     _aabbNode = DrawNode::create();
     addChild(_aabbNode);
     
-    _locationName = ui::Text::create("","",20);
+    _locationName = ui::Text::create("", "", 20);
+    _locationName->setAnchorPoint(Vec2(0.0f, 0.5f));
+    _locationName->setPosition(Vec2(6.0f, _sizeY * _file.tileHeight / 4 - 15.0f));
     addChild(_locationName);
     
     clearLocationGrabFlags();

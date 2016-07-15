@@ -31,6 +31,7 @@ namespace realtrick
     class TileToolCommand;
     class EditorEntityBase;
     class LocationNode;
+    class RenameLocationLayer;
     
     class GMXLayer2 : public cocos2d::Layer
     {
@@ -42,7 +43,6 @@ namespace realtrick
         
         static GMXLayer2* create(EditScene2& imguiLayer, GMXFile& file);
         virtual bool init() override;
-        virtual void update(float dt) override;
         void updateCocosLogic();
         
         const GMXFile& getFile() const { return _file; }
@@ -115,6 +115,8 @@ namespace realtrick
         bool removeLocation(LocationNode* node);
         void setVisibleLocations(bool visible);
         void reorderLocations();
+        LocationNode* getGrabbedLocation() const { return _grabbedLocation; }
+        bool isOverlappedLocationName(const std::string& name) const;
         
     private:
         
@@ -166,6 +168,9 @@ namespace realtrick
         
         HistoryLayer* _historyLayer = nullptr;
         bool _isShowHistory = true;
+        
+        RenameLocationLayer* _renameLocationLayer;
+        bool _isShowRenameLocationLayer = false;
         
         CommandBase* _currCommand = nullptr;
         TileToolCommand* _tileToolCommand = nullptr;

@@ -25,6 +25,7 @@
 #include "TestScene.hpp"
 #include "MainMenu3.hpp"
 #include "LocationNode.hpp"
+#include "RenameLocationLayer.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 
@@ -150,6 +151,9 @@ bool GMXLayer2::init()
     _historyLayer = HistoryLayer::create(*this);
     addChild(_historyLayer);
     
+    _renameLocationLayer = RenameLocationLayer::create(*this);
+    addChild(_renameLocationLayer);
+    
     _tileToolCommand = new TileToolCommand(this);
     _addEntityToolCommand = new AddEntityToolCommand(this);
     _removeEntityToolCommand = new RemoveEntityToolCommand(this);
@@ -274,6 +278,7 @@ void GMXLayer2::showWindow()
     if ( _isShowPalette ) _paletteLayer->showLayer(&_isShowPalette);
     if ( _isShowNavigator ) _navigatorLayer->showLayer(&_isShowNavigator);
     if ( _isShowHistory ) _historyLayer->showLayer(&_isShowHistory);
+    if ( _isShowRenameLocationLayer ) _renameLocationLayer->showLayer(&_isShowRenameLocationLayer);
     
 }
 
@@ -372,6 +377,17 @@ void GMXLayer2::updateCocosLogic()
                     }
                     
                     _grabbedLocation->setSelected(true);
+                    if ( ImGui::GetIO().MouseDoubleClicked[0] )
+                    {
+                        _renameLocationLayer->setInputText(_grabbedLocation->getLocationName());
+                        _isShowRenameLocationLayer = true;
+                        
+                        updateChunk(_camera->getPosition());
+                        for( auto& loc : _locations )
+                        {
+                            loc->setSelected(false);
+                        }
+                    }
                     
                     reorderLocations();
                 }
@@ -677,9 +693,60 @@ void GMXLayer2::updateCocosLogic()
     }
     
     
-    if ( ImGui::IsKeyReleased(257) )
+    if ( !_isShowRenameLocationLayer )
     {
-        Director::getInstance()->replaceScene(MainMenu3::createScene());
+        if ( ImGui::GetIO().KeysDown[262] ) _cameraDirection.x = 1.0f;
+        else if ( ImGui::GetIO().KeysDown[263] ) _cameraDirection.x = -1.0f;
+        else _cameraDirection.x = 0.0f;
+        
+        if ( ImGui::GetIO().KeysDown[265] ) _cameraDirection.y = 1.0f;
+        else if ( ImGui::GetIO().KeysDown[264] ) _cameraDirection.y = -1.0f;
+        else _cameraDirection.y = 0.0f;
+        
+        auto dt = Director::getInstance()->getDeltaTime();
+        _centerViewParam.x += (_cameraDirection.x * _windowSpeed * dt) / (_file.worldSize.width - _layerSize.width);
+        _centerViewParam.y += (_cameraDirection.y * _windowSpeed * dt) / (_file.worldSize.height - _layerSize.height);
+        _centerViewParam.clamp(Vec2::ZERO, Vec2::ONE);
+        
+        Vec2 oldPosition = _camera->getPosition();
+        Vec2 newPosition = Vec2( _layerSize.width / 2 + (_file.worldSize.width - _layerSize.width) * _centerViewParam.x,
+                                _layerSize.height / 2 + (_file.worldSize.height - _layerSize.height) * _centerViewParam.y);
+        
+        _camera->setPosition(newPosition);
+        auto cameraPos = _camera->getPosition();
+        cameraPos.clamp(Vec2(_layerSize / 2), Vec2(_file.worldSize) - Vec2(_layerSize / 2));
+        _camera->setPosition(cameraPos);
+        
+        if ( _cellSpacePartition->isUpdateChunk(oldPosition, newPosition) )
+        {
+            updateChunk(newPosition);
+        }
+        
+        _tileRoot->setPosition( Vec2(_layerSize / 2) + _tileRootWorldPosition - _camera->getPosition() );
+        _rootNode->setPosition( -_camera->getPosition() + Vec2(_layerSize / 2) );
+        
+        if ( ImGui::IsKeyPressed(259) || ImGui::IsKeyPressed(261) ) // back space, delete
+        {
+            auto prevCommand = _currCommand;
+            _currCommand = _removeEntityToolCommand;
+            
+            _currCommand->begin();
+            
+            static_cast<RemoveEntityToolCommand*>(_currCommand)->pushEntity(_selectedEntities);
+            removeSelectedEntities(true);
+            if ( !_currCommand->empty() )
+            {
+                _historyLayer->pushCommand(_currCommand->clone());
+            }
+            
+            _currCommand->end();
+            _currCommand = prevCommand;
+        }
+        
+        if ( ImGui::IsKeyReleased(257) )
+        {
+            Director::getInstance()->replaceScene(MainMenu3::createScene());
+        }
     }
 }
 
@@ -710,58 +777,6 @@ void GMXLayer2::setTile(int x, int y, const TileBase& tile, bool isExecCommand)
     
     _tileImages[localY][localX]->setTexture(tile.getNumber() + ".png");
 }
-
-
-void GMXLayer2::update(float dt)
-{
-    if ( ImGui::GetIO().KeysDown[262] ) _cameraDirection.x = 1.0f;
-    else if ( ImGui::GetIO().KeysDown[263] ) _cameraDirection.x = -1.0f;
-    else _cameraDirection.x = 0.0f;
-    
-    if ( ImGui::GetIO().KeysDown[265] ) _cameraDirection.y = 1.0f;
-    else if ( ImGui::GetIO().KeysDown[264] ) _cameraDirection.y = -1.0f;
-    else _cameraDirection.y = 0.0f;
-    
-    _centerViewParam.x += (_cameraDirection.x * _windowSpeed * dt) / (_file.worldSize.width - _layerSize.width);
-    _centerViewParam.y += (_cameraDirection.y * _windowSpeed * dt) / (_file.worldSize.height - _layerSize.height);
-    _centerViewParam.clamp(Vec2::ZERO, Vec2::ONE);
-    
-    Vec2 oldPosition = _camera->getPosition();
-    Vec2 newPosition = Vec2( _layerSize.width / 2 + (_file.worldSize.width - _layerSize.width) * _centerViewParam.x,
-                            _layerSize.height / 2 + (_file.worldSize.height - _layerSize.height) * _centerViewParam.y);
-    
-    _camera->setPosition(newPosition);
-    auto cameraPos = _camera->getPosition();
-    cameraPos.clamp(Vec2(_layerSize / 2), Vec2(_file.worldSize) - Vec2(_layerSize / 2));
-    _camera->setPosition(cameraPos);
-    
-    if ( _cellSpacePartition->isUpdateChunk(oldPosition, newPosition) )
-    {
-        updateChunk(newPosition);
-    }
-    
-    _tileRoot->setPosition( Vec2(_layerSize / 2) + _tileRootWorldPosition - _camera->getPosition() );
-    _rootNode->setPosition( -_camera->getPosition() + Vec2(_layerSize / 2) );
-    
-    if ( ImGui::IsKeyPressed(259) || ImGui::IsKeyPressed(261) ) // back space, delete
-    {
-        auto prevCommand = _currCommand;
-        _currCommand = _removeEntityToolCommand;
-    
-        _currCommand->begin();
-        
-        static_cast<RemoveEntityToolCommand*>(_currCommand)->pushEntity(_selectedEntities);
-        removeSelectedEntities(true);
-        if ( !_currCommand->empty() )
-        {
-            _historyLayer->pushCommand(_currCommand->clone());
-        }
-        
-        _currCommand->end();
-        _currCommand = prevCommand;
-    }
-}
-
 
 void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
 {
@@ -1893,7 +1908,14 @@ void GMXLayer2::reorderLocations()
 }
 
 
-
+bool GMXLayer2::isOverlappedLocationName(const std::string& name) const
+{
+    for(auto& loc : _locations)
+    {
+        if (loc->getLocationName() == name) return true;
+    }
+    return false;
+}
 
 
 

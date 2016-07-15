@@ -114,6 +114,7 @@ namespace realtrick
         bool addLocation(LocationNode* node);
         bool removeLocation(LocationNode* node);
         void setVisibleLocations(bool visible);
+        void reorderLocations();
         
     private:
         

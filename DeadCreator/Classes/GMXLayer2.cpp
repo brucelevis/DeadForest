@@ -368,6 +368,8 @@ void GMXLayer2::updateCocosLogic()
                 }
                 
                 _grabbedLocation->setSelected(true);
+                
+                reorderLocations();
             }
             else
             {
@@ -381,43 +383,20 @@ void GMXLayer2::updateCocosLogic()
                 location->setPositionFromWorldPosition(_mousePosInWorld);
                 location->setLocationZOrder(_locations.size());
                 location->setSelected(true);
+                location->setName("Location" + std::to_string(_locations.size()));
                 addLocation(location);
                 
                 _grabbedLocation = location;
             }
         }
         
-        if ( isExistClickableLocation && ImGui::GetIO().MouseDown[0] )
+        if ( ImGui::GetIO().MouseDown[0] )
         {
             static auto oldRectangleIndex = getRectangleTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight);
             auto newRectangleIndex = getRectangleTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight);
             if ( oldRectangleIndex != newRectangleIndex )
             {
-                std::vector<LocationNode*> overlappedLocations;
-                for( auto& loc : _locations )
-                {
-                    if ( loc->getLocationName() == _grabbedLocation->getLocationName() ) continue;
-                    if ( _grabbedLocation->getAABBBox().intersectsRect(loc->getAABBBox()) )
-                    {
-                        overlappedLocations.push_back(loc);
-                    }
-                }
-                
-                if ( !overlappedLocations.empty() )
-                {
-                    auto maxZorderNode = *std::max_element(std::begin(overlappedLocations), std::end(overlappedLocations),
-                                                           [](LocationNode* l1, LocationNode* l2)
-                                                           {
-                                                               return l1->getLocationZOrder() < l2->getLocationZOrder();
-                                                           });
-                    
-                    _grabbedLocation->setLocationZOrder(maxZorderNode->getLocationZOrder() + 1);
-                    
-                    std::sort(std::begin(_locations), std::end(_locations), [](LocationNode* l1, LocationNode* l2) {
-                        return (l1->getLocationZOrder() < l2->getLocationZOrder());
-                    });
-                }
-                
+                reorderLocations();
                 oldRectangleIndex = newRectangleIndex;
             }
         }
@@ -432,7 +411,7 @@ void GMXLayer2::updateCocosLogic()
     {
         for( auto& loc : _locations )
         {
-            if ( loc->getLocationName() == _grabbedLocation->getLocationName() ) continue;
+            if ( loc->getName() == _grabbedLocation->getName() ) continue;
             loc->setSelected(false);
         }
     }
@@ -1871,6 +1850,41 @@ void GMXLayer2::setVisibleLocations(bool visible)
     {
         loc->setVisible(visible);
         loc->update(Vec2::ZERO);
+    }
+}
+
+
+void GMXLayer2::reorderLocations()
+{
+    std::vector<LocationNode*> overlappedLocations;
+    for( auto& loc : _locations )
+    {
+        if ( loc->getName() == _grabbedLocation->getName() ) continue;
+        if ( _grabbedLocation->getAABBBox().intersectsRect(loc->getAABBBox()) )
+        {
+            overlappedLocations.push_back(loc);
+        }
+    }
+    
+    log("overlapped location size: %d [%d]", (int)overlappedLocations.size(), random(10, 100) );
+    
+    if ( !overlappedLocations.empty() )
+    {
+        auto maxZorderNode = *std::max_element(std::begin(overlappedLocations), std::end(overlappedLocations),
+                                               [](LocationNode* l1, LocationNode* l2)
+                                               {
+                                                   return l1->getLocationZOrder() < l2->getLocationZOrder();
+                                               });
+        
+        _grabbedLocation->setLocationZOrder(maxZorderNode->getLocationZOrder() + 1);
+        
+        std::sort(std::begin(_locations), std::end(_locations), [](LocationNode* l1, LocationNode* l2) {
+            return (l1->getLocationZOrder() < l2->getLocationZOrder());
+        });
+    }
+    else
+    {
+        _grabbedLocation->setLocationZOrder(0);
     }
 }
 

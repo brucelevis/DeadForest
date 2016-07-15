@@ -156,7 +156,6 @@ namespace realtrick
         bool _isLeftMouseClickEventDone = false;
         
         cocos2d::Vec2 _mousePosInWorld;
-        cocos2d::Vec2 _mousePosInCanvas;
         
         PaletteLayer* _paletteLayer = nullptr;
         bool _isShowPalette = true;

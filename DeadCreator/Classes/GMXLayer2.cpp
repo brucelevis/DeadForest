@@ -291,11 +291,12 @@ void GMXLayer2::updateCocosLogic()
     ImGuiContext& g = *GImGui;
     float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
     
-    _mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - ImGui::GetCursorScreenPos().x,
+    static Vec2 mousePosInCanvas(0, 0);
+    mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - ImGui::GetCursorScreenPos().x,
                              ImGui::GetContentRegionAvail().y - (ImGui::GetIO().MousePos.y - ImGui::GetCursorScreenPos().y));
     
-    _mousePosInWorld = _camera->getPosition() + (Vec2(_mousePosInCanvas.x - _layerSize.width / 2 + ImGui::GetStyle().WindowPadding.x,
-                                                      _mousePosInCanvas.y - _layerSize.height / 2 + ImGui::GetStyle().WindowPadding.y));
+    _mousePosInWorld = _camera->getPosition() + (Vec2(mousePosInCanvas.x - _layerSize.width / 2 + ImGui::GetStyle().WindowPadding.x,
+                                                      mousePosInCanvas.y - _layerSize.height / 2 + ImGui::GetStyle().WindowPadding.y));
     
     _mousePosInWorld.clamp(_camera->getPosition() - Vec2(_layerSize / 2), _camera->getPosition() + Vec2(_layerSize / 2));
     
@@ -340,6 +341,15 @@ void GMXLayer2::updateCocosLogic()
             }
         }
     }
+    
+    static auto oldRectangleIndex = std::make_pair(0, 0);
+    if ( oldRectangleIndex != getRectangleTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight) )
+    {
+        // changed!
+        log("indices [%d, %d]", oldRectangleIndex.second, oldRectangleIndex.first);
+        oldRectangleIndex = getRectangleTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight);
+    }
+
     
     _hoveredTileRegion->clear();
     

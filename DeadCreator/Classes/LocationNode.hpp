@@ -15,6 +15,7 @@ namespace realtrick
 {
     
     class GMXLayer2;
+    class GMXFile;
     
     class LocationNode : public cocos2d::Node
     {
@@ -31,9 +32,6 @@ namespace realtrick
         static LocationNode* create(GMXLayer2& layer);
         virtual bool init() override;
         
-        bool isSelected() const { return _isSelected; }
-        void setSelected(bool selected);
-        
         void setLocationSize(int x, int y);
         std::pair<int, int> getLocationSize() const { return { _sizeX, _sizeY }; }
         
@@ -47,7 +45,14 @@ namespace realtrick
         
     private:
         
+        std::function<bool(int offsetX, int offsetY)> resizeFuncs[9];
+        void clearLocationGrabFlags();
+        bool isOnlyGrabbedLocation(int index);
+        
+    private:
+        
         GMXLayer2& _gmxLayer;
+        const GMXFile& _file;
         
         cocos2d::Rect _aabb;
         cocos2d::Rect _rects[9];
@@ -59,8 +64,10 @@ namespace realtrick
         int _sizeX;
         int _sizeY;
         
-        bool _isSelected = false;
+        bool _isLocationGrabbed[9];
         
+        std::pair<int, int> _oldRectangleIndex = {0, 0};
+    
     };
     
 }

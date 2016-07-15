@@ -13,8 +13,10 @@ using namespace realtrick;
 
 
 LocationNode::LocationNode(GMXLayer2& layer) :
-_gmxLayer(layer)
+_gmxLayer(layer),
+_file(_gmxLayer.getFile())
 {
+    
 }
 
 
@@ -44,17 +46,155 @@ bool LocationNode::init()
     _aabbNode = DrawNode::create();
     addChild(_aabbNode);
     
-    setSelected(false);
     setLocationSize(3, 10);
+    clearLocationGrabFlags();
+    
+    resizeFuncs[0] = [this](int offsetX, int offsetY) {
+        
+        bool ret = false;
+        
+        if ( _sizeX - offsetX > 0 )
+        {
+            _sizeX -= offsetX;
+            this->setPosition(getPosition().x + offsetX * _file.tileWidth / 4, getPosition().y);
+            ret = true;
+        }
+        
+        if ( _sizeY + offsetY > 0 )
+        {
+            _sizeY += offsetY;
+            ret = true;
+        }
+
+        return ret;
+    };
+    
+    resizeFuncs[1] = [this](int offsetX, int offsetY) {
+        
+        if ( _sizeY + offsetY > 0 )
+        {
+            _sizeY += offsetY;
+            
+            return true;
+        }
+        
+        return false;
+    };
+    
+    resizeFuncs[2] = [this](int offsetX, int offsetY) {
+        
+        bool ret = false;
+        
+        if ( _sizeX + offsetX > 0 )
+        {
+            _sizeX += offsetX;
+            ret = true;
+        }
+        
+        if ( _sizeY + offsetY > 0 )
+        {
+            _sizeY += offsetY;
+            ret = true;
+        }
+        
+        return ret;
+        
+    };
+    
+    resizeFuncs[3] = [this](int offsetX, int offsetY) {
+        
+        if ( _sizeX - offsetX > 0 )
+        {
+            _sizeX -= offsetX;
+            this->setPosition(getPosition().x + offsetX * _file.tileWidth / 4, getPosition().y);
+            
+            return true;
+        }
+      
+        return false;
+    };
+    
+    resizeFuncs[4] = [this](int offsetX, int offsetY) {
+        
+        this->setPosition(getPosition().x + offsetX * _file.tileWidth / 4, getPosition().y + offsetY * _file.tileHeight / 4);
+        
+        return true;
+    };
+    
+    resizeFuncs[5] = [this](int offsetX, int offsetY) {
+        
+        if ( _sizeX + offsetX > 0 )
+        {
+            _sizeX += offsetX;
+            
+            return true;
+        }
+    
+        return false;
+    };
+    
+    resizeFuncs[6] = [this](int offsetX, int offsetY) {
+        
+        bool ret = false;
+        
+        if ( _sizeX - offsetX > 0 )
+        {
+            _sizeX -= offsetX;
+            this->setPosition(getPosition().x + offsetX * _file.tileWidth / 4, getPosition().y);
+            ret = true;
+        }
+        
+        if ( _sizeY - offsetY > 0 )
+        {
+            _sizeY -= offsetY;
+            this->setPosition(getPosition().x, getPosition().y + offsetY * _file.tileHeight / 4);
+            ret = true;
+        }
+        
+        return ret;
+        
+    };
+    
+    resizeFuncs[7] = [this](int offsetX, int offsetY) {
+        
+        if ( _sizeY - offsetY > 0 )
+        {
+            _sizeY -= offsetY;
+            this->setPosition(getPosition().x, getPosition().y + offsetY * _file.tileHeight / 4);
+            
+            return true;
+        }
+        
+        return false;
+        
+    };
+    
+    resizeFuncs[8] = [this](int offsetX, int offsetY) {
+        
+        bool ret = false;
+        
+        if ( _sizeX + offsetX > 0 )
+        {
+            _sizeX += offsetX;
+            ret = true;
+        }
+        
+        if ( _sizeY - offsetY > 0 )
+        {
+            _sizeY -= offsetY;
+            this->setPosition(getPosition().x, getPosition().y + offsetY * _file.tileHeight / 4);
+            ret = true;
+        }
+        
+        return ret;
+        
+    };
+    
+    
     
     return true;
 }
 
-
-void LocationNode::setSelected(bool selected)
-{
-    _isSelected = selected;
-}
 
 
 void LocationNode::updateRects()
@@ -77,8 +217,7 @@ void LocationNode::updateRects()
     
     auto file = _gmxLayer.getFile();
     Size rectSize(file.tileWidth / 4 * _sizeX, file.tileHeight / 4 * _sizeY);
-    
-    Vec2 p = this->getPosition();
+    auto p = this->getPosition();
     
     _rects[0].setRect(p.x - dummySpace, p.y + rectSize.height - dummySpace, dummySpace * 2, dummySpace * 2);
     _rects[1].setRect(p.x + dummySpace, p.y + rectSize.height - dummySpace, rectSize.width - dummySpace * 2, dummySpace * 2);
@@ -98,53 +237,57 @@ void LocationNode::updateRects()
 
 void LocationNode::update(const Vec2& mouseWorldPosition)
 {
-    if ( !_isSelected )
+    for(int i = 0 ; i < 9 ; ++ i)
     {
-        if ( _aabb.containsPoint(mouseWorldPosition) )
+        if ( _rects[i].containsPoint(mouseWorldPosition) )
         {
-            if ( ImGui::GetIO().MouseClicked[0] )
-            {
-                _isSelected = true;
-            }
-            else // hovered
-            {
-                for(int i = 0 ; i < 9 ; ++ i)
-                {
-                    _colors[i] = Color4F(1,1,1,0.2f);
-                }
-            }
+            if ( isOnlyGrabbedLocation(i) )
+                _colors[i] = Color4F(1, 1, 1, 0.8f);
+            
+            ImGui::GetIO().MouseDrawCursor = true;
+            
+            if ( i == 0 || i == 8) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNWSE);
+            else if ( i == 2 || i == 6 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNESW);
+            else if ( i == 1 || i == 7 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
+            else if ( i == 3 || i == 5 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
+            else if ( i == 4 ) ImGui::SetMouseCursor(ImGuiMouseCursor_Move);
         }
         else
         {
-            for(int i = 0 ; i < 9 ; ++ i)
-            {
-                _colors[i] = Color4F(0, 0, 0, 1.0f);
-            }
+            if ( !_isLocationGrabbed[i] ) _colors[i] = Color4F(1, 1, 1, 0.4f);
         }
     }
-    else
+    
+    if ( ImGui::GetIO().MouseClicked[0] )
     {
         for(int i = 0 ; i < 9 ; ++ i)
         {
-            if ( _rects[i].containsPoint(mouseWorldPosition) ) {
-                _colors[i] = Color4F(1, 1, 1, 0.8f);
-                
-                ImGui::GetIO().MouseDrawCursor = true;
-                
-                if ( i == 0 || i == 8) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNWSE);
-                else if ( i == 2 || i == 6 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNESW);
-                else if ( i == 1 || i == 7 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
-                else if ( i == 3 || i == 5 ) ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
-                else if ( i == 4 ) ImGui::SetMouseCursor(ImGuiMouseCursor_Move);
-            }
-            else _colors[i] = Color4F(1, 1, 1, 0.4f);
-        }
-        
-        if ( ImGui::GetIO().MouseClicked[0] )
-        {
-            if ( !_aabb.containsPoint(mouseWorldPosition) )
+            if( _rects[i].containsPoint(mouseWorldPosition) )
             {
-                _isSelected = false;
+                _isLocationGrabbed[i] = true;
+                _oldRectangleIndex = getRectangleTileIndex(_gmxLayer.getMousePosInWorld(), _file.tileWidth, _file.tileHeight);
+            }
+        }
+    }
+    
+    if ( ImGui::GetIO().MouseReleased[0] )
+    {
+        for (auto& d : _isLocationGrabbed) d = false;
+    }
+    
+    for(int i = 0 ; i < 9 ; ++ i)
+    {
+        if ( _isLocationGrabbed[i] )
+        {
+            auto newRectangleIndex = getRectangleTileIndex(_gmxLayer.getMousePosInWorld(), _file.tileWidth, _file.tileHeight);
+            if ( _oldRectangleIndex != newRectangleIndex )
+            {
+                auto offset = std::make_pair(newRectangleIndex.first - _oldRectangleIndex.first, newRectangleIndex.second - _oldRectangleIndex.second);
+                if ( resizeFuncs[i](offset.first, offset.second) )
+                {
+                    updateRects();
+                    _oldRectangleIndex = newRectangleIndex;
+                }
             }
         }
     }
@@ -238,6 +381,28 @@ void LocationNode::setPosition(const cocos2d::Vec2& pos)
     Node::setPosition(pos);
     updateRects();
 }
+
+
+void LocationNode::clearLocationGrabFlags()
+{
+    for ( auto& d : _isLocationGrabbed )
+        d = false;
+}
+
+
+bool LocationNode::isOnlyGrabbedLocation(int index)
+{
+    bool ret = true;
+    for( int i = 0 ; i < 9 ; ++ i)
+    {
+        if ( i == index ) continue;
+        if ( _isLocationGrabbed[i] ) ret = false;
+    }
+    return ret;
+}
+
+
+
 
 
 

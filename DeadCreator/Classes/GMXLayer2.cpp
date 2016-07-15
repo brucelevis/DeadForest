@@ -289,7 +289,7 @@ void GMXLayer2::showWindow()
 void GMXLayer2::updateCocosLogic()
 {
     ImGuiContext& g = *GImGui;
-    float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
+    static float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
     
     static Vec2 mousePosInCanvas(0, 0);
     mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - ImGui::GetCursorScreenPos().x,
@@ -341,15 +341,6 @@ void GMXLayer2::updateCocosLogic()
             }
         }
     }
-    
-    static auto oldRectangleIndex = std::make_pair(0, 0);
-    if ( oldRectangleIndex != getRectangleTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight) )
-    {
-        // changed!
-        log("indices [%d, %d]", oldRectangleIndex.second, oldRectangleIndex.first);
-        oldRectangleIndex = getRectangleTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight);
-    }
-
     
     _hoveredTileRegion->clear();
     
@@ -1797,8 +1788,7 @@ void GMXLayer2::setVisibleLocations(bool visible)
     for (auto& loc : _locations)
     {
         loc.second->setVisible(visible);
-        if ( !visible ) loc.second->setSelected(false);
-        else loc.second->update(Vec2::ZERO);
+        loc.second->update(Vec2::ZERO);
     }
 }
 

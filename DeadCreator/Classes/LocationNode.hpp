@@ -52,7 +52,7 @@ namespace realtrick
         int getLocationZOrder() const { return _locationZOrder; }
         void setLocationZOrder(int zOrder) { _locationZOrder = zOrder; }
         
-        void setLocationName(const std::string& name) { _locationName->setString(name); _nameBackup = name; }
+        void setLocationName(const std::string& name) { _locationName->setString(name); }
         std::string getLocationName() const { return _locationName->getString(); }
         
     private:
@@ -77,7 +77,6 @@ namespace realtrick
         cocos2d::ClippingRectangleNode* _clipNode;
         cocos2d::DrawNode* _aabbNode;
         cocos2d::ui::Text* _locationName;
-        std::string _nameBackup;
         
         int _sizeX = 1;
         int _sizeY = 1;

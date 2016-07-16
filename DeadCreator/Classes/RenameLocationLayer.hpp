@@ -23,13 +23,10 @@ namespace realtrick
     public:
         
         explicit RenameLocationLayer(GMXLayer2& layer);
-        
         virtual ~RenameLocationLayer();
-        
         static RenameLocationLayer* create(GMXLayer2& layer);
         
         void showLayer(bool* opened);
-        
         void closeWindow();
         
         void setInputText(const std::string& inputText);
@@ -38,7 +35,7 @@ namespace realtrick
         
         GMXLayer2& _gmxLayer;
         
-        char _locationName[256];
+        char _locationName[20];
         ImGuiButtonFlags _okButtonFlags = ImGuiButtonFlags_Disabled;
         float _okButtonTextAlpha = 0.5f;
         bool _isPossibleRenameLocation = false;

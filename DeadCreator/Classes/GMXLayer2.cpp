@@ -403,7 +403,12 @@ void GMXLayer2::updateCocosLogic()
                     location->setPositionFromWorldPosition(_mousePosInWorld);
                     location->setLocationZOrder(_locations.size());
                     location->setSelected(true);
-                    location->setLocationName("Location" + std::to_string(_locations.size()));
+                    int number = 0;
+                    while ( isOverlappedLocationName("Location" + std::to_string(number)) )
+                    {
+                        number ++;
+                    }
+                    location->setLocationName("Location" + std::to_string(number));
                     addLocation(location);
                     
                     _grabbedLocation = location;
@@ -727,6 +732,7 @@ void GMXLayer2::updateCocosLogic()
         
         if ( ImGui::IsKeyPressed(259) || ImGui::IsKeyPressed(261) ) // back space, delete
         {
+            // remove command
             auto prevCommand = _currCommand;
             _currCommand = _removeEntityToolCommand;
             
@@ -741,6 +747,18 @@ void GMXLayer2::updateCocosLogic()
             
             _currCommand->end();
             _currCommand = prevCommand;
+            
+            
+            if ( _imguiLayer.getLayerType() == LayerType::LOCATION )
+            {
+                // remove location
+                for (auto& loc : _locations)
+                {
+                    loc->setSelected(false);
+                }
+                removeLocation(_grabbedLocation);
+            }
+            
         }
         
         if ( ImGui::IsKeyReleased(257) )
@@ -1858,6 +1876,7 @@ bool GMXLayer2::removeLocation(LocationNode* node)
     {
         _locations.erase(iter);
         node->removeFromParent();
+        node = nullptr;
         return true;
     }
     return false;

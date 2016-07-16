@@ -39,7 +39,7 @@ RenameLocationLayer* RenameLocationLayer::create(GMXLayer2& layer)
 
 void RenameLocationLayer::setInputText(const std::string& inputText)
 {
-    strncpy(_locationName, inputText.c_str(), 256);
+    strncpy(_locationName, inputText.c_str(), 20);
 }
 
 
@@ -50,7 +50,7 @@ void RenameLocationLayer::showLayer(bool* opened)
     ImGui::OpenPopup("Change Location Name");
     if (ImGui::BeginPopupModal("Change Location Name", NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        if ( ImGui::InputText("", _locationName, 256) )
+        if ( ImGui::InputText("", _locationName, 20) )
         {
             if ( _gmxLayer.isOverlappedLocationName(_locationName) )
             {

@@ -195,6 +195,8 @@ namespace ImGui
     IMGUI_API void          PopAllowKeyboardFocus();
     IMGUI_API void          PushButtonRepeat(bool repeat);                                      // in 'repeat' mode, Button*() functions return repeated true in a typematic manner (uses io.KeyRepeatDelay/io.KeyRepeatRate for now). Note that you can call IsItemActive() after any Button() to tell if the button is held in the current frame.
     IMGUI_API void          PopButtonRepeat();
+    IMGUI_API bool          TabLabels(int numTabs, const char** tabLabels, int& selectedIndex, const char** tabLabelTooltips, bool autoLayout,
+                                      int *pOptionalHoveredIndex);
 
     // Cursor / Layout
     IMGUI_API void          Separator();                                                        // horizontal line

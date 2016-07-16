@@ -15,6 +15,7 @@
 #include "PaletteLayer.hpp"
 #include "NavigatorLayer.hpp"
 #include "HistoryLayer.hpp"
+#include "TriggerEditLayer.hpp"
 #include "TileToolCommand.hpp"
 #include "AddEntityToolCommand.hpp"
 #include "RemoveEntityToolCommand.hpp"
@@ -151,6 +152,9 @@ bool GMXLayer2::init()
     _historyLayer = HistoryLayer::create(*this);
     addChild(_historyLayer);
     
+    _triggerEditLayer = TriggerEditLayer::create(*this);
+    addChild(_triggerEditLayer);
+    
     _renameLocationLayer = RenameLocationLayer::create(*this);
     addChild(_renameLocationLayer);
     
@@ -279,7 +283,7 @@ void GMXLayer2::showWindow()
     if ( _isShowNavigator ) _navigatorLayer->showLayer(&_isShowNavigator);
     if ( _isShowHistory ) _historyLayer->showLayer(&_isShowHistory);
     if ( _isShowRenameLocationLayer ) _renameLocationLayer->showLayer(&_isShowRenameLocationLayer);
-    
+    if ( _isShowTriggerEdit ) _triggerEditLayer->showLayer(&_isShowTriggerEdit);
 }
 
 

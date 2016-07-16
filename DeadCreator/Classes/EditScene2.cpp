@@ -109,7 +109,7 @@ bool EditScene2::init()
                 ImGui::MenuItem("Navigator", "SHIFT+N", &_layer->isShowNavigator());
                 ImGui::MenuItem("Palette", "SHIFT+P", &_layer->isShowPalette());
                 ImGui::MenuItem("History", "SHIFT+H", &_layer->isShowHistory());
-                ImGui::MenuItem("Trigger", "SHIFT+T");
+                ImGui::MenuItem("Trigger", "SHIFT+T", &_layer->isShowTriggerEdit());
                 ImGui::MenuItem("Property", "SHIFT+R");
                 ImGui::EndMenu();
             }

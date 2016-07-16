@@ -19,11 +19,13 @@
 #include "SizeProtocol.h"
 #include "HistoryLayer.hpp"
 
+
 namespace realtrick
 {
     
     class PaletteLayer;
     class NavigatorLayer;
+    class TriggerEditLayer;
     class EditScene2;
     class CommandBase;
     class AddEntityToolCommand;
@@ -69,6 +71,7 @@ namespace realtrick
         bool& isShowPalette() { return _isShowPalette; }
         bool& isShowNavigator() { return _isShowNavigator; }
         bool& isShowHistory() { return _isShowHistory; }
+        bool& isShowTriggerEdit() { return _isShowTriggerEdit; }
         
         bool isRedo() const { return _historyLayer->isRedo(); }
         bool isUndo() const { return _historyLayer->isUndo(); }
@@ -171,6 +174,9 @@ namespace realtrick
         
         RenameLocationLayer* _renameLocationLayer;
         bool _isShowRenameLocationLayer = false;
+        
+        TriggerEditLayer* _triggerEditLayer;
+        bool _isShowTriggerEdit = false;
         
         CommandBase* _currCommand = nullptr;
         TileToolCommand* _tileToolCommand = nullptr;

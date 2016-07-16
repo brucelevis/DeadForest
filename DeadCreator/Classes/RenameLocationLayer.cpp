@@ -74,6 +74,7 @@ void RenameLocationLayer::showLayer(bool* opened)
                                                     style.Colors[ImGuiCol_Text].y,
                                                     style.Colors[ImGuiCol_Text].z,
                                                     _okButtonTextAlpha));
+        
         if (ImGui::ButtonEx("Ok", ImVec2(60, 20), _okButtonFlags))
         {
             *opened = false;
@@ -88,6 +89,7 @@ void RenameLocationLayer::showLayer(bool* opened)
             closeWindow();
             *opened = false;
         }
+        
         ImGui::EndPopup();
     }
 }

@@ -21,13 +21,6 @@ TileImage::~TileImage()
 }
 
 
-bool TileImage::init()
-{
-    if ( !Sprite::init() )
-        return false;
-    
-    return true;
-}
 
 TileImage* TileImage::create()
 {

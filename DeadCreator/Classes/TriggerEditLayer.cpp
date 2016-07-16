@@ -37,6 +37,21 @@ TriggerEditLayer* TriggerEditLayer::create(GMXLayer2& layer)
 }
 
 
+bool TriggerEditLayer::init()
+{
+    if ( !Node::init() )
+        return false;
+    
+    for ( int i = 0 ; i < 8 ; ++ i)
+        _selectedPlayer[i] = false;
+    _selectedPlayer[0] = true;
+    
+    for ( int i = 0 ; i < 5 ; ++ i)
+        _selectedTrigger[i] = false;
+    
+    return true;
+}
+
 void TriggerEditLayer::showLayer(bool* opened)
 {
     ImGuiContext& g = *GImGui;
@@ -48,19 +63,61 @@ void TriggerEditLayer::showLayer(bool* opened)
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
         
         ImGui::BeginChild("dummy1", ImVec2(0, 100), true);
+        
+        for(int i = 0 ; i < 8 ; ++ i)
+        {
+            std::string name = "Player " + std::to_string(i+1);
+            if (ImGui::Selectable(name.c_str(), &_selectedPlayer[i]))
+            {
+                for(int j = 0 ; j < 8 ; ++j )
+                    _selectedPlayer[j] = false;
+                _selectedPlayer[i] = true;
+            }
+        }
         ImGui::EndChild();
         
+        ImGui::BeginGroup();
         ImGui::BeginChild("dummy2", ImVec2(650, 330), true);
-        ImGui::EndChild();
         
-        if(ImGui::Button("Ok", ImVec2(60, 23)))
+        for( int i = 0 ; i < 5 ; ++ i)
+        {
+            ImGui::PushID(i);
+            if (ImGui::Selectable("Conditions:\nAlways.\nActions:\nVictory game.\nPreserve Triggers.", &_selectedTrigger[i], ImGuiSelectableFlags_AllowDoubleClick))
+            {
+                for(int j = 0 ; j < 5 ; ++j )
+                    _selectedTrigger[j] = false;
+                _selectedTrigger[i] = true;
+                
+                if ( ImGui::IsMouseDoubleClicked(0) )
+                {
+                    log("modify mode %d", i);
+                }
+            }
+            ImGui::PopID();
+            ImGui::Separator();
+        }
+    
+        ImGui::EndChild();
+        ImGui::EndGroup();
+        
+        ImGui::SameLine();
+        ImGui::BeginGroup();
+        ImGui::Button("New", ImVec2(130, 25));
+        ImGui::Button("Modify", ImVec2(130, 25));
+        ImGui::Button("Copy", ImVec2(130, 25));
+        ImGui::Button("Delete", ImVec2(130, 25));
+        ImGui::Button("Move Up", ImVec2(130, 25));
+        ImGui::Button("Move Down", ImVec2(130, 25));
+        ImGui::EndGroup();
+        
+        if(ImGui::Button("Ok", ImVec2(130, 25)))
         {
             *opened = false;
             closeWindow();
         }
         
         ImGui::SameLine();
-        if (ImGui::Button("Cancel", ImVec2(100, 23)))
+        if (ImGui::Button("Cancel", ImVec2(130, 25)))
         {
             *opened = false;
             closeWindow();

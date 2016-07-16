@@ -84,7 +84,6 @@ void HistoryLayer::showLayer(bool* opened)
                                 _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
     
     ImGui::BeginChild("##child", ImVec2(0, _layerSize.height - height - g.Style.FramePadding.y * 2.0f), true);
-    
     {
         static Vec2 mousePosInCocos2dMatrix;
         mousePosInCocos2dMatrix = Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);

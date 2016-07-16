@@ -25,6 +25,7 @@ namespace realtrick
         explicit TriggerEditLayer(GMXLayer2& layer);
         virtual ~TriggerEditLayer();
         static TriggerEditLayer* create(GMXLayer2& layer);
+        virtual bool init() override;
         
         void showLayer(bool* opened);
         void closeWindow();
@@ -32,6 +33,9 @@ namespace realtrick
     private:
         
         GMXLayer2& _gmxLayer;
+        
+        bool _selectedPlayer[8];
+        bool _selectedTrigger[5];
         
     };
     

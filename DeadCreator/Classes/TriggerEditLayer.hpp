@@ -16,6 +16,7 @@ namespace realtrick
 {
     
     class GMXLayer2;
+    class GameTrigger;
     
     class TriggerEditLayer : public cocos2d::Node
     {
@@ -36,6 +37,8 @@ namespace realtrick
         
         bool _selectedPlayer[8];
         bool _selectedTrigger[5];
+        
+        std::vector<GameTrigger*> _triggers;
         
     };
     

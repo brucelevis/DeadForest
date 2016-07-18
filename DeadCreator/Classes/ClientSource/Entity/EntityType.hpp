@@ -46,7 +46,7 @@ namespace realtrick
         ENTITY_RAIN_DROP
     };
     
-    enum PlayerType : int
+    enum class PlayerType : int
     {
         INVALID = -1,
         PLAYER1 = 0,
@@ -57,6 +57,7 @@ namespace realtrick
         PLAYER6,
         PLAYER7,
         PLAYER8,
+        CURRENT_PLAYER,
         NEUTRAL = 12,
     };
     

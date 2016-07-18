@@ -420,7 +420,8 @@ void EditScene2::createGMXLayer(const std::string& filePath)
             
             if ( entType == EntityType::ENTITY_HUMAN )
             {
-                EditorSheriff* ent = EditorSheriff::create(*_layer, _layer->getNextValidID(), cocos2d::ui::Widget::TextureResType::PLIST);
+                EditorSheriff* ent = EditorSheriff::create(*_layer, _layer->getNextValidID(),
+                                                           cocos2d::ui::Widget::TextureResType::PLIST);
                 ent->setPosition(pos);
                 ent->setPlayerType(playerType);
                 _layer->addEntityForce(ent, 5);
@@ -507,12 +508,14 @@ void EditScene2::createGMXLayer(const std::string& filePath)
 
 void EditScene2::doNewButton()
 {
+    if ( _layer ) _layer->updateChunk(_layer->getCameraPosition());
     _showNewMap = true;
 }
 
 
 void EditScene2::doOpenButton()
 {
+    if ( _layer ) _layer->updateChunk(_layer->getCameraPosition());
     _showOpenMap = true;
 }
 
@@ -547,6 +550,7 @@ bool EditScene2::isRedo()
 
 void EditScene2::doSaveButton()
 {
+    if ( _layer ) _layer->updateChunk(_layer->getCameraPosition());
     if ( _layer->isFirstFile() )
     {
         saveAsFile();

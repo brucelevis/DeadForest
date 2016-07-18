@@ -9,6 +9,11 @@
 #include "TriggerEditLayer.hpp"
 #include "GMXLayer2.hpp"
 #include "LocationNode.hpp"
+#include "TriggerParameterBase.hpp"
+#include "TriggerParameters.hpp"
+#include "GameTrigger.hpp"
+#include "ConditionBase.hpp"
+#include "ActionBase.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 
@@ -195,7 +200,36 @@ void TriggerEditLayer::showLayer(bool* opened)
                 ImGui::SameLine();
                 ImGui::BeginGroup();
                 ImGui::PushID(2);
-                ImGui::Button("New", ImVec2(130, 25));
+                if ( ImGui::Button("New", ImVec2(130, 25)) )
+                {
+                    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 800) / 2,
+                                                   (g.IO.DisplaySize.x - 345) / 2),
+                                            ImGuiSetCond_Once);
+                    ImGui::SetNextWindowSize(ImVec2(800, 345));
+                    ImGui::OpenPopup("New Action");
+                }
+                if ( ImGui::BeginPopupModal("New Action", NULL, ImGuiWindowFlags_NoResize) )
+                {
+                    static int currentCondition = 0;
+                    ImGui::Combo("Select Action", &currentCondition, "Display Text\0Kill Entity At Location\0", 2);
+                    ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
+                    ImGui::Text("Always");
+                    ImGui::EndChild();
+                    
+                    if (ImGui::Button("Ok", ImVec2(60, 20)))
+                    {
+                        ImGui::CloseCurrentPopup();
+                    }
+                    
+                    ImGui::SameLine();
+                    if (ImGui::Button("Cancel", ImVec2(100, 20)))
+                    {
+                        ImGui::CloseCurrentPopup();
+                    }
+                    
+                    ImGui::EndPopup();
+                }
+
                 ImGui::Button("Modify", ImVec2(130, 25));
                 ImGui::Button("Copy", ImVec2(130, 25));
                 ImGui::Button("Delete", ImVec2(130, 25));

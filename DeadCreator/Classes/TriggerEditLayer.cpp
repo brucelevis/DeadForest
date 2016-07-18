@@ -102,12 +102,129 @@ void TriggerEditLayer::showLayer(bool* opened)
         
         ImGui::SameLine();
         ImGui::BeginGroup();
-        ImGui::Button("New", ImVec2(130, 25));
+        ImGui::PushID(0);
+        if (ImGui::Button("New", ImVec2(130, 25)))
+        {
+            ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 1000) / 2,
+                                           (g.IO.DisplaySize.x - 635) / 2),
+                                    ImGuiSetCond_Once);
+            ImGui::SetNextWindowSize(ImVec2(1000.0f, 645.0f));
+            ImGui::OpenPopup("New Trigger");
+        }
+        if (ImGui::BeginPopupModal("New Trigger", NULL, ImGuiWindowFlags_NoResize))
+        {
+            const char* tabNames[] = {"Player", "Conditions", "Actions"};
+            const int numTabs = 3;
+            const char* tabTooltips[numTabs] = {"", "", ""};
+            static int selectedTab = 0;
+            static int optionalHoveredTab = 0;
+            ImGui::TabLabels(numTabs, tabNames, selectedTab, tabTooltips, false, &optionalHoveredTab);
+            
+            if ( selectedTab == 0)
+            {
+                ImGui::BeginChild("##dummy", ImVec2(0, 550), true);
+                ImGui::Text("For which players will this trigger execute?");
+                ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
+                static bool isPlayerChecked[8] = { false, };
+                for(int i = 0 ; i < 8 ; ++ i)
+                {
+                    std::string playerType = "Player " + std::to_string(i + 1);
+                    ImGui::Checkbox(playerType.c_str(), &isPlayerChecked[i]);
+                }
+                ImGui::PopStyleColor();
+                ImGui::EndChild();
+            }
+            
+            else if ( selectedTab == 1 )
+            {
+                ImGui::BeginGroup();
+                ImGui::BeginChild("##dummy", ImVec2(850, 550), true);
+                ImGui::Text("Trigger Conditions");
+                ImGui::EndChild();
+                ImGui::EndGroup();
+                
+                ImGui::SameLine();
+                ImGui::BeginGroup();
+                ImGui::PushID(1);
+                if ( ImGui::Button("New", ImVec2(130, 25)) )
+                {
+                    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 800) / 2,
+                                                   (g.IO.DisplaySize.x - 345) / 2),
+                                            ImGuiSetCond_Once);
+                    ImGui::SetNextWindowSize(ImVec2(800, 345));
+                    ImGui::OpenPopup("New Condition");
+                }
+                if ( ImGui::BeginPopupModal("New Condition", NULL, ImGuiWindowFlags_NoResize) )
+                {
+                    static int currentCondition = 0;
+                    ImGui::Combo("Select Condition", &currentCondition, "Always\0Bring\0", 2);
+                    ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
+                    ImGui::Text("Always");
+                    ImGui::EndChild();
+                    
+                    if (ImGui::Button("Ok", ImVec2(60, 20)))
+                    {
+                        ImGui::CloseCurrentPopup();
+                    }
+                    
+                    ImGui::SameLine();
+                    if (ImGui::Button("Cancel", ImVec2(100, 20)))
+                    {
+                        ImGui::CloseCurrentPopup();
+                    }
+                    
+                    ImGui::EndPopup();
+                }
+                ImGui::Button("Modify", ImVec2(130, 25));
+                ImGui::Button("Copy", ImVec2(130, 25));
+                ImGui::Button("Delete", ImVec2(130, 25));
+                ImGui::Button("Move Up", ImVec2(130, 25));
+                ImGui::Button("Move Down", ImVec2(130, 25));
+                ImGui::PopID();
+                ImGui::EndGroup();
+            }
+            
+            else if ( selectedTab == 2 )
+            {
+                ImGui::BeginGroup();
+                ImGui::BeginChild("##dummy", ImVec2(850, 550), true);
+                ImGui::Text("Trigger Actions");
+                ImGui::EndChild();
+                ImGui::EndGroup();
+                
+                ImGui::SameLine();
+                ImGui::BeginGroup();
+                ImGui::PushID(2);
+                ImGui::Button("New", ImVec2(130, 25));
+                ImGui::Button("Modify", ImVec2(130, 25));
+                ImGui::Button("Copy", ImVec2(130, 25));
+                ImGui::Button("Delete", ImVec2(130, 25));
+                ImGui::Button("Move Up", ImVec2(130, 25));
+                ImGui::Button("Move Down", ImVec2(130, 25));
+                ImGui::PopID();
+                ImGui::EndGroup();
+            }
+            
+            if (ImGui::Button("Ok", ImVec2(60, 20)))
+            {
+                ImGui::CloseCurrentPopup();
+            }
+            
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(100, 20)))
+            {
+                ImGui::CloseCurrentPopup();
+            }
+            
+            ImGui::EndPopup();
+        }
+        
         ImGui::Button("Modify", ImVec2(130, 25));
         ImGui::Button("Copy", ImVec2(130, 25));
         ImGui::Button("Delete", ImVec2(130, 25));
         ImGui::Button("Move Up", ImVec2(130, 25));
         ImGui::Button("Move Down", ImVec2(130, 25));
+        ImGui::PopID();
         ImGui::EndGroup();
         
         if(ImGui::Button("Ok", ImVec2(130, 25)))

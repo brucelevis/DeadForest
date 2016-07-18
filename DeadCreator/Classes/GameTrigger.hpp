@@ -20,6 +20,11 @@ namespace realtrick
     class GameTrigger
     {
         
+    public:
+        
+        void drawCondition();
+        void drawActions();
+        
     private:
         
         std::vector<PlayerType> _players;

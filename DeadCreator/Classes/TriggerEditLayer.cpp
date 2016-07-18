@@ -14,6 +14,8 @@
 #include "GameTrigger.hpp"
 #include "ConditionBase.hpp"
 #include "ActionBase.hpp"
+#include "Conditions.hpp"
+#include "Actions.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 
@@ -54,6 +56,9 @@ bool TriggerEditLayer::init()
     for ( int i = 0 ; i < 5 ; ++ i)
         _selectedTrigger[i] = false;
     
+    _conditionList.resize(static_cast<int>(ConditionBase::Type::CONDITION_MAX));
+    _conditionList[static_cast<int>(ConditionBase::Type::BRING)] = new ConditionBring();
+    
     return true;
 }
 
@@ -71,7 +76,7 @@ void TriggerEditLayer::showLayer(bool* opened)
         
         for(int i = 0 ; i < 8 ; ++ i)
         {
-            std::string name = "Player " + std::to_string(i+1);
+            std::string name = "Player " + std::to_string(i + 1);
             if (ImGui::Selectable(name.c_str(), &_selectedPlayer[i]))
             {
                 for(int j = 0 ; j < 8 ; ++j )
@@ -115,6 +120,9 @@ void TriggerEditLayer::showLayer(bool* opened)
                                     ImGuiSetCond_Once);
             ImGui::SetNextWindowSize(ImVec2(1000.0f, 645.0f));
             ImGui::OpenPopup("New Trigger");
+            
+            _newTrigger = new GameTrigger();
+            
         }
         if (ImGui::BeginPopupModal("New Trigger", NULL, ImGuiWindowFlags_NoResize))
         {
@@ -145,6 +153,8 @@ void TriggerEditLayer::showLayer(bool* opened)
                 ImGui::BeginGroup();
                 ImGui::BeginChild("##dummy", ImVec2(850, 550), true);
                 ImGui::Text("Trigger Conditions");
+                
+                
                 ImGui::EndChild();
                 ImGui::EndGroup();
                 
@@ -162,9 +172,11 @@ void TriggerEditLayer::showLayer(bool* opened)
                 if ( ImGui::BeginPopupModal("New Condition", NULL, ImGuiWindowFlags_NoResize) )
                 {
                     static int currentCondition = 0;
-                    ImGui::Combo("Select Condition", &currentCondition, "Always\0Bring\0", 2);
+                    ImGui::Combo("Select Condition", &currentCondition, "Bring\0", 1);
                     ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
-                    ImGui::Text("Always");
+                    
+                    _conditionList[currentCondition]->draw();
+                    
                     ImGui::EndChild();
                     
                     if (ImGui::Button("Ok", ImVec2(60, 20)))

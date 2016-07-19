@@ -33,13 +33,11 @@ namespace realtrick
         
     public:
         
-        void pushParameter(TriggerParameterBase* parameter) { _parameters.push_back(parameter); }
+        ConditionBase() = default;
+        ConditionBase(const ConditionBase& rhs) {}
         
         virtual void draw()  = 0;
-        
-    protected:
-        
-        std::vector<TriggerParameterBase*> _parameters;
+        virtual ConditionBase* clone() const = 0;
         
     };
     

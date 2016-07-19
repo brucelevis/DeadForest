@@ -19,11 +19,17 @@ namespace realtrick
     
     public:
         
-        explicit TriggerParameterPlayerType(PlayerType type) :
-        TriggerParameterBase(),
-        _playerType(type)
+        TriggerParameterPlayerType() : TriggerParameterBase(),
+        _playerType(PlayerType::INVALID)
         {
             _parameterType = Type::PLAYER;
+            setParameterName("#invalid");
+        }
+        
+        PlayerType getPlayerType() const { return _playerType; }
+        void setPlayerType(PlayerType type)
+        {
+            _playerType = type;
             
             if ( type == PlayerType::PLAYER1 ) setParameterName("Player 1");
             else if ( type == PlayerType::PLAYER2 ) setParameterName("Player 2");
@@ -35,9 +41,6 @@ namespace realtrick
             else if ( type == PlayerType::PLAYER8 ) setParameterName("Player 8");
             else if ( type == PlayerType::CURRENT_PLAYER ) setParameterName("Current Player");
         }
-        
-        PlayerType getPlayerType() const { return _playerType; }
-        void setPlayerType(PlayerType type) { _playerType = type; }
         
     private:
     

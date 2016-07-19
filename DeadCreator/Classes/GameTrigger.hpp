@@ -9,7 +9,14 @@
 #pragma once
 
 #include <vector>
+#include <string>
+
 #include "EntityType.hpp"
+#include "Conditions.hpp"
+#include "Actions.hpp"
+
+#include "imgui.h"
+#include "imgui_internal.h"
 
 namespace realtrick
 {
@@ -22,10 +29,23 @@ namespace realtrick
         
     public:
         
-        void drawCondition();
-        void drawActions();
+        bool drawTrigger()
+        {
+            std::string label = "Conditions:\n";
+            bool ret = ImGui::Selectable(label.c_str(), &_isSelected, ImGuiSelectableFlags_AllowDoubleClick);
+            return ret;
+        }
+        
+        void setSelected(bool selected) { _isSelected = selected; }
+        bool isSelected() const { return _isSelected; }
+        
+        void addPlayerType(PlayerType p) { _players.push_back(p); }
+        void addCondition(ConditionBase* cond) { _conditions.push_back(cond); }
+        void addAction(ActionBase* act) { _actions.push_back(act); }
         
     private:
+        
+        bool _isSelected;
         
         std::vector<PlayerType> _players;
         std::vector<ConditionBase*> _conditions;
@@ -34,3 +54,12 @@ namespace realtrick
     };
     
 }
+
+
+
+
+
+
+
+
+

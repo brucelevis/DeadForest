@@ -19,15 +19,19 @@ namespace realtrick
         
     public:
         
-        explicit TriggerParameterLocation(LocationNode* location) :
-        TriggerParameterBase(),
-        _location(location)
+        TriggerParameterLocation() : TriggerParameterBase(),
+        _location(nullptr)
         {
             _parameterType = TriggerParameterBase::Type::ENTITY;
+            setParameterName("#invalid");
         }
         
         LocationNode* getLocation() const { return _location; }
-        void setLocation(LocationNode* location) { _location = location; }
+        void setLocation(LocationNode* location)
+        {
+            _location = location;
+            setParameterName(location->getLocationName());
+        }
         
     private:
         

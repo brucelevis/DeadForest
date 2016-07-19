@@ -59,6 +59,9 @@ bool TriggerEditLayer::init()
     _conditionList.resize(static_cast<int>(ConditionBase::Type::CONDITION_MAX));
     _conditionList[static_cast<int>(ConditionBase::Type::BRING)] = new ConditionBring();
     
+    _actionList.resize(static_cast<int>(ActionBase::Type::ACTION_MAX));
+    _actionList[static_cast<int>(ActionBase::Type::DISPLAY_TEXT)] = new ActionDisplayText();
+    
     return true;
 }
 
@@ -89,14 +92,15 @@ void TriggerEditLayer::showLayer(bool* opened)
         ImGui::BeginGroup();
         ImGui::BeginChild("dummy2", ImVec2(650, 330), true);
         
-        for( int i = 0 ; i < 5 ; ++ i)
+        for( int i = 0 ; i < _triggers.size() ; ++ i)
         {
             ImGui::PushID(i);
-            if (ImGui::Selectable("Conditions:\nAlways.\nActions:\nVictory game.\nPreserve Triggers.", &_selectedTrigger[i], ImGuiSelectableFlags_AllowDoubleClick))
+            if ( _triggers[i]->drawTrigger() )
             {
-                for(int j = 0 ; j < 5 ; ++j )
-                    _selectedTrigger[j] = false;
-                _selectedTrigger[i] = true;
+                for(int j = 0 ; j < _triggers.size() ; ++j )
+                    _triggers[j]->setSelected(false);
+                
+                _triggers[i]->setSelected(true);
                 
                 if ( ImGui::IsMouseDoubleClicked(0) )
                 {
@@ -181,12 +185,18 @@ void TriggerEditLayer::showLayer(bool* opened)
                     
                     if (ImGui::Button("Ok", ImVec2(60, 20)))
                     {
+                        // save
+                        _newTrigger->addCondition(_conditionList[currentCondition]);
+                        
                         ImGui::CloseCurrentPopup();
                     }
                     
                     ImGui::SameLine();
                     if (ImGui::Button("Cancel", ImVec2(100, 20)))
                     {
+                        // reset
+                        
+                        
                         ImGui::CloseCurrentPopup();
                     }
                     
@@ -223,9 +233,11 @@ void TriggerEditLayer::showLayer(bool* opened)
                 if ( ImGui::BeginPopupModal("New Action", NULL, ImGuiWindowFlags_NoResize) )
                 {
                     static int currentCondition = 0;
-                    ImGui::Combo("Select Action", &currentCondition, "Display Text\0Kill Entity At Location\0", 2);
+                    ImGui::Combo("Select Action", &currentCondition, "Display Text\0", 2);
                     ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
-                    ImGui::Text("Always");
+                    
+                    _actionList[currentCondition]->draw();
+                    
                     ImGui::EndChild();
                     
                     if (ImGui::Button("Ok", ImVec2(60, 20)))

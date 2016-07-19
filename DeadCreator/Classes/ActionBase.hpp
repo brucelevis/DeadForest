@@ -12,6 +12,9 @@
 
 #include "TriggerParameterBase.hpp"
 
+#include "imgui.h"
+#include "imgui_internal.h"
+
 namespace realtrick
 {
     
@@ -20,11 +23,16 @@ namespace realtrick
         
     public:
         
-        void pushParameter(TriggerParameterBase* parameter) { _parameters.push_back(parameter); }
+        enum class Type
+        {
+            INVALID = - 1,
+            DISPLAY_TEXT = 0,
+            ACTION_MAX
+        };
         
-    protected:
+    public:
         
-        std::vector<TriggerParameterBase*> _parameters;
+        virtual void draw()  = 0;
         
     };
     

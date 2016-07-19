@@ -73,7 +73,7 @@ GMXLayer2::~GMXLayer2()
     _selectedEntities.clear();
     
     _currCommand = nullptr;
-
+    
 }
 
 
@@ -133,7 +133,8 @@ bool GMXLayer2::init()
     _selectedItem = Sprite::create();
     _rootNode->addChild(_selectedItem, 10);
     
-    _cellSpacePartition = EditorCellSpacePartition::create(_file.worldSize, Size(_file.tileWidth * 5, _file.tileHeight * 5));
+    _cellSpacePartition = EditorCellSpacePartition::create(_file.worldSize,
+                                                           Size(_file.tileWidth * 5, _file.tileHeight * 5));
     addChild(_cellSpacePartition);
     
     _camera = Node::create();
@@ -209,7 +210,7 @@ void GMXLayer2::showWindow()
 {
     auto& g = *GImGui;
     float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
-
+    
     ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100),
                                         ImVec2(ImGui::GetIO().DisplaySize.x - WINDOW_PADDING * 4,
                                                ImGui::GetIO().DisplaySize.y - height - ICONBAR_HEIGHT - STATUSBAR_HEIGHT - WINDOW_PADDING * 4));
@@ -240,7 +241,7 @@ void GMXLayer2::showWindow()
         _layerPosition.x = g.IO.DisplaySize.x - _layerSize.width - WINDOW_PADDING * 1.5f;
         positionDirty = true;
     }
-
+    
     if ( _layerPosition.y < height + WINDOW_PADDING + ICONBAR_HEIGHT )
     {
         _layerPosition.y = height + WINDOW_PADDING  * 1.5f + ICONBAR_HEIGHT;
@@ -295,7 +296,7 @@ void GMXLayer2::updateCocosLogic()
     // mouse events
     static Vec2 mousePosInCanvas(0, 0);
     mousePosInCanvas = Vec2(ImGui::GetIO().MousePos.x - ImGui::GetCursorScreenPos().x,
-                             ImGui::GetContentRegionAvail().y - (ImGui::GetIO().MousePos.y - ImGui::GetCursorScreenPos().y));
+                            ImGui::GetContentRegionAvail().y - (ImGui::GetIO().MousePos.y - ImGui::GetCursorScreenPos().y));
     
     _mousePosInWorld = _camera->getPosition() + (Vec2(mousePosInCanvas.x - _layerSize.width / 2 + ImGui::GetStyle().WindowPadding.x,
                                                       mousePosInCanvas.y - _layerSize.height / 2 + ImGui::GetStyle().WindowPadding.y));
@@ -855,11 +856,11 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
                 
                 for(int i = 0 ; i < 4 ; ++ i)
                 {
-                _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2 + (_file.tileWidth / 4 * i),
-                                               worldPos.y - _file.tileHeight / 2),
-                                          Vec2(worldPos.x - _file.tileWidth / 2 + (_file.tileWidth / 4 * i),
-                                               worldPos.y + _file.tileHeight / 2),
-                                          Color4F(1, 1, 1, 0.05f));
+                    _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2 + (_file.tileWidth / 4 * i),
+                                                   worldPos.y - _file.tileHeight / 2),
+                                              Vec2(worldPos.x - _file.tileWidth / 2 + (_file.tileWidth / 4 * i),
+                                                   worldPos.y + _file.tileHeight / 2),
+                                              Color4F(1, 1, 1, 0.05f));
                     
                     _worldDebugNode->drawLine(Vec2(worldPos.x - _file.tileWidth / 2,
                                                    worldPos.y - _file.tileHeight / 2 + (_file.tileHeight / 4 * i)),
@@ -1587,7 +1588,7 @@ void GMXLayer2::updateCollisionRegion()
                     else if ( inputState == TileInputState::LEFT_UP || inputState == TileInputState::RIGHT_DOWN ) _tiles[y][x].setInputState( TileInputState::INVALID );
                     isSpecial = true;
                 }
-            
+                
                 if ( !isSpecial )
                 {
                     _tiles[y][x].setInputState(TileInputState::INVALID);
@@ -1622,7 +1623,7 @@ void GMXLayer2::updateCollisionRegion()
                     {
                         polygon.push_back(_tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y));
                     }
-
+                    
                     bool isSpecial = false;
                     if ( tail == "13" )
                     {
@@ -1643,7 +1644,7 @@ void GMXLayer2::updateCollisionRegion()
                         
                         isSpecial = true;
                     }
-            
+                    
                     if ( !isSpecial )
                     {
                         _tiles[y][x].setInputState( TileInputState::INVALID );

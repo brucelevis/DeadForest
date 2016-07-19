@@ -14,6 +14,7 @@ EditorItemM1897::EditorItemM1897(GMXLayer2& layer, int id) :
 EditorEntityBase(layer, id)
 {
     _type = EntityType::ITEM_M1897;
+    setName("M1897");
 }
 
 

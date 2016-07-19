@@ -23,13 +23,10 @@ namespace realtrick
     public:
         
         explicit OpenLayer(EditScene2* layer);
-        
         virtual ~OpenLayer();
-        
         static OpenLayer* create(EditScene2* layer);
         
         void showLayer(bool* opened);
-        
         void closeWindow();
         
         void checkIsOpenFile();

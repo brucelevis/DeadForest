@@ -23,13 +23,10 @@ namespace realtrick
     public:
         
         explicit SaveAsLayer(EditScene2* layer);
-        
         virtual ~SaveAsLayer();
-        
         static SaveAsLayer* create(EditScene2* layer);
         
         void showLayer(bool* opened);
-        
         void closeWindow();
         
         void checkIsSaveFile();

@@ -19,15 +19,19 @@ namespace realtrick
         
     public:
         
-        explicit TriggerParameterEntity(EditorEntityBase* entity) :
-        TriggerParameterBase(),
-        _entity(entity)
+        TriggerParameterEntity() : TriggerParameterBase(),
+        _entity(nullptr)
         {
             _parameterType = TriggerParameterBase::Type::ENTITY;
+            setParameterName("#invalid");
         }
         
         EditorEntityBase* getEntity() const { return _entity; }
-        void setEntity(EditorEntityBase* entity) { _entity = entity; }
+        void setEntity(EditorEntityBase* entity)
+        {
+            _entity = entity;
+            setParameterName(entity->getName());
+        }
         
     private:
         

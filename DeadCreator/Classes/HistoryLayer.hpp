@@ -23,11 +23,8 @@ namespace realtrick
     public:
         
         HistoryLayer(GMXLayer2& gmxLayer);
-        
         virtual ~HistoryLayer();
-        
         static HistoryLayer* create(GMXLayer2& gmxLayer);
-        
         virtual bool init() override;
         
         void showLayer(bool* opened);
@@ -35,15 +32,12 @@ namespace realtrick
         void pushCommand(CommandBase* command) { _commandQueue.pushCommand(command); _isSetScrollBottom = true; }
         
         void redo() { if ( isRedo() ) _commandQueue.redo(); }
-        
         void undo() { if ( isUndo() ) _commandQueue.undo(); }
-        
-        int getIndex() const { return _commandQueue.getIndex(); }
-        
+    
         bool isRedo() const { return _commandQueue.isRedo(); }
-        
         bool isUndo() const { return _commandQueue.isUndo(); }
         
+        int getIndex() const { return _commandQueue.getIndex(); }
         int size() const { return _commandQueue.size(); }
         
     private:

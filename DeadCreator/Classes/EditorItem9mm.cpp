@@ -14,6 +14,7 @@ EditorItem9mm::EditorItem9mm(GMXLayer2& layer, int id) :
 EditorEntityBase(layer, id)
 {
     _type = EntityType::BULLET_9MM;
+    setName("9mm");
 }
 
 

@@ -14,6 +14,7 @@ EditorSheriff::EditorSheriff(GMXLayer2& layer, int id) :
 EditorEntityBase(layer, id)
 {
     _type = EntityType::ENTITY_HUMAN;
+    setName("Sheriff");
 }
 
 

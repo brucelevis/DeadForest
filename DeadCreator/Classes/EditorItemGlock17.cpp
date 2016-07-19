@@ -14,6 +14,7 @@ EditorItemGlock17::EditorItemGlock17(GMXLayer2& layer, int id) :
 EditorEntityBase(layer, id)
 {
     _type = EntityType::ITEM_GLOCK17;
+    setName("Glock17");
 }
 
 

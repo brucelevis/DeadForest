@@ -22,9 +22,7 @@ namespace realtrick
     public:
         
         explicit NewFileWindow2(EditScene2* layer);
-        
         virtual ~NewFileWindow2();
-        
         static NewFileWindow2* create(EditScene2* layer);
         
         void showNewFileWindow(bool* opened);

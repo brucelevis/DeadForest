@@ -23,19 +23,14 @@ namespace realtrick
     public:
         
         NavigatorLayer(GMXLayer2& gmxLayer);
-        
         virtual ~NavigatorLayer();
-        
         static NavigatorLayer* create(GMXLayer2& gmxLayer);
-        
         virtual bool init() override;
         
         void showLayer(bool* opened);
-        
         void setTile(int x, int y, const TileBase& tile);
         
         void addEntity(EditorEntityBase* ent);
-        
         void eraseEntity(int id);
         
     private:

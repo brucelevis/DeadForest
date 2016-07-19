@@ -151,7 +151,7 @@ namespace realtrick
         
         EditorCellSpacePartition* _cellSpacePartition;
         std::map<int, EditorEntityBase*> _entities;
-        std::vector<std::vector<TileBase>> _tiles;
+        std::vector< std::vector<TileBase> > _tiles;
         std::vector< std::vector<TileImage*> > _tileImages;
         std::vector< EditorEntityBase* > _selectedEntities;
         
@@ -172,10 +172,10 @@ namespace realtrick
         HistoryLayer* _historyLayer = nullptr;
         bool _isShowHistory = true;
         
-        RenameLocationLayer* _renameLocationLayer;
+        RenameLocationLayer* _renameLocationLayer = nullptr;
         bool _isShowRenameLocationLayer = false;
         
-        TriggerEditLayer* _triggerEditLayer;
+        TriggerEditLayer* _triggerEditLayer = nullptr;
         bool _isShowTriggerEdit = false;
         
         CommandBase* _currCommand = nullptr;
@@ -187,7 +187,7 @@ namespace realtrick
         cocos2d::DrawNode* _selectionRectNode;
         
         std::vector<LocationNode*> _locations;
-        LocationNode* _grabbedLocation;
+        LocationNode* _grabbedLocation = nullptr;
         
         std::map<std::string, std::vector<cocos2d::Vec2>> _tileCollisions;
         std::vector< std::vector<cocos2d::Vec2> > _collisionRegions;

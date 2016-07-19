@@ -16,15 +16,19 @@ namespace realtrick
         
     public:
         
-        explicit TriggerParameterNumber(int number) :
-        TriggerParameterBase(),
-        _number(number)
+        TriggerParameterNumber() : TriggerParameterBase(),
+        _number(-1)
         {
             _parameterType = TriggerParameterBase::Type::NUMBER;
+            setParameterName("#invalid");
         }
         
         int getNumber() const { return _number; }
-        void setNumber(int number) { _number = number; }
+        void setNumber(int number)
+        {
+            _number = number;
+            setParameterName(std::to_string(number));
+        }
         
     private:
         

@@ -14,6 +14,7 @@ EditorItemAxe::EditorItemAxe(GMXLayer2& layer, int id) :
 EditorEntityBase(layer, id)
 {
     _type = EntityType::ITEM_AXE;
+    setName("Axe");
 }
 
 

@@ -196,8 +196,6 @@ namespace realtrick
         bool _isFirstFile = true;
         std::string _currFilePath;
         
-        
-        
     };
     
 }

@@ -51,7 +51,7 @@ namespace realtrick
         cocos2d::Rect _boundingBoxPadding;
         
         int _paletteType = 0;
-        int _selectedItem = 0;
+        int _selectedItem = -1;
             
     };
         

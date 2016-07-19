@@ -48,7 +48,7 @@ namespace realtrick
             _id = ID;
             _type = type;
             
-            _image = cocos2d::Sprite::create(getEntityTable().at(type).fileName);
+            _image = cocos2d::Sprite::create(getEntityTableByType().at(type).fileName);
             addChild(_image);
             
             _selectedCircle = cocos2d::Sprite::create("circle.png");
@@ -82,18 +82,43 @@ namespace realtrick
         
         EntityType getEntityType() const { return _type; }
         
-        static std::map<EntityType, EntityData> getEntityTable()
+        static const std::map<EntityType, EntityData>& getEntityTableByType()
         {
             static std::map<EntityType, EntityData> table;
-            table[EntityType::DEFAULT] = EntityData(EntityType::DEFAULT, "", "");
-            table[EntityType::ENTITY_HUMAN] = EntityData(EntityType::ENTITY_HUMAN, "Sheriff", "sheriff.png");
-            table[EntityType::ITEM_M16A2] = EntityData(EntityType::ITEM_M16A2, "M16A2", "M16A2.png");
-            table[EntityType::ITEM_M1897] = EntityData(EntityType::ITEM_M1897, "M1897", "M1897.png");
-            table[EntityType::ITEM_GLOCK17] = EntityData(EntityType::ITEM_GLOCK17, "Glock17", "Glock17.png");
-            table[EntityType::ITEM_AXE] = EntityData(EntityType::ITEM_AXE, "Axe", "Axe.png");
-            table[EntityType::BULLET_556MM] = EntityData(EntityType::BULLET_556MM, "5.56mm", "5_56mm.png");
-            table[EntityType::BULLET_9MM] = EntityData(EntityType::BULLET_9MM, "9mm", "9mm.png");
-            table[EntityType::BULLET_SHELL] = EntityData(EntityType::BULLET_SHELL, "ShotgunShell", "Shell.png");
+            static bool isFirstCall = true;
+            if ( isFirstCall )
+            {
+                table[EntityType::ENTITY_HUMAN] = EntityData(EntityType::ENTITY_HUMAN, "Sheriff", "sheriff.png");
+                table[EntityType::ITEM_M16A2] = EntityData(EntityType::ITEM_M16A2, "M16A2", "M16A2.png");
+                table[EntityType::ITEM_M1897] = EntityData(EntityType::ITEM_M1897, "M1897", "M1897.png");
+                table[EntityType::ITEM_GLOCK17] = EntityData(EntityType::ITEM_GLOCK17, "Glock17", "Glock17.png");
+                table[EntityType::ITEM_AXE] = EntityData(EntityType::ITEM_AXE, "Axe", "Axe.png");
+                table[EntityType::BULLET_556MM] = EntityData(EntityType::BULLET_556MM, "5.56mm", "5_56mm.png");
+                table[EntityType::BULLET_9MM] = EntityData(EntityType::BULLET_9MM, "9mm", "9mm.png");
+                table[EntityType::BULLET_SHELL] = EntityData(EntityType::BULLET_SHELL, "Shotgun Shell", "Shell.png");
+                
+                isFirstCall = false;
+            }
+            return table;
+        }
+        
+        static const std::map<std::string, EntityData> getEntityTableByName()
+        {
+            static std::map<std::string, EntityData> table;
+            static bool isFirstCall = true;
+            if ( isFirstCall )
+            {
+                table["Sheriff"] = EntityData(EntityType::ENTITY_HUMAN, "Sheriff", "sheriff.png");
+                table["M16A2"] = EntityData(EntityType::ITEM_M16A2, "M16A2", "M16A2.png");
+                table["M1897"] = EntityData(EntityType::ITEM_M1897, "M1897", "M1897.png");
+                table["Glock17"] = EntityData(EntityType::ITEM_GLOCK17, "Glock17", "Glock17.png");
+                table["Axe"] = EntityData(EntityType::ITEM_AXE, "Axe", "Axe.png");
+                table["5.56mm"] = EntityData(EntityType::BULLET_556MM, "5.56mm", "5_56mm.png");
+                table["9mm"] = EntityData(EntityType::BULLET_9MM, "9mm", "9mm.png");
+                table["Shotgun Shell"] = EntityData(EntityType::BULLET_SHELL, "Shotgun Shell", "Shell.png");
+                
+                isFirstCall = false;
+            }
             return table;
         }
         

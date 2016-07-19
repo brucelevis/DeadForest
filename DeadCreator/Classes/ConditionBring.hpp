@@ -10,6 +10,7 @@
 
 #include "ConditionBase.hpp"
 #include "TriggerParameters.hpp"
+#include "EditorEntity.hpp"
 
 namespace realtrick
 {
@@ -26,6 +27,7 @@ namespace realtrick
             _number = new TriggerParameterNumber();
             _entity = new TriggerParameterEntity();
             _location = new TriggerParameterLocation();
+            
         }
         
         virtual ~ConditionBring()
@@ -114,16 +116,26 @@ namespace realtrick
             ImGui::SameLine();
             ImGui::PushID(3);
             ImGui::PushItemWidth(150);
-            static const char* items3[3] =
-            {
-                "Sheriff",
-                "M16A2",
-                "...",
-            };
             
-            if ( ImGui::Combo("", &_currEntity, items3, 3, 3) )
+            static std::string entityList;
+            static std::vector<std::string> entityNames;
+            static bool isFirstCall = true;
+            if ( isFirstCall )
             {
-//                _entity->setEntity();
+                auto entityTable = EditorEntity::getEntityTableByType();
+                for(auto iter = entityTable.begin(); iter != entityTable.end() ; ++ iter)
+                {
+                    entityList += (iter->second.entityName);
+                    entityNames.push_back(iter->second.entityName);
+                    entityList += '\0';
+                }
+                isFirstCall = false;
+            }
+            
+            if ( ImGui::Combo("", &_currEntity, entityList.c_str(), 5) )
+            {
+                _entity->setEntityType(EditorEntity::getEntityTableByName().at(entityNames[_currEntity]).entityType);
+                cocos2d::log("entity is %d.", _entity->getEntityType());
             }
             
             ImGui::PopItemWidth();

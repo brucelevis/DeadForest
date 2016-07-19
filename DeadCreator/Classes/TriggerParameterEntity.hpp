@@ -20,22 +20,22 @@ namespace realtrick
     public:
         
         TriggerParameterEntity() : TriggerParameterBase(),
-        _entity(nullptr)
+        _entityType(EntityType::DEFAULT)
         {
             _parameterType = TriggerParameterBase::Type::ENTITY;
             setParameterName("#invalid");
         }
         
-        EditorEntity* getEntity() const { return _entity; }
-        void setEntity(EditorEntity* entity)
+        EntityType getEntityType() const { return _entityType; }
+        void setEntityType(EntityType entityType)
         {
-            _entity = entity;
-            setParameterName(entity->getName());
+            _entityType = entityType;
+            setParameterName(EditorEntity::getEntityTableByType().at(entityType).entityName);
         }
         
     private:
         
-        EditorEntity* _entity;
+        EntityType _entityType;
         
     };
     

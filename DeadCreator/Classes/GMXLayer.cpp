@@ -460,7 +460,8 @@ void GMXLayer::updateCocosLogic()
         clearSelectedEntites();
     }
     
-    if ( _imguiLayer.getLayerType() == LayerType::ENTITY )
+    auto layerType = _imguiLayer.getLayerType();
+    if ( layerType == LayerType::ENTITY )
     {
         static bool isSelecting = false;
         if ( selectedItem == - 1)
@@ -509,7 +510,7 @@ void GMXLayer::updateCocosLogic()
         }
     }
     
-    if ( _imguiLayer.getLayerType() == LayerType::TILE )
+    if ( layerType == LayerType::TILE )
     {
         EditorTileType selectedTile = static_cast<EditorTileType>(_paletteLayer->getSelectedItem());
         auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
@@ -551,14 +552,14 @@ void GMXLayer::updateCocosLogic()
         _selectedItem->setPosition(_tiles[indices.second][indices.first].getPosition());
         _selectedItem->setOpacity(128);
     }
-    else if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN  )
+    else if ( layerType == LayerType::ENTITY )
     {
         _selectedItem->setPosition(_mousePosInWorld);
         EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
         
         if ( selectedEntity != EntityType::DEFAULT )
         {
-            _selectedItem->setTexture(EditorEntity::getEntityTable().at(selectedEntity).fileName);
+            _selectedItem->setTexture(EditorEntity::getEntityTableByType().at(selectedEntity).fileName);
             _selectedItem->setOpacity(128);
             if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
@@ -568,30 +569,10 @@ void GMXLayer::updateCocosLogic()
                 {
                     EditorEntity* ent = EditorEntity::create(getNextValidID(), selectedEntity);
                     ent->setPosition(_mousePosInWorld);
-                    ent->setPlayerType(_imguiLayer.getSelectedPlayerType());
-                    addEntity(ent, 5);
-                }
-            }
-        }
-    }
-    else if ( _paletteLayer->getPaletteType() == PaletteType::ITEM )
-    {
-        _selectedItem->setPosition(_mousePosInWorld);
-        EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
-        
-        if ( selectedEntity != EntityType::DEFAULT )
-        {
-            _selectedItem->setTexture(EditorEntity::getEntityTable().at(selectedEntity).fileName);
-            _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
-            {
-                Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
-                if ( !isClickedResizeButton )
-                {
-                    EditorEntity* ent = EditorEntity::create(getNextValidID(), selectedEntity);
-                    ent->setPosition(_mousePosInWorld);
-                    ent->setPlayerType(PlayerType::NEUTRAL);
+                    if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN )
+                        ent->setPlayerType(_imguiLayer.getSelectedPlayerType());
+                    else if ( _paletteLayer->getPaletteType() == PaletteType::ITEM )
+                        ent->setPlayerType(PlayerType::NEUTRAL);
                     addEntity(ent, 5);
                 }
             }

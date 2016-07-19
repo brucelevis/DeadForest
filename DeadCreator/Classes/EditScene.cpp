@@ -71,11 +71,13 @@ bool EditScene::init()
                 if (ImGui::MenuItem("Open", "Ctrl+O", false, _enableOpenMap)) { doOpenButton(); }
                 if (ImGui::MenuItem("Save", "Ctrl+S", false, _enableSaveMap)) { saveFile(_layer->getCurrFilePath()); }
                 if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", &_showSaveAs, _enableSaveMap)) { saveAsFile(); }
+                
                 ImGui::Separator();
                 if (ImGui::MenuItem("Quit", "Alt+F4")) {}
                 
                 ImGui::EndMenu();
             }
+            
             if (ImGui::BeginMenu("Edit", _isEditEnable))
             {
                 if ( ImGui::MenuItem("Undo", "CTRL+Z", false, isUndo()) ) { _layer->undo(); }
@@ -85,6 +87,7 @@ bool EditScene::init()
                 if ( ImGui::MenuItem("Cut", "CTRL+X", false, false) ) {}
                 if ( ImGui::MenuItem("Copy", "CTRL+C", false, false) ) {}
                 if ( ImGui::MenuItem("Paste", "CTRL+V", false, false) ) {}
+                
                 ImGui::EndMenu();
             }
             
@@ -98,9 +101,11 @@ bool EditScene::init()
                 if (ImGui::MenuItem("Player 6")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER6); }
                 if (ImGui::MenuItem("Player 7")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER7); }
                 if (ImGui::MenuItem("Player 8")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER8); }
+                
                 ImGui::Separator();
                 if (ImGui::MenuItem("Player Setting")) {}
                 if (ImGui::MenuItem("Force Setting")) {}
+                
                 ImGui::EndMenu();
             }
             
@@ -118,6 +123,7 @@ bool EditScene::init()
             {
                 if (ImGui::MenuItem("Contact")) {}
                 if (ImGui::MenuItem("About")) {}
+                
                 ImGui::EndMenu();
             }
             

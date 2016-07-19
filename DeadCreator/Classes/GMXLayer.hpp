@@ -19,7 +19,6 @@
 #include "SizeProtocol.h"
 #include "HistoryLayer.hpp"
 
-
 namespace realtrick
 {
     
@@ -34,6 +33,7 @@ namespace realtrick
     class EditorEntityBase;
     class LocationNode;
     class RenameLocationLayer;
+    class EditorEntity;
     
     class GMXLayer : public cocos2d::Layer
     {

@@ -34,6 +34,7 @@ using namespace realtrick;
 #include "util.h"
 #include "GMXFile_generated.h"
 
+
 bool GMXLayer::TITLE_CLICKED = false;
 
 GMXLayer::GMXLayer(EditScene& imguiLayer, GMXFile& file) :
@@ -1940,6 +1941,11 @@ bool GMXLayer::isOverlappedLocationName(const std::string& name) const
     }
     return false;
 }
+
+
+
+
+
 
 
 

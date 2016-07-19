@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "CommandBase.hpp"
-#include "EditorEntityBase.hpp"
+#include "EditorEntity.hpp"
 
 namespace realtrick
 {
@@ -47,7 +47,7 @@ namespace realtrick
         
         virtual bool empty() const override { return _entities.empty(); }
         
-        void pushEntity(const std::vector<EditorEntityBase*>& entities) { if ( _isBegan ) _entities = entities; }
+        void pushEntity(const std::vector<EditorEntity*>& entities) { if ( _isBegan ) _entities = entities; }
         
     private:
         
@@ -57,7 +57,7 @@ namespace realtrick
         
     private:
         
-        std::vector<EditorEntityBase*> _entities;
+        std::vector<EditorEntity*> _entities;
         
     };
     

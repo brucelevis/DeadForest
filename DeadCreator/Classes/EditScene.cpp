@@ -20,8 +20,6 @@ using namespace cocos2d;
 #include "OpenLayer.hpp"
 #include "PaletteLayer.hpp"
 #include "SizeProtocol.h"
-#include "EditorSheriff.hpp"
-#include "EditorItems.hpp"
 using namespace realtrick;
 
 #include "GMXFile_generated.h"
@@ -424,78 +422,10 @@ void EditScene::createGMXLayer(const std::string& filePath)
             PlayerType playerType = static_cast<PlayerType>(iter->player_type());
             auto entType = static_cast<EntityType>(iter->entity_type());
             
-            if ( entType == EntityType::ENTITY_HUMAN )
-            {
-                EditorSheriff* ent = EditorSheriff::create(*_layer, _layer->getNextValidID(),
-                                                           cocos2d::ui::Widget::TextureResType::PLIST);
-                ent->setPosition(pos);
-                ent->setPlayerType(playerType);
-                _layer->addEntityForce(ent, 5);
-            }
-            
-            else if ( entType == EntityType::BULLET_556MM )
-            {
-                EditorItem556mm* ent = EditorItem556mm::create(*_layer, _layer->getNextValidID(), "5_56mm.png",
-                                                               cocos2d::ui::Widget::TextureResType::PLIST);
-                ent->setPosition(pos);
-                ent->setPlayerType(PlayerType::NEUTRAL);
-                _layer->addEntityForce(ent, 5);
-            }
-            
-            else if ( entType == EntityType::BULLET_9MM )
-            {
-                EditorItem9mm* ent = EditorItem9mm::create(*_layer, _layer->getNextValidID(), "9mm.png",
-                                                           cocos2d::ui::Widget::TextureResType::PLIST);
-                ent->setPosition(pos);
-                ent->setPlayerType(PlayerType::NEUTRAL);
-                _layer->addEntityForce(ent, 5);
-            }
-            
-            else if ( entType == EntityType::ITEM_AXE )
-            {
-                EditorItemAxe* ent = EditorItemAxe::create(*_layer, _layer->getNextValidID(), "Axe.png",
-                                                           cocos2d::ui::Widget::TextureResType::PLIST);
-                ent->setPosition(pos);
-                ent->setPlayerType(PlayerType::NEUTRAL);
-                _layer->addEntityForce(ent, 5);
-            }
-            
-            else if ( entType == EntityType::ITEM_GLOCK17 )
-            {
-                EditorItemGlock17* ent = EditorItemGlock17::create(*_layer, _layer->getNextValidID(), "Glock17.png",
-                                                                   cocos2d::ui::Widget::TextureResType::PLIST);
-                ent->setPosition(pos);
-                ent->setPlayerType(PlayerType::NEUTRAL);
-                _layer->addEntityForce(ent, 5);
-            }
-            
-            else if ( entType == EntityType::ITEM_M16A2 )
-            {
-                EditorItemM16A2* ent = EditorItemM16A2::create(*_layer, _layer->getNextValidID(), "M16A2.png",
-                                                               cocos2d::ui::Widget::TextureResType::PLIST);
-                ent->setPosition(pos);
-                ent->setPlayerType(PlayerType::NEUTRAL);
-                _layer->addEntityForce(ent, 5);
-            }
-            
-            else if ( entType == EntityType::ITEM_M1897 )
-            {
-                EditorItemM1897* ent = EditorItemM1897::create(*_layer, _layer->getNextValidID(), "M1897.png",
-                                                               cocos2d::ui::Widget::TextureResType::PLIST);
-                ent->setPosition(pos);
-                ent->setPlayerType(PlayerType::NEUTRAL);
-                _layer->addEntityForce(ent, 5);
-            }
-            
-            else if ( entType == EntityType::BULLET_SHELL )
-            {
-                EditorItemShell* ent = EditorItemShell::create(*_layer, _layer->getNextValidID(), "Shell.png",
-                                                               cocos2d::ui::Widget::TextureResType::PLIST);
-                ent->setPosition(pos);
-                ent->setPlayerType(PlayerType::NEUTRAL);
-                _layer->addEntityForce(ent, 5);
-            }
-            
+            EditorEntity* ent = EditorEntity::create(_layer->getNextValidID(), entType);
+            ent->setPosition(pos);
+            ent->setPlayerType(playerType);
+            _layer->addEntityForce(ent, 5);
         }
         
         _layer->updateCollisionRegion();

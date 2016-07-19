@@ -19,8 +19,6 @@
 #include "TileToolCommand.hpp"
 #include "AddEntityToolCommand.hpp"
 #include "RemoveEntityToolCommand.hpp"
-#include "EditorSheriff.hpp"
-#include "EditorItems.hpp"
 #include "CellSpacePartition.hpp"
 #include "GameWorld.hpp"
 #include "TestScene.hpp"
@@ -553,13 +551,14 @@ void GMXLayer::updateCocosLogic()
         _selectedItem->setPosition(_tiles[indices.second][indices.first].getPosition());
         _selectedItem->setOpacity(128);
     }
-    else if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN )
+    else if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN  )
     {
         _selectedItem->setPosition(_mousePosInWorld);
         EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
-        if ( selectedEntity == EntityType::ENTITY_HUMAN )
+        
+        if ( selectedEntity != EntityType::DEFAULT )
         {
-            _selectedItem->setSpriteFrame("HumanFistIdleLoop0.png");
+            _selectedItem->setTexture(EditorEntity::getEntityTable().at(selectedEntity).fileName);
             _selectedItem->setOpacity(128);
             if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
@@ -567,7 +566,7 @@ void GMXLayer::updateCocosLogic()
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
-                    EditorSheriff* ent = EditorSheriff::create(*this, getNextValidID(), cocos2d::ui::Widget::TextureResType::PLIST);
+                    EditorEntity* ent = EditorEntity::create(getNextValidID(), selectedEntity);
                     ent->setPosition(_mousePosInWorld);
                     ent->setPlayerType(_imguiLayer.getSelectedPlayerType());
                     addEntity(ent, 5);
@@ -580,9 +579,9 @@ void GMXLayer::updateCocosLogic()
         _selectedItem->setPosition(_mousePosInWorld);
         EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
         
-        if ( selectedEntity == EntityType::BULLET_556MM )
+        if ( selectedEntity != EntityType::DEFAULT )
         {
-            _selectedItem->setSpriteFrame("5_56mm.png");
+            _selectedItem->setTexture(EditorEntity::getEntityTable().at(selectedEntity).fileName);
             _selectedItem->setOpacity(128);
             if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
@@ -590,114 +589,10 @@ void GMXLayer::updateCocosLogic()
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
-                    EditorItem556mm* ent = EditorItem556mm::create(*this, getNextValidID(), "5_56mm.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
+                    EditorEntity* ent = EditorEntity::create(getNextValidID(), selectedEntity);
                     ent->setPosition(_mousePosInWorld);
                     ent->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(ent);
-                }
-            }
-        }
-        else if ( selectedEntity == EntityType::BULLET_9MM )
-        {
-            _selectedItem->setSpriteFrame("9mm.png");
-            _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
-            {
-                Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
-                if ( !isClickedResizeButton )
-                {
-                    EditorItem9mm* ent = EditorItem9mm::create(*this, getNextValidID(), "9mm.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
-                    ent->setPosition(_mousePosInWorld);
-                    ent->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(ent);
-                }
-            }
-        }
-        else if ( selectedEntity == EntityType::ITEM_AXE )
-        {
-            _selectedItem->setSpriteFrame("Axe.png");
-            _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
-            {
-                Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
-                if ( !isClickedResizeButton )
-                {
-                    EditorItemAxe* ent = EditorItemAxe::create(*this, getNextValidID(), "Axe.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
-                    ent->setPosition(_mousePosInWorld);
-                    ent->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(ent);
-                }
-            }
-        }
-        else if ( selectedEntity == EntityType::BULLET_SHELL )
-        {
-            _selectedItem->setSpriteFrame("Shell.png");
-            _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
-            {
-                Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
-                if ( !isClickedResizeButton )
-                {
-                    EditorItemShell* ent = EditorItemShell::create(*this, getNextValidID(), "Shell.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
-                    ent->setPosition(_mousePosInWorld);
-                    ent->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(ent);
-                }
-            }
-        }
-        else if ( selectedEntity == EntityType::ITEM_M16A2 )
-        {
-            _selectedItem->setSpriteFrame("M16A2.png");
-            _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
-            {
-                Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
-                if ( !isClickedResizeButton )
-                {
-                    EditorItemM16A2* ent = EditorItemM16A2::create(*this, getNextValidID(), "M16A2.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
-                    ent->setPosition(_mousePosInWorld);
-                    ent->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(ent);
-                }
-            }
-            
-        }
-        else if ( selectedEntity == EntityType::ITEM_GLOCK17 )
-        {
-            _selectedItem->setSpriteFrame("Glock17.png");
-            _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
-            {
-                Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
-                if ( !isClickedResizeButton )
-                {
-                    EditorItemGlock17* ent = EditorItemGlock17::create(*this, getNextValidID(), "Glock17.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
-                    ent->setPosition(_mousePosInWorld);
-                    ent->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(ent);
-                }
-            }
-            
-        }
-        else if ( selectedEntity == EntityType::ITEM_M1897 )
-        {
-            _selectedItem->setSpriteFrame("M1897.png");
-            _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
-            {
-                Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
-                if ( !isClickedResizeButton )
-                {
-                    EditorItemM1897* ent = EditorItemM1897::create(*this, getNextValidID(), "M1897.png" ,cocos2d::ui::Widget::TextureResType::PLIST);
-                    ent->setPosition(_mousePosInWorld);
-                    ent->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(ent);
+                    addEntity(ent, 5);
                 }
             }
         }
@@ -1044,7 +939,7 @@ void GMXLayer::putTile(EditorTileType type, int x, int y)
 }
 
 
-bool GMXLayer::addEntity(EditorEntityBase* entity, int localZOrder, bool isExecCommand)
+bool GMXLayer::addEntity(EditorEntity* entity, int localZOrder, bool isExecCommand)
 {
     clearSelectedEntites();
     
@@ -1075,7 +970,7 @@ bool GMXLayer::addEntity(EditorEntityBase* entity, int localZOrder, bool isExecC
 }
 
 
-bool GMXLayer::addEntityForce(EditorEntityBase* entity, int localZOrder)
+bool GMXLayer::addEntityForce(EditorEntity* entity, int localZOrder)
 {
     auto iter = _entities.find(entity->getID());
     if ( iter == std::end(_entities))
@@ -1925,7 +1820,6 @@ void GMXLayer::reorderLocations()
             return (l1->getLocationZOrder() < l2->getLocationZOrder());
         });
     }
-    
     else
     {
         _grabbedLocation->setLocationZOrder(0);

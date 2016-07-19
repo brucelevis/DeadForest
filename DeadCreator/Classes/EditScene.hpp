@@ -10,7 +10,7 @@
 
 #include "cocos2d.h"
 #include "ImGuiLayer.h"
-#include "EditorEntityBase.hpp"
+#include "EditorEntity.hpp"
 
 namespace realtrick
 {

@@ -30,7 +30,7 @@ namespace realtrick
     class AddEntityToolCommand;
     class RemoveEntityToolCommand;
     class TileToolCommand;
-    class EditorEntityBase;
+    class EditorEntity;
     class LocationNode;
     class RenameLocationLayer;
     class EditorEntity;
@@ -84,8 +84,8 @@ namespace realtrick
         TileToolCommand* getTileToolCommand() const { return _tileToolCommand; }
         AddEntityToolCommand* getAddEntityToolCommand() const { return _addEntityToolCommand; }
         
-        bool addEntity(EditorEntityBase* entity, int localZOrder = 0, bool isExecCommand = false);
-        bool addEntityForce(EditorEntityBase* entity, int localZOrder = 0);
+        bool addEntity(EditorEntity* entity, int localZOrder = 0, bool isExecCommand = false);
+        bool addEntityForce(EditorEntity* entity, int localZOrder = 0);
         
         bool eraseEntity(int id, bool isExecCommand = false);
         
@@ -150,10 +150,10 @@ namespace realtrick
         cocos2d::Sprite* _selectedItem;
         
         EditorCellSpacePartition* _cellSpacePartition;
-        std::map<int, EditorEntityBase*> _entities;
+        std::map<int, EditorEntity*> _entities;
         std::vector< std::vector<TileBase> > _tiles;
         std::vector< std::vector<TileImage*> > _tileImages;
-        std::vector< EditorEntityBase* > _selectedEntities;
+        std::vector< EditorEntity* > _selectedEntities;
         
         int _viewX;
         int _viewY;
@@ -195,6 +195,8 @@ namespace realtrick
         
         bool _isFirstFile = true;
         std::string _currFilePath;
+        
+        
         
     };
     

@@ -9,7 +9,7 @@
 #pragma once
 
 #include "TriggerParameterBase.hpp"
-#include "EditorEntityBase.hpp"
+#include "EditorEntity.hpp"
 
 namespace realtrick
 {
@@ -26,8 +26,8 @@ namespace realtrick
             setParameterName("#invalid");
         }
         
-        EditorEntityBase* getEntity() const { return _entity; }
-        void setEntity(EditorEntityBase* entity)
+        EditorEntity* getEntity() const { return _entity; }
+        void setEntity(EditorEntity* entity)
         {
             _entity = entity;
             setParameterName(entity->getName());
@@ -35,7 +35,7 @@ namespace realtrick
         
     private:
         
-        EditorEntityBase* _entity;
+        EditorEntity* _entity;
         
     };
     

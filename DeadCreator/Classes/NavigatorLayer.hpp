@@ -15,7 +15,7 @@ namespace realtrick
 {
     
     class GMXLayer;
-    class EditorEntityBase;
+    class EditorEntity;
     
     class NavigatorLayer : public cocos2d::Node
     {
@@ -30,7 +30,7 @@ namespace realtrick
         void showLayer(bool* opened);
         void setTile(int x, int y, const TileBase& tile);
         
-        void addEntity(EditorEntityBase* ent);
+        void addEntity(EditorEntity* ent);
         void eraseEntity(int id);
         
     private:
@@ -44,7 +44,7 @@ namespace realtrick
         cocos2d::Vec2 _centerViewParam;
         
         std::map<int, ImTextureID> _tileMarks;
-        std::map<int, EditorEntityBase*> _entityMarks;
+        std::map<int, EditorEntity*> _entityMarks;
         
         EditorTileType _defaultTile;
         GLint _defaultTileTextureName;

@@ -17,14 +17,14 @@
 namespace realtrick
 {
     
-    class EditorEntityBase;
+    class EditorEntity;
     
     class EditorCell
     {
         
     public:
         
-        std::list<EditorEntityBase*>                members;
+        std::list<EditorEntity*>                    members;
         
         cocos2d::Rect                               boundingBox;
         
@@ -80,7 +80,7 @@ namespace realtrick
         
         EditorCellSpacePartition() = default;
         
-        inline void                     addEntity(EditorEntityBase* ent);
+        inline void                     addEntity(EditorEntity* ent);
         
         inline bool                     isUpdateChunk(const cocos2d::Vec2& oldPos, const cocos2d::Vec2& newPos);
         
@@ -88,7 +88,7 @@ namespace realtrick
         
         inline void                     clearCells();
         
-        inline void                     removeEntityFromCell(EditorEntityBase* ent);
+        inline void                     removeEntityFromCell(EditorEntity* ent);
         
         inline int                      positionToIndex(const cocos2d::Vec2& pos) const;
         

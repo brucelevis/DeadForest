@@ -15,16 +15,16 @@
 namespace realtrick
 {
     
-    class EditScene2;
+    class EditScene;
     
     class OpenLayer : public cocos2d::Node
     {
         
     public:
         
-        explicit OpenLayer(EditScene2* layer);
+        explicit OpenLayer(EditScene* layer);
         virtual ~OpenLayer();
-        static OpenLayer* create(EditScene2* layer);
+        static OpenLayer* create(EditScene* layer);
         
         void showLayer(bool* opened);
         void closeWindow();
@@ -33,7 +33,7 @@ namespace realtrick
         
     private:
         
-        EditScene2* _imguiLayer;
+        EditScene* _imguiLayer;
         
         char _filePath[256];
         ImGuiButtonFlags _openButtonFlags = ImGuiButtonFlags_Disabled;

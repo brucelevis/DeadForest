@@ -10,12 +10,12 @@
 using namespace boost::filesystem;
 
 #include "OpenLayer.hpp"
-#include "EditScene2.hpp"
+#include "EditScene.hpp"
 #include "SizeProtocol.h"
 using namespace cocos2d;
 using namespace realtrick;
 
-OpenLayer::OpenLayer(EditScene2* layer) :
+OpenLayer::OpenLayer(EditScene* layer) :
 _imguiLayer(layer),
 _filePath("")
 {
@@ -29,7 +29,7 @@ OpenLayer::~OpenLayer()
 }
 
 
-OpenLayer* OpenLayer::create(EditScene2* layer)
+OpenLayer* OpenLayer::create(EditScene* layer)
 {
     auto ret = new (std::nothrow) OpenLayer(layer);
     if ( ret && ret->init() )

@@ -7,12 +7,12 @@
 //
 
 #include "RenameLocationLayer.hpp"
-#include "GMXLayer2.hpp"
+#include "GMXLayer.hpp"
 #include "LocationNode.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 
-RenameLocationLayer::RenameLocationLayer(GMXLayer2& layer) :
+RenameLocationLayer::RenameLocationLayer(GMXLayer& layer) :
 _gmxLayer(layer)
 {
     _locationName[0] = '\0';
@@ -24,7 +24,7 @@ RenameLocationLayer::~RenameLocationLayer()
 }
 
 
-RenameLocationLayer* RenameLocationLayer::create(GMXLayer2& layer)
+RenameLocationLayer* RenameLocationLayer::create(GMXLayer& layer)
 {
     auto ret = new (std::nothrow) RenameLocationLayer(layer);
     if ( ret && ret->init() )

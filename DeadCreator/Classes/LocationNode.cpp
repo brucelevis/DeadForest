@@ -7,12 +7,12 @@
 //
 
 #include "LocationNode.hpp"
-#include "GMXLayer2.hpp"
+#include "GMXLayer.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 
 
-LocationNode::LocationNode(GMXLayer2& layer) :
+LocationNode::LocationNode(GMXLayer& layer) :
 _gmxLayer(layer),
 _file(_gmxLayer.getFile())
 {
@@ -25,7 +25,7 @@ LocationNode::~LocationNode()
 }
 
 
-LocationNode* LocationNode::create(GMXLayer2& layer)
+LocationNode* LocationNode::create(GMXLayer& layer)
 {
     auto ret = new (std::nothrow) LocationNode(layer);
     if ( ret && ret->init() )

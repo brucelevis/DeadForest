@@ -19,11 +19,11 @@ namespace realtrick
         
     public:
         
-        EditorSheriff(GMXLayer2& layer, int id);
+        EditorSheriff(GMXLayer& layer, int id);
         
         virtual ~EditorSheriff();
         
-        static EditorSheriff* create(GMXLayer2& layer, int id, cocos2d::ui::Widget::TextureResType resType);
+        static EditorSheriff* create(GMXLayer& layer, int id, cocos2d::ui::Widget::TextureResType resType);
         
         bool init(cocos2d::ui::Widget::TextureResType resType);
         

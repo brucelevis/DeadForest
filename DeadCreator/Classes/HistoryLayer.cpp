@@ -7,12 +7,12 @@
 //
 
 #include "HistoryLayer.hpp"
-#include "GMXLayer2.hpp"
+#include "GMXLayer.hpp"
 #include "CommandBase.hpp"
 using namespace realtrick;
 using namespace cocos2d;
 
-HistoryLayer::HistoryLayer(GMXLayer2& gmxLayer) :
+HistoryLayer::HistoryLayer(GMXLayer& gmxLayer) :
 _gmxLayer(gmxLayer),
 _layerSize(Size(200, 300)),
 _layerPosition(Vec2(120, 370)),
@@ -26,7 +26,7 @@ HistoryLayer::~HistoryLayer()
 }
 
 
-HistoryLayer* HistoryLayer::create(GMXLayer2& gmxLayer)
+HistoryLayer* HistoryLayer::create(GMXLayer& gmxLayer)
 {
     auto ret = new (std::nothrow) HistoryLayer(gmxLayer);
     if ( ret && ret->init() )
@@ -74,7 +74,7 @@ void HistoryLayer::showLayer(bool* opened)
         Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerSize.height - _layerPosition.y, _layerSize.width, _layerSize.height);
         if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
         {
-            GMXLayer2::enableTitleClicked();
+            GMXLayer::enableTitleClicked();
         }
     }
     
@@ -92,7 +92,7 @@ void HistoryLayer::showLayer(bool* opened)
             Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerSize.height - _layerPosition.y, _layerSize.width, _layerSize.height);
             if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
             {
-                GMXLayer2::enableTitleClicked();
+                GMXLayer::enableTitleClicked();
             }
         }
     }

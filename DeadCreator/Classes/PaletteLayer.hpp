@@ -15,7 +15,7 @@
 namespace realtrick
 {
     
-    class GMXLayer2;
+    class GMXLayer;
     
     enum class PaletteType : int
     {
@@ -31,10 +31,10 @@ namespace realtrick
         
     public:
         
-        explicit PaletteLayer(GMXLayer2& gmxLayer);
+        explicit PaletteLayer(GMXLayer& gmxLayer);
         virtual ~PaletteLayer();
         
-        static PaletteLayer* create(GMXLayer2& gmxLayer);
+        static PaletteLayer* create(GMXLayer& gmxLayer);
         void showLayer(bool* opened);
         
         void setPaletteType(PaletteType type) { _paletteType = static_cast<int>(type); }
@@ -44,7 +44,7 @@ namespace realtrick
         
     private:
         
-        GMXLayer2& _gmxLayer;
+        GMXLayer& _gmxLayer;
         
         cocos2d::Size _layerSize;
         cocos2d::Vec2 _layerPosition;

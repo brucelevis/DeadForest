@@ -15,14 +15,14 @@
 namespace realtrick
 {
     
-    class GMXLayer2;
+    class GMXLayer;
             
     class EditorEntityBase : public cocos2d::Node
     {
         
     public:
         
-        EditorEntityBase(GMXLayer2& layer, int id);
+        EditorEntityBase(GMXLayer& layer, int id);
         
         virtual ~EditorEntityBase();
         
@@ -43,7 +43,7 @@ namespace realtrick
             
     protected:
             
-        GMXLayer2& _gmxLayer;
+        GMXLayer& _gmxLayer;
         
         int _id;
         EntityType _type;

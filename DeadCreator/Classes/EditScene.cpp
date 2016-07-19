@@ -1,5 +1,5 @@
 //
-//  EditScene2.cpp
+//  EditScene.cpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 6. 26..
@@ -12,10 +12,10 @@ using namespace boost::filesystem;
 #include "ui/CocosGUI.h"
 using namespace cocos2d;
 
-#include "EditScene2.hpp"
-#include "GMXLayer2.hpp"
+#include "EditScene.hpp"
+#include "GMXLayer.hpp"
 #include "GMXFile.hpp"
-#include "NewFileWindow2.hpp"
+#include "NewFileWindow.hpp"
 #include "SaveAsLayer.hpp"
 #include "OpenLayer.hpp"
 #include "PaletteLayer.hpp"
@@ -27,16 +27,16 @@ using namespace realtrick;
 #include "GMXFile_generated.h"
 #include "util.h"
 
-Scene* EditScene2::createScene()
+Scene* EditScene::createScene()
 {
     auto scene = Scene::create();
-    auto layer = EditScene2::create();
+    auto layer = EditScene::create();
     scene->addChild(layer);
     return scene;
 }
 
 
-bool EditScene2::init()
+bool EditScene::init()
 {
     if ( !ImGuiLayer::init() )
         return false;
@@ -48,7 +48,7 @@ bool EditScene2::init()
     file->tileHeight = 128;
     file->worldSize = Size(file->numOfTileX * file->tileWidth, file->numOfTileY * file->tileHeight);
     
-    _newFileWindow = NewFileWindow2::create(this);
+    _newFileWindow = NewFileWindow::create(this);
     addChild(_newFileWindow);
     
     _saveAsLayer = SaveAsLayer::create(this);
@@ -307,7 +307,7 @@ bool EditScene2::init()
 }
 
 
-void EditScene2::createGMXLayer(GMXFile* file)
+void EditScene::createGMXLayer(GMXFile* file)
 {
     if ( _layer )
     {
@@ -315,7 +315,7 @@ void EditScene2::createGMXLayer(GMXFile* file)
         log("remove from parent");
     }
     
-    _layer = GMXLayer2::create(*this, *file);
+    _layer = GMXLayer::create(*this, *file);
     addChild(_layer);
     
     // menu
@@ -330,7 +330,7 @@ void EditScene2::createGMXLayer(GMXFile* file)
 }
 
 
-void EditScene2::createGMXLayer(const std::string& filePath)
+void EditScene::createGMXLayer(const std::string& filePath)
 {
     if ( _layer )
     {
@@ -388,7 +388,7 @@ void EditScene2::createGMXLayer(const std::string& filePath)
             file->tileInfos[yy][xx] = iter->number()->str();
         }
         
-        _layer = GMXLayer2::create(*this, *file);
+        _layer = GMXLayer::create(*this, *file);
         _layer->setCurrFilePath(filePath);
         _layer->enableFirstFile(false);
         addChild(_layer);
@@ -506,21 +506,21 @@ void EditScene2::createGMXLayer(const std::string& filePath)
 }
 
 
-void EditScene2::doNewButton()
+void EditScene::doNewButton()
 {
     if ( _layer ) _layer->updateChunk(_layer->getCameraPosition());
     _showNewMap = true;
 }
 
 
-void EditScene2::doOpenButton()
+void EditScene::doOpenButton()
 {
     if ( _layer ) _layer->updateChunk(_layer->getCameraPosition());
     _showOpenMap = true;
 }
 
 
-void EditScene2::changeLayerType(LayerType type)
+void EditScene::changeLayerType(LayerType type)
 {
     _layerType = type;
     if ( _layer )
@@ -536,19 +536,19 @@ void EditScene2::changeLayerType(LayerType type)
 }
 
 
-bool EditScene2::isUndo()
+bool EditScene::isUndo()
 {
     return (_layer &&  _layer->isUndo());
 }
 
 
-bool EditScene2::isRedo()
+bool EditScene::isRedo()
 {
     return (_layer &&  _layer->isRedo());
 }
 
 
-void EditScene2::doSaveButton()
+void EditScene::doSaveButton()
 {
     if ( _layer ) _layer->updateChunk(_layer->getCameraPosition());
     if ( _layer->isFirstFile() )
@@ -562,13 +562,13 @@ void EditScene2::doSaveButton()
 }
 
 
-void EditScene2::saveFile(const std::string& filePath)
+void EditScene::saveFile(const std::string& filePath)
 {
     _layer->save(filePath);
 }
 
 
-void EditScene2::saveAsFile()
+void EditScene::saveAsFile()
 {
     _showSaveAs = true;
 }

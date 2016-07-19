@@ -10,12 +10,12 @@
 using namespace boost::filesystem;
 
 #include "SaveAsLayer.hpp"
-#include "EditScene2.hpp"
+#include "EditScene.hpp"
 #include "SizeProtocol.h"
 using namespace cocos2d;
 using namespace realtrick;
 
-SaveAsLayer::SaveAsLayer(EditScene2* layer) :
+SaveAsLayer::SaveAsLayer(EditScene* layer) :
 _imguiLayer(layer),
 _filePath("")
 {
@@ -29,7 +29,7 @@ SaveAsLayer::~SaveAsLayer()
 }
 
 
-SaveAsLayer* SaveAsLayer::create(EditScene2* layer)
+SaveAsLayer* SaveAsLayer::create(EditScene* layer)
 {
     auto ret = new (std::nothrow) SaveAsLayer(layer);
     if ( ret && ret->init() )

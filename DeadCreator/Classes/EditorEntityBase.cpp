@@ -7,11 +7,11 @@
 //
 
 #include "EditorEntityBase.hpp"
-#include "GMXLayer2.hpp"
+#include "GMXLayer.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 
-EditorEntityBase::EditorEntityBase(GMXLayer2& layer, int id) :
+EditorEntityBase::EditorEntityBase(GMXLayer& layer, int id) :
 _gmxLayer(layer),
 _id(id)
 {

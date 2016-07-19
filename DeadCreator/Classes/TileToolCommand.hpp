@@ -21,7 +21,7 @@ namespace realtrick
         
     public:
         
-        explicit TileToolCommand(GMXLayer2* layer) :
+        explicit TileToolCommand(GMXLayer* layer) :
         CommandBase(layer)
         {
             _commandName = "Tile Tool";

@@ -1,5 +1,5 @@
 #include "AppDelegate.h"
-#include "EditScene2.hpp"
+#include "EditScene.hpp"
 #include "GameWorld.hpp"
 #include "MainMenu3.hpp"
 
@@ -54,7 +54,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images.plist");
     
-    auto scene = realtrick::EditScene2::createScene();
+    auto scene = realtrick::EditScene::createScene();
 //    auto scene = realtrick::MainMenu3::createScene();
     director->runWithScene(scene);
     

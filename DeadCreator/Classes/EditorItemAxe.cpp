@@ -10,7 +10,7 @@
 using namespace cocos2d;
 using namespace realtrick;
 
-EditorItemAxe::EditorItemAxe(GMXLayer2& layer, int id) :
+EditorItemAxe::EditorItemAxe(GMXLayer& layer, int id) :
 EditorEntityBase(layer, id)
 {
     _type = EntityType::ITEM_AXE;
@@ -23,7 +23,7 @@ EditorItemAxe::~EditorItemAxe()
 }
 
 
-EditorItemAxe* EditorItemAxe::create(GMXLayer2& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
+EditorItemAxe* EditorItemAxe::create(GMXLayer& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
 {
     auto ret = new (std::nothrow) EditorItemAxe(layer, id);
     if ( ret && ret->init(fileName, resType) )

@@ -14,14 +14,14 @@
 namespace realtrick
 {
     
-    class GMXLayer2;
+    class GMXLayer;
     
     class CommandBase
     {
         
     public:
         
-        explicit CommandBase(GMXLayer2* layer) :
+        explicit CommandBase(GMXLayer* layer) :
         _layer(layer),
         _isBegan(false)
         {}
@@ -73,7 +73,7 @@ namespace realtrick
         
     protected:
         
-        GMXLayer2* _layer;
+        GMXLayer* _layer;
         bool _isBegan;
         std::string _commandName;
         bool _isEmpty;

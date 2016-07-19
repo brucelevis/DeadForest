@@ -1,5 +1,5 @@
 //
-//  GMXLayer2.hpp
+//  GMXLayer.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 6. 28..
@@ -26,7 +26,7 @@ namespace realtrick
     class PaletteLayer;
     class NavigatorLayer;
     class TriggerEditLayer;
-    class EditScene2;
+    class EditScene;
     class CommandBase;
     class AddEntityToolCommand;
     class RemoveEntityToolCommand;
@@ -35,15 +35,15 @@ namespace realtrick
     class LocationNode;
     class RenameLocationLayer;
     
-    class GMXLayer2 : public cocos2d::Layer
+    class GMXLayer : public cocos2d::Layer
     {
         
     public:
         
-        explicit GMXLayer2(EditScene2& _imguiLayer, GMXFile& file);
-        virtual ~GMXLayer2();
+        explicit GMXLayer(EditScene& _imguiLayer, GMXFile& file);
+        virtual ~GMXLayer();
         
-        static GMXLayer2* create(EditScene2& imguiLayer, GMXFile& file);
+        static GMXLayer* create(EditScene& imguiLayer, GMXFile& file);
         virtual bool init() override;
         void updateCocosLogic();
         
@@ -131,7 +131,7 @@ namespace realtrick
         
         static bool TITLE_CLICKED;
         
-        EditScene2& _imguiLayer;
+        EditScene& _imguiLayer;
         GMXFile& _file;
         
         cocos2d::DrawNode* _worldDebugNode;

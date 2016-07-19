@@ -19,7 +19,7 @@ namespace realtrick
         
     public:
         
-        explicit AddEntityToolCommand(GMXLayer2* layer) :
+        explicit AddEntityToolCommand(GMXLayer* layer) :
         CommandBase(layer)
         {
             _commandName = "Add Entity";

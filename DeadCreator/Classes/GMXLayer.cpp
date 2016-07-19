@@ -1,5 +1,5 @@
 //
-//  GMXLayer2.cpp
+//  GMXLayer.cpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 6. 28..
@@ -9,8 +9,8 @@
 
 #include <stack>
 
-#include "GMXLayer2.hpp"
-#include "EditScene2.hpp"
+#include "GMXLayer.hpp"
+#include "EditScene.hpp"
 #include "TileHelperFunctions.hpp"
 #include "PaletteLayer.hpp"
 #include "NavigatorLayer.hpp"
@@ -34,9 +34,9 @@ using namespace realtrick;
 #include "util.h"
 #include "GMXFile_generated.h"
 
-bool GMXLayer2::TITLE_CLICKED = false;
+bool GMXLayer::TITLE_CLICKED = false;
 
-GMXLayer2::GMXLayer2(EditScene2& imguiLayer, GMXFile& file) :
+GMXLayer::GMXLayer(EditScene& imguiLayer, GMXFile& file) :
 _imguiLayer(imguiLayer),
 _file(file),
 _worldDebugNode(nullptr),
@@ -54,7 +54,7 @@ _viewY(60)
 {}
 
 
-GMXLayer2::~GMXLayer2()
+GMXLayer::~GMXLayer()
 {
     CC_SAFE_DELETE(_tileToolCommand);
     CC_SAFE_DELETE(_addEntityToolCommand);
@@ -77,9 +77,9 @@ GMXLayer2::~GMXLayer2()
 }
 
 
-GMXLayer2* GMXLayer2::create(EditScene2& imguiLayer, GMXFile& file)
+GMXLayer* GMXLayer::create(EditScene& imguiLayer, GMXFile& file)
 {
-    auto ret = new (std::nothrow) GMXLayer2(imguiLayer, file);
+    auto ret = new (std::nothrow) GMXLayer(imguiLayer, file);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -90,7 +90,7 @@ GMXLayer2* GMXLayer2::create(EditScene2& imguiLayer, GMXFile& file)
 }
 
 
-bool GMXLayer2::init()
+bool GMXLayer::init()
 {
     if ( !Layer::init() )
         return false;
@@ -167,7 +167,7 @@ bool GMXLayer2::init()
 }
 
 
-void GMXLayer2::initFile()
+void GMXLayer::initFile()
 {
     int x = _file.numOfTileX + DUMMY_TILE_SIZE * 2;
     int y = _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4;
@@ -206,7 +206,7 @@ void GMXLayer2::initFile()
 }
 
 
-void GMXLayer2::showWindow()
+void GMXLayer::showWindow()
 {
     auto& g = *GImGui;
     float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
@@ -288,7 +288,7 @@ void GMXLayer2::showWindow()
 }
 
 
-void GMXLayer2::updateCocosLogic()
+void GMXLayer::updateCocosLogic()
 {
     ImGuiContext& g = *GImGui;
     static float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
@@ -311,15 +311,15 @@ void GMXLayer2::updateCocosLogic()
         cocos2d::Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerPosition.y - height, _layerSize.width, height);
         if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
         {
-            GMXLayer2::enableTitleClicked();
+            GMXLayer::enableTitleClicked();
         }
     }
     if ( ImGui::GetIO().MouseReleased[0] )
     {
-        GMXLayer2::disableTitleClicked();
+        GMXLayer::disableTitleClicked();
     }
     
-    if ( ImGui::GetIO().MouseClicked[0] && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+    if ( ImGui::GetIO().MouseClicked[0] && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
     {
         if ( !_isLeftMouseClickEventDone )
         {
@@ -328,7 +328,7 @@ void GMXLayer2::updateCocosLogic()
         }
         
     }
-    else if ( ImGui::GetIO().MouseReleased[0] && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+    else if ( ImGui::GetIO().MouseReleased[0] && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
     {
         if ( _isLeftMouseClickEventDone )
         {
@@ -347,7 +347,7 @@ void GMXLayer2::updateCocosLogic()
     
     
     // location funcs
-    if ( _imguiLayer.getLayerType() == LayerType::LOCATION && ImGui::IsWindowHovered() && !GMXLayer2::isTitleClicked() )
+    if ( _imguiLayer.getLayerType() == LayerType::LOCATION && ImGui::IsWindowHovered() && !GMXLayer::isTitleClicked() )
     {
         Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
         bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
@@ -466,7 +466,7 @@ void GMXLayer2::updateCocosLogic()
         static bool isSelecting = false;
         if ( selectedItem == - 1)
         {
-            if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+            if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
                 if ( ImGui::GetIO().MouseClicked[0] )
                 {
@@ -533,7 +533,7 @@ void GMXLayer2::updateCocosLogic()
                 _selectedItem->setTexture("5_1_1234.png");
             }
             
-            if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+            if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
@@ -560,7 +560,7 @@ void GMXLayer2::updateCocosLogic()
         {
             _selectedItem->setSpriteFrame("HumanFistIdleLoop0.png");
             _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
@@ -583,7 +583,7 @@ void GMXLayer2::updateCocosLogic()
         {
             _selectedItem->setSpriteFrame("5_56mm.png");
             _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
@@ -600,7 +600,7 @@ void GMXLayer2::updateCocosLogic()
         {
             _selectedItem->setSpriteFrame("9mm.png");
             _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
@@ -617,7 +617,7 @@ void GMXLayer2::updateCocosLogic()
         {
             _selectedItem->setSpriteFrame("Axe.png");
             _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
@@ -634,7 +634,7 @@ void GMXLayer2::updateCocosLogic()
         {
             _selectedItem->setSpriteFrame("Shell.png");
             _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
@@ -651,7 +651,7 @@ void GMXLayer2::updateCocosLogic()
         {
             _selectedItem->setSpriteFrame("M16A2.png");
             _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
@@ -669,7 +669,7 @@ void GMXLayer2::updateCocosLogic()
         {
             _selectedItem->setSpriteFrame("Glock17.png");
             _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
@@ -687,7 +687,7 @@ void GMXLayer2::updateCocosLogic()
         {
             _selectedItem->setSpriteFrame("M1897.png");
             _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer2::isTitleClicked() )
+            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
@@ -774,7 +774,7 @@ void GMXLayer2::updateCocosLogic()
 }
 
 
-void GMXLayer2::setTile(int x, int y, const TileBase& tile, bool isExecCommand)
+void GMXLayer::setTile(int x, int y, const TileBase& tile, bool isExecCommand)
 {
     if ( !isExecCommand )
     {
@@ -801,7 +801,7 @@ void GMXLayer2::setTile(int x, int y, const TileBase& tile, bool isExecCommand)
     _tileImages[localY][localX]->setTexture(tile.getNumber() + ".png");
 }
 
-void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
+void GMXLayer::updateChunk(const cocos2d::Vec2& pivot)
 {
     _tileRootWorldPosition = pivot;
     
@@ -875,13 +875,13 @@ void GMXLayer2::updateChunk(const cocos2d::Vec2& pivot)
 }
 
 
-void GMXLayer2::setCenterViewParameter(const cocos2d::Vec2& p)
+void GMXLayer::setCenterViewParameter(const cocos2d::Vec2& p)
 {
     _centerViewParam = p;
 }
 
 
-void GMXLayer2::putTile(EditorTileType type, int x, int y)
+void GMXLayer::putTile(EditorTileType type, int x, int y)
 {
     if ( _tiles[y][x].getTileType() == type && _tiles[y][x].getTileTail() == "1234" )
     {
@@ -1043,7 +1043,7 @@ void GMXLayer2::putTile(EditorTileType type, int x, int y)
 }
 
 
-bool GMXLayer2::addEntity(EditorEntityBase* entity, int localZOrder, bool isExecCommand)
+bool GMXLayer::addEntity(EditorEntityBase* entity, int localZOrder, bool isExecCommand)
 {
     clearSelectedEntites();
     
@@ -1074,7 +1074,7 @@ bool GMXLayer2::addEntity(EditorEntityBase* entity, int localZOrder, bool isExec
 }
 
 
-bool GMXLayer2::addEntityForce(EditorEntityBase* entity, int localZOrder)
+bool GMXLayer::addEntityForce(EditorEntityBase* entity, int localZOrder)
 {
     auto iter = _entities.find(entity->getID());
     if ( iter == std::end(_entities))
@@ -1090,7 +1090,7 @@ bool GMXLayer2::addEntityForce(EditorEntityBase* entity, int localZOrder)
 }
 
 
-bool GMXLayer2::eraseEntity(int id, bool isExecCommand)
+bool GMXLayer::eraseEntity(int id, bool isExecCommand)
 {
     auto iter = _entities.find(id);
     if ( iter != std::end(_entities))
@@ -1111,7 +1111,7 @@ bool GMXLayer2::eraseEntity(int id, bool isExecCommand)
 }
 
 
-void GMXLayer2::setCommand(CommandBase* newCommand)
+void GMXLayer::setCommand(CommandBase* newCommand)
 {
     _currCommand = newCommand;
     
@@ -1130,7 +1130,7 @@ void GMXLayer2::setCommand(CommandBase* newCommand)
 }
 
 
-void GMXLayer2::removeSelectedEntities(bool isExecCommand)
+void GMXLayer::removeSelectedEntities(bool isExecCommand)
 {
     for ( auto& ent : _selectedEntities )
     {
@@ -1140,7 +1140,7 @@ void GMXLayer2::removeSelectedEntities(bool isExecCommand)
 }
 
 
-void GMXLayer2::clearSelectedEntites()
+void GMXLayer::clearSelectedEntites()
 {
     for (auto& ent : _selectedEntities )
     {
@@ -1150,7 +1150,7 @@ void GMXLayer2::clearSelectedEntites()
 }
 
 
-void GMXLayer2::initCollisionData()
+void GMXLayer::initCollisionData()
 {
     _tileCollisions["5_1_1_LD"].push_back(Vec2(88, 25));
     _tileCollisions["5_1_1_LD"].push_back(Vec2(83, 30));
@@ -1541,7 +1541,7 @@ void GMXLayer2::initCollisionData()
 }
 
 
-void GMXLayer2::updateCollisionRegion()
+void GMXLayer::updateCollisionRegion()
 {
     for (int i = 0 ; i < _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4; ++ i)
     {
@@ -1668,7 +1668,7 @@ void GMXLayer2::updateCollisionRegion()
 }
 
 
-std::string GMXLayer2::getInDirection(int x, int y)
+std::string GMXLayer::getInDirection(int x, int y)
 {
     std::string tail = _tiles[y][x].getTileTail();
     
@@ -1701,7 +1701,7 @@ std::string GMXLayer2::getInDirection(int x, int y)
 }
 
 
-std::string GMXLayer2::getOutDirection(const std::string& tail)
+std::string GMXLayer::getOutDirection(const std::string& tail)
 {
     if ( tail == "1_LD" ) return "_LU";
     else if ( tail == "2_LU" ) return "_RU";
@@ -1727,7 +1727,7 @@ std::string GMXLayer2::getOutDirection(const std::string& tail)
 }
 
 
-std::pair<int, int> GMXLayer2::getNextTileIndex(const std::string& tailWithInputDir, int x, int y)
+std::pair<int, int> GMXLayer::getNextTileIndex(const std::string& tailWithInputDir, int x, int y)
 {
     enum { LEFT_DOWN = 0, LEFT_UP = 1, RIGHT_DOWN = 2, RIGHT_UP = 3 };
     int nextDir;
@@ -1777,7 +1777,7 @@ std::pair<int, int> GMXLayer2::getNextTileIndex(const std::string& tailWithInput
 }
 
 
-void GMXLayer2::save(const std::string& path)
+void GMXLayer::save(const std::string& path)
 {
     _isFirstFile = false;
     _currFilePath = path;
@@ -1866,7 +1866,7 @@ void GMXLayer2::save(const std::string& path)
 }
 
 
-bool GMXLayer2::addLocation(LocationNode* node)
+bool GMXLayer::addLocation(LocationNode* node)
 {
     _locations.push_back(node);
     _rootNode->addChild(node, 20);
@@ -1874,7 +1874,7 @@ bool GMXLayer2::addLocation(LocationNode* node)
 }
 
 
-bool GMXLayer2::removeLocation(LocationNode* node)
+bool GMXLayer::removeLocation(LocationNode* node)
 {
     auto iter = std::find(_locations.begin(), _locations.end(), node);
     if ( iter != _locations.end() )
@@ -1888,7 +1888,7 @@ bool GMXLayer2::removeLocation(LocationNode* node)
 }
 
 
-void GMXLayer2::setVisibleLocations(bool visible)
+void GMXLayer::setVisibleLocations(bool visible)
 {
     for (auto& loc : _locations)
     {
@@ -1898,7 +1898,7 @@ void GMXLayer2::setVisibleLocations(bool visible)
 }
 
 
-void GMXLayer2::reorderLocations()
+void GMXLayer::reorderLocations()
 {
     std::vector<LocationNode*> overlappedLocations;
     for( auto& loc : _locations )
@@ -1932,7 +1932,7 @@ void GMXLayer2::reorderLocations()
 }
 
 
-bool GMXLayer2::isOverlappedLocationName(const std::string& name) const
+bool GMXLayer::isOverlappedLocationName(const std::string& name) const
 {
     for(auto& loc : _locations)
     {

@@ -1,5 +1,5 @@
 //
-//  EditScene2.hpp
+//  EditScene.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 6. 26..
@@ -16,8 +16,8 @@ namespace realtrick
 {
     
     class GMXFile;
-    class GMXLayer2;
-    class NewFileWindow2;
+    class GMXLayer;
+    class NewFileWindow;
     class SaveAsLayer;
     class OpenLayer;
     
@@ -29,12 +29,12 @@ namespace realtrick
         LOCATION,
     };
     
-    class EditScene2 : public ImGuiLayer
+    class EditScene : public ImGuiLayer
     {
         
     public:
         
-        CREATE_FUNC(EditScene2);
+        CREATE_FUNC(EditScene);
         
         static cocos2d::Scene* createScene();
         
@@ -72,9 +72,9 @@ namespace realtrick
         
     private:
         
-        GMXLayer2* _layer = nullptr;
+        GMXLayer* _layer = nullptr;
         
-        NewFileWindow2* _newFileWindow = nullptr;
+        NewFileWindow* _newFileWindow = nullptr;
         SaveAsLayer* _saveAsLayer = nullptr;
         OpenLayer* _openLayer = nullptr;
         

@@ -15,7 +15,7 @@
 namespace realtrick
 {
     
-    class GMXLayer2;
+    class GMXLayer;
     class GameTrigger;
     class ConditionBase;
     class ActionBase;
@@ -25,9 +25,9 @@ namespace realtrick
         
     public:
         
-        explicit TriggerEditLayer(GMXLayer2& layer);
+        explicit TriggerEditLayer(GMXLayer& layer);
         virtual ~TriggerEditLayer();
-        static TriggerEditLayer* create(GMXLayer2& layer);
+        static TriggerEditLayer* create(GMXLayer& layer);
         virtual bool init() override;
         
         void showLayer(bool* opened);
@@ -35,7 +35,7 @@ namespace realtrick
         
     private:
         
-        GMXLayer2& _gmxLayer;
+        GMXLayer& _gmxLayer;
         
         bool _selectedPlayer[8];
         bool _selectedTrigger[5];

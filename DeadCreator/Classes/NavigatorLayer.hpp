@@ -14,7 +14,7 @@
 namespace realtrick
 {
     
-    class GMXLayer2;
+    class GMXLayer;
     class EditorEntityBase;
     
     class NavigatorLayer : public cocos2d::Node
@@ -22,9 +22,9 @@ namespace realtrick
         
     public:
         
-        NavigatorLayer(GMXLayer2& gmxLayer);
+        NavigatorLayer(GMXLayer& gmxLayer);
         virtual ~NavigatorLayer();
-        static NavigatorLayer* create(GMXLayer2& gmxLayer);
+        static NavigatorLayer* create(GMXLayer& gmxLayer);
         virtual bool init() override;
         
         void showLayer(bool* opened);
@@ -35,7 +35,7 @@ namespace realtrick
         
     private:
         
-        GMXLayer2& _gmxLayer;
+        GMXLayer& _gmxLayer;
         
         cocos2d::Size _layerSize;
         cocos2d::Vec2 _layerPosition;

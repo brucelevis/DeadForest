@@ -1,5 +1,5 @@
 //
-//  NewFileWindow2.hpp
+//  NewFileWindow.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 6. 24..
@@ -14,16 +14,16 @@
 namespace realtrick
 {
     
-    class EditScene2;
+    class EditScene;
     
-    class NewFileWindow2 : public cocos2d::Node
+    class NewFileWindow : public cocos2d::Node
     {
         
     public:
         
-        explicit NewFileWindow2(EditScene2* layer);
-        virtual ~NewFileWindow2();
-        static NewFileWindow2* create(EditScene2* layer);
+        explicit NewFileWindow(EditScene* layer);
+        virtual ~NewFileWindow();
+        static NewFileWindow* create(EditScene* layer);
         
         void showNewFileWindow(bool* opened);
         
@@ -33,7 +33,7 @@ namespace realtrick
         
     private:
         
-        EditScene2* _imguiLayer;
+        EditScene* _imguiLayer;
 
         int _tileSizeXItem = 0;
         int _tileSizeYItem = 0;

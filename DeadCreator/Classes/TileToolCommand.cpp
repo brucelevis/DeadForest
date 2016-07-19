@@ -7,7 +7,7 @@
 //
 
 #include "TileToolCommand.hpp"
-#include "GMXLayer2.hpp"
+#include "GMXLayer.hpp"
 using namespace realtrick;
 
 void TileToolCommand::execute()

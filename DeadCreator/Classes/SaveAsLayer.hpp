@@ -15,16 +15,16 @@
 namespace realtrick
 {
     
-    class EditScene2;
+    class EditScene;
     
     class SaveAsLayer : public cocos2d::Node
     {
         
     public:
         
-        explicit SaveAsLayer(EditScene2* layer);
+        explicit SaveAsLayer(EditScene* layer);
         virtual ~SaveAsLayer();
-        static SaveAsLayer* create(EditScene2* layer);
+        static SaveAsLayer* create(EditScene* layer);
         
         void showLayer(bool* opened);
         void closeWindow();
@@ -33,7 +33,7 @@ namespace realtrick
         
     private:
         
-        EditScene2* _imguiLayer;
+        EditScene* _imguiLayer;
         
         char _filePath[256];
         ImGuiButtonFlags _saveButtonFlags = ImGuiButtonFlags_Disabled;

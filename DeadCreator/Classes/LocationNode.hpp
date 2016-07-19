@@ -14,7 +14,7 @@
 namespace realtrick
 {
     
-    class GMXLayer2;
+    class GMXLayer;
     class GMXFile;
     
     class LocationNode : public cocos2d::Node
@@ -26,10 +26,10 @@ namespace realtrick
         
     public:
         
-        explicit LocationNode(GMXLayer2& layer);
+        explicit LocationNode(GMXLayer& layer);
         virtual ~LocationNode();
         
-        static LocationNode* create(GMXLayer2& layer);
+        static LocationNode* create(GMXLayer& layer);
         virtual bool init() override;
         
         void setLocationSize(int x, int y);
@@ -66,7 +66,7 @@ namespace realtrick
         
     private:
         
-        GMXLayer2& _gmxLayer;
+        GMXLayer& _gmxLayer;
         const GMXFile& _file;
         
         cocos2d::Rect _aabb;

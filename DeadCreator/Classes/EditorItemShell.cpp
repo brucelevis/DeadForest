@@ -10,7 +10,7 @@
 using namespace cocos2d;
 using namespace realtrick;
 
-EditorItemShell::EditorItemShell(GMXLayer2& layer, int id) :
+EditorItemShell::EditorItemShell(GMXLayer& layer, int id) :
 EditorEntityBase(layer, id)
 {
     _type = EntityType::BULLET_SHELL;
@@ -23,7 +23,7 @@ EditorItemShell::~EditorItemShell()
 }
 
 
-EditorItemShell* EditorItemShell::create(GMXLayer2& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
+EditorItemShell* EditorItemShell::create(GMXLayer& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
 {
     auto ret = new (std::nothrow) EditorItemShell(layer, id);
     if ( ret && ret->init(fileName, resType) )

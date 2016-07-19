@@ -7,7 +7,7 @@
 //
 
 #include "TriggerEditLayer.hpp"
-#include "GMXLayer2.hpp"
+#include "GMXLayer.hpp"
 #include "LocationNode.hpp"
 #include "TriggerParameterBase.hpp"
 #include "TriggerParameters.hpp"
@@ -20,7 +20,7 @@ using namespace cocos2d;
 using namespace realtrick;
 
 
-TriggerEditLayer::TriggerEditLayer(GMXLayer2& layer) :
+TriggerEditLayer::TriggerEditLayer(GMXLayer& layer) :
 _gmxLayer(layer)
 {
 }
@@ -31,7 +31,7 @@ TriggerEditLayer::~TriggerEditLayer()
 }
 
 
-TriggerEditLayer* TriggerEditLayer::create(GMXLayer2& layer)
+TriggerEditLayer* TriggerEditLayer::create(GMXLayer& layer)
 {
     auto ret = new (std::nothrow) TriggerEditLayer(layer);
     if ( ret && ret->init() )

@@ -15,16 +15,16 @@
 namespace realtrick
 {
     
-    class GMXLayer2;
+    class GMXLayer;
     
     class HistoryLayer : public cocos2d::Node
     {
         
     public:
         
-        HistoryLayer(GMXLayer2& gmxLayer);
+        HistoryLayer(GMXLayer& gmxLayer);
         virtual ~HistoryLayer();
-        static HistoryLayer* create(GMXLayer2& gmxLayer);
+        static HistoryLayer* create(GMXLayer& gmxLayer);
         virtual bool init() override;
         
         void showLayer(bool* opened);
@@ -42,7 +42,7 @@ namespace realtrick
         
     private:
         
-        GMXLayer2& _gmxLayer;
+        GMXLayer& _gmxLayer;
         
         cocos2d::Size _layerSize;
         cocos2d::Vec2 _layerPosition;

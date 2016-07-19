@@ -17,11 +17,11 @@ namespace realtrick
         
     public:
         
-        EditorItemM1897(GMXLayer2& layer, int id);
+        EditorItemM1897(GMXLayer& layer, int id);
         
         virtual ~EditorItemM1897();
         
-        static EditorItemM1897* create(GMXLayer2& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType = cocos2d::ui::Widget::TextureResType::LOCAL);
+        static EditorItemM1897* create(GMXLayer& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType = cocos2d::ui::Widget::TextureResType::LOCAL);
         
         bool init(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType);
         

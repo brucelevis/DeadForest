@@ -7,13 +7,13 @@
 //
 
 #include "NavigatorLayer.hpp"
-#include "GMXLayer2.hpp"
+#include "GMXLayer.hpp"
 #include "SizeProtocol.h"
 #include "TileHelperFunctions.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 
-NavigatorLayer::NavigatorLayer(GMXLayer2& gmxLayer) :
+NavigatorLayer::NavigatorLayer(GMXLayer& gmxLayer) :
 _gmxLayer(gmxLayer),
 _layerSize(Size(200,200)),
 _layerPosition(Vec2(70, 100)),
@@ -30,7 +30,7 @@ NavigatorLayer::~NavigatorLayer()
 }
 
 
-NavigatorLayer* NavigatorLayer::create(GMXLayer2& gmxLayer)
+NavigatorLayer* NavigatorLayer::create(GMXLayer& gmxLayer)
 {
     auto ret = new (std::nothrow) NavigatorLayer(gmxLayer);
     if ( ret && ret->init() )
@@ -95,7 +95,7 @@ void NavigatorLayer::showLayer(bool* opened)
         Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerSize.height - _layerPosition.y, _layerSize.width, _layerSize.height);
         if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
         {
-            GMXLayer2::enableTitleClicked();
+            GMXLayer::enableTitleClicked();
         }
     }
     

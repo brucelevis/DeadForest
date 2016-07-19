@@ -7,7 +7,7 @@
 //
 
 #include "AddEntityToolCommand.hpp"
-#include "GMXLayer2.hpp"
+#include "GMXLayer.hpp"
 using namespace realtrick;
 
 AddEntityToolCommand::~AddEntityToolCommand()

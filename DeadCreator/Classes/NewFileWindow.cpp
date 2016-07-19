@@ -1,5 +1,5 @@
 //
-//  NewFileWindow2.cpp
+//  NewFileWindow.cpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 6. 24..
@@ -8,28 +8,28 @@
 
 #include <functional>
 
-#include "NewFileWindow2.hpp"
-#include "EditScene2.hpp"
-#include "GMXLayer2.hpp"
+#include "NewFileWindow.hpp"
+#include "EditScene.hpp"
+#include "GMXLayer.hpp"
 #include "GMXFile.hpp"
 #include "FileSystem.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 
-NewFileWindow2::NewFileWindow2(EditScene2* layer) :
+NewFileWindow::NewFileWindow(EditScene* layer) :
 _imguiLayer(layer)
 {
 }
 
 
-NewFileWindow2::~NewFileWindow2()
+NewFileWindow::~NewFileWindow()
 {
 }
 
 
-NewFileWindow2* NewFileWindow2::create(EditScene2* layer)
+NewFileWindow* NewFileWindow::create(EditScene* layer)
 {
-    auto ret = new (std::nothrow) NewFileWindow2(layer);
+    auto ret = new (std::nothrow) NewFileWindow(layer);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -40,7 +40,7 @@ NewFileWindow2* NewFileWindow2::create(EditScene2* layer)
 }
 
 
-void NewFileWindow2::showNewFileWindow(bool* opened)
+void NewFileWindow::showNewFileWindow(bool* opened)
 {
     ImGuiContext& g = *GImGui;
     
@@ -155,7 +155,7 @@ void NewFileWindow2::showNewFileWindow(bool* opened)
 }
 
 
-void NewFileWindow2::closeWindow()
+void NewFileWindow::closeWindow()
 {
     ImGui::CloseCurrentPopup();
     _imguiLayer->enableModal(false);

@@ -10,7 +10,7 @@
 using namespace cocos2d;
 using namespace realtrick;
 
-EditorItemGlock17::EditorItemGlock17(GMXLayer2& layer, int id) :
+EditorItemGlock17::EditorItemGlock17(GMXLayer& layer, int id) :
 EditorEntityBase(layer, id)
 {
     _type = EntityType::ITEM_GLOCK17;
@@ -23,7 +23,7 @@ EditorItemGlock17::~EditorItemGlock17()
 }
 
 
-EditorItemGlock17* EditorItemGlock17::create(GMXLayer2& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
+EditorItemGlock17* EditorItemGlock17::create(GMXLayer& layer, int id, const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
 {
     auto ret = new (std::nothrow) EditorItemGlock17(layer, id);
     if ( ret && ret->init(fileName, resType) )

@@ -15,16 +15,16 @@
 namespace realtrick
 {
     
-    class GMXLayer2;
+    class GMXLayer;
     
     class RenameLocationLayer : public cocos2d::Node
     {
         
     public:
         
-        explicit RenameLocationLayer(GMXLayer2& layer);
+        explicit RenameLocationLayer(GMXLayer& layer);
         virtual ~RenameLocationLayer();
-        static RenameLocationLayer* create(GMXLayer2& layer);
+        static RenameLocationLayer* create(GMXLayer& layer);
         
         void showLayer(bool* opened);
         void closeWindow();
@@ -33,7 +33,7 @@ namespace realtrick
         
     private:
         
-        GMXLayer2& _gmxLayer;
+        GMXLayer& _gmxLayer;
         
         char _locationName[20];
         ImGuiButtonFlags _okButtonFlags = ImGuiButtonFlags_Disabled;

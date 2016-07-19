@@ -10,7 +10,7 @@
 using namespace cocos2d;
 using namespace realtrick;
 
-EditorSheriff::EditorSheriff(GMXLayer2& layer, int id) :
+EditorSheriff::EditorSheriff(GMXLayer& layer, int id) :
 EditorEntityBase(layer, id)
 {
     _type = EntityType::ENTITY_HUMAN;
@@ -23,7 +23,7 @@ EditorSheriff::~EditorSheriff()
 }
 
 
-EditorSheriff* EditorSheriff::create(GMXLayer2& layer, int id, cocos2d::ui::Widget::TextureResType resType)
+EditorSheriff* EditorSheriff::create(GMXLayer& layer, int id, cocos2d::ui::Widget::TextureResType resType)
 {
     auto ret = new (std::nothrow) EditorSheriff(layer, id);
     if ( ret && ret->init(resType) )

@@ -21,7 +21,7 @@ namespace realtrick
         
     public:
         
-        explicit RemoveEntityToolCommand(GMXLayer2* layer) :
+        explicit RemoveEntityToolCommand(GMXLayer* layer) :
         CommandBase(layer)
         {
             _commandName = "Remove Entity";

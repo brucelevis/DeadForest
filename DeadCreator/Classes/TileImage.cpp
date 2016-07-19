@@ -7,7 +7,7 @@
 //
 
 #include "TileImage.hpp"
-#include "GMXLayer2.hpp"
+#include "GMXLayer.hpp"
 using namespace realtrick;
 using namespace cocos2d;
 

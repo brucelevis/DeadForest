@@ -8,13 +8,13 @@
 
 #include "PaletteLayer.hpp"
 #include "ImGuiLayer.h"
-#include "GMXLayer2.hpp"
+#include "GMXLayer.hpp"
 #include "TileToolCommand.hpp"
 #include "AddEntityToolCommand.hpp"
 using namespace realtrick;
 using namespace cocos2d;
 
-PaletteLayer::PaletteLayer(GMXLayer2& layer):
+PaletteLayer::PaletteLayer(GMXLayer& layer):
 _gmxLayer(layer),
 _layerSize(Size(200,200)),
 _layerPosition(Vec2(200, 200)),
@@ -28,7 +28,7 @@ PaletteLayer::~PaletteLayer()
 }
 
 
-PaletteLayer* PaletteLayer::create(GMXLayer2& layer)
+PaletteLayer* PaletteLayer::create(GMXLayer& layer)
 {
     auto ret = new (std::nothrow) PaletteLayer(layer);
     if ( ret && ret->init() )
@@ -72,7 +72,7 @@ void PaletteLayer::showLayer(bool* opened)
         Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerSize.height - _layerPosition.y, _layerSize.width, _layerSize.height);
         if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
         {
-            GMXLayer2::enableTitleClicked();
+            GMXLayer::enableTitleClicked();
         }
     }
     

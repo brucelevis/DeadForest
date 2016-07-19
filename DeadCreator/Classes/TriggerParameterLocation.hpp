@@ -26,11 +26,21 @@ namespace realtrick
             setParameterName("#invalid");
         }
         
+        TriggerParameterLocation(const TriggerParameterLocation& rhs) : TriggerParameterBase(rhs)
+        {
+            _location = rhs._location;
+        }
+        
         LocationNode* getLocation() const { return _location; }
         void setLocation(LocationNode* location)
         {
             _location = location;
             setParameterName(location->getLocationName());
+        }
+        
+        virtual TriggerParameterLocation* clone() const override
+        {
+            return new TriggerParameterLocation(*this);
         }
         
     private:

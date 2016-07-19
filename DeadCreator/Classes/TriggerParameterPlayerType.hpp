@@ -26,6 +26,11 @@ namespace realtrick
             setParameterName("#invalid");
         }
         
+        TriggerParameterPlayerType(const TriggerParameterPlayerType& rhs) : TriggerParameterBase(rhs)
+        {
+            _playerType = rhs._playerType;
+        }
+        
         PlayerType getPlayerType() const { return _playerType; }
         void setPlayerType(PlayerType type)
         {
@@ -40,6 +45,11 @@ namespace realtrick
             else if ( type == PlayerType::PLAYER7 ) setParameterName("Player 7");
             else if ( type == PlayerType::PLAYER8 ) setParameterName("Player 8");
             else if ( type == PlayerType::CURRENT_PLAYER ) setParameterName("Current Player");
+        }
+        
+        virtual TriggerParameterPlayerType* clone() const override
+        {
+            return new TriggerParameterPlayerType(*this);
         }
         
     private:

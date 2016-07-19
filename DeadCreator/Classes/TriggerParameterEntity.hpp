@@ -26,11 +26,21 @@ namespace realtrick
             setParameterName("#invalid");
         }
         
+        TriggerParameterEntity(const TriggerParameterEntity& rhs) : TriggerParameterBase(rhs)
+        {
+            _entityType = rhs._entityType;
+        }
+        
         EntityType getEntityType() const { return _entityType; }
         void setEntityType(EntityType entityType)
         {
             _entityType = entityType;
             setParameterName(EditorEntity::getEntityTableByType().at(entityType).entityName);
+        }
+        
+        virtual TriggerParameterEntity* clone() const override
+        {
+            return new TriggerParameterEntity(*this);
         }
         
     private:

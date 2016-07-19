@@ -38,9 +38,17 @@ namespace realtrick
         _parameterName("")
         {}
         
+        TriggerParameterBase(const TriggerParameterBase& rhs)
+        {
+            _parameterType = rhs._parameterType;
+            _parameterName = rhs._parameterName;
+        }
+        
         Type getType() const { return _parameterType; }
         std::string getParameterName() const { return _parameterName; }
         void setParameterName(const std::string& name) { _parameterName = name; }
+        
+        virtual TriggerParameterBase* clone() const = 0;
         
     protected:
         

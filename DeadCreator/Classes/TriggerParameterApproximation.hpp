@@ -35,6 +35,11 @@ namespace realtrick
             setParameterName("#invalid");
         }
         
+        TriggerParameterApproximation(const TriggerParameterApproximation& rhs) : TriggerParameterBase(rhs)
+        {
+            _approximation = rhs._approximation;
+        }
+        
         Type getApproximationType() const { return _approximation; }
         void setApproximationType(Type type)
         {
@@ -43,6 +48,11 @@ namespace realtrick
             if ( type == Type::AT_LEAST ) setParameterName("at least");
             else if ( type == Type::AT_MOST ) setParameterName("at most");
             else if ( type == Type::EXACTLY ) setParameterName("exactly");
+        }
+        
+        virtual TriggerParameterApproximation* clone() const override
+        {
+            return new TriggerParameterApproximation(*this);
         }
         
     private:

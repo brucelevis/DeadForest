@@ -157,12 +157,11 @@ namespace realtrick
             
             if ( ImGui::Combo("", &_currLocation, locationList.c_str(), 5) )
             {
-                //_location->setLocation();
+                _location->setLocation(_gmxLayer.getLocations().at(_currLocation));
             }
             
             ImGui::PopItemWidth();
             ImGui::PopID();
-            
             
             ImGui::PopStyleColor();
         }

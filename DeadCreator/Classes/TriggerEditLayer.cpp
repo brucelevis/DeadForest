@@ -57,7 +57,7 @@ bool TriggerEditLayer::init()
         _selectedTrigger[i] = false;
     
     _conditionList.resize(static_cast<int>(ConditionBase::Type::CONDITION_MAX));
-    _conditionList[static_cast<int>(ConditionBase::Type::BRING)] = new ConditionBring();
+    _conditionList[static_cast<int>(ConditionBase::Type::BRING)] = new ConditionBring(_gmxLayer);
     
     _actionList.resize(static_cast<int>(ActionBase::Type::ACTION_MAX));
     _actionList[static_cast<int>(ActionBase::Type::DISPLAY_TEXT)] = new ActionDisplayText();

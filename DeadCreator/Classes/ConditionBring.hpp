@@ -20,14 +20,13 @@ namespace realtrick
         
     public:
         
-        ConditionBring() : ConditionBase()
+        ConditionBring(GMXLayer& layer) : ConditionBase(layer)
         {
             _playerType = new TriggerParameterPlayerType();
             _approximation = new TriggerParameterApproximation();
             _number = new TriggerParameterNumber();
             _entity = new TriggerParameterEntity();
             _location = new TriggerParameterLocation();
-            
         }
         
         virtual ~ConditionBring()
@@ -39,7 +38,14 @@ namespace realtrick
             CC_SAFE_DELETE(_location);
         }
         
-        ConditionBring(const ConditionBring& rhs) : ConditionBase(rhs) {}
+        ConditionBring(const ConditionBring& rhs) : ConditionBase(rhs)
+        {
+            _playerType = rhs._playerType;
+            _approximation = rhs._approximation;
+            _number = rhs._number;
+            _entity = rhs._entity;
+            _location = rhs._location;
+        }
         
         virtual void draw() override
         {
@@ -115,27 +121,21 @@ namespace realtrick
             
             ImGui::SameLine();
             ImGui::PushID(3);
-            ImGui::PushItemWidth(150);
+            ImGui::PushItemWidth(200);
             
-            static std::string entityList;
-            static std::vector<std::string> entityNames;
-            static bool isFirstCall = true;
-            if ( isFirstCall )
+            std::string entityList;
+            std::vector<std::string> entityNames;
+            auto entityTable = EditorEntity::getEntityTableByType();
+            for(auto iter = entityTable.begin(); iter != entityTable.end() ; ++ iter)
             {
-                auto entityTable = EditorEntity::getEntityTableByType();
-                for(auto iter = entityTable.begin(); iter != entityTable.end() ; ++ iter)
-                {
-                    entityList += (iter->second.entityName);
-                    entityNames.push_back(iter->second.entityName);
-                    entityList += '\0';
-                }
-                isFirstCall = false;
+                entityList += (iter->second.entityName);
+                entityNames.push_back(iter->second.entityName);
+                entityList += '\0';
             }
             
             if ( ImGui::Combo("", &_currEntity, entityList.c_str(), 5) )
             {
                 _entity->setEntityType(EditorEntity::getEntityTableByName().at(entityNames[_currEntity]).entityType);
-                cocos2d::log("entity is %d.", _entity->getEntityType());
             }
             
             ImGui::PopItemWidth();
@@ -144,19 +144,20 @@ namespace realtrick
             ImGui::SameLine();
             ImGui::Text("to");
             
-            ImGui::SameLine();
             ImGui::PushID(4);
-            ImGui::PushItemWidth(150);
-            static const char* items4[3] =
-            {
-                "Location 1",
-                "Location 2",
-                "Location 3",
-            };
+            ImGui::PushItemWidth(200);
             
-            if ( ImGui::Combo("", &_currLocation, items4, 3, 3) )
+            std::string locationList;
+            std::vector<std::string> locationNames;
+            for(auto& loc : _gmxLayer.getLocations() )
             {
-//                _location->setLocation();
+                locationList += loc->getLocationName();
+                locationList += '\0';
+            }
+            
+            if ( ImGui::Combo("", &_currLocation, locationList.c_str(), 5) )
+            {
+                //_location->setLocation();
             }
             
             ImGui::PopItemWidth();

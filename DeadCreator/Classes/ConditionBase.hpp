@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "TriggerParameterBase.hpp"
+#include "GMXLayer.hpp"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -33,11 +34,16 @@ namespace realtrick
         
     public:
         
-        ConditionBase() = default;
-        ConditionBase(const ConditionBase& rhs) {}
+        ConditionBase(GMXLayer& layer) : _gmxLayer(layer) {}
+        ConditionBase(const ConditionBase& rhs) : _gmxLayer(rhs._gmxLayer)
+        {}
         
         virtual void draw()  = 0;
         virtual ConditionBase* clone() const = 0;
+        
+    protected:
+        
+        GMXLayer& _gmxLayer;
         
     };
     

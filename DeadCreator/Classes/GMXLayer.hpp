@@ -120,6 +120,8 @@ namespace realtrick
         void reorderLocations();
         LocationNode* getGrabbedLocation() const { return _grabbedLocation; }
         bool isOverlappedLocationName(const std::string& name) const;
+        const std::vector<LocationNode*>& getLocations() { return _locations; }
+        
         
     private:
         

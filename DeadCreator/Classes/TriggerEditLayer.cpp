@@ -117,7 +117,7 @@ void TriggerEditLayer::showLayer(bool* opened)
         ImGui::SameLine();
         ImGui::BeginGroup();
         ImGui::PushID(0);
-        if (ImGui::Button("New", ImVec2(130, 25)))
+        if ( ImGui::Button("New", ImVec2(130, 25)) )
         {
             ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 1000) / 2,
                                            (g.IO.DisplaySize.x - 635) / 2),
@@ -126,7 +126,6 @@ void TriggerEditLayer::showLayer(bool* opened)
             ImGui::OpenPopup("New Trigger");
             
             _newTrigger = new GameTrigger();
-            
         }
         if (ImGui::BeginPopupModal("New Trigger", NULL, ImGuiWindowFlags_NoResize))
         {
@@ -137,7 +136,7 @@ void TriggerEditLayer::showLayer(bool* opened)
             static int optionalHoveredTab = 0;
             ImGui::TabLabels(numTabs, tabNames, selectedTab, tabTooltips, false, &optionalHoveredTab);
             
-            if ( selectedTab == 0)
+            if ( selectedTab == 0 )
             {
                 ImGui::BeginChild("##dummy", ImVec2(0, 550), true);
                 ImGui::Text("For which players will this trigger execute?");
@@ -156,8 +155,8 @@ void TriggerEditLayer::showLayer(bool* opened)
             {
                 ImGui::BeginGroup();
                 ImGui::BeginChild("##dummy", ImVec2(850, 550), true);
-                ImGui::Text("Trigger Conditions");
                 
+                _newTrigger->drawConditions();
                 
                 ImGui::EndChild();
                 ImGui::EndGroup();
@@ -179,23 +178,20 @@ void TriggerEditLayer::showLayer(bool* opened)
                     ImGui::Combo("Select Condition", &currentCondition, "Bring\0", 1);
                     ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
                     
-                    _conditionList[currentCondition]->draw();
+                    _conditionList[currentCondition]->drawEditMode();
                     
                     ImGui::EndChild();
                     
                     if (ImGui::Button("Ok", ImVec2(60, 20)))
                     {
                         // save
-                        _newTrigger->addCondition(_conditionList[currentCondition]);
-                        
+                        _newTrigger->addCondition(_conditionList[currentCondition]->clone());
                         ImGui::CloseCurrentPopup();
                     }
                     
                     ImGui::SameLine();
                     if (ImGui::Button("Cancel", ImVec2(100, 20)))
                     {
-                        // reset
-                        
                         
                         ImGui::CloseCurrentPopup();
                     }
@@ -265,12 +261,16 @@ void TriggerEditLayer::showLayer(bool* opened)
             
             if (ImGui::Button("Ok", ImVec2(60, 20)))
             {
+                // add trigger
+                CC_SAFE_DELETE(_newTrigger);
                 ImGui::CloseCurrentPopup();
             }
             
             ImGui::SameLine();
             if (ImGui::Button("Cancel", ImVec2(100, 20)))
             {
+                // reset new trigger instance
+                CC_SAFE_DELETE(_newTrigger);
                 ImGui::CloseCurrentPopup();
             }
             

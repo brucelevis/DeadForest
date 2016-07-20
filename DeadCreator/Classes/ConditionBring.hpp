@@ -21,22 +21,10 @@ namespace realtrick
     public:
         
         ConditionBring(GMXLayer& layer) : ConditionBase(layer)
-        {
-            _playerType = new TriggerParameterPlayerType();
-            _approximation = new TriggerParameterApproximation();
-            _number = new TriggerParameterNumber();
-            _entity = new TriggerParameterEntity();
-            _location = new TriggerParameterLocation();
-        }
+        {}
         
         virtual ~ConditionBring()
-        {
-            CC_SAFE_DELETE(_playerType);
-            CC_SAFE_DELETE(_approximation);
-            CC_SAFE_DELETE(_number);
-            CC_SAFE_DELETE(_entity);
-            CC_SAFE_DELETE(_location);
-        }
+        {}
         
         ConditionBring(const ConditionBring& rhs) : ConditionBase(rhs)
         {
@@ -47,7 +35,8 @@ namespace realtrick
             _location = rhs._location;
         }
         
-        virtual void draw() override
+        
+        virtual void drawEditMode() override
         {
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
             ImGui::PushID(0);
@@ -67,15 +56,15 @@ namespace realtrick
             
             if ( ImGui::Combo("", &_currPlayer, items1, 9, 9) )
             {
-                if ( _currPlayer == 0 ) _playerType->setPlayerType(PlayerType::PLAYER1);
-                else if ( _currPlayer == 1 ) _playerType->setPlayerType(PlayerType::PLAYER2);
-                else if ( _currPlayer == 2 ) _playerType->setPlayerType(PlayerType::PLAYER3);
-                else if ( _currPlayer == 3 ) _playerType->setPlayerType(PlayerType::PLAYER4);
-                else if ( _currPlayer == 4 ) _playerType->setPlayerType(PlayerType::PLAYER5);
-                else if ( _currPlayer == 5 ) _playerType->setPlayerType(PlayerType::PLAYER6);
-                else if ( _currPlayer == 6 ) _playerType->setPlayerType(PlayerType::PLAYER7);
-                else if ( _currPlayer == 7 ) _playerType->setPlayerType(PlayerType::PLAYER8);
-                else if ( _currPlayer == 8 ) _playerType->setPlayerType(PlayerType::CURRENT_PLAYER);
+                if ( _currPlayer == 0 ) _playerType.setPlayerType(PlayerType::PLAYER1);
+                else if ( _currPlayer == 1 ) _playerType.setPlayerType(PlayerType::PLAYER2);
+                else if ( _currPlayer == 2 ) _playerType.setPlayerType(PlayerType::PLAYER3);
+                else if ( _currPlayer == 3 ) _playerType.setPlayerType(PlayerType::PLAYER4);
+                else if ( _currPlayer == 4 ) _playerType.setPlayerType(PlayerType::PLAYER5);
+                else if ( _currPlayer == 5 ) _playerType.setPlayerType(PlayerType::PLAYER6);
+                else if ( _currPlayer == 6 ) _playerType.setPlayerType(PlayerType::PLAYER7);
+                else if ( _currPlayer == 7 ) _playerType.setPlayerType(PlayerType::PLAYER8);
+                else if ( _currPlayer == 8 ) _playerType.setPlayerType(PlayerType::CURRENT_PLAYER);
             }
             
             ImGui::PopItemWidth();
@@ -97,11 +86,11 @@ namespace realtrick
             if (ImGui::Combo("", &_currApproximation, items2, 3, 3))
             {
                 if ( _currApproximation == 0 )
-                    _approximation->setApproximationType(TriggerParameterApproximation::Type::AT_LEAST);
+                    _approximation.setApproximationType(TriggerParameterApproximation::Type::AT_LEAST);
                 else if ( _currApproximation == 1 )
-                    _approximation->setApproximationType(TriggerParameterApproximation::Type::AT_MOST);
+                    _approximation.setApproximationType(TriggerParameterApproximation::Type::AT_MOST);
                 else if ( _currApproximation == 2 )
-                    _approximation->setApproximationType(TriggerParameterApproximation::Type::EXACTLY);
+                    _approximation.setApproximationType(TriggerParameterApproximation::Type::EXACTLY);
             }
             
             ImGui::PopItemWidth();
@@ -113,7 +102,10 @@ namespace realtrick
             
             if ( ImGui::DragInt("", &_currNumber, 1, 0, 255) )
             {
-                _number->setNumber(_currNumber);
+                if ( _currNumber < 0 ) _currNumber = 0;
+                if ( _currNumber > 255 ) _currNumber = 255;
+                
+                _number.setNumber(_currNumber);
             }
             
             ImGui::PopItemWidth();
@@ -135,7 +127,7 @@ namespace realtrick
             
             if ( ImGui::Combo("", &_currEntity, entityList.c_str(), 5) )
             {
-                _entity->setEntityType(EditorEntity::getEntityTableByName().at(entityNames[_currEntity]).entityType);
+                _entity.setEntityType(EditorEntity::getEntityTableByName().at(entityNames[_currEntity]).entityType);
             }
             
             ImGui::PopItemWidth();
@@ -157,13 +149,31 @@ namespace realtrick
             
             if ( ImGui::Combo("", &_currLocation, locationList.c_str(), 5) )
             {
-                _location->setLocation(_gmxLayer.getLocations().at(_currLocation));
+                _location.setLocation(_gmxLayer.getLocations().at(_currLocation));
             }
             
             ImGui::PopItemWidth();
             ImGui::PopID();
             
             ImGui::PopStyleColor();
+        }
+        
+        virtual bool drawSelectableSummary() const override
+        {
+            return ImGui::Selectable(this->getSummaryString().c_str());
+        }
+        
+        virtual std::string getSummaryString() const override
+        {
+            std::string ret;
+            ret += "'" + _playerType.getParameterName() + "' ";
+            ret += "brings ";
+            ret += "'" + _approximation.getParameterName() + "' ";
+            ret += "'" + _number.getParameterName() + "' ";
+            ret += "'" + _entity.getParameterName() + "' ";
+            ret += "to ";
+            ret += "'" + _location.getParameterName() + "'";
+            return ret;
         }
         
         virtual ConditionBring* clone() const override
@@ -174,19 +184,19 @@ namespace realtrick
     private:
         
         int _currPlayer = -1;
-        TriggerParameterPlayerType* _playerType = nullptr;
+        TriggerParameterPlayerType _playerType;
         
         int _currApproximation = -1;
-        TriggerParameterApproximation* _approximation = nullptr;
+        TriggerParameterApproximation _approximation;
         
         int _currNumber = 0;
-        TriggerParameterNumber* _number = nullptr;
+        TriggerParameterNumber _number;
         
         int _currEntity = -1;
-        TriggerParameterEntity* _entity = nullptr;
+        TriggerParameterEntity _entity;
         
         int _currLocation = -1;
-        TriggerParameterLocation* _location = nullptr;
+        TriggerParameterLocation _location;
         
     };
     

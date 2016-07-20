@@ -12,6 +12,7 @@
 #include <string>
 
 #include "EntityType.hpp"
+#include "ConditionBase.hpp"
 #include "Conditions.hpp"
 #include "Actions.hpp"
 
@@ -42,6 +43,23 @@ namespace realtrick
         void addPlayerType(PlayerType p) { _players.push_back(p); }
         void addCondition(ConditionBase* cond) { _conditions.push_back(cond); }
         void addAction(ActionBase* act) { _actions.push_back(act); }
+        
+        void drawConditions()
+        {
+            for(int i = 0 ; i < _conditions.size(); ++ i)
+            {
+                _conditions[i]->drawSelectableSummary();
+            }
+        }
+        
+        void drawActions()
+        {
+            for(int i = 0 ; i < _actions.size(); ++ i)
+            {
+                
+            }
+        }
+        
         
     private:
         

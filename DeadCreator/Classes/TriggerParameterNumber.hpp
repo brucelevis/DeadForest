@@ -19,10 +19,10 @@ namespace realtrick
     public:
         
         TriggerParameterNumber() : TriggerParameterBase(),
-        _number(-1)
+        _number(0)
         {
             _parameterType = TriggerParameterBase::Type::NUMBER;
-            setParameterName("#invalid");
+            setParameterName("0");
         }
         
         TriggerParameterNumber(const TriggerParameterNumber& rhs) : TriggerParameterBase(rhs)

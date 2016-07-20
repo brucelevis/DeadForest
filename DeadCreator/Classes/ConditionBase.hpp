@@ -10,6 +10,7 @@
 
 #include <vector>
 
+#include "TriggerComponentProtocol.hpp"
 #include "TriggerParameterBase.hpp"
 #include "GMXLayer.hpp"
 
@@ -19,7 +20,7 @@
 namespace realtrick
 {
     
-    class ConditionBase
+    class ConditionBase : public TriggerComponentProtocol
     {
      
     public:
@@ -38,8 +39,10 @@ namespace realtrick
         ConditionBase(const ConditionBase& rhs) : _gmxLayer(rhs._gmxLayer)
         {}
         
-        virtual void draw()  = 0;
-        virtual ConditionBase* clone() const = 0;
+        virtual void drawEditMode() override {}
+        virtual bool drawSelectableSummary() const override { return false; }
+        virtual std::string getSummaryString() const override { return ""; }
+        virtual ConditionBase* clone() const override { return nullptr; }
         
     protected:
         

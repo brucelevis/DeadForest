@@ -28,6 +28,13 @@ _gmxLayer(layer)
 
 TriggerEditLayer::~TriggerEditLayer()
 {
+    for( auto& cond : _conditionList)
+        CC_SAFE_DELETE(cond);
+    
+    for( auto& act : _actionList)
+        CC_SAFE_DELETE(act);
+    
+    
 }
 
 
@@ -60,7 +67,7 @@ bool TriggerEditLayer::init()
     _conditionList[static_cast<int>(ConditionBase::Type::BRING)] = new ConditionBring(_gmxLayer);
     
     _actionList.resize(static_cast<int>(ActionBase::Type::ACTION_MAX));
-    _actionList[static_cast<int>(ActionBase::Type::DISPLAY_TEXT)] = new ActionDisplayText();
+    _actionList[static_cast<int>(ActionBase::Type::DISPLAY_TEXT)] = new ActionDisplayText(_gmxLayer);
     
     return true;
 }
@@ -211,7 +218,9 @@ void TriggerEditLayer::showLayer(bool* opened)
             {
                 ImGui::BeginGroup();
                 ImGui::BeginChild("##dummy", ImVec2(850, 550), true);
-                ImGui::Text("Trigger Actions");
+                
+                _newTrigger->drawActions();
+                
                 ImGui::EndChild();
                 ImGui::EndGroup();
                 
@@ -232,12 +241,14 @@ void TriggerEditLayer::showLayer(bool* opened)
                     ImGui::Combo("Select Action", &currentCondition, "Display Text\0", 2);
                     ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
                     
-                    _actionList[currentCondition]->draw();
+                    _actionList[currentCondition]->drawEditMode();
                     
                     ImGui::EndChild();
                     
                     if (ImGui::Button("Ok", ImVec2(60, 20)))
                     {
+                        // save
+                        _newTrigger->addAction(_actionList[currentCondition]->clone());
                         ImGui::CloseCurrentPopup();
                     }
                     
@@ -262,7 +273,7 @@ void TriggerEditLayer::showLayer(bool* opened)
             if (ImGui::Button("Ok", ImVec2(60, 20)))
             {
                 // add trigger
-                CC_SAFE_DELETE(_newTrigger);
+                _triggers.push_back(_newTrigger);
                 ImGui::CloseCurrentPopup();
             }
             

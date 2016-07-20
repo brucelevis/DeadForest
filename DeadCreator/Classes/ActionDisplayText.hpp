@@ -19,12 +19,40 @@ namespace realtrick
         
     public:
         
-        virtual void draw() override
+        ActionDisplayText(GMXLayer& layer) : ActionBase(layer)
+        {
+            _buf[0] = '\0';
+        }
+        
+        virtual ~ActionDisplayText()
+        {}
+        
+        ActionDisplayText(const ActionDisplayText& rhs) : ActionBase(rhs)
+        {
+            std::strncpy(_buf, rhs._buf, 64);
+        }
+
+        virtual void drawEditMode() override
         {
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImColor(ImVec4(0.85, 0.85, 0.85, 1.00)));
             ImGui::Text("Display for current player.");
             ImGui::InputText("", _buf, 64);
             ImGui::PopStyleColor();
+        }
+        
+        virtual bool drawSelectableSummary() const override
+        {
+            return ImGui::Selectable(this->getSummaryString().c_str());
+        }
+        
+        virtual std::string getSummaryString() const override
+        {
+            return "Display for current player.";
+        }
+        
+        virtual ActionDisplayText* clone() const override
+        {
+            return new ActionDisplayText(*this);
         }
         
     private:

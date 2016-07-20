@@ -45,8 +45,8 @@ namespace realtrick
         }
         
         Type getType() const { return _parameterType; }
-        std::string getParameterName() const { return _parameterName; }
-        void setParameterName(const std::string& name) { _parameterName = name; }
+        virtual std::string getParameterName() const { return _parameterName; }
+        virtual void setParameterName(const std::string& name) { _parameterName = name; }
         
         virtual TriggerParameterBase* clone() const = 0;
         

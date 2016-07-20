@@ -32,7 +32,23 @@ namespace realtrick
         
         bool drawTrigger()
         {
-            std::string label = "Conditions:\n";
+            std::string label;
+            label += "Conditions:\n";
+            for(int i = 0 ; i < _conditions.size(); ++ i)
+            {
+                label += _conditions[i]->getSummaryString();
+                label += '\n';
+            }
+            
+            label += "Actions:\n";
+            for(int i = 0 ; i < _actions.size() ; ++ i)
+            {
+                label += _actions[i]->getSummaryString();
+                label += '\n';
+            }
+            
+            label.pop_back();
+            
             bool ret = ImGui::Selectable(label.c_str(), &_isSelected, ImGuiSelectableFlags_AllowDoubleClick);
             return ret;
         }
@@ -56,7 +72,7 @@ namespace realtrick
         {
             for(int i = 0 ; i < _actions.size(); ++ i)
             {
-                
+                _actions[i]->drawSelectableSummary();
             }
         }
         

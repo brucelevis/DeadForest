@@ -38,6 +38,13 @@ namespace realtrick
             setParameterName(location->getLocationName());
         }
         
+        virtual std::string getParameterName() const override
+        {
+            std::string ret = "#invalid";
+            if ( _location ) ret = _location->getLocationName();
+            return ret;
+        }
+        
         virtual TriggerParameterLocation* clone() const override
         {
             return new TriggerParameterLocation(*this);

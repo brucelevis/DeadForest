@@ -39,6 +39,8 @@ namespace realtrick
         ConditionBase(const ConditionBase& rhs) : _gmxLayer(rhs._gmxLayer)
         {}
         
+        virtual ~ConditionBase() = default;
+        
         virtual void drawEditMode() override {}
         virtual bool drawSelectableSummary() const override { return false; }
         virtual std::string getSummaryString() const override { return ""; }

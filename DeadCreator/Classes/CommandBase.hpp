@@ -39,15 +39,11 @@ namespace realtrick
         }
         
         virtual ~CommandBase() = default;
-        
         virtual void execute() = 0;
-        
         virtual void undo() = 0;
-        
         virtual CommandBase* clone() const = 0;
         
         virtual void beginImpl() {}
-        
         virtual void endImpl() {}
         
         virtual void begin() final
@@ -68,7 +64,6 @@ namespace realtrick
         }
         
         std::string getCommandName() const { return _commandName; }
-        
         virtual bool empty() const { return true; }
         
     protected:

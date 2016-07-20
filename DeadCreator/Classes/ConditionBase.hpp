@@ -41,7 +41,7 @@ namespace realtrick
         
         virtual ~ConditionBase() = default;
         
-        virtual void drawEditMode() override {}
+        virtual bool drawEditMode() override { return false; }
         virtual bool drawSelectableSummary() const override { return false; }
         virtual std::string getSummaryString() const override { return ""; }
         virtual ConditionBase* clone() const override { return nullptr; }
@@ -53,3 +53,12 @@ namespace realtrick
     };
     
 };
+
+
+
+
+
+
+
+
+

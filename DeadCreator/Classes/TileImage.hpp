@@ -19,16 +19,10 @@ namespace realtrick
     public:
         
         TileImage();
-        
         virtual ~TileImage();
-        
         static TileImage* create();
-        
         static TileImage* create(const std::string& fileName);
-        
         static TileImage* createWithFrameName(const std::string& frameName);
-        
-    private:
         
     };
     

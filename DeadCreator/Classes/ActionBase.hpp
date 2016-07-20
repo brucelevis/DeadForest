@@ -39,7 +39,7 @@ namespace realtrick
         
         virtual ~ActionBase() = default;
         
-        virtual void drawEditMode() override {}
+        virtual bool drawEditMode() override { return false; }
         virtual bool drawSelectableSummary() const override { return false; }
         virtual std::string getSummaryString() const override { return ""; }
         virtual ActionBase* clone() const override { return nullptr; }
@@ -51,3 +51,12 @@ namespace realtrick
     };
     
 };
+
+
+
+
+
+
+
+
+

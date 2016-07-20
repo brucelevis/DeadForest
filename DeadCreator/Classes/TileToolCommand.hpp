@@ -41,13 +41,9 @@ namespace realtrick
         virtual ~TileToolCommand() = default;
         
         virtual void execute() override;
-        
         virtual void undo() override;
-        
         virtual TileToolCommand* clone() const override;
-        
         void pushTile(const TileBase& prevTile, const TileBase& currTile);
-        
         virtual bool empty() const override { return _prevTiles.empty(); }
         
     private:

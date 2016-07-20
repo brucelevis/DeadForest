@@ -27,27 +27,23 @@ namespace realtrick
         virtual ~CommandQueue();
         
         void redo();
-        
         void undo();
-        
-        void pushCommand(CommandBase* command);
-        
+    
         int getIndex() const { return _currIndex; }
         
         bool isRedo() const;
-        
         bool isUndo() const;
         
         int size() const { return static_cast<int>(_commands.size()); }
-        
         void setStateToIndex(int index);
         
         const CommandBase* operator[](size_t index) const { return _commands[index]; }
         
+        void pushCommand(CommandBase* command);
+        
     private:
         
         std::vector<CommandBase*> _commands;
-        
         int _currIndex = -1;
         
     };

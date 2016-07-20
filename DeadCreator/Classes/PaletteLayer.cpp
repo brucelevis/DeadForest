@@ -198,3 +198,9 @@ void PaletteLayer::showLayer(bool* opened)
 
 
 
+
+
+
+
+
+

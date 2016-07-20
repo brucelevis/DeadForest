@@ -57,11 +57,11 @@ bool TriggerEditLayer::init()
         return false;
     
     for ( int i = 0 ; i < 8 ; ++ i)
+    {
         _selectedPlayer[i] = false;
+        _isPlayerChecked[i] = false;
+    }
     _selectedPlayer[0] = true;
-    
-    for ( int i = 0 ; i < 5 ; ++ i)
-        _selectedTrigger[i] = false;
     
     _conditionList.resize(static_cast<int>(ConditionBase::Type::CONDITION_MAX));
     _conditionList[static_cast<int>(ConditionBase::Type::BRING)] = new ConditionBring(_gmxLayer);
@@ -117,7 +117,7 @@ void TriggerEditLayer::showLayer(bool* opened)
             ImGui::PopID();
             ImGui::Separator();
         }
-    
+        
         ImGui::EndChild();
         ImGui::EndGroup();
         
@@ -148,12 +148,19 @@ void TriggerEditLayer::showLayer(bool* opened)
                 ImGui::BeginChild("##dummy", ImVec2(0, 550), true);
                 ImGui::Text("For which players will this trigger execute?");
                 ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
-                static bool isPlayerChecked[8] = { false, };
                 for(int i = 0 ; i < 8 ; ++ i)
                 {
                     std::string playerType = "Player " + std::to_string(i + 1);
-                    ImGui::Checkbox(playerType.c_str(), &isPlayerChecked[i]);
+                    if (ImGui::Checkbox(playerType.c_str(), &_isPlayerChecked[i]))
+                    {
+                        _isPlayerTabCompleted = false;
+                        for(int i = 0 ; i < 8 ; ++ i)
+                        {
+                            if ( _isPlayerChecked[i] ) _isPlayerTabCompleted = true;
+                        }
+                    }
                 }
+                
                 ImGui::PopStyleColor();
                 ImGui::EndChild();
             }
@@ -199,7 +206,6 @@ void TriggerEditLayer::showLayer(bool* opened)
                     ImGui::SameLine();
                     if (ImGui::Button("Cancel", ImVec2(100, 20)))
                     {
-                        
                         ImGui::CloseCurrentPopup();
                     }
                     
@@ -212,10 +218,12 @@ void TriggerEditLayer::showLayer(bool* opened)
                 ImGui::Button("Move Down", ImVec2(130, 25));
                 ImGui::PopID();
                 ImGui::EndGroup();
+                
             }
             
             else if ( selectedTab == 2 )
             {
+                
                 ImGui::BeginGroup();
                 ImGui::BeginChild("##dummy", ImVec2(850, 550), true);
                 
@@ -260,7 +268,7 @@ void TriggerEditLayer::showLayer(bool* opened)
                     
                     ImGui::EndPopup();
                 }
-
+                
                 ImGui::Button("Modify", ImVec2(130, 25));
                 ImGui::Button("Copy", ImVec2(130, 25));
                 ImGui::Button("Delete", ImVec2(130, 25));
@@ -268,6 +276,7 @@ void TriggerEditLayer::showLayer(bool* opened)
                 ImGui::Button("Move Down", ImVec2(130, 25));
                 ImGui::PopID();
                 ImGui::EndGroup();
+                
             }
             
             if (ImGui::Button("Ok", ImVec2(60, 20)))

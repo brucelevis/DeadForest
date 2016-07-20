@@ -32,12 +32,14 @@ namespace realtrick
             std::strncpy(_buf, rhs._buf, 64);
         }
 
-        virtual void drawEditMode() override
+        virtual bool drawEditMode() override
         {
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImColor(ImVec4(0.85, 0.85, 0.85, 1.00)));
             ImGui::Text("Display for current player.");
             ImGui::InputText("", _buf, 64);
             ImGui::PopStyleColor();
+            
+            return (_buf[0] != '\0');
         }
         
         virtual bool drawSelectableSummary() const override

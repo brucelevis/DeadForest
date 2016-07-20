@@ -40,19 +40,14 @@ namespace realtrick
         virtual ~RemoveEntityToolCommand();
         
         virtual void execute() override;
-        
         virtual void undo() override;
-        
         virtual RemoveEntityToolCommand* clone() const override;
-        
         virtual bool empty() const override { return _entities.empty(); }
-        
         void pushEntity(const std::vector<EditorEntity*>& entities) { if ( _isBegan ) _entities = entities; }
         
     private:
         
         virtual void beginImpl() override;
-        
         virtual void endImpl() override;
         
     private:

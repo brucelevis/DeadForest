@@ -87,29 +87,23 @@ namespace realtrick
         inline void                     calculateNeighbors(const cocos2d::Vec2& targetPos, float queryRadius);
         
         inline void                     clearCells();
-        
         inline void                     removeEntityFromCell(EditorEntity* ent);
         
         inline int                      positionToIndex(const cocos2d::Vec2& pos) const;
         
         inline const EditorCell&        getCell(const cocos2d::Vec2& pos) const;
-        
         inline const EditorCell&        getCell(int index)  { return _cells[index]; }
         
         inline float                    getWorldWidth() const { return _worldWidth; }
-        
         inline float                    getWorldHeight() const { return _worldHeight; }
         
         inline int                      getNumOfCellX() const { return _numOfCellsX; }
-        
         inline int                      getNumOfCellY() const { return _numOfCellsY; }
         
         inline float                    getCellWidth() const { return _cellWidth; }
-        
         inline float                    getCellHeight() const { return _cellHeight; }
         
         inline std::vector<int>         getNeighborCells(const cocos2d::Vec2& pos) const;
-        
         inline std::vector<int>         getNeighborCellsNotCurrent(const cocos2d::Vec2& pos) const;
         
         inline const std::vector<EditorCell>& getCells() const { return _cells; }
@@ -119,15 +113,12 @@ namespace realtrick
         std::vector<EditorCell> _cells;
         
         float                   _worldWidth;
-        
         float                   _worldHeight;
         
         int                     _numOfCellsX;
-        
         int                     _numOfCellsY;
         
         float                   _cellWidth;
-        
         float                   _cellHeight;
         
     };

@@ -29,14 +29,14 @@ namespace realtrick
         
         ActionDisplayText(const ActionDisplayText& rhs) : ActionBase(rhs)
         {
-            std::strncpy(_buf, rhs._buf, 64);
+            std::strncpy(_buf, rhs._buf, 32);
         }
 
         virtual bool drawEditMode() override
         {
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImColor(ImVec4(0.85, 0.85, 0.85, 1.00)));
             ImGui::Text("Display for current player.");
-            ImGui::InputText("", _buf, 64);
+            ImGui::InputText("", _buf, 32);
             ImGui::PopStyleColor();
             
             return (_buf[0] != '\0');
@@ -49,7 +49,10 @@ namespace realtrick
         
         virtual std::string getSummaryString() const override
         {
-            return "Display for current player.";
+            std::string ret = "Display for current player. '";
+            ret += _buf;
+            ret += "'";
+            return ret;
         }
         
         virtual ActionDisplayText* clone() const override
@@ -57,9 +60,14 @@ namespace realtrick
             return new ActionDisplayText(*this);
         }
         
+        virtual void clear() override
+        {
+            _buf[0] = '\0';
+        }
+        
     private:
         
-        char _buf[64];
+        char _buf[32];
         
     };
     

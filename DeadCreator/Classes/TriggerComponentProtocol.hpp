@@ -20,6 +20,7 @@ struct TriggerComponentProtocol
     virtual bool drawSelectableSummary() const = 0;
     virtual std::string getSummaryString() const = 0;
     virtual TriggerComponentProtocol* clone() const = 0;
+    virtual void clear() = 0;
 };
 
 

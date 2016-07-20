@@ -40,10 +40,6 @@ namespace realtrick
         bool _selectedPlayer[8];
         
         bool _isPlayerChecked[8];
-        bool _isPlayerTabCompleted = false;
-        
-        bool _isConditionTabCompleted = false;
-        bool _isActionTabCompleted = false;
         
         std::vector<GameTrigger*> _triggers;
         GameTrigger* _newTrigger;

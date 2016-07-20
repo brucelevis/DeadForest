@@ -38,7 +38,6 @@ namespace realtrick
         
         virtual bool drawEditMode() override
         {
-            
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
             ImGui::PushID(0);
             ImGui::PushItemWidth(180);
@@ -182,6 +181,15 @@ namespace realtrick
         virtual ConditionBring* clone() const override
         {
             return new ConditionBring(*this);
+        }
+        
+        virtual void clear() override
+        {
+            _currPlayer = -1;
+            _currApproximation = -1;
+            _currNumber = 0;
+            _currEntity = -1;
+            _currLocation = -1;
         }
         
     private:

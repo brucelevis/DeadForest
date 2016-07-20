@@ -56,7 +56,7 @@ namespace realtrick
         void setSelected(bool selected) { _isSelected = selected; }
         bool isSelected() const { return _isSelected; }
         
-        void setPlayerType(const std::vector<PlayerType>& players) { _players = players; }
+        void setPlayerType(const std::vector<PlayerType>& players) { _players.clear(); _players = players; }
         void addCondition(ConditionBase* cond) { _conditions.push_back(cond); }
         void addAction(ActionBase* act) { _actions.push_back(act); }
         
@@ -75,6 +75,10 @@ namespace realtrick
                 _actions[i]->drawSelectableSummary();
             }
         }
+        
+        int getCheckedPlayerNumber() const { return _players.size(); }
+        int getConditionNumber() const { return _conditions.size(); }
+        int getActionNumber() const { return _actions.size(); }
         
     private:
         

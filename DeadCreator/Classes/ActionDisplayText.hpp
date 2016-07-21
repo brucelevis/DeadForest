@@ -36,10 +36,12 @@ namespace realtrick
 
         virtual bool drawEditMode(void* opt) override
         {
+            ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImColor(ImVec4(0.85, 0.85, 0.85, 1.00)));
             ImGui::Text("Display for current player.");
             ImGui::InputText("", _buf, 32);
             ImGui::PopStyleColor();
+            ImGui::EndChild();
             
             return (_buf[0] != '\0');
         }

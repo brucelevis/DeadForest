@@ -221,15 +221,13 @@ void TriggerEditLayer::showNewTrigger(const char* title, bool& opened)
             ImGui::BeginChild("##dummy", ImVec2(950, 550), true);
             for (int i = 0 ; i < newTrigger.conditions.size(); ++ i)
             {
-                std::string dummy = "dummy" + newTrigger.conditions[i]->getSummaryString();
-                ImGui::Text(dummy.c_str());
-//                bool ret = newTrigger.conditions[i].second.drawSelectableSummary(newTrigger.conditions[i].first);
-//                if ( ret )
-//                {
-//                    for(int j = 0 ; j < newTrigger.conditions.size(); ++ j)
-//                        newTrigger.conditions[j].first = false;
-//                    newTrigger.conditions[i].first = true;
-//                }
+                bool ret = newTrigger.conditions[i]->drawSelectableSummary(newTrigger.conditions[i]->isSelected());
+                if ( ret )
+                {
+                    for(int j = 0 ; j < newTrigger.conditions.size(); ++ j)
+                        newTrigger.conditions[j]->isSelected() = false;
+                    newTrigger.conditions[i]->isSelected() = true;
+                }
             }
             ImGui::EndChild();
             ImGui::EndGroup();
@@ -253,75 +251,33 @@ void TriggerEditLayer::showNewTrigger(const char* title, bool& opened)
         
         else if ( selectedTab == 2 )
         {
+            //
             // draw actions summary
+            //
             ImGui::BeginGroup();
             ImGui::BeginChild("##dummy", ImVec2(950, 550), true);
-            
-            for(int i = 0 ; i < newTrigger.actions.size(); ++ i)
+            for (int i = 0 ; i < newTrigger.actions.size(); ++ i)
             {
-                static bool temp = false;
-                temp = newTrigger.actions[i]->drawSelectableSummary(temp);
+                bool ret = newTrigger.actions[i]->drawSelectableSummary(newTrigger.actions[i]->isSelected());
+                if ( ret )
+                {
+                    for(int j = 0 ; j < newTrigger.actions.size(); ++ j)
+                        newTrigger.actions[j]->isSelected() = false;
+                    newTrigger.actions[i]->isSelected() = true;
+                }
             }
-            
             ImGui::EndChild();
             ImGui::EndGroup();
+            
+            static bool isShowNewAction = false;
+            
+            if ( isShowNewAction ) showNewAction("New Action", isShowNewAction, newTrigger);
             
             ImGui::SameLine();
             ImGui::BeginGroup();
             ImGui::PushID(2);
-            if ( ImGui::Button("New", ImVec2(130, 25)) )
-            {
-                ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 800) / 2,
-                                               (g.IO.DisplaySize.x - 345) / 2),
-                                        ImGuiSetCond_Once);
-                ImGui::SetNextWindowSize(ImVec2(800, 345));
-                ImGui::OpenPopup("New Action");
-            }
-            if ( ImGui::BeginPopupModal("New Action", NULL, ImGuiWindowFlags_NoResize) )
-            {
-                static int currentAction = 0;
-                ImGui::Combo("Select Action", &currentAction, "Display Text\0", 2);
-                ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
-                
-                bool isCompleted = _actionList[currentAction]->drawEditMode(&_gmxLayer);
-                
-                ImGui::EndChild();
-                
-                ImVec4 backupButton = ImGui::GetStyle().Colors[ImGuiCol_Button];
-                ImVec4 backupHoverColor = ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];
-                ImVec4 backupActiveColor = ImGui::GetStyle().Colors[ImGuiCol_ButtonActive];
-                
-                if ( !isCompleted )
-                {
-                    ImGui::GetStyle().Colors[ImGuiCol_Button] = ImVec4(0.20, 0.00, 0.00, 0.35);
-                    ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = ImVec4(0.20, 0.00, 0.00, 0.35);
-                    ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = ImVec4(0.20, 0.00, 0.00, 0.35);
-                }
-                
-                if ( ImGui::Button("Ok", ImVec2(60, 20)) && isCompleted )
-                {
-                    // save
-                    newTrigger.addAction(_actionList[currentAction]->clone());
-                    _actionList[currentAction]->reset();
-                    ImGui::CloseCurrentPopup();
-                }
-                
-                ImGui::GetStyle().Colors[ImGuiCol_Button] = backupButton;
-                ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = backupHoverColor;
-                ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = backupActiveColor;
-                
-                ImGui::SameLine();
-                if (ImGui::Button("Cancel", ImVec2(100, 20)))
-                {
-                    _actionList[currentAction]->reset();
-                    ImGui::CloseCurrentPopup();
-                }
-                
-                ImGui::EndPopup();
-            }
-            
-            
-            ImGui::Button("Modify", ImVec2(130, 25));
+            if ( ImGui::Button("New", ImVec2(130, 25)) ) isShowNewAction = true;
+            if ( ImGui::Button("Modify", ImVec2(130, 25)) ) {}
             ImGui::Button("Copy", ImVec2(130, 25));
             ImGui::Button("Delete", ImVec2(130, 25));
             ImGui::Button("Move Up", ImVec2(130, 25));
@@ -389,9 +345,6 @@ void TriggerEditLayer::showNewCondition(const char* title, bool& opened, GameTri
     ImGui::SetNextWindowSize(ImVec2(800, 345));
     if ( ImGui::BeginPopupModal(title, NULL, ImGuiWindowFlags_NoResize) )
     {
-        ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 800) / 2, (g.IO.DisplaySize.x - 345) / 2), ImGuiSetCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(800, 345));
-        
         //
         // draw condition edit window
         //
@@ -442,6 +395,62 @@ void TriggerEditLayer::showNewCondition(const char* title, bool& opened, GameTri
 }
 
 
+void TriggerEditLayer::showNewAction(const char* title, bool& opened, GameTrigger& newTrigger)
+{
+    ImGuiContext& g = *GImGui;
+    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 800) / 2, (g.IO.DisplaySize.x - 345) / 2), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(800, 345));
+    ImGui::OpenPopup(title);
+    if ( ImGui::BeginPopupModal(title, NULL, ImGuiWindowFlags_NoResize) )
+    {
+        //
+        // draw action edit window
+        //
+        static int currentAction = 0;
+        ImGui::Combo("Select Action", &currentAction, "Display Text\0", 2);
+        bool isCompleted = _actionList[currentAction]->drawEditMode(&_gmxLayer);
+        
+        //
+        // draw ok button
+        //
+        ImVec4 backupButton = ImGui::GetStyle().Colors[ImGuiCol_Button];
+        ImVec4 backupHoverColor = ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];
+        ImVec4 backupActiveColor = ImGui::GetStyle().Colors[ImGuiCol_ButtonActive];
+        if ( !isCompleted )
+        {
+            ImGui::GetStyle().Colors[ImGuiCol_Button] = ImVec4(0.20, 0.00, 0.00, 0.35);
+            ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = ImVec4(0.20, 0.00, 0.00, 0.35);
+            ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = ImVec4(0.20, 0.00, 0.00, 0.35);
+        }
+        if ( ImGui::Button("Ok", ImVec2(60, 20)) && isCompleted )
+        {
+            // save
+            newTrigger.addAction(_actionList[currentAction]->clone());
+            
+            // clear
+            _actionList[currentAction]->reset();
+            opened = false;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::GetStyle().Colors[ImGuiCol_Button] = backupButton;
+        ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = backupHoverColor;
+        ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = backupActiveColor;
+        
+        //
+        // draw cancel button
+        //
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel", ImVec2(100, 20)))
+        {
+            // clear
+            _actionList[currentAction]->reset();
+            opened = false;
+            ImGui::CloseCurrentPopup();
+        }
+        
+        ImGui::EndPopup();
+    }
+}
 
 
 

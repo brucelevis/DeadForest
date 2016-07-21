@@ -39,11 +39,18 @@ namespace realtrick
         ConditionBase(const ConditionBase& rhs) = default;
         virtual ~ConditionBase() = default;
         
+        bool& isSelected() { return _isSelected; }
+        
         virtual bool drawEditMode(void* opt) override { return false; }
         virtual bool drawSelectableSummary(bool& selected) const override { return false; }
         virtual std::string getSummaryString() const override { return ""; }
         virtual void reset() override {}
         virtual ConditionBase* clone() const override { return nullptr; }
+    
+    protected:
+        
+        bool _isSelected = false;
+        
     };
     
 };

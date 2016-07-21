@@ -35,6 +35,7 @@ namespace realtrick
         
         void showNewTrigger(const char* title, bool& opened);
         void showNewCondition(const char* title, bool& opened, GameTrigger& newTrigger);
+        void showNewAction(const char* title, bool& opened, GameTrigger& newTrigger);
         
     private:
         

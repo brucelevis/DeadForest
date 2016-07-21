@@ -25,8 +25,16 @@ namespace realtrick
             setParameterName("0");
         }
         
-        TriggerParameterNumber(const TriggerParameterNumber& rhs) : TriggerParameterBase(rhs)
+        TriggerParameterNumber(const TriggerParameterNumber& rhs) { copyFrom(rhs); }
+        TriggerParameterNumber& operator=(const TriggerParameterNumber& rhs)
         {
+            if ( &rhs != this ) copyFrom(rhs);
+            return *this;
+        }
+        
+        void copyFrom(const TriggerParameterNumber& rhs)
+        {
+            TriggerParameterBase::copyFrom(rhs);
             _number = rhs._number;
         }
         

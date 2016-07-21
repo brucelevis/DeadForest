@@ -26,8 +26,16 @@ namespace realtrick
             setParameterName("#invalid");
         }
         
-        TriggerParameterEntity(const TriggerParameterEntity& rhs) : TriggerParameterBase(rhs)
+        TriggerParameterEntity(const TriggerParameterEntity& rhs) { copyFrom(rhs); }
+        TriggerParameterEntity& operator=(const TriggerParameterEntity& rhs)
         {
+            if ( &rhs != this ) copyFrom(rhs);
+            return *this;
+        }
+        
+        void copyFrom(const TriggerParameterEntity& rhs)
+        {
+            TriggerParameterBase::copyFrom(rhs);
             _entityType = rhs._entityType;
         }
         

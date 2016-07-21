@@ -26,8 +26,16 @@ namespace realtrick
             setParameterName("#invalid");
         }
         
-        TriggerParameterPlayerType(const TriggerParameterPlayerType& rhs) : TriggerParameterBase(rhs)
+        TriggerParameterPlayerType(const TriggerParameterPlayerType& rhs) { copyFrom(rhs); }
+        TriggerParameterPlayerType& operator=(const TriggerParameterPlayerType& rhs)
         {
+            if ( &rhs != this ) copyFrom(rhs);
+            return *this;
+        }
+        
+        void copyFrom(const TriggerParameterPlayerType& rhs)
+        {
+            TriggerParameterBase::copyFrom(rhs);
             _playerType = rhs._playerType;
         }
         

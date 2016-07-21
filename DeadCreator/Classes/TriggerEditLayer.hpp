@@ -44,8 +44,8 @@ namespace realtrick
         bool _isPlayerChecked[8];
         
         std::vector<GameTrigger> _triggers;
-        std::vector<ConditionBase> _conditionList;
-        std::vector<ActionBase> _actionList;
+        std::vector<ConditionBase*> _conditionList;
+        std::vector<ActionBase*> _actionList;
         
     };
     

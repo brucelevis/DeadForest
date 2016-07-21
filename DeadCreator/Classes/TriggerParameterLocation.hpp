@@ -26,8 +26,16 @@ namespace realtrick
             setParameterName("#invalid");
         }
         
-        TriggerParameterLocation(const TriggerParameterLocation& rhs) : TriggerParameterBase(rhs)
+        TriggerParameterLocation(const TriggerParameterLocation& rhs) { copyFrom(rhs); }
+        TriggerParameterLocation& operator=(const TriggerParameterLocation& rhs)
         {
+            if ( &rhs != this ) copyFrom(rhs);
+            return *this;
+        }
+        
+        void copyFrom(const TriggerParameterLocation& rhs)
+        {
+            TriggerParameterBase::copyFrom(rhs);
             _location = rhs._location;
         }
         

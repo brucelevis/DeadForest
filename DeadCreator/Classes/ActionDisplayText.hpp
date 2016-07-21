@@ -21,12 +21,20 @@ namespace realtrick
         
         ActionDisplayText() { _buf[0] = '\0'; }
         virtual ~ActionDisplayText() = default;
-        ActionDisplayText(const ActionDisplayText& rhs) : ActionBase(rhs)
+        
+        ActionDisplayText(const ActionDisplayText& rhs) : ActionBase(rhs) { copyFrom(rhs); }
+        ActionDisplayText& operator=(const ActionDisplayText& rhs)
+        {
+            if ( &rhs != this ) copyFrom(rhs);
+            return *this;
+        }
+        
+        void copyFrom(const ActionDisplayText& rhs)
         {
             std::strncpy(_buf, rhs._buf, 32);
         }
 
-        virtual bool drawEditMode() override
+        virtual bool drawEditMode(void* opt) override
         {
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImColor(ImVec4(0.85, 0.85, 0.85, 1.00)));
             ImGui::Text("Display for current player.");
@@ -52,6 +60,11 @@ namespace realtrick
         virtual void reset() override
         {
             _buf[0] = '\0';
+        }
+        
+        virtual ActionDisplayText* clone() const override
+        {
+            return new ActionDisplayText(*this);
         }
         
     private:

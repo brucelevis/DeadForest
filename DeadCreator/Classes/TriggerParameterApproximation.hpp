@@ -28,15 +28,24 @@ namespace realtrick
         
     public:
         
-        TriggerParameterApproximation() : TriggerParameterBase(),
+        TriggerParameterApproximation() :
+        TriggerParameterBase(),
         _approximation(Type::INVALID)
         {
             _parameterType = TriggerParameterBase::Type::APPROXIMATION;
             setParameterName("#invalid");
         }
         
-        TriggerParameterApproximation(const TriggerParameterApproximation& rhs) : TriggerParameterBase(rhs)
+        TriggerParameterApproximation(const TriggerParameterApproximation& rhs) { copyFrom(rhs); }
+        TriggerParameterApproximation& operator=(const TriggerParameterApproximation& rhs)
         {
+            if ( &rhs != this ) copyFrom(rhs);
+            return *this;
+        }
+    
+        void copyFrom(const TriggerParameterApproximation& rhs)
+        {
+            TriggerParameterBase::copyFrom(rhs);
             _approximation = rhs._approximation;
         }
         

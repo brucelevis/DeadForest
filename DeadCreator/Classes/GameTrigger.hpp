@@ -31,13 +31,25 @@ namespace realtrick
         bool isSelected;
         
         std::vector<PlayerType> players;
-        std::vector<std::pair<bool, ConditionBase>> conditions;
-        std::vector<ActionBase> actions;
+        std::vector<ConditionBase*> conditions;
+        std::vector<ActionBase*> actions;
 
         GameTrigger() = default;
-        GameTrigger(const GameTrigger& rhs)
+        GameTrigger(const GameTrigger& rhs) { copyFrom(rhs); }
+        GameTrigger& operator=(const GameTrigger& rhs)
+        {
+            if ( &rhs != this )
+                copyFrom(rhs);
+            return *this;
+        }
+        
+        virtual ~GameTrigger() { reset(); }
+        
+        void copyFrom(const GameTrigger& rhs)
         {
             players = rhs.players;
+            conditions = rhs.conditions;
+            actions = rhs.actions;
         }
         
         void reset()
@@ -47,20 +59,20 @@ namespace realtrick
             actions.clear();
         }
         
-        bool drawTrigger()
+        bool drawSelectableTrigger()
         {
             std::string label;
             label += "Conditions:\n";
             for(int i = 0 ; i < conditions.size(); ++ i)
             {
-                label += conditions[i].second.getSummaryString();
+                label += conditions[i]->getSummaryString();
                 label += '\n';
             }
             
             label += "Actions:\n";
             for(int i = 0 ; i < actions.size() ; ++ i)
             {
-                label += actions[i].getSummaryString();
+                label += actions[i]->getSummaryString();
                 label += '\n';
             }
             
@@ -71,8 +83,8 @@ namespace realtrick
         }
         
         void setPlayerType(const std::vector<PlayerType>& p) { players.clear(); players = p; }
-        void addCondition(const ConditionBase& cond) { conditions.push_back({false, cond}); }
-        void addAction(const ActionBase& act) { actions.push_back(act); }
+        void addCondition(ConditionBase* cond) { cocos2d::log("addCondition"); conditions.push_back(cond); }
+        void addAction(ActionBase* act) { actions.push_back(act); }
         
     };
     

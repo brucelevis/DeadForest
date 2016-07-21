@@ -40,6 +40,7 @@ namespace realtrick
         virtual void reset() override {}
         virtual ConditionBase* clone() const override { return nullptr; }
         virtual void deepCopy(TriggerComponentProtocol* copy) override { TriggerComponentProtocol::deepCopy(copy); }
+        
     };
     
 };

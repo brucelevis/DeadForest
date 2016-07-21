@@ -37,6 +37,7 @@ namespace realtrick
         void showNewCondition(const char* title, bool& opened, GameTrigger& newTrigger);
         void showModifyCondition(const char* title, bool& opened, GameTrigger& trigger, int condIndex);
         void showNewAction(const char* title, bool& opened, GameTrigger& newTrigger);
+        void showModifyAction(const char* title, bool& opened, GameTrigger& trigger, int actIndex);
         
     private:
         
@@ -49,7 +50,8 @@ namespace realtrick
         std::vector<ConditionBase*> _conditionList;
         std::vector<ActionBase*> _actionList;
         
-        ConditionBase* _modifingCondition;
+        ConditionBase* _modifyingCondition;
+        ActionBase* _modifyingAction;
         
     };
     

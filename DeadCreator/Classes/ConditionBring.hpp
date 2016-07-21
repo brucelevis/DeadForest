@@ -11,6 +11,7 @@
 #include "ConditionBase.hpp"
 #include "TriggerParameters.hpp"
 #include "EditorEntity.hpp"
+#include "GMXLayer.hpp"
 
 namespace realtrick
 {
@@ -20,7 +21,7 @@ namespace realtrick
         
     public:
         
-        ConditionBring() = default;
+        ConditionBring() { name() = "Bring"; }
         virtual ~ConditionBring() = default;
         
         ConditionBring(const ConditionBring& rhs) : ConditionBase(rhs) { copyFrom(rhs); }
@@ -32,11 +33,19 @@ namespace realtrick
         
         void copyFrom(const ConditionBring& rhs)
         {
+            ConditionBase::copyFrom(rhs);
+            
             _playerType = rhs._playerType;
             _approximation = rhs._approximation;
             _number = rhs._number;
             _entity = rhs._entity;
             _location = rhs._location;
+            
+            _currPlayer = rhs._currPlayer;
+            _currApproximation = rhs._currApproximation;
+            _currNumber = rhs._currNumber;
+            _currEntity = rhs._currEntity;
+            _currLocation = rhs._currLocation;
         }
         
         virtual bool drawEditMode(void* opt) override
@@ -188,6 +197,24 @@ namespace realtrick
         virtual ConditionBring* clone() const override
         {
             return new ConditionBring(*this);
+        }
+        
+        virtual void deepCopy(TriggerComponentProtocol* copy) override
+        {
+            ConditionBase::deepCopy(copy);
+            
+            auto p = static_cast<ConditionBring*>(copy);
+            _playerType = p->_playerType;
+            _approximation = p->_approximation;
+            _number = p->_number;
+            _entity = p->_entity;
+            _location = p->_location;
+            
+            _currPlayer = p->_currPlayer;
+            _currApproximation = p->_currApproximation;
+            _currNumber = p->_currNumber;
+            _currEntity = p->_currEntity;
+            _currLocation = p->_currLocation;
         }
         
     private:

@@ -19,7 +19,7 @@ namespace realtrick
         
     public:
         
-        ActionDisplayText() { _buf[0] = '\0'; }
+        ActionDisplayText() { name() = "Display Text"; _buf[0] = '\0'; }
         virtual ~ActionDisplayText() = default;
         
         ActionDisplayText(const ActionDisplayText& rhs) : ActionBase(rhs) { copyFrom(rhs); }
@@ -31,6 +31,8 @@ namespace realtrick
         
         void copyFrom(const ActionDisplayText& rhs)
         {
+            ActionBase::copyFrom(rhs);
+            
             std::strncpy(_buf, rhs._buf, 32);
         }
 
@@ -67,6 +69,13 @@ namespace realtrick
         virtual ActionDisplayText* clone() const override
         {
             return new ActionDisplayText(*this);
+        }
+        
+        virtual void deepCopy(TriggerComponentProtocol* copy) override
+        {
+            ActionBase::deepCopy(copy);
+            ActionDisplayText* p = static_cast<ActionDisplayText*>(copy);
+            std::strncpy(_buf, p->_buf, 32);
         }
         
     private:

@@ -24,30 +24,22 @@ namespace realtrick
         
     public:
         
-        enum class Type
-        {
-            INVALID = - 1,
-            DISPLAY_TEXT = 0,
-            ACTION_MAX
-        };
-        
-    public:
-        
         ActionBase() = default;
-        ActionBase(const ActionBase& rhs) = default;
+        ActionBase(const ActionBase& rhs) : TriggerComponentProtocol(rhs) { copyFrom(rhs); }
+        ActionBase& operator=(const ActionBase& rhs)
+        {
+            if ( &rhs != this) copyFrom(rhs);
+            return *this;
+        }
         virtual ~ActionBase() = default;
-        
-        bool& isSelected() { return _isSelected; }
+        void copyFrom(const ActionBase& rhs) { TriggerComponentProtocol::copyFrom(rhs); }
         
         virtual bool drawEditMode(void* opt) override { return false; }
         virtual bool drawSelectableSummary(bool& selected) const override { return false; }
         virtual std::string getSummaryString() const override { return ""; }
         virtual void reset() override {}
         virtual ActionBase* clone() const override { return nullptr; }
-        
-    protected:
-        
-        bool _isSelected = false;
+        virtual void deepCopy(TriggerComponentProtocol* copy) override { TriggerComponentProtocol::deepCopy(copy); }
         
     };
     

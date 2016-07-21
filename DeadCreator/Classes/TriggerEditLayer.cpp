@@ -58,11 +58,21 @@ bool TriggerEditLayer::init()
     }
     _selectedPlayer[0] = true;
     
-    static ConditionBring condBring;
-    _conditionList.push_back(&condBring);
+    GameTrigger::ConditionType condIter = GameTrigger::ConditionType::BEGIN;
+    GameTrigger::increase(condIter);
+    while ( condIter != GameTrigger::ConditionType::END )
+    {
+        _conditionList.push_back(GameTrigger::createCondition(condIter));
+        GameTrigger::increase(condIter);
+    }
     
-    static ActionDisplayText actDisplayText;
-    _actionList.push_back(&actDisplayText);
+    GameTrigger::ActionType actIter = GameTrigger::ActionType::BEGIN;
+    GameTrigger::increase(actIter);
+    while ( actIter != GameTrigger::ActionType::END )
+    {
+        _actionList.push_back(GameTrigger::createAction(actIter));
+        GameTrigger::increase(actIter);
+    }
     
     return true;
 }
@@ -217,6 +227,8 @@ void TriggerEditLayer::showNewTrigger(const char* title, bool& opened)
             //
             // draw conditions summary
             //
+            static int selectedCondition = 0;
+            
             ImGui::BeginGroup();
             ImGui::BeginChild("##dummy", ImVec2(950, 550), true);
             for (int i = 0 ; i < newTrigger.conditions.size(); ++ i)
@@ -226,21 +238,32 @@ void TriggerEditLayer::showNewTrigger(const char* title, bool& opened)
                 {
                     for(int j = 0 ; j < newTrigger.conditions.size(); ++ j)
                         newTrigger.conditions[j]->isSelected() = false;
+                    
                     newTrigger.conditions[i]->isSelected() = true;
+                    selectedCondition = i;
                 }
             }
             ImGui::EndChild();
             ImGui::EndGroup();
             
             static bool isShowNewCondition = false;
+            static bool isShowModifyCondition = false;
             
-            if ( isShowNewCondition ) showNewCondition("New Condition", isShowNewCondition, newTrigger);
+            if ( isShowNewCondition )
+                showNewCondition("New Condition", isShowNewCondition, newTrigger);
+            
+            if ( isShowModifyCondition )
+                showModifyCondition("Modify Condition", isShowModifyCondition, newTrigger, selectedCondition);
             
             ImGui::SameLine();
             ImGui::BeginGroup();
             ImGui::PushID(1);
             if ( ImGui::Button("New", ImVec2(130, 25)) ) isShowNewCondition = true;
-            if ( ImGui::Button("Modify", ImVec2(130, 25)) ) {}
+            if ( ImGui::Button("Modify", ImVec2(130, 25)) )
+            {
+                _modifingCondition = newTrigger.conditions[selectedCondition]->clone();
+                isShowModifyCondition = true;
+            }
             ImGui::Button("Copy", ImVec2(130, 25));
             ImGui::Button("Delete", ImVec2(130, 25));
             ImGui::Button("Move Up", ImVec2(130, 25));
@@ -349,7 +372,18 @@ void TriggerEditLayer::showNewCondition(const char* title, bool& opened, GameTri
         // draw condition edit window
         //
         static int currentCondition = 0;
-        ImGui::Combo("Select Condition", &currentCondition, "Bring\0", 1);
+        static std::string conditionNameList;
+        static bool isFirstCall = true;
+        if ( isFirstCall )
+        {
+            for(int i = 0 ; i < _conditionList.size() ; ++ i)
+            {
+                conditionNameList += _conditionList[i]->name();
+                conditionNameList += '\0';
+            }
+            isFirstCall = false;
+        }
+        ImGui::Combo("Select Condition", &currentCondition, conditionNameList.c_str(), 3);
         bool isCompleted = _conditionList[currentCondition]->drawEditMode(&_gmxLayer);
     
         //
@@ -369,7 +403,7 @@ void TriggerEditLayer::showNewCondition(const char* title, bool& opened, GameTri
             // save condition
             newTrigger.addCondition(_conditionList[currentCondition]->clone());
             
-            // clear
+            // cleanup
             _conditionList[currentCondition]->reset();
             opened = false;
             ImGui::CloseCurrentPopup();
@@ -384,8 +418,69 @@ void TriggerEditLayer::showNewCondition(const char* title, bool& opened, GameTri
         ImGui::SameLine();
         if (ImGui::Button("Cancel", ImVec2(100, 20)))
         {
-            // clear
+            // cleanup
             _conditionList[currentCondition]->reset();
+            opened = false;
+            ImGui::CloseCurrentPopup();
+        }
+        
+        ImGui::EndPopup();
+    }
+}
+
+
+void TriggerEditLayer::showModifyCondition(const char* title, bool& opened, GameTrigger& trigger, int condIndex)
+{
+    ImGuiContext& g = *GImGui;
+    ImGui::OpenPopup(title);
+    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 800) / 2, (g.IO.DisplaySize.x - 345) / 2), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(800, 345));
+    if ( ImGui::BeginPopupModal(title, NULL, ImGuiWindowFlags_NoResize) )
+    {
+        //
+        // draw condition edit window
+        //
+        ImGui::Bullet(); ImGui::Text(_modifingCondition->name().c_str(), NULL);
+        bool isCompleted = _modifingCondition->drawEditMode(&_gmxLayer);
+        
+        //
+        // draw ok button
+        //
+        ImVec4 backupButton = ImGui::GetStyle().Colors[ImGuiCol_Button];
+        ImVec4 backupHoverColor = ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];
+        ImVec4 backupActiveColor = ImGui::GetStyle().Colors[ImGuiCol_ButtonActive];
+        if ( !isCompleted )
+        {
+            ImGui::GetStyle().Colors[ImGuiCol_Button] = ImVec4(0.20, 0.00, 0.00, 0.35);
+            ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = ImVec4(0.20, 0.00, 0.00, 0.35);
+            ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = ImVec4(0.20, 0.00, 0.00, 0.35);
+        }
+        if ( ImGui::ButtonEx("Ok", ImVec2(60, 20)) && isCompleted )
+        {
+            // save
+            trigger.conditions[condIndex]->deepCopy(_modifingCondition);
+            
+            // revert
+            CC_SAFE_DELETE(_modifingCondition);
+            
+            // cleanup
+            opened = false;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::GetStyle().Colors[ImGuiCol_Button] = backupButton;
+        ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = backupHoverColor;
+        ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = backupActiveColor;
+        
+        //
+        // draw cancel button
+        //
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel", ImVec2(100, 20)))
+        {
+            // revert
+            CC_SAFE_DELETE(_modifingCondition);
+            
+            // cleanup
             opened = false;
             ImGui::CloseCurrentPopup();
         }
@@ -407,7 +502,18 @@ void TriggerEditLayer::showNewAction(const char* title, bool& opened, GameTrigge
         // draw action edit window
         //
         static int currentAction = 0;
-        ImGui::Combo("Select Action", &currentAction, "Display Text\0", 2);
+        static std::string actionNameList;
+        static bool isFirstCall = true;
+        if ( isFirstCall )
+        {
+            for(int i = 0 ; i < _actionList.size() ; ++ i)
+            {
+                actionNameList += _actionList[i]->name();
+                actionNameList += '\0';
+            }
+            isFirstCall = false;
+        }
+        ImGui::Combo("Select Action", &currentAction, actionNameList.c_str(), 3);
         bool isCompleted = _actionList[currentAction]->drawEditMode(&_gmxLayer);
         
         //
@@ -427,7 +533,7 @@ void TriggerEditLayer::showNewAction(const char* title, bool& opened, GameTrigge
             // save
             newTrigger.addAction(_actionList[currentAction]->clone());
             
-            // clear
+            // cleanup
             _actionList[currentAction]->reset();
             opened = false;
             ImGui::CloseCurrentPopup();
@@ -442,7 +548,7 @@ void TriggerEditLayer::showNewAction(const char* title, bool& opened, GameTrigge
         ImGui::SameLine();
         if (ImGui::Button("Cancel", ImVec2(100, 20)))
         {
-            // clear
+            // cleanup
             _actionList[currentAction]->reset();
             opened = false;
             ImGui::CloseCurrentPopup();

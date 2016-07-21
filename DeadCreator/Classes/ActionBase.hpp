@@ -33,20 +33,14 @@ namespace realtrick
         
     public:
         
-        ActionBase(GMXLayer& layer) : _gmxLayer(layer) {}
-        ActionBase(const ActionBase& rhs) : _gmxLayer(rhs._gmxLayer)
-        {}
-        
+        ActionBase() = default;
+        ActionBase(const ActionBase& rhs) = default;
         virtual ~ActionBase() = default;
         
         virtual bool drawEditMode() override { return false; }
-        virtual bool drawSelectableSummary() const override { return false; }
+        virtual bool drawSelectableSummary(bool& selected) const override { return false; }
         virtual std::string getSummaryString() const override { return ""; }
-        virtual ActionBase* clone() const override { return nullptr; }
-        
-    protected:
-        
-        GMXLayer& _gmxLayer;
+        virtual void reset() override {}
         
     };
     

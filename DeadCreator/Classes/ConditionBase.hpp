@@ -35,20 +35,14 @@ namespace realtrick
         
     public:
         
-        ConditionBase(GMXLayer& layer) : _gmxLayer(layer) {}
-        ConditionBase(const ConditionBase& rhs) : _gmxLayer(rhs._gmxLayer)
-        {}
-        
+        ConditionBase() = default;
+        ConditionBase(const ConditionBase& rhs) = default;
         virtual ~ConditionBase() = default;
         
         virtual bool drawEditMode() override { return false; }
-        virtual bool drawSelectableSummary() const override { return false; }
+        virtual bool drawSelectableSummary(bool& selected) const override { return false; }
         virtual std::string getSummaryString() const override { return ""; }
-        virtual ConditionBase* clone() const override { return nullptr; }
-        
-    protected:
-        
-        GMXLayer& _gmxLayer;
+        virtual void reset() override {}
         
     };
     

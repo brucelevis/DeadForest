@@ -17,10 +17,9 @@ struct TriggerComponentProtocol
 {
     virtual ~TriggerComponentProtocol() = default;
     virtual bool drawEditMode()  = 0;
-    virtual bool drawSelectableSummary() const = 0;
+    virtual bool drawSelectableSummary(bool& selected) const = 0;
     virtual std::string getSummaryString() const = 0;
-    virtual TriggerComponentProtocol* clone() const = 0;
-    virtual void clear() = 0;
+    virtual void reset() = 0;
 };
 
 

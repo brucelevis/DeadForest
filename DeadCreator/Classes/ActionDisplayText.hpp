@@ -19,14 +19,8 @@ namespace realtrick
         
     public:
         
-        ActionDisplayText(GMXLayer& layer) : ActionBase(layer)
-        {
-            _buf[0] = '\0';
-        }
-        
-        virtual ~ActionDisplayText()
-        {}
-        
+        ActionDisplayText() { _buf[0] = '\0'; }
+        virtual ~ActionDisplayText() = default;
         ActionDisplayText(const ActionDisplayText& rhs) : ActionBase(rhs)
         {
             std::strncpy(_buf, rhs._buf, 32);
@@ -42,7 +36,7 @@ namespace realtrick
             return (_buf[0] != '\0');
         }
         
-        virtual bool drawSelectableSummary() const override
+        virtual bool drawSelectableSummary(bool& selected) const override
         {
             return ImGui::Selectable(this->getSummaryString().c_str());
         }
@@ -55,12 +49,7 @@ namespace realtrick
             return ret;
         }
         
-        virtual ActionDisplayText* clone() const override
-        {
-            return new ActionDisplayText(*this);
-        }
-        
-        virtual void clear() override
+        virtual void reset() override
         {
             _buf[0] = '\0';
         }

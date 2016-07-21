@@ -25,68 +25,54 @@ namespace realtrick
     class ConditionBase;
     class ActionBase;
     
-    class GameTrigger
+    struct GameTrigger
     {
         
-    public:
+        bool isSelected;
+        
+        std::vector<PlayerType> players;
+        std::vector<std::pair<bool, ConditionBase>> conditions;
+        std::vector<ActionBase> actions;
+
+        GameTrigger() = default;
+        GameTrigger(const GameTrigger& rhs)
+        {
+            players = rhs.players;
+        }
+        
+        void reset()
+        {
+            players.clear();
+            conditions.clear();
+            actions.clear();
+        }
         
         bool drawTrigger()
         {
             std::string label;
             label += "Conditions:\n";
-            for(int i = 0 ; i < _conditions.size(); ++ i)
+            for(int i = 0 ; i < conditions.size(); ++ i)
             {
-                label += _conditions[i]->getSummaryString();
+                label += conditions[i].second.getSummaryString();
                 label += '\n';
             }
             
             label += "Actions:\n";
-            for(int i = 0 ; i < _actions.size() ; ++ i)
+            for(int i = 0 ; i < actions.size() ; ++ i)
             {
-                label += _actions[i]->getSummaryString();
+                label += actions[i].getSummaryString();
                 label += '\n';
             }
             
             label.pop_back();
             
-            bool ret = ImGui::Selectable(label.c_str(), &_isSelected, ImGuiSelectableFlags_AllowDoubleClick);
+            bool ret = ImGui::Selectable(label.c_str(), &isSelected, ImGuiSelectableFlags_AllowDoubleClick);
             return ret;
         }
         
-        void setSelected(bool selected) { _isSelected = selected; }
-        bool isSelected() const { return _isSelected; }
-        
-        void setPlayerType(const std::vector<PlayerType>& players) { _players.clear(); _players = players; }
-        void addCondition(ConditionBase* cond) { _conditions.push_back(cond); }
-        void addAction(ActionBase* act) { _actions.push_back(act); }
-        
-        void drawConditions()
-        {
-            for(int i = 0 ; i < _conditions.size(); ++ i)
-            {
-                _conditions[i]->drawSelectableSummary();
-            }
-        }
-        
-        void drawActions()
-        {
-            for(int i = 0 ; i < _actions.size(); ++ i)
-            {
-                _actions[i]->drawSelectableSummary();
-            }
-        }
-        
-        int getCheckedPlayerNumber() const { return _players.size(); }
-        int getConditionNumber() const { return _conditions.size(); }
-        int getActionNumber() const { return _actions.size(); }
-        
-    private:
-        
-        bool _isSelected;
-        
-        std::vector<PlayerType> _players;
-        std::vector<ConditionBase*> _conditions;
-        std::vector<ActionBase*> _actions;
+        void setPlayerType(const std::vector<PlayerType>& p) { players.clear(); players = p; }
+        void addCondition(const ConditionBase& cond) { conditions.push_back({false, cond}); }
+        void addAction(const ActionBase& act) { actions.push_back(act); }
         
     };
     

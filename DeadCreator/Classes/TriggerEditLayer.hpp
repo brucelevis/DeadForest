@@ -31,21 +31,21 @@ namespace realtrick
         virtual bool init() override;
         
         void showLayer(bool* opened);
-        void closeWindow();
+        void closeWindow(bool* opened);
+        
+        void showNewTrigger(const char* title, bool& opened);
+        void showNewCondition(const char* title, bool& opened, GameTrigger& newTrigger);
         
     private:
         
         GMXLayer& _gmxLayer;
         
         bool _selectedPlayer[8];
-        
         bool _isPlayerChecked[8];
         
-        std::vector<GameTrigger*> _triggers;
-        GameTrigger* _newTrigger;
-        
-        std::vector<ConditionBase*> _conditionList;
-        std::vector<ActionBase*> _actionList;
+        std::vector<GameTrigger> _triggers;
+        std::vector<ConditionBase> _conditionList;
+        std::vector<ActionBase> _actionList;
         
     };
     

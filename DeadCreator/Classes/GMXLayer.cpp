@@ -352,7 +352,7 @@ void GMXLayer::updateCocosLogic()
         bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
         if ( !isClickedResizeButton )
         {
-            static bool isExistClickableLocation = false;
+            static bool isExistClickableLocation;
             if ( ImGui::GetIO().MouseClicked[0] )
             {
                 isExistClickableLocation = false;
@@ -408,11 +408,11 @@ void GMXLayer::updateCocosLogic()
                     location->setLocationZOrder(_locations.size());
                     location->setSelected(true);
                     int number = 0;
-                    while ( isOverlappedLocationName("Location" + std::to_string(number)) )
+                    while ( isOverlappedLocationName(std::string("Location") + std::to_string(number)) )
                     {
                         number ++;
                     }
-                    location->setLocationName("Location" + std::to_string(number));
+                    location->setLocationName(std::string("Location") + std::to_string(number));
                     addLocation(location);
                     
                     _grabbedLocation = location;

@@ -97,12 +97,12 @@ namespace realtrick
         }
         
         GameTrigger() = default;
-        GameTrigger(const GameTrigger& rhs) { cocos2d::log("GameTrigger 복사생성자"); copyFrom(rhs); }
+        GameTrigger(const GameTrigger& rhs) { copyFrom(rhs); }
         GameTrigger& operator=(const GameTrigger& rhs)
         {
-            cocos2d::log("GameTrigger 대입연산자");
             if ( &rhs != this )
             {
+                reset();
                 copyFrom(rhs);
             }
             return *this;
@@ -112,8 +112,6 @@ namespace realtrick
         
         void copyFrom(const GameTrigger& rhs)
         {
-            reset();
-            
             for(int i = 0 ; i < 8 ; ++ i ) isPlayerSelected[i] = rhs.isPlayerSelected[i];
             for(auto& cond : rhs.conditions) conditions.push_back(cond->clone());
             for(auto& act : rhs.actions) actions.push_back(act->clone());

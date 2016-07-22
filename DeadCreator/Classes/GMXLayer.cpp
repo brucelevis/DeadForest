@@ -273,10 +273,7 @@ void GMXLayer::showWindow()
         setVisible(false);
         _isShowPalette = false;
         _isShowNavigator = false;
-        _imguiLayer.setEnableEditMenu(false);
-        _imguiLayer.setEnablePlayerMenu(false);
-        _imguiLayer.setEnableWindowMenu(false);
-        _imguiLayer.setEnableSaveButton(false);
+        _imguiLayer.closeGMXLayer();
     }
     
     if ( _isShowPalette ) _paletteLayer->showLayer(&_isShowPalette);

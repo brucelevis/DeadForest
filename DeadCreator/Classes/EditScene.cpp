@@ -161,6 +161,7 @@ bool EditScene::init()
         {
             doNewButton();
         }
+        if ( ImGui::IsItemHovered()) ImGui::SetTooltip("new");
         ImGui::PopStyleColor(2);
         
         static float openAlpha;
@@ -183,6 +184,7 @@ bool EditScene::init()
         {
             doOpenButton();
         }
+        if ( _enableOpenMap && ImGui::IsItemHovered()) ImGui::SetTooltip("open");
         ImGui::PopStyleColor(2);
         
         static float saveAlpha;
@@ -205,6 +207,7 @@ bool EditScene::init()
         {
             doSaveButton();
         }
+        if ( _enableSaveMap && ImGui::IsItemHovered()) ImGui::SetTooltip("save");
         ImGui::PopStyleColor(2);
         
         ImGui::SameLine();
@@ -225,6 +228,7 @@ bool EditScene::init()
         {
             if ( isUndo() ) _layer->undo();
         }
+        if ( isUndo() && ImGui::IsItemHovered()) ImGui::SetTooltip("undo");
         ImGui::PopStyleColor(2);
         
         ImGui::SameLine();
@@ -245,6 +249,56 @@ bool EditScene::init()
         {
             if ( isRedo() ) _layer->redo();
         }
+        if ( isRedo() && ImGui::IsItemHovered()) ImGui::SetTooltip("redo");
+        ImGui::PopStyleColor(2);
+        
+        static float windowAlpha;
+        if ( _layer )
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
+            windowAlpha = 1.0f;
+        }
+        else
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0, 0.0, 0.0, 0.0));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
+            windowAlpha = 0.2f;
+        }
+        
+        ImGui::SameLine();
+        if (ImGuiLayer::imageButton("navi.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
+                                    -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
+        {
+            if ( _layer ) { _layer->isShowNavigator() = !_layer->isShowNavigator(); }
+        }
+        if ( _layer && ImGui::IsItemHovered()) ImGui::SetTooltip("navigator");
+
+    
+        ImGui::SameLine();
+        if ( ImGuiLayer::imageButton("palette.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
+                                     -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, windowAlpha)))
+        {
+            if ( _layer ) { _layer->isShowPalette() = !_layer->isShowPalette(); }
+        }
+        if ( _layer && ImGui::IsItemHovered()) ImGui::SetTooltip("palette");
+        
+        ImGui::SameLine();
+        if (ImGuiLayer::imageButton("history.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
+                                    -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
+        {
+            if ( _layer ) { _layer->isShowHistory() = !_layer->isShowHistory(); }
+        }
+        if ( _layer && ImGui::IsItemHovered()) ImGui::SetTooltip("history");
+        
+        ImGui::SameLine();
+        if ( ImGuiLayer::imageButton("trigger.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
+                                     -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
+        {
+            if ( _layer ) { _layer->isShowTriggerEdit() = !_layer->isShowTriggerEdit(); }
+        }
+        if ( _layer && ImGui::IsItemHovered()) ImGui::SetTooltip("trigger");
+        
         ImGui::PopStyleColor(2);
         
         ImGui::SameLine();
@@ -314,11 +368,7 @@ bool EditScene::init()
 
 void EditScene::createGMXLayer(GMXFile* file)
 {
-    if ( _layer )
-    {
-        _layer->removeFromParent();
-        log("remove from parent");
-    }
+    if ( _layer ) closeGMXLayer();
     
     _layer = GMXLayer::create(*this, *file);
     addChild(_layer);
@@ -337,7 +387,7 @@ void EditScene::createGMXLayer(GMXFile* file)
 
 void EditScene::createGMXLayer(const std::string& filePath)
 {
-    if ( _layer ) _layer->removeFromParent();
+    if ( _layer ) closeGMXLayer();
     
     std::string loadData;
     auto ret =  flatbuffers::LoadFile(filePath.c_str(), true, &loadData);
@@ -456,6 +506,18 @@ void EditScene::createGMXLayer(const std::string& filePath)
         
         changeLayerType(LayerType::TILE);
     }
+}
+
+
+void EditScene::closeGMXLayer()
+{
+    setEnableEditMenu(false);
+    setEnablePlayerMenu(false);
+    setEnableWindowMenu(false);
+    setEnableSaveButton(false);
+    
+    _layer->removeFromParent();
+    _layer = nullptr;
 }
 
 

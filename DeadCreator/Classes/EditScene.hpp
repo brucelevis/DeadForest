@@ -48,6 +48,7 @@ namespace realtrick
         
         void createGMXLayer(GMXFile* file);
         void createGMXLayer(const std::string& filePath);
+        void closeGMXLayer();
         
         void setLayerType(LayerType type) { _layerType = type; }
         int getLayerType() const { return _layerType; }

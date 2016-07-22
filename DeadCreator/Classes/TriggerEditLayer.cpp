@@ -53,6 +53,7 @@ bool TriggerEditLayer::init()
     
     for ( int i = 0 ; i < 8 ; ++ i) _isSelectedPlayer[i] = false;
     _isSelectedPlayer[0] = true;
+    _selectedPlayer = 0;
     
     GameTrigger::ConditionType condIter = GameTrigger::ConditionType::BEGIN;
     GameTrigger::increase(condIter);
@@ -97,6 +98,7 @@ void TriggerEditLayer::showLayer(bool* opened)
             {
                 for(int j = 0 ; j < 8 ; ++j ) { _isSelectedPlayer[j] = false; }
                 _isSelectedPlayer[i] = true;
+                _selectedPlayer = i;
             }
         }
         ImGui::EndChild();
@@ -110,7 +112,7 @@ void TriggerEditLayer::showLayer(bool* opened)
         for( int i = 0 ; i < _triggers.size() ; ++ i)
         {
             ImGui::PushID(i);
-            if ( _triggers[i]->drawSelectableTrigger() )
+            if ( _triggers[i]->isPlayerSelected[_selectedPlayer] && _triggers[i]->drawSelectableTrigger() )
             {
                 for(int j = 0 ; j < _triggers.size() ; ++j )
                     _triggers[j]->isSelected = false;
@@ -124,7 +126,6 @@ void TriggerEditLayer::showLayer(bool* opened)
                 }
             }
             ImGui::PopID();
-            ImGui::Separator();
         }
         ImGui::EndChild();
         ImGui::EndGroup();

@@ -148,6 +148,7 @@ namespace realtrick
             label.pop_back();
             
             bool ret = ImGui::Selectable(label.c_str(), &isSelected, ImGuiSelectableFlags_AllowDoubleClick);
+            ImGui::Separator();
             return ret;
         }
         

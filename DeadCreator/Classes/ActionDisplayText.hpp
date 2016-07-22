@@ -50,7 +50,7 @@ namespace realtrick
         
         virtual bool drawSelectableSummary(bool& selected) const override
         {
-            return ImGui::Selectable(this->getSummaryString().c_str());
+            return ImGui::Selectable(this->getSummaryString().c_str(), selected);
         }
         
         virtual std::string getSummaryString() const override

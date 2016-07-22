@@ -148,6 +148,26 @@ namespace realtrick
         void addCondition(ConditionBase* cond) { conditions.push_back(cond); }
         void addAction(ActionBase* act) { actions.push_back(act); }
         
+        void eraseCondition(int idx)
+        {
+            auto iter = std::find(conditions.begin(), conditions.end(), conditions[idx]);
+            if ( iter != conditions.end() )
+            {
+                CC_SAFE_DELETE(*iter);
+                conditions.erase(iter);
+            }
+        }
+        
+        void eraseAction(int idx)
+        {
+            auto iter = std::find(actions.begin(), actions.end(), actions[idx]);
+            if ( iter != actions.end() )
+            {
+                CC_SAFE_DELETE(*iter);
+                actions.erase(iter);
+            }
+        }
+        
     };
     
 }

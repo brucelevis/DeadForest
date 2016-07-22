@@ -34,6 +34,7 @@ namespace realtrick
         void closeWindow(bool* opened);
         
         void showNewTrigger(const char* title, bool& opened);
+        void showModifyTrigger(const char* title, bool& opened, GameTrigger& trigger, int trigIndex);
         void showNewCondition(const char* title, bool& opened, GameTrigger& newTrigger);
         void showModifyCondition(const char* title, bool& opened, GameTrigger& trigger, int condIndex);
         void showNewAction(const char* title, bool& opened, GameTrigger& newTrigger);

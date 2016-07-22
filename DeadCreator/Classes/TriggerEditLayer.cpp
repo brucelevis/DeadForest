@@ -142,10 +142,22 @@ void TriggerEditLayer::showLayer(bool* opened)
         ImGui::PushID(0);
         if ( ImGui::Button("New", ImVec2(130, 25)) ) isShowNewTrigger = true;
         if ( ImGui::Button("Modify", ImVec2(130, 25)) ) isModifyTrigger = true;
-        ImGui::Button("Copy", ImVec2(130, 25));
-        ImGui::Button("Delete", ImVec2(130, 25));
-        ImGui::Button("Move Up", ImVec2(130, 25));
-        ImGui::Button("Move Down", ImVec2(130, 25));
+        if ( ImGui::Button("Copy", ImVec2(130, 25)) )
+        {
+            
+        }
+        if ( ImGui::Button("Delete", ImVec2(130, 25)) )
+        {
+            
+        }
+        if ( ImGui::Button("Move Up", ImVec2(130, 25)) )
+        {
+            
+        }
+        if ( ImGui::Button("Move Down", ImVec2(130, 25)) )
+        {
+            
+        }
         ImGui::PopID();
         ImGui::EndGroup();
         
@@ -227,20 +239,22 @@ void TriggerEditLayer::showNewTrigger(const char* title, bool& opened)
             //
             // draw conditions summary
             //
-            static int selectedCondition = 0;
+            static int selectedCondition = -1;
             ImGui::BeginGroup();
             ImGui::BeginChild("##dummy", ImVec2(950, 550), true);
             for (int i = 0 ; i < newTrigger.conditions.size(); ++ i)
             {
-                bool ret = newTrigger.conditions[i]->drawSelectableSummary(newTrigger.conditions[i]->isSelected());
-                if ( ret )
+                ImGui::PushID(i);
+                if ( newTrigger.conditions[i]->drawSelectableSummary(newTrigger.conditions[i]->isSelected()) )
                 {
+                    log("selected: %d", i);
                     for(int j = 0 ; j < newTrigger.conditions.size(); ++ j)
                         newTrigger.conditions[j]->isSelected() = false;
                     
                     newTrigger.conditions[i]->isSelected() = true;
                     selectedCondition = i;
                 }
+                ImGui::PopID();
             }
             ImGui::EndChild();
             ImGui::EndGroup();
@@ -260,13 +274,46 @@ void TriggerEditLayer::showNewTrigger(const char* title, bool& opened)
             if ( ImGui::Button("New", ImVec2(130, 25)) ) isShowNewCondition = true;
             if ( ImGui::Button("Modify", ImVec2(130, 25)) )
             {
-                _modifyingCondition = newTrigger.conditions[selectedCondition]->clone();
-                isShowModifyCondition = true;
+                if ( selectedCondition != -1)
+                {
+                    _modifyingCondition = newTrigger.conditions[selectedCondition]->clone();
+                    isShowModifyCondition = true;
+                }
             }
-            ImGui::Button("Copy", ImVec2(130, 25));
-            ImGui::Button("Delete", ImVec2(130, 25));
-            ImGui::Button("Move Up", ImVec2(130, 25));
-            ImGui::Button("Move Down", ImVec2(130, 25));
+            if ( ImGui::Button("Copy", ImVec2(130, 25)) )
+            {
+                if ( selectedCondition != -1)
+                {
+                    auto clonedCondition = newTrigger.conditions[selectedCondition]->clone();
+                    clonedCondition->isSelected() = false;
+                    newTrigger.addCondition(clonedCondition);
+                }
+            }
+            if ( ImGui::Button("Delete", ImVec2(130, 25)) )
+            {
+                if ( selectedCondition != -1)
+                {
+                    newTrigger.eraseCondition(selectedCondition);
+                    if ( selectedCondition == newTrigger.conditions.size() ) selectedCondition = -1;
+                    else newTrigger.conditions[selectedCondition]->isSelected() = true;
+                }
+            }
+            if ( ImGui::Button("Move Up", ImVec2(130, 25)) )
+            {
+                if ( selectedCondition > 0 )
+                {
+                    std::swap(newTrigger.conditions[selectedCondition], newTrigger.conditions[selectedCondition - 1]);
+                    selectedCondition -= 1;
+                }
+            }
+            if ( ImGui::Button("Move Down", ImVec2(130, 25)) )
+            {
+                if ( selectedCondition < newTrigger.conditions.size() - 1 )
+                {
+                    std::swap(newTrigger.conditions[selectedCondition], newTrigger.conditions[selectedCondition + 1]);
+                    selectedCondition += 1;
+                }
+            }
             ImGui::PopID();
             ImGui::EndGroup();
         }
@@ -276,13 +323,13 @@ void TriggerEditLayer::showNewTrigger(const char* title, bool& opened)
             //
             // draw actions summary
             //
-            static int selectedAction = 0;
+            static int selectedAction = -1;
             ImGui::BeginGroup();
             ImGui::BeginChild("##dummy", ImVec2(950, 550), true);
             for (int i = 0 ; i < newTrigger.actions.size(); ++ i)
             {
-                bool ret = newTrigger.actions[i]->drawSelectableSummary(newTrigger.actions[i]->isSelected());
-                if ( ret )
+                ImGui::PushID(i);
+                if ( newTrigger.actions[i]->drawSelectableSummary(newTrigger.actions[i]->isSelected()) )
                 {
                     for(int j = 0 ; j < newTrigger.actions.size(); ++ j)
                         newTrigger.actions[j]->isSelected() = false;
@@ -290,6 +337,7 @@ void TriggerEditLayer::showNewTrigger(const char* title, bool& opened)
                     newTrigger.actions[i]->isSelected() = true;
                     selectedAction = i;
                 }
+                ImGui::PopID();
             }
             ImGui::EndChild();
             ImGui::EndGroup();
@@ -306,13 +354,46 @@ void TriggerEditLayer::showNewTrigger(const char* title, bool& opened)
             if ( ImGui::Button("New", ImVec2(130, 25)) ) isShowNewAction = true;
             if ( ImGui::Button("Modify", ImVec2(130, 25)) )
             {
-                _modifyingAction = newTrigger.actions[selectedAction]->clone();
-                isShowModifyAction = true;
+                if ( selectedAction != -1 )
+                {
+                    _modifyingAction = newTrigger.actions[selectedAction]->clone();
+                    isShowModifyAction = true;
+                }
             }
-            ImGui::Button("Copy", ImVec2(130, 25));
-            ImGui::Button("Delete", ImVec2(130, 25));
-            ImGui::Button("Move Up", ImVec2(130, 25));
-            ImGui::Button("Move Down", ImVec2(130, 25));
+            if ( ImGui::Button("Copy", ImVec2(130, 25)) )
+            {
+                if ( selectedAction != -1 )
+                {
+                    auto clonedAction = newTrigger.actions[selectedAction]->clone();
+                    clonedAction->isSelected() = false;
+                    newTrigger.addAction(clonedAction);
+                }
+            }
+            if ( ImGui::Button("Delete", ImVec2(130, 25)) )
+            {
+                if ( selectedAction != -1)
+                {
+                    newTrigger.eraseAction(selectedAction);
+                    if ( selectedAction == newTrigger.actions.size() ) selectedAction = -1;
+                    else newTrigger.actions[selectedAction]->isSelected() = true;
+                }
+            }
+            if ( ImGui::Button("Move Up", ImVec2(130, 25)) )
+            {
+                if ( selectedAction > 0 )
+                {
+                    std::swap(newTrigger.actions[selectedAction], newTrigger.actions[selectedAction - 1]);
+                    selectedAction -= 1;
+                }
+            }
+            if ( ImGui::Button("Move Down", ImVec2(130, 25)) )
+            {
+                if ( selectedAction < newTrigger.actions.size() - 1 )
+                {
+                    std::swap(newTrigger.actions[selectedAction], newTrigger.actions[selectedAction + 1]);
+                    selectedAction += 1;
+                }
+            }
             ImGui::PopID();
             ImGui::EndGroup();
             
@@ -365,6 +446,12 @@ void TriggerEditLayer::showNewTrigger(const char* title, bool& opened)
         
         ImGui::EndPopup();
     }
+}
+
+
+void TriggerEditLayer::showModifyTrigger(const char* title, bool& opened, GameTrigger& trigger, int trigIndex)
+{
+    
 }
 
 
@@ -466,7 +553,7 @@ void TriggerEditLayer::showModifyCondition(const char* title, bool& opened, Game
         if ( ImGui::ButtonEx("Ok", ImVec2(60, 20)) && isCompleted )
         {
             // save
-            trigger.conditions[condIndex]->deepCopy(_modifyingCondition);
+            std::swap(trigger.conditions[condIndex], _modifyingCondition);
             
             // revert
             CC_SAFE_DELETE(_modifyingCondition);
@@ -596,7 +683,7 @@ void TriggerEditLayer::showModifyAction(const char* title, bool& opened, GameTri
         if ( ImGui::ButtonEx("Ok", ImVec2(60, 20)) && isCompleted )
         {
             // save
-            trigger.actions[actIndex]->deepCopy(_modifyingAction);
+            std::swap(trigger.actions[actIndex], _modifyingAction);
             
             // revert
             CC_SAFE_DELETE(_modifyingAction);

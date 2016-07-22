@@ -28,8 +28,17 @@ _gmxLayer(layer)
 
 TriggerEditLayer::~TriggerEditLayer()
 {
+    for(auto& trigger : _triggers) CC_SAFE_DELETE(trigger);
+    for(auto& cond : _conditionList) CC_SAFE_DELETE(cond);
+    for(auto& act : _actionList) CC_SAFE_DELETE(act);
+    
+    _triggers.clear();
     _conditionList.clear();
     _actionList.clear();
+    
+    _modifyingTrigger = nullptr;
+    _modifyingCondition = nullptr;
+    _modifyingAction = nullptr;
 }
 
 
@@ -216,8 +225,7 @@ void TriggerEditLayer::closeWindow(bool* opened)
     for(int i = 0 ; i < 8 ; ++i ) _isSelectedPlayer[i] = false;
     _isSelectedPlayer[0] = true;
     
-    for(int i = 0 ; i < _triggers.size() ; ++i )
-        _triggers[i]->isSelected = false;
+    for(int i = 0 ; i < _triggers.size() ; ++i ) _triggers[i]->isSelected = false;
     
     ImGui::CloseCurrentPopup();
 }

@@ -437,7 +437,7 @@ void GMXLayer::updateCocosLogic()
         }
     }
     
-    if ( _imguiLayer.getLayerType() == LayerType::LOCATION && ImGui::GetIO().MouseReleased[0] )
+    if ( _imguiLayer.getLayerType() == LayerType::LOCATION && ImGui::GetIO().MouseReleased[0] && _grabbedLocation )
     {
         for( auto& loc : _locations )
         {
@@ -1727,14 +1727,27 @@ void GMXLayer::save(const std::string& path)
         }
     }
     
+    // cell space size
     DeadCreator::Size cellSpaceSize(_file.tileWidth * 5, _file.tileHeight * 5);
+    
+    // locations
+    std::vector<flatbuffers::Offset<DeadCreator::Location>> locations;
+    for(int i = 0 ; i < _locations.size(); ++ i)
+    {
+        DeadCreator::Vector2 pos(_locations[i]->getPosition().x, _locations[i]->getPosition().y);
+        DeadCreator::Size size(_locations[i]->getLocationSize().first, _locations[i]->getLocationSize().second);
+        locations.push_back(DeadCreator::CreateLocation(builder,
+                                                        builder.CreateString(_locations[i]->getLocationName().c_str()),
+                                                        &pos, &size));
+    }
     
     auto file = DeadCreator::CreateGMXFile(builder,
                                            static_cast<DeadCreator::TileType>(_file.defaultTile),
                                            builder.CreateVector(tileInfos), &numOfTiles, &tileSize,
                                            builder.CreateVector(collisionRegions),
                                            builder.CreateVector(entities),
-                                           &cellSpaceSize);
+                                           &cellSpaceSize,
+                                           builder.CreateVector(locations));
     builder.Finish(file);
     flatbuffers::SaveFile(path.c_str(),
                           reinterpret_cast<const char*>(builder.GetBufferPointer()),

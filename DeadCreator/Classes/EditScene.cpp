@@ -19,6 +19,7 @@ using namespace cocos2d;
 #include "SaveAsLayer.hpp"
 #include "OpenLayer.hpp"
 #include "PaletteLayer.hpp"
+#include "LocationNode.hpp"
 #include "SizeProtocol.h"
 using namespace realtrick;
 
@@ -336,10 +337,7 @@ void EditScene::createGMXLayer(GMXFile* file)
 
 void EditScene::createGMXLayer(const std::string& filePath)
 {
-    if ( _layer )
-    {
-        _layer->removeFromParent();
-    }
+    if ( _layer ) _layer->removeFromParent();
     
     std::string loadData;
     auto ret =  flatbuffers::LoadFile(filePath.c_str(), true, &loadData);
@@ -384,7 +382,6 @@ void EditScene::createGMXLayer(const std::string& filePath)
             }
         }
         
-        
         for ( auto iter = gmxFile->tiles()->begin(); iter != gmxFile->tiles()->end() ; ++ iter)
         {
             int xx = iter->indices()->x();
@@ -397,6 +394,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
         _layer->enableFirstFile(false);
         addChild(_layer);
         
+        // tile infos
         for ( auto iter = gmxFile->tiles()->begin(); iter != gmxFile->tiles()->end() ; ++ iter)
         {
             int xx = iter->indices()->x();
@@ -407,6 +405,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
         }
         
         
+        // collision regions
         for ( auto iter = gmxFile->collision_regions()->begin(); iter != gmxFile->collision_regions()->end(); ++ iter )
         {
             auto polygon = iter;
@@ -416,6 +415,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
             }
         }
         
+        // entities
         for ( auto iter = gmxFile->entities()->begin(); iter != gmxFile->entities()->end() ; ++ iter )
         {
             Vec2 pos(iter->pos()->x(), iter->pos()->y());
@@ -428,6 +428,21 @@ void EditScene::createGMXLayer(const std::string& filePath)
             _layer->addEntityForce(ent, 5);
         }
         
+        // locations
+        for ( auto iter = gmxFile->locations()->begin() ; iter != gmxFile->locations()->end() ; ++ iter)
+        {
+            std::string name = iter->name()->str();
+            Vec2 pos(iter->pos()->x(), iter->pos()->y());
+            std::pair<int, int> size = std::make_pair(iter->size()->width(), iter->size()->height());
+            
+            LocationNode* loc = LocationNode::create(*_layer);
+            loc->setLocationName(name);
+            loc->setPositionFromWorldPosition(pos);
+            loc->setLocationSize(size.first, size.second);
+            loc->setSelected(false);
+            _layer->addLocation(loc);
+        }
+        
         _layer->updateCollisionRegion();
         
         // menu
@@ -438,6 +453,8 @@ void EditScene::createGMXLayer(const std::string& filePath)
         // button
         setEnableSaveButton(true);
         _selectedPlayerType = 0;
+        
+        changeLayerType(LayerType::TILE);
     }
 }
 
@@ -486,21 +503,18 @@ bool EditScene::isRedo()
 
 void EditScene::doSaveButton()
 {
-    if ( _layer ) _layer->updateChunk(_layer->getCameraPosition());
-    if ( _layer->isFirstFile() )
+    if ( _layer )
     {
-        saveAsFile();
-    }
-    else
-    {
-        saveFile(_layer->getCurrFilePath());
+        _layer->updateChunk(_layer->getCameraPosition());
+        if ( _layer->isFirstFile() ) saveAsFile();
+        else saveFile(_layer->getCurrFilePath());
     }
 }
 
 
 void EditScene::saveFile(const std::string& filePath)
 {
-    _layer->save(filePath);
+    if ( _layer ) _layer->save(filePath);
 }
 
 

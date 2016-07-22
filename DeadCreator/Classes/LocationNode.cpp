@@ -236,7 +236,7 @@ void LocationNode::updateRects()
     _rects[8].setRect(p.x + rectSize.width - dummySpace, p.y - dummySpace, dummySpace * 2, dummySpace * 2);
 
     _aabb.setRect(p.x, p.y, rectSize.width, rectSize.height);
-    setLocationSize(_sizeX, _sizeY);
+    dummySpace = 10 + std::min(_sizeX, _sizeY) * 0.5f;
 }
 
 
@@ -388,8 +388,7 @@ void LocationNode::setLocationSize(int x, int y)
 {
     _sizeX = x;
     _sizeY = y;
-    
-    dummySpace = 10 + std::min(_sizeX, _sizeY) * 0.5f;
+    updateRects();
 }
 
 

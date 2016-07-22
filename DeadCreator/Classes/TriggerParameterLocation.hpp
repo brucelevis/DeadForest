@@ -39,6 +39,8 @@ namespace realtrick
             _location = rhs._location;
         }
         
+        virtual ~TriggerParameterLocation() { _location = nullptr; }
+        
         LocationNode* getLocation() const { return _location; }
         void setLocation(LocationNode* location)
         {

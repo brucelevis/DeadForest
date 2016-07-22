@@ -580,7 +580,7 @@ void GMXLayer::updateCocosLogic()
     }
     
     
-    if ( !_isShowRenameLocationLayer )
+    if ( !_isShowRenameLocationLayer && !_isShowTriggerEdit )
     {
         if ( ImGui::GetIO().KeysDown[262] ) _cameraDirection.x = 1.0f;
         else if ( ImGui::GetIO().KeysDown[263] ) _cameraDirection.x = -1.0f;

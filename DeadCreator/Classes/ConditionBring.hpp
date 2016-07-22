@@ -22,7 +22,7 @@ namespace realtrick
     public:
         
         ConditionBring() { name() = "Bring"; }
-        virtual ~ConditionBring() = default;
+        virtual ~ConditionBring() { }
         
         ConditionBring(const ConditionBring& rhs) : ConditionBase(rhs) { copyFrom(rhs); }
         ConditionBring& operator=(const ConditionBring& rhs)

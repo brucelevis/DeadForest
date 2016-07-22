@@ -38,6 +38,8 @@ namespace realtrick
             _number = rhs._number;
         }
         
+        virtual ~TriggerParameterNumber() = default;
+        
         int getNumber() const { return _number; }
         void setNumber(int number)
         {

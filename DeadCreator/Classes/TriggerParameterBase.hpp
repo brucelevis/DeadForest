@@ -51,6 +51,8 @@ namespace realtrick
             _parameterName = rhs._parameterName;
         }
         
+        virtual ~TriggerParameterBase() = default;
+        
         Type getType() const { return _parameterType; }
         virtual std::string getParameterName() const { return _parameterName; }
         virtual void setParameterName(const std::string& name) { _parameterName = name; }

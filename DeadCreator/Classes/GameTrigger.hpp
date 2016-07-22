@@ -30,7 +30,7 @@ namespace realtrick
         
         bool isSelected;
         
-        std::vector<PlayerType> players;
+        bool isPlayerSelected[8];
         std::vector<ConditionBase*> conditions;
         std::vector<ActionBase*> actions;
 
@@ -97,11 +97,14 @@ namespace realtrick
         }
         
         GameTrigger() = default;
-        GameTrigger(const GameTrigger& rhs) { copyFrom(rhs); }
+        GameTrigger(const GameTrigger& rhs) { cocos2d::log("GameTrigger 복사생성자"); copyFrom(rhs); }
         GameTrigger& operator=(const GameTrigger& rhs)
         {
+            cocos2d::log("GameTrigger 대입연산자");
             if ( &rhs != this )
+            {
                 copyFrom(rhs);
+            }
             return *this;
         }
         
@@ -109,14 +112,18 @@ namespace realtrick
         
         void copyFrom(const GameTrigger& rhs)
         {
-            players = rhs.players;
-            conditions = rhs.conditions;
-            actions = rhs.actions;
+            reset();
+            
+            for(int i = 0 ; i < 8 ; ++ i ) isPlayerSelected[i] = rhs.isPlayerSelected[i];
+            for(auto& cond : rhs.conditions) conditions.push_back(cond->clone());
+            for(auto& act : rhs.actions) actions.push_back(act->clone());
         }
         
         void reset()
         {
-            players.clear();
+            for(int i = 0 ; i < 8 ; ++ i ) isPlayerSelected[i] = false;
+            for(auto& cond : conditions) CC_SAFE_DELETE(cond);
+            for(auto& act : actions) CC_SAFE_DELETE(act);
             conditions.clear();
             actions.clear();
         }
@@ -144,7 +151,6 @@ namespace realtrick
             return ret;
         }
         
-        void setPlayerType(const std::vector<PlayerType>& p) { players.clear(); players = p; }
         void addCondition(ConditionBase* cond) { conditions.push_back(cond); }
         void addAction(ActionBase* act) { actions.push_back(act); }
         
@@ -167,6 +173,15 @@ namespace realtrick
                 actions.erase(iter);
             }
         }
+        
+        int getSelectedPlayerSize() const
+        {
+            int ret = 0;
+            for(int i = 0 ; i < 8 ; ++ i) if (isPlayerSelected[i]) ret ++;
+            return ret;
+        }
+        
+        GameTrigger* clone() const { return new GameTrigger(*this); }
         
     };
     

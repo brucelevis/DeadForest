@@ -39,6 +39,8 @@ namespace realtrick
             _playerType = rhs._playerType;
         }
         
+        virtual ~TriggerParameterPlayerType() = default;
+        
         PlayerType getPlayerType() const { return _playerType; }
         void setPlayerType(PlayerType type)
         {

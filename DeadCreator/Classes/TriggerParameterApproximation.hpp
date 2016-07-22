@@ -49,6 +49,8 @@ namespace realtrick
             _approximation = rhs._approximation;
         }
         
+        virtual ~TriggerParameterApproximation() = default;
+        
         Type getApproximationType() const { return _approximation; }
         void setApproximationType(Type type)
         {

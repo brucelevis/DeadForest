@@ -12,11 +12,12 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
+#include "GameTrigger.hpp"
+
 namespace realtrick
 {
     
     class GMXLayer;
-    class GameTrigger;
     class ConditionBase;
     class ActionBase;
     
@@ -33,24 +34,23 @@ namespace realtrick
         void showLayer(bool* opened);
         void closeWindow(bool* opened);
         
-        void showNewTrigger(const char* title, bool& opened);
-        void showModifyTrigger(const char* title, bool& opened, GameTrigger& trigger, int trigIndex);
-        void showNewCondition(const char* title, bool& opened, GameTrigger& newTrigger);
-        void showModifyCondition(const char* title, bool& opened, GameTrigger& trigger, int condIndex);
-        void showNewAction(const char* title, bool& opened, GameTrigger& newTrigger);
-        void showModifyAction(const char* title, bool& opened, GameTrigger& trigger, int actIndex);
+        void showTrigger(const char* title, bool& opened, GameTrigger* trigger);
+        void showNewCondition(const char* title, bool& opened, GameTrigger* newTrigger);
+        void showModifyCondition(const char* title, bool& opened, GameTrigger* trigger, int condIndex);
+        void showNewAction(const char* title, bool& opened, GameTrigger* newTrigger);
+        void showModifyAction(const char* title, bool& opened, GameTrigger* trigger, int actIndex);
         
     private:
         
         GMXLayer& _gmxLayer;
         
         bool _selectedPlayer[8];
-        bool _isPlayerChecked[8];
         
-        std::vector<GameTrigger> _triggers;
+        std::vector<GameTrigger*> _triggers;
         std::vector<ConditionBase*> _conditionList;
         std::vector<ActionBase*> _actionList;
         
+        GameTrigger* _newTrigger;
         ConditionBase* _modifyingCondition;
         ActionBase* _modifyingAction;
         

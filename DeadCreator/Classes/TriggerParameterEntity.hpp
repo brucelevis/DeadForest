@@ -39,6 +39,8 @@ namespace realtrick
             _entityType = rhs._entityType;
         }
         
+        virtual ~TriggerParameterEntity() = default;
+        
         EntityType getEntityType() const { return _entityType; }
         void setEntityType(EntityType entityType)
         {

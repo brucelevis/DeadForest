@@ -27,15 +27,11 @@ namespace realtrick
         int defaultTile = -1;
         
         GMXFile() = default;
-        
         virtual ~GMXFile() = default;
         
     };
     
 }
-
-
-
 
 
 

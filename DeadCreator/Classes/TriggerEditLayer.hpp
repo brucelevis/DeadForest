@@ -34,7 +34,7 @@ namespace realtrick
         void showLayer(bool* opened);
         void closeWindow(bool* opened);
         
-        void showTrigger(const char* title, bool& opened, GameTrigger* trigger);
+        void showTrigger(const char* title, bool& opened, GameTrigger* trigger, bool isModify = false, int index = 0);
         void showNewCondition(const char* title, bool& opened, GameTrigger* newTrigger);
         void showModifyCondition(const char* title, bool& opened, GameTrigger* trigger, int condIndex);
         void showNewAction(const char* title, bool& opened, GameTrigger* newTrigger);
@@ -44,13 +44,14 @@ namespace realtrick
         
         GMXLayer& _gmxLayer;
         
-        bool _selectedPlayer[8];
-        
+        bool _isSelectedPlayer[8];
+        int _selectedPlayer = 0;
         std::vector<GameTrigger*> _triggers;
+        
         std::vector<ConditionBase*> _conditionList;
         std::vector<ActionBase*> _actionList;
         
-        GameTrigger* _newTrigger;
+        GameTrigger* _modifyingTrigger;
         ConditionBase* _modifyingCondition;
         ActionBase* _modifyingAction;
         

@@ -51,11 +51,8 @@ bool TriggerEditLayer::init()
     if ( !Node::init() )
         return false;
     
-    for ( int i = 0 ; i < 8 ; ++ i)
-    {
-        _selectedPlayer[i] = false;
-    }
-    _selectedPlayer[0] = true;
+    for ( int i = 0 ; i < 8 ; ++ i) _isSelectedPlayer[i] = false;
+    _isSelectedPlayer[0] = true;
     
     GameTrigger::ConditionType condIter = GameTrigger::ConditionType::BEGIN;
     GameTrigger::increase(condIter);
@@ -96,10 +93,10 @@ void TriggerEditLayer::showLayer(bool* opened)
         for(int i = 0 ; i < 8 ; ++ i)
         {
             std::string name = "Player " + std::to_string(i + 1);
-            if (ImGui::Selectable(name.c_str(), &_selectedPlayer[i]))
+            if (ImGui::Selectable(name.c_str(), &_isSelectedPlayer[i]))
             {
-                for(int j = 0 ; j < 8 ; ++j ) { _selectedPlayer[j] = false; }
-                _selectedPlayer[i] = true;
+                for(int j = 0 ; j < 8 ; ++j ) { _isSelectedPlayer[j] = false; }
+                _isSelectedPlayer[i] = true;
             }
         }
         ImGui::EndChild();
@@ -140,12 +137,16 @@ void TriggerEditLayer::showLayer(bool* opened)
         ImGui::PushID(0);
         if ( ImGui::Button("New", ImVec2(130, 25)) )
         {
-            _newTrigger = new GameTrigger();
+            _modifyingTrigger = new GameTrigger();
             isShowNewTrigger = true;
         }
         if ( ImGui::Button("Modify", ImVec2(130, 25)) )
         {
-            isModifyTrigger = true;
+            if ( selectedTrigger != -1 )
+            {
+                _modifyingTrigger = _triggers[selectedTrigger]->clone();
+                isModifyTrigger = true;
+            }
         }
         if ( ImGui::Button("Copy", ImVec2(130, 25)) )
         {
@@ -197,11 +198,8 @@ void TriggerEditLayer::showLayer(bool* opened)
         //
         // draw modal pop up windows
         //
-        if ( isShowNewTrigger )
-        {
-            showTrigger("New Trigger", isShowNewTrigger, _newTrigger);
-        }
-        if ( isModifyTrigger ) { }
+        if ( isShowNewTrigger ) showTrigger("New Trigger", isShowNewTrigger, _modifyingTrigger);
+        if ( isModifyTrigger ) showTrigger("Modify Trigger", isModifyTrigger, _modifyingTrigger, true, selectedTrigger);
             
         ImGui::PopStyleVar();
         ImGui::EndPopup();
@@ -213,9 +211,8 @@ void TriggerEditLayer::closeWindow(bool* opened)
 {
     *opened = false;
     
-    for(int i = 0 ; i < 8 ; ++i )
-        _selectedPlayer[i] = false;
-    _selectedPlayer[0] = true;
+    for(int i = 0 ; i < 8 ; ++i ) _isSelectedPlayer[i] = false;
+    _isSelectedPlayer[0] = true;
     
     for(int i = 0 ; i < _triggers.size() ; ++i )
         _triggers[i]->isSelected = false;
@@ -224,7 +221,7 @@ void TriggerEditLayer::closeWindow(bool* opened)
 }
 
 
-void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger* trigger)
+void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger* trigger, bool isModify, int index)
 {
     ImGuiContext& g = *GImGui;
     ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 1100) / 2, (g.IO.DisplaySize.x - 645) / 2), ImGuiSetCond_Once);
@@ -438,8 +435,8 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
         
         if ( ImGui::Button("Ok", ImVec2(60, 20)) && isCompleted )
         {
-            // add trigger
-            _triggers.push_back(trigger);
+            if ( isModify ) std::swap(_triggers[index], trigger);
+            else _triggers.push_back(trigger); // add
             
             // reset new trigger instance
             selectedTab = 0;
@@ -455,7 +452,7 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
         ImGui::SameLine();
         if (ImGui::Button("Cancel", ImVec2(100, 20)))
         {
-            // erase new trigger instance
+            // erase trigger instance
             CC_SAFE_DELETE(trigger);
             selectedTab = 0;
             

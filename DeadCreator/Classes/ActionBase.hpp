@@ -35,7 +35,6 @@ namespace realtrick
         void copyFrom(const ActionBase& rhs) { TriggerComponentProtocol::copyFrom(rhs); }
         
         virtual bool drawEditMode(void* opt) override { return false; }
-        virtual bool drawSelectableSummary(bool& selected) const override { return false; }
         virtual std::string getSummaryString() const override { return ""; }
         virtual void reset() override {}
         virtual ActionBase* clone() const override { return nullptr; }

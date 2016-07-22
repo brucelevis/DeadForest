@@ -42,8 +42,12 @@ public:
     bool& isSelected() { return _isSelected; }
     std::string& name() { return _name; }
     
+    virtual bool drawSelectableSummary(bool& selected) const
+    {
+        return ImGui::Selectable(this->getSummaryString().c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick);
+    }
+    
     virtual bool drawEditMode(void* opt)  = 0;
-    virtual bool drawSelectableSummary(bool& selected) const = 0;
     virtual std::string getSummaryString() const = 0;
     virtual void reset() = 0;
     virtual TriggerComponentProtocol* clone() const = 0;

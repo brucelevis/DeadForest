@@ -122,7 +122,8 @@ void TriggerEditLayer::showLayer(bool* opened)
                 
                 if ( ImGui::IsMouseDoubleClicked(0) )
                 {
-                    log("modify mode %d", i);
+                    _modifyingTrigger = _triggers[selectedTrigger]->clone();
+                    isModifyTrigger = true;
                 }
             }
             ImGui::PopID();
@@ -257,6 +258,9 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
         
         else if ( selectedTab == 1 )
         {
+            static bool isShowNewCondition = false;
+            static bool isShowModifyCondition = false;
+            
             //
             // draw conditions summary
             //
@@ -273,14 +277,17 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
                     
                     trigger->conditions[i]->isSelected() = true;
                     selectedCondition = i;
+                    
+                    if ( ImGui::IsMouseDoubleClicked(0) )
+                    {
+                        _modifyingCondition = trigger->conditions[selectedCondition]->clone();
+                        isShowModifyCondition = true;
+                    }
                 }
                 ImGui::PopID();
             }
             ImGui::EndChild();
             ImGui::EndGroup();
-            
-            static bool isShowNewCondition = false;
-            static bool isShowModifyCondition = false;
             
             if ( isShowNewCondition )
                 showNewCondition("New Condition", isShowNewCondition, trigger);
@@ -340,6 +347,9 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
         
         else if ( selectedTab == 2 )
         {
+            static bool isShowNewAction = false;
+            static bool isShowModifyAction = false;
+            
             //
             // draw actions summary
             //
@@ -356,14 +366,17 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
                     
                     trigger->actions[i]->isSelected() = true;
                     selectedAction = i;
+                    
+                    if ( ImGui::IsMouseDoubleClicked(0) )
+                    {
+                        _modifyingAction = trigger->actions[selectedAction]->clone();
+                        isShowModifyAction = true;
+                    }
                 }
                 ImGui::PopID();
             }
             ImGui::EndChild();
             ImGui::EndGroup();
-            
-            static bool isShowNewAction = false;
-            static bool isShowModifyAction = false;
             
             if ( isShowNewAction ) showNewAction("New Action", isShowNewAction, trigger);
             if ( isShowModifyAction ) showModifyAction("Modify Action", isShowModifyAction, trigger, selectedAction);

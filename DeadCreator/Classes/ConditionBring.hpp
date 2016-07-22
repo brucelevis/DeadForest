@@ -22,8 +22,6 @@ namespace realtrick
     public:
         
         ConditionBring() { name() = "Bring"; }
-        virtual ~ConditionBring() { }
-        
         ConditionBring(const ConditionBring& rhs) : ConditionBase(rhs) { copyFrom(rhs); }
         ConditionBring& operator=(const ConditionBring& rhs)
         {
@@ -48,6 +46,7 @@ namespace realtrick
             _currLocation = rhs._currLocation;
         }
         
+        virtual ~ConditionBring() = default;
         virtual bool drawEditMode(void* opt) override
         {
             auto gmxLayer = reinterpret_cast<GMXLayer*>(opt);
@@ -166,12 +165,7 @@ namespace realtrick
             
             return (_currPlayer != -1 && _currApproximation != -1 && _currEntity != -1 && _currLocation != -1);
         }
-        
-        virtual bool drawSelectableSummary(bool& selected) const override
-        {
-            return ImGui::Selectable(this->getSummaryString().c_str(), selected);
-        }
-        
+                
         virtual std::string getSummaryString() const override
         {
             std::string ret;

@@ -1,20 +1,3 @@
-# Client
-TheDeadForest-Client/CMakeLists.txt
-TheDeadForest-Client/cocos2d/
-TheDeadForest-Client/LICENSE
-TheDeadForest-Client/proj.ios_mac/
-TheDeadForest-Client/proj.android/
-TheDeadForest-Client/proj.android-studio/
-TheDeadForest-Client/proj.linux/
-TheDeadForest-Client/proj.win8.1-universal/
-TheDeadForest-Client/proj.win10/
-TheDeadForest-Client/proj.win32/
-TheDeadForest-Client/Library/
-
-# Server
-
-
-
 # Editor
 DeadCreator/CMakeLists.txt
 DeadCreator/cocos2d/

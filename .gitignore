@@ -1,4 +1,3 @@
-# Editor
 DeadCreator/CMakeLists.txt
 DeadCreator/cocos2d/
 DeadCreator/proj.ios_mac/
@@ -6,9 +5,4 @@ DeadCreator/proj.linux/
 DeadCreator/proj.win10/
 DeadCreator/proj.win32/
 
-
-Server/TheDeadForestTestClient/TheDeadForestTestClient.xcodeproj/project.pbxproj
-Server/TheDeadForestTestClient/TheDeadForestTestClient.xcodeproj/project.xcworkspace/contents.xcworkspacedata
-Server/TheDeadForestTestClient/TheDeadForestTestClient.xcodeproj/project.xcworkspace/xcuserdata/DBK.xcuserdatad/UserInterfaceState.xcuserstate
-Server/TheDeadForestTestClient/TheDeadForestTestClient.xcodeproj/xcuserdata/DBK.xcuserdatad/xcschemes/TheDeadForestTestClient.xcscheme
-Server/TheDeadForestTestClient/TheDeadForestTestClient.xcodeproj/xcuserdata/DBK.xcuserdatad/xcschemes/xcschememanagement.plist
+lib/

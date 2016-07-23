@@ -1,8 +1,2 @@
-DeadCreator/CMakeLists.txt
-DeadCreator/cocos2d/
-DeadCreator/proj.ios_mac/
-DeadCreator/proj.linux/
-DeadCreator/proj.win10/
-DeadCreator/proj.win32/
-
+DeadCreator/
 lib/

@@ -314,11 +314,9 @@ bool EditScene::init()
                          "Player 1\0Player 2\0Player 3\0Player 4\0Player 5\0Player 6\0Player 7\0Player 8\0", 8))
         {}
         ImGui::PopItemWidth();
-        
         ImGui::End();
         ImGui::PopStyleColor(4);
         ImGui::PopStyleVar(1);
-        
         
         ImGui::SetNextWindowPos(ImVec2(0.0f, io.DisplaySize.y - STATUSBAR_HEIGHT));
         ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, STATUSBAR_HEIGHT));
@@ -330,37 +328,23 @@ bool EditScene::init()
                      ImGuiWindowFlags_NoScrollbar |
                      ImGuiWindowFlags_NoSavedSettings);
         
-        ImGui::Columns(4, "extra_info", false);
+        ImGui::Columns(2, "extra_info", false);
+        ImGui::Text("(%.2f FPS)", ImGui::GetIO().Framerate);
         
+        ImGui::SameLine();
+        ImGui::NextColumn();
         static Vec2 worldPosition = Vec2::ZERO;
         if ( _layer ) worldPosition = _layer->getMousePosInWorld();
-        ImGui::Text("World Position (%.0f, %.0f)", worldPosition.x, worldPosition.y);
-        
-        ImGui::SameLine();
-        ImGui::NextColumn();
-        ImGui::Text("Player 1");
-        
-        ImGui::SameLine();
-        ImGui::NextColumn();
-        ImGui::Text("Object 372");
-        
-        ImGui::SameLine();
-        ImGui::NextColumn();
-        ImGui::Text("(%.2f FPS)", ImGui::GetIO().Framerate);
+        ImGui::Text("Mouse Position (World) (%.0f, %.0f)", worldPosition.x, worldPosition.y);
         
         ImGui::End();
         ImGui::PopStyleVar(1);
         
+//        static bool isShowDemo = true;
+//        ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
+//        ImGui::ShowTestWindow(&isShowDemo);
+        
     }, "##main menu");
-    
-    
-    addImGUI([this]{
-        
-        static bool isShowDemo = true;
-        ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-        ImGui::ShowTestWindow(&isShowDemo);
-        
-    }, "test_window");
     
     return true;
 }

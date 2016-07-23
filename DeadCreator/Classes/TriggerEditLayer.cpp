@@ -86,8 +86,9 @@ bool TriggerEditLayer::init()
 void TriggerEditLayer::showLayer(bool* opened)
 {
     ImGuiContext& g = *GImGui;
-    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 1000) / 2, (g.IO.DisplaySize.x - 700) / 2), ImGuiSetCond_Once);
-    ImGui::SetNextWindowSize(ImVec2(1000, 700));
+    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - TRIGGER_EDIT_WIDTH) / 2,
+                                   (g.IO.DisplaySize.x - TRIGGER_EDIT_HEIGHT) / 2), ImGuiSetCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(TRIGGER_EDIT_WIDTH, TRIGGER_EDIT_HEIGHT));
     ImGui::OpenPopup("Trigger Editor");
     if (ImGui::BeginPopupModal("Trigger Editor", NULL, ImGuiWindowFlags_NoResize))
     {
@@ -99,7 +100,7 @@ void TriggerEditLayer::showLayer(bool* opened)
         //
         // draw player list
         //
-        ImGui::BeginChild("dummy1", ImVec2(0, 150), true);
+        ImGui::BeginChild("dummy1", ImVec2(0, TRIGGER_PLAYER_HEIGHT), true);
         for(int i = 0 ; i < 8 ; ++ i)
         {
             std::string name = "Player " + std::to_string(i + 1);
@@ -117,7 +118,7 @@ void TriggerEditLayer::showLayer(bool* opened)
         //
         static int selectedTrigger = -1;
         ImGui::BeginGroup();
-        ImGui::BeginChild("dummy2", ImVec2(850, 480), true);
+        ImGui::BeginChild("dummy2", ImVec2(TRIGGER_EDIT_WIDTH - 150, TRIGGER_EDIT_HEIGHT - TRIGGER_PLAYER_HEIGHT - 70), true);
         for( int i = 0 ; i < _triggers.size() ; ++ i)
         {
             ImGui::PushID(i);
@@ -233,9 +234,11 @@ void TriggerEditLayer::closeWindow(bool* opened)
 
 void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger* trigger, bool isModify, int index)
 {
+    static const int WIDTH = TRIGGER_EDIT_WIDTH + 100;
+    static const int HEIGHT = TRIGGER_EDIT_HEIGHT - 55;
     ImGuiContext& g = *GImGui;
-    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 1100) / 2, (g.IO.DisplaySize.x - 645) / 2), ImGuiSetCond_Once);
-    ImGui::SetNextWindowSize(ImVec2(1100.0f, 645.0f));
+    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - WIDTH) / 2, (g.IO.DisplaySize.y - HEIGHT) / 2), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(WIDTH, HEIGHT));
     ImGui::OpenPopup(title);
     
     if (ImGui::BeginPopupModal(title, NULL, ImGuiWindowFlags_NoResize))
@@ -252,7 +255,7 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
             //
             // draw select player layer
             //
-            ImGui::BeginChild("##dummy", ImVec2(0, 550), true);
+            ImGui::BeginChild("##dummy", ImVec2(0, TRIGGER_EDIT_HEIGHT - 150), true);
             ImGui::Text("For which players will this trigger execute?");
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
             for(int i = 0 ; i < 8 ; ++ i)
@@ -274,7 +277,7 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
             //
             static int selectedCondition = -1;
             ImGui::BeginGroup();
-            ImGui::BeginChild("##dummy", ImVec2(950, 550), true);
+            ImGui::BeginChild("##dummy", ImVec2(TRIGGER_EDIT_WIDTH - 50, TRIGGER_EDIT_HEIGHT - 150), true);
             for (int i = 0 ; i < trigger->conditions.size(); ++ i)
             {
                 ImGui::PushID(i);
@@ -363,7 +366,7 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
             //
             static int selectedAction = -1;
             ImGui::BeginGroup();
-            ImGui::BeginChild("##dummy", ImVec2(950, 550), true);
+            ImGui::BeginChild("##dummy", ImVec2(TRIGGER_EDIT_WIDTH - 50, TRIGGER_EDIT_HEIGHT - 150), true);
             for (int i = 0 ; i < trigger->actions.size(); ++ i)
             {
                 ImGui::PushID(i);
@@ -489,10 +492,12 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
 
 void TriggerEditLayer::showNewCondition(const char* title, bool& opened, GameTrigger* newTrigger)
 {
+    static const int WIDTH = TRIGGER_COMPONENT_EDIT_WIDTH;
+    static const int HEIGHT = TRIGGER_COMPONENT_EDIT_HEIGHT;
     ImGuiContext& g = *GImGui;
     ImGui::OpenPopup(title);
-    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 800) / 2, (g.IO.DisplaySize.x - 345) / 2), ImGuiSetCond_Once);
-    ImGui::SetNextWindowSize(ImVec2(800, 345));
+    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - WIDTH) / 2, (g.IO.DisplaySize.y - HEIGHT) / 2), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(WIDTH, HEIGHT));
     if ( ImGui::BeginPopupModal(title, NULL, ImGuiWindowFlags_NoResize) )
     {
         //
@@ -558,10 +563,12 @@ void TriggerEditLayer::showNewCondition(const char* title, bool& opened, GameTri
 
 void TriggerEditLayer::showModifyCondition(const char* title, bool& opened, GameTrigger* trigger, int condIndex)
 {
+    static const int WIDTH = TRIGGER_COMPONENT_EDIT_WIDTH;
+    static const int HEIGHT = TRIGGER_COMPONENT_EDIT_HEIGHT;
     ImGuiContext& g = *GImGui;
     ImGui::OpenPopup(title);
-    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 800) / 2, (g.IO.DisplaySize.x - 345) / 2), ImGuiSetCond_Once);
-    ImGui::SetNextWindowSize(ImVec2(800, 345));
+    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - WIDTH) / 2, (g.IO.DisplaySize.y - HEIGHT) / 2), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(WIDTH, HEIGHT));
     if ( ImGui::BeginPopupModal(title, NULL, ImGuiWindowFlags_NoResize) )
     {
         //
@@ -619,10 +626,12 @@ void TriggerEditLayer::showModifyCondition(const char* title, bool& opened, Game
 
 void TriggerEditLayer::showNewAction(const char* title, bool& opened, GameTrigger* newTrigger)
 {
+    static const int WIDTH = TRIGGER_COMPONENT_EDIT_WIDTH;
+    static const int HEIGHT = TRIGGER_COMPONENT_EDIT_HEIGHT;
     ImGuiContext& g = *GImGui;
-    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 800) / 2, (g.IO.DisplaySize.x - 345) / 2), ImGuiSetCond_Once);
-    ImGui::SetNextWindowSize(ImVec2(800, 345));
     ImGui::OpenPopup(title);
+    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - WIDTH) / 2, (g.IO.DisplaySize.y - HEIGHT) / 2), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(WIDTH, HEIGHT));
     if ( ImGui::BeginPopupModal(title, NULL, ImGuiWindowFlags_NoResize) )
     {
         //
@@ -688,10 +697,12 @@ void TriggerEditLayer::showNewAction(const char* title, bool& opened, GameTrigge
 
 void TriggerEditLayer::showModifyAction(const char* title, bool& opened, GameTrigger* trigger, int actIndex)
 {
+    static const int WIDTH = TRIGGER_COMPONENT_EDIT_WIDTH;
+    static const int HEIGHT = TRIGGER_COMPONENT_EDIT_HEIGHT;
     ImGuiContext& g = *GImGui;
     ImGui::OpenPopup(title);
-    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 800) / 2, (g.IO.DisplaySize.x - 345) / 2), ImGuiSetCond_Once);
-    ImGui::SetNextWindowSize(ImVec2(800, 345));
+    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - WIDTH) / 2, (g.IO.DisplaySize.y - HEIGHT) / 2), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(WIDTH, HEIGHT));
     if ( ImGui::BeginPopupModal(title, NULL, ImGuiWindowFlags_NoResize) )
     {
         //

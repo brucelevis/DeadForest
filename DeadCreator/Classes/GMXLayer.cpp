@@ -262,7 +262,7 @@ void GMXLayer::showWindow()
     _tileRoot->setPosition(_layerSize / 2);
     _clipNode->setClippingRegion(cocos2d::Rect(0, 0, _layerSize.width, _layerSize.height));
     
-    if ( !_imguiLayer.isModal() ) updateCocosLogic();
+    if ( !_imguiLayer.isModal() && !_isShowTriggerEdit ) updateCocosLogic();
     
     ImGui::End();
     ImGui::PopStyleVar(2);
@@ -577,7 +577,7 @@ void GMXLayer::updateCocosLogic()
     }
     
     
-    if ( !_isShowRenameLocationLayer && !_isShowTriggerEdit )
+    if ( !_isShowRenameLocationLayer )
     {
         if ( ImGui::GetIO().KeysDown[262] ) _cameraDirection.x = 1.0f;
         else if ( ImGui::GetIO().KeysDown[263] ) _cameraDirection.x = -1.0f;

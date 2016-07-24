@@ -22,6 +22,9 @@ Architecture of a game is largely has three configurations. **Editor**, **Client
 
 **Client** run real-time rendering to the actual game data using the built in editor. [cocos2d-x](http://cocos2d-x.org) game engine is helps this works. Since the game is a large game world we were using various optimization techniques(such as cell space partition, deferred rendering)
 
+**Server** 
+The game server has not yet been developed.
+
 ![CellSpacePartition](http://i.imgur.com/tCV8nCm.jpg)
 This can be through lowering the average basic operations of the game (such as collision detecting) is to be done.
 
@@ -39,7 +42,6 @@ How to build
 3. Paste to Classes, Resource folders.
 4. play.
 
-The game server has not yet been developed.
 
 License
 -------

@@ -1281,7 +1281,6 @@ void GMXLayer::initCollisionData()
     _tileCollisions["5_3_1_LD"].push_back(Vec2(60, 39));
     _tileCollisions["5_3_1_LD"].push_back(Vec2(45, 30));
     
-    
     _tileCollisions["5_3_2_LU"].push_back(Vec2(107, 85));
     _tileCollisions["5_3_2_LU"].push_back(Vec2(99, 84));
     _tileCollisions["5_3_2_LU"].push_back(Vec2(95, 78));

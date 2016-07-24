@@ -31,8 +31,7 @@ I used [Sprite Illuminator](https://www.codeandweb.com/spriteilluminator) to gen
 
 And [Texture Packer](https://www.codeandweb.com/texturepacker) help to manage sprites. 
 
-**Server** 
-The game server has not yet been developed.
+**Server** has not yet been developed.
 
 How to build
 -------

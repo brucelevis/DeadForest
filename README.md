@@ -20,14 +20,22 @@ Architecture of a game is largely has three configurations. **Editor**, **Client
 
 ![Editor3](http://i.imgur.com/8SU7Xjb.png)
 
-**Client** run real-time rendering to the actual game data using the built in editor. [cocos2d-x](http://cocos2d-x.org) game engine is helps this work. Since the game is a large game world we were using various optimization techniques(such as cell space partition, deferred rendering)
+**Client** run real-time rendering to the actual game data using the built in editor. [cocos2d-x](http://cocos2d-x.org) game engine is helps this works. Since the game is a large game world we were using various optimization techniques(such as cell space partition, deferred rendering)
 
 ![CellSpacePartition](http://i.imgur.com/tCV8nCm.jpg)
 This can be through lowering the average basic operations of the game (such as collision detecting) is to be done.
 
 ![DeferredRendering](http://i.imgur.com/UNrrzW1.png)
 As a result, lighting, many post effects represents only a small number of draw call.
+I used [Sprite Illuminator](https://www.codeandweb.com/spriteilluminator) to generate 2d normap map. I think that it is greate tool compared to other tools(easy to use and provides various functions).
+
+And [Texture Packer](https://www.codeandweb.com/texturepacker) help to manage sprites. 
+
+How to build
+-------
+
 
 License
 -------
+It developed as a hobby. Because of I helped from other open source, it is licensed under the MIT License, see LICENSE for more information.
 

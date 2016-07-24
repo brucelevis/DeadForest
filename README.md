@@ -1,7 +1,7 @@
 The Dead Forest
 =====
 
-2d top view cross platform shooting game based [cocos2d-x](https://cocos2d-x.org)
+2d top view cross platform shooting game based [cocos2d-x](cocos2d-x.org)
 
 ![Editor1](http://i.imgur.com/T0qvX9g.png)
 

@@ -37,5 +37,5 @@ How to build
 
 License
 -------
-It developed as a hobby. Because of I helped from other open source, licensed under the MIT License, see LICENSE for more information.
+It developed as a hobby. Because of I helped from other open source, it licensed under the MIT License, see LICENSE for more information.
 

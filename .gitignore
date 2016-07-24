@@ -1,0 +1,11 @@
+DeadCreator/.cocos-project.json
+DeadCreator/cocos2d/
+DeadCreator/CMakeLists.txt
+DeadCreator/proj.ios_mac/
+DeadCreator/proj.win32/
+DeadCreator/proj.win10/
+DeadCreator/proj.linux/
+DeadCreator/proj.android/
+DeadCreator/proj.android-studio/
+DeadCreator/proj.win8.1-universal/
+

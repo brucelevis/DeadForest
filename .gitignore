@@ -1,7 +1,8 @@
-lib/*
-code/DeadCreator/CMakeLists.txt
+DeadCreator/.cocos-project.json
 DeadCreator/cocos2d/
-DeadCreator/ios_mac/ios/
-DeadCreator/lib/
-DeadCreator/mac/
-DeadCerator/DeadCreator.xcodeproj
+DeadCreator/CMakeLists.txt
+DeadCreator/proj.ios_mac/
+DeadCreator/proj.win32/
+DeadCreator/proj.win10/
+DeadCreator/proj.linux/
+

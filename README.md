@@ -34,6 +34,10 @@ And [Texture Packer](https://www.codeandweb.com/texturepacker) help to manage sp
 How to build
 -------
 
+1. Download and build [cocos2d-x](http://cocos2d-x.org) project, [boost](http://boost.org) library.
+2. Clone the repository.
+3. Paste Classes, Resource folders
+4. play.
 
 License
 -------

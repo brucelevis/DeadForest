@@ -72,7 +72,6 @@ GMXLayer::~GMXLayer()
     _selectedEntities.clear();
     
     _currCommand = nullptr;
-    
 }
 
 

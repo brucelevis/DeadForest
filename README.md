@@ -48,5 +48,5 @@ How to build
 
 License
 -------
-It developed as a hobby. so it is licensed under the MIT License, see LICENSE for more information.
+it is licensed under the GNU License, see LICENSE for more information.
 

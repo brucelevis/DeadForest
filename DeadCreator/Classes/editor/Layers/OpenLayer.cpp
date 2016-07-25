@@ -68,6 +68,7 @@ void OpenLayer::showLayer(bool* opened)
         if (ImGui::ButtonEx("Open", ImVec2(60, 20), _openButtonFlags))
         {
             _imguiLayer->createGMXLayer(_filePath);
+            
             UserDefault::getInstance()->setStringForKey("recent_open_path", _filePath);
             UserDefault::getInstance()->flush();
             *opened = false;

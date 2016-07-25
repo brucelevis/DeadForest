@@ -22,7 +22,7 @@ namespace realtrick
         
     public:
         
-        NavigatorLayer(GMXLayer& gmxLayer);
+        explicit NavigatorLayer(GMXLayer& gmxLayer);
         virtual ~NavigatorLayer();
         static NavigatorLayer* create(GMXLayer& gmxLayer);
         virtual bool init() override;

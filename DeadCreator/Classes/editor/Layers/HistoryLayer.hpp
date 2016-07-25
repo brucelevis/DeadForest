@@ -22,7 +22,7 @@ namespace realtrick
         
     public:
         
-        HistoryLayer(GMXLayer& gmxLayer);
+        explicit HistoryLayer(GMXLayer& gmxLayer);
         virtual ~HistoryLayer();
         static HistoryLayer* create(GMXLayer& gmxLayer);
         virtual bool init() override;

@@ -74,7 +74,6 @@ namespace realtrick
     private:
         
         GMXLayer* _layer = nullptr;
-        
         NewFileWindow* _newFileWindow = nullptr;
         SaveAsLayer* _saveAsLayer = nullptr;
         OpenLayer* _openLayer = nullptr;

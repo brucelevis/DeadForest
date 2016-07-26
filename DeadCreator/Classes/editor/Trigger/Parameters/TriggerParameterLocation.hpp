@@ -67,6 +67,8 @@ namespace realtrick
         
         virtual void drawImGui(void* opt = nullptr) override
         {
+            if ( opt == nullptr ) throw std::runtime_error("location's drawImGUi() must have *opt(gmx layer's instance)");
+            
             auto gmxLayer = static_cast<GMXLayer*>(opt);
             
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));

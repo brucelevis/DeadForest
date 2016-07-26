@@ -26,7 +26,7 @@ namespace realtrick
             LOCATION,
             APPROXIMATION,
             NUMBER,
-            STRING,
+            TEXT,
             SCORE,
             SWITCH,
             SWITCH_STATE,

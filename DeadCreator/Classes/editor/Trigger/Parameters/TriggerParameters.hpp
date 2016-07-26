@@ -13,3 +13,4 @@
 #include "TriggerParameterEntity.hpp"
 #include "TriggerParameterLocation.hpp"
 #include "TriggerParameterNumber.hpp"
+#include "TriggerParameterText.hpp"

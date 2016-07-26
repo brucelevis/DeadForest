@@ -49,6 +49,7 @@ namespace realtrick
         {
             TriggerParameterBase::copyFrom(rhs);
             _approximation = rhs._approximation;
+            _currApproximation = rhs._currApproximation;
         }
         
         virtual ~TriggerParameterApproximation() = default;
@@ -68,9 +69,31 @@ namespace realtrick
             return new TriggerParameterApproximation(*this);
         }
         
+        virtual void reset() override { _currApproximation = -1; }
+        virtual bool isItemSelected() override { return (_currApproximation != -1); }
+        
+        virtual void drawImGui(void* opt = nullptr) override
+        {
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
+            ImGui::PushItemWidth(150);
+            static const char* items2[3] =
+            {
+                "at least",
+                "at most",
+                "exactly",
+            };
+            if (ImGui::Combo("##", &_currApproximation, items2, 3, 3))
+            {
+                setApproximationType(static_cast<TriggerParameterApproximation::Type>(_currApproximation));
+            }
+            ImGui::PopItemWidth();
+            ImGui::PopStyleColor();
+        }
+        
     private:
         
         Type _approximation;
+        int _currApproximation = -1;
 
     };
     

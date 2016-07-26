@@ -58,6 +58,9 @@ namespace realtrick
         virtual void setParameterName(const std::string& name) { _parameterName = name; }
         
         virtual TriggerParameterBase* clone() const = 0;
+        virtual void drawImGui(void* opt = nullptr) = 0;
+        virtual void reset() = 0;
+        virtual bool isItemSelected() = 0;
         
     protected:
         

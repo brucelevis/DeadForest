@@ -35,7 +35,7 @@ namespace realtrick
         void showLayer(bool* opened);
         void closeWindow(bool* opened);
         
-        void showTrigger(const char* title, bool& opened, GameTrigger* trigger, bool isModify = false, int index = 0);
+        void showTrigger(const char* title, bool& opened, GameTrigger* trigger, bool isModify = false, int index = -1);
         void showNewCondition(const char* title, bool& opened, GameTrigger* newTrigger);
         void showModifyCondition(const char* title, bool& opened, GameTrigger* trigger, int condIndex);
         void showNewAction(const char* title, bool& opened, GameTrigger* newTrigger);
@@ -43,6 +43,7 @@ namespace realtrick
         
         void saveTriggers(flatbuffers::FlatBufferBuilder& builder,
                           std::vector<flatbuffers::Offset<DeadCreator::Trigger>>& out_triggers);
+        void addTrigger(GameTrigger* trigger) { _triggers.push_back(trigger); }
         
     private:
         

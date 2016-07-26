@@ -51,10 +51,26 @@ namespace realtrick
         {
             return new TriggerParameterNumber(*this);
         }
+    
+        virtual void reset() override { _number = 0; }
+        virtual bool isItemSelected() override { return true; }
+        
+        virtual void drawImGui(void* opt = nullptr) override
+        {
+            ImGui::PushItemWidth(30);
+            if ( ImGui::DragInt("##", &_number, 1, 0, 255) )
+            {
+                if ( _number < 0 ) _number = 0;
+                if ( _number > 255 ) _number = 255;
+                
+                setParameterName(std::to_string(_number));
+            }
+            ImGui::PopItemWidth();
+        }
         
     private:
         
-        int _number;
+        int _number = 0;
         
     };
     

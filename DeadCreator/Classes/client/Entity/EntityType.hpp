@@ -50,14 +50,14 @@ namespace realtrick
     {
         INVALID = -1,
         PLAYER1 = 1,
-        PLAYER2,
-        PLAYER3,
-        PLAYER4,
-        PLAYER5,
-        PLAYER6,
-        PLAYER7,
-        PLAYER8,
-        CURRENT_PLAYER,
+        PLAYER2 = 2,
+        PLAYER3 = 3,
+        PLAYER4 = 4,
+        PLAYER5 = 5,
+        PLAYER6 = 6,
+        PLAYER7 = 7,
+        PLAYER8 = 8,
+        CURRENT_PLAYER = 9,
         NEUTRAL = 12,
     };
     

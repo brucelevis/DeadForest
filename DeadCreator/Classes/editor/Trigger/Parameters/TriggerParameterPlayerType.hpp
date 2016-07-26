@@ -37,6 +37,7 @@ namespace realtrick
         {
             TriggerParameterBase::copyFrom(rhs);
             _playerType = rhs._playerType;
+            _currPlayer = rhs._currPlayer;
         }
         
         virtual ~TriggerParameterPlayerType() = default;
@@ -45,7 +46,6 @@ namespace realtrick
         void setPlayerType(PlayerType type)
         {
             _playerType = type;
-            
             if ( type == PlayerType::PLAYER1 ) setParameterName("Player 1");
             else if ( type == PlayerType::PLAYER2 ) setParameterName("Player 2");
             else if ( type == PlayerType::PLAYER3 ) setParameterName("Player 3");
@@ -62,9 +62,38 @@ namespace realtrick
             return new TriggerParameterPlayerType(*this);
         }
         
+        virtual void reset() override { _currPlayer = -1; }
+        virtual bool isItemSelected() override { return (_currPlayer != -1); }
+        
+        virtual void drawImGui(void* opt = nullptr) override
+        {
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
+            ImGui::PushItemWidth(180);
+            static const char* items1[9] =
+            {
+                "Player 1",
+                "Player 2",
+                "Player 3",
+                "Player 4",
+                "Player 5",
+                "Player 6",
+                "Player 7",
+                "Player 8",
+                "Current Player"
+            };
+            
+            if ( ImGui::Combo("##", &_currPlayer, items1, 9, 9) )
+            {
+                setPlayerType(static_cast<PlayerType>(_currPlayer + 1));
+            }
+            ImGui::PopItemWidth();
+            ImGui::PopStyleColor();
+        }
+        
     private:
     
         PlayerType _playerType;
+        int _currPlayer = -1;
         
     };
     

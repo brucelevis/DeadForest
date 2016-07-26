@@ -68,11 +68,7 @@ namespace realtrick
         bool isModal() const { return _isModal; }
         void enableModal(bool enable) { _isModal = enable; }
         
-        void setSelectedPlayerType(PlayerType type)
-        {
-            int temp = static_cast<int>(type); --temp;
-            _selectedPlayerType = temp;
-        }
+        void setSelectedPlayerType(PlayerType type) { _selectedPlayerType = static_cast<int>(type) - 1; }
         PlayerType getSelectedPlayerType() { return static_cast<PlayerType>(_selectedPlayerType + 1); }
         
     private:

@@ -10,6 +10,7 @@
 
 #include "TriggerParameterBase.hpp"
 #include "LocationNode.hpp"
+#include "GMXLayer.hpp"
 
 namespace realtrick
 {
@@ -37,6 +38,7 @@ namespace realtrick
         {
             TriggerParameterBase::copyFrom(rhs);
             _location = rhs._location;
+            _currLocation = rhs._currLocation;
         }
         
         virtual ~TriggerParameterLocation() { _location = nullptr; }
@@ -60,9 +62,35 @@ namespace realtrick
             return new TriggerParameterLocation(*this);
         }
         
+        virtual void reset() override { _currLocation = -1; }
+        virtual bool isItemSelected() override { return (_currLocation != -1); }
+        
+        virtual void drawImGui(void* opt = nullptr) override
+        {
+            auto gmxLayer = static_cast<GMXLayer*>(opt);
+            
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
+            ImGui::PushItemWidth(200);
+            std::string locationList;
+            std::vector<std::string> locationNames;
+            for(auto& loc : gmxLayer->getLocations() )
+            {
+                locationList += loc->getLocationName();
+                locationList += '\0';
+            }
+            
+            if ( ImGui::Combo("##", &_currLocation, locationList.c_str(), 5) )
+            {
+                setLocation(gmxLayer->getLocations().at(_currLocation));
+            }
+            ImGui::PopItemWidth();
+            ImGui::PopStyleColor();
+        }
+        
     private:
         
         LocationNode* _location;
+        int _currLocation = -1;
         
     };
     

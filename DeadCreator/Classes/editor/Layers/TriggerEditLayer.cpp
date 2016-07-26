@@ -460,8 +460,12 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
         
         if ( ImGui::Button("Ok", ImVec2(60, 20)) && isCompleted )
         {
-            if ( isModify ) std::swap(_triggers[index], trigger);
-            else _triggers.push_back(trigger); // add
+            if ( isModify )
+            {
+                std::swap(_triggers[index], trigger);
+                CC_SAFE_DELETE(trigger);
+            }
+            else addTrigger(trigger);
             
             // reset new trigger instance
             selectedTab = 0;

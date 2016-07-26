@@ -34,6 +34,7 @@ namespace realtrick
     class LocationNode;
     class RenameLocationLayer;
     class EditorEntity;
+    class GameTrigger;
     
     class GMXLayer : public cocos2d::Layer
     {
@@ -111,11 +112,14 @@ namespace realtrick
         
         bool addLocation(LocationNode* node);
         bool removeLocation(LocationNode* node);
+        LocationNode* findLocation(const std::string& name);
         void setVisibleLocations(bool visible);
         void reorderLocations();
         LocationNode* getGrabbedLocation() const { return _grabbedLocation; }
         bool isOverlappedLocationName(const std::string& name) const;
-        const std::vector<LocationNode*>& getLocations() { return _locations; }
+        const std::vector<LocationNode*>& getLocations() const { return _locations; }
+        
+        void addTrigger(GameTrigger* trigger);
         
     private:
         

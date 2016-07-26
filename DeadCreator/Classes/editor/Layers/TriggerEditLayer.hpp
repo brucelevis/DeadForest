@@ -43,7 +43,7 @@ namespace realtrick
         
         void saveTriggers(flatbuffers::FlatBufferBuilder& builder,
                           std::vector<flatbuffers::Offset<DeadCreator::Trigger>>& out_triggers);
-        void addTrigger(GameTrigger* trigger) { _triggers.push_back(trigger); }
+        void addTrigger(GameTrigger* trigger) { if ( trigger ) _triggers.push_back(trigger); }
         
     private:
         

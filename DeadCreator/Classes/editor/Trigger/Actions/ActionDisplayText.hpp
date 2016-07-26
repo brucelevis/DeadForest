@@ -66,6 +66,8 @@ namespace realtrick
             return DeadCreator::CreateAction(builder, DeadCreator::ActionBase_DisplayText, obj.Union());
         }
         
+        void setText(const std::string& text) { _text.setText(text); }
+        
     private:
         
         TriggerParameterText _text;

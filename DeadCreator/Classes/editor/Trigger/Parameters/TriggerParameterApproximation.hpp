@@ -57,11 +57,13 @@ namespace realtrick
         Type getApproximationType() const { return _approximation; }
         void setApproximationType(Type type)
         {
-            _approximation = type;
-            
             if ( type == Type::AT_LEAST ) setParameterName("at least");
             else if ( type == Type::AT_MOST ) setParameterName("at most");
             else if ( type == Type::EXACTLY ) setParameterName("exactly");
+            
+            
+            _approximation = type;
+            _currApproximation = static_cast<int>(type);
         }
         
         virtual TriggerParameterApproximation* clone() const override
@@ -82,7 +84,7 @@ namespace realtrick
                 "at most",
                 "exactly",
             };
-            if (ImGui::Combo("##", &_currApproximation, items2, 3, 3))
+            if (ImGui::Combo("", &_currApproximation, items2, 3, 3))
             {
                 setApproximationType(static_cast<TriggerParameterApproximation::Type>(_currApproximation));
             }

@@ -1783,6 +1783,16 @@ bool GMXLayer::removeLocation(LocationNode* node)
 }
 
 
+LocationNode* GMXLayer::findLocation(const std::string& name)
+{
+    for(int i = 0 ; i < _locations.size(); ++ i)
+    {
+        if ( _locations[i]->getLocationName() == name ) return _locations[i];
+    }
+    return nullptr;
+}
+
+
 void GMXLayer::setVisibleLocations(bool visible)
 {
     for (auto& loc : _locations)
@@ -1833,6 +1843,12 @@ bool GMXLayer::isOverlappedLocationName(const std::string& name) const
         if (loc->getLocationName() == name) return true;
     }
     return false;
+}
+
+
+void GMXLayer::addTrigger(GameTrigger* trigger)
+{
+    _triggerEditLayer->addTrigger(trigger);
 }
 
 

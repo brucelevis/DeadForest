@@ -45,8 +45,17 @@ namespace realtrick
         EntityType getEntityType() const { return _entityType; }
         void setEntityType(EntityType entityType)
         {
-            _entityType = entityType;
             setParameterName(EditorEntity::getEntityTableByType().at(entityType).entityName);
+            
+            _entityType = entityType;
+            
+            auto& entityTable = EditorEntity::getEntityTableByType();
+            int index = 0;
+            for(auto iter = entityTable.begin(); iter != entityTable.end() ; ++ iter)
+            {
+                if ( iter->first == entityType ) _currEntity = index;
+                ++ index;
+            }
         }
         
         virtual TriggerParameterEntity* clone() const override
@@ -63,15 +72,14 @@ namespace realtrick
             ImGui::PushItemWidth(200);
             std::string entityList;
             std::vector<std::string> entityNames;
-            auto entityTable = EditorEntity::getEntityTableByType();
+            auto& entityTable = EditorEntity::getEntityTableByType();
             for(auto iter = entityTable.begin(); iter != entityTable.end() ; ++ iter)
             {
                 entityList += (iter->second.entityName);
                 entityNames.push_back(iter->second.entityName);
                 entityList += '\0';
             }
-            
-            if ( ImGui::Combo("##", &_currEntity, entityList.c_str(), 5) )
+            if ( ImGui::Combo("", &_currEntity, entityList.c_str(), 5) )
             {
                 setEntityType(EditorEntity::getEntityTableByName().at(entityNames[_currEntity]).entityType);
             }

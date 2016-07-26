@@ -58,7 +58,7 @@ namespace realtrick
         virtual void drawImGui(void* opt = nullptr) override
         {
             ImGui::PushItemWidth(30);
-            if ( ImGui::DragInt("##", &_number, 1, 0, 255) )
+            if ( ImGui::DragInt("", &_number, 1, 0, 255) )
             {
                 if ( _number < 0 ) _number = 0;
                 if ( _number > 255 ) _number = 255;

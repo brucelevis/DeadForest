@@ -55,6 +55,8 @@ namespace realtrick
         void setLocationName(const std::string& name) {_locationName->setString(name); }
         std::string getLocationName() const { return _locationName->getString(); }
         
+        const GMXLayer& getGMXLayer() const { return _gmxLayer; }
+        
     private:
         
         virtual void setPosition(float x, float y) override;

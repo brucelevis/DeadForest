@@ -46,8 +46,15 @@ namespace realtrick
         LocationNode* getLocation() const { return _location; }
         void setLocation(LocationNode* location)
         {
-            _location = location;
             setParameterName(location->getLocationName());
+            
+            _location = location;
+            
+            auto& locations = location->getGMXLayer().getLocations();
+            for(int i = 0 ; i < locations.size() ; ++ i )
+            {
+                if(  locations[i] == location ) _currLocation = i;
+            }
         }
         
         virtual std::string getParameterName() const override
@@ -68,20 +75,17 @@ namespace realtrick
         virtual void drawImGui(void* opt = nullptr) override
         {
             if ( opt == nullptr ) throw std::runtime_error("location's drawImGUi() must have *opt(gmx layer's instance)");
-            
             auto gmxLayer = static_cast<GMXLayer*>(opt);
             
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
             ImGui::PushItemWidth(200);
             std::string locationList;
-            std::vector<std::string> locationNames;
             for(auto& loc : gmxLayer->getLocations() )
             {
                 locationList += loc->getLocationName();
                 locationList += '\0';
             }
-            
-            if ( ImGui::Combo("##", &_currLocation, locationList.c_str(), 5) )
+            if ( ImGui::Combo("", &_currLocation, locationList.c_str(), 5) )
             {
                 setLocation(gmxLayer->getLocations().at(_currLocation));
             }

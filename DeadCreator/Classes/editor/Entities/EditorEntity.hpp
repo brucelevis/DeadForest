@@ -102,7 +102,7 @@ namespace realtrick
             return table;
         }
         
-        static const std::map<std::string, EntityData> getEntityTableByName()
+        static const std::map<std::string, EntityData>& getEntityTableByName()
         {
             static std::map<std::string, EntityData> table;
             static bool isFirstCall = true;

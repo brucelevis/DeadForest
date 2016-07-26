@@ -45,7 +45,6 @@ namespace realtrick
         PlayerType getPlayerType() const { return _playerType; }
         void setPlayerType(PlayerType type)
         {
-            _playerType = type;
             if ( type == PlayerType::PLAYER1 ) setParameterName("Player 1");
             else if ( type == PlayerType::PLAYER2 ) setParameterName("Player 2");
             else if ( type == PlayerType::PLAYER3 ) setParameterName("Player 3");
@@ -55,6 +54,9 @@ namespace realtrick
             else if ( type == PlayerType::PLAYER7 ) setParameterName("Player 7");
             else if ( type == PlayerType::PLAYER8 ) setParameterName("Player 8");
             else if ( type == PlayerType::CURRENT_PLAYER ) setParameterName("Current Player");
+            
+            _playerType = type;
+            _currPlayer = static_cast<int>(type) - 1;
         }
         
         virtual TriggerParameterPlayerType* clone() const override
@@ -81,8 +83,7 @@ namespace realtrick
                 "Player 8",
                 "Current Player"
             };
-            
-            if ( ImGui::Combo("##", &_currPlayer, items1, 9, 9) )
+            if ( ImGui::Combo("", &_currPlayer, items1, 9, 9) )
             {
                 setPlayerType(static_cast<PlayerType>(_currPlayer + 1));
             }

@@ -12,6 +12,8 @@
 
 #include "TriggerParameterBase.hpp"
 
+#define MAX_TEXT_LENGTH 32
+
 namespace realtrick
 {
     
@@ -36,7 +38,7 @@ namespace realtrick
         void copyFrom(const TriggerParameterText& rhs)
         {
             TriggerParameterBase::copyFrom(rhs);
-            strncpy(_buf.data(), rhs._buf.data(), 32);
+            strncpy(_buf.data(), rhs._buf.data(), MAX_TEXT_LENGTH);
         }
         
         virtual ~TriggerParameterText() = default;
@@ -44,7 +46,7 @@ namespace realtrick
         std::string getText() const { return _buf.data(); }
         void setText(const std::string& text)
         {
-            strncpy(_buf.data(), text.c_str(), 32);
+            strncpy(_buf.data(), text.c_str(), MAX_TEXT_LENGTH);
             setParameterName(_buf.data());
         }
         
@@ -60,7 +62,7 @@ namespace realtrick
         {
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImColor(ImVec4(0.85, 0.85, 0.85, 1.00)));
             ImGui::Text("Display for current player.");
-            if (ImGui::InputText("", _buf.data(), 32))
+            if (ImGui::InputText("", _buf.data(), MAX_TEXT_LENGTH))
             {
                 setParameterName(_buf.data());
             }
@@ -69,7 +71,7 @@ namespace realtrick
         
     private:
         
-        std::array<char, 32> _buf;
+        std::array<char, MAX_TEXT_LENGTH> _buf;
         
     };
     

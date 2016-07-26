@@ -124,41 +124,21 @@ namespace realtrick
         virtual flatbuffers::Offset<DeadCreator::Condition> getConditionObject(flatbuffers::FlatBufferBuilder& builder) override
         {
             auto locationPtr = _location.getLocation();
-            DeadCreator::Size size(locationPtr->getLocationSize().first, locationPtr->getLocationSize().second);
-            DeadCreator::Vector2 pos(locationPtr->getPositionX(), locationPtr->getPositionY());
-            auto locationObject = DeadCreator::CreateLocation(builder,
-                                                              builder.CreateString(locationPtr->getLocationName()),
-                                                              &size, &pos);
-            
             auto obj = DeadCreator::CreateBring(builder,
                                                 static_cast<int>(_playerType.getPlayerType()),
                                                 static_cast<DeadCreator::Approximation>(_approximation.getApproximationType()),
                                                 _number.getNumber(),
                                                 _entity.getEntityType(),
-                                                locationObject);
+                                                builder.CreateString(locationPtr->getLocationName()));
             
             return DeadCreator::CreateCondition(builder, DeadCreator::ConditionBase_Bring, obj.Union());
         }
         
-        void setPlayerType(PlayerType type)
-        {
-            _playerType.setPlayerType(type);
-        }
-        
-        void setApproximation(TriggerParameterApproximation::Type type)
-        {
-            _approximation.setApproximationType(type);
-        }
-        
-        void setNumber(int number)
-        {
-            _number.setNumber(number);
-        }
-        
-        void setEntity(EntityType type)
-        {
-            _entity.setEntityType(type);
-        }
+        void setPlayerType(PlayerType type) { _playerType.setPlayerType(type); }
+        void setApproximation(TriggerParameterApproximation::Type type) { _approximation.setApproximationType(type); }
+        void setNumber(int number) { _number.setNumber(number); }
+        void setEntity(EntityType type) { _entity.setEntityType(type); }
+        void setLocation(LocationNode* loc) { _location.setLocation(loc); }
         
     private:
         

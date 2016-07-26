@@ -96,7 +96,7 @@ namespace realtrick
             }
         }
         
-        GameTrigger() = default;
+        GameTrigger() { for ( int i = 0 ; i < 8 ; ++ i) isPlayerSelected[i] = false; }
         GameTrigger(const GameTrigger& rhs) { copyFrom(rhs); }
         GameTrigger& operator=(const GameTrigger& rhs)
         {
@@ -150,8 +150,8 @@ namespace realtrick
             return ret;
         }
         
-        void addCondition(ConditionBase* cond) { conditions.push_back(cond); }
-        void addAction(ActionBase* act) { actions.push_back(act); }
+        void addCondition(ConditionBase* cond) { if ( cond ) conditions.push_back(cond); }
+        void addAction(ActionBase* act) { if ( act ) actions.push_back(act); }
         
         void eraseCondition(int idx)
         {

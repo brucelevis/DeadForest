@@ -12,6 +12,7 @@ using namespace boost::filesystem;
 #include "ui/CocosGUI.h"
 using namespace cocos2d;
 
+#include "SizeProtocol.h"
 #include "EditScene.hpp"
 #include "GMXLayer.hpp"
 #include "GMXFile.hpp"
@@ -20,7 +21,9 @@ using namespace cocos2d;
 #include "OpenLayer.hpp"
 #include "PaletteLayer.hpp"
 #include "LocationNode.hpp"
-#include "SizeProtocol.h"
+#include "GameTrigger.hpp"
+#include "Conditions.hpp"
+#include "Actions.hpp"
 using namespace realtrick;
 
 #include "GMXFile_generated.h"
@@ -464,6 +467,70 @@ void EditScene::createGMXLayer(const std::string& filePath)
             loc->setLocationSize(size.first, size.second);
             loc->setSelected(false);
             _layer->addLocation(loc);
+        }
+        
+        // triggers
+        for ( auto trigger = gmxFile->triggers()->begin(); trigger != gmxFile->triggers()->end() ; ++ trigger )
+        {
+            GameTrigger* newTrigger = new GameTrigger();
+            
+            // set players
+            for(auto index = trigger->players()->begin(); index != trigger->players()->end(); ++index)
+            {
+                newTrigger->isPlayerSelected[*index] = true;
+            }
+            
+            // set conditions
+            for(auto cond = trigger->conditions()->begin() ; cond != trigger->conditions()->end(); ++cond)
+            {
+                auto condType = cond->condition_type();
+                switch (condType)
+                {
+                    case DeadCreator::ConditionBase_Bring:
+                    {
+                        auto conditionObject = static_cast<const DeadCreator::Bring*>(cond->condition());
+                        auto conditionBring = new ConditionBring();
+                        conditionBring->setPlayerType(static_cast<PlayerType>(conditionObject->player()));
+                        conditionBring->setApproximation(static_cast<TriggerParameterApproximation::Type>(conditionObject->approximation()));
+                        conditionBring->setEntity(static_cast<EntityType>(conditionObject->entity_type()));
+                        conditionBring->setNumber(conditionObject->number());
+                        
+                        LocationNode* locationPtr = _layer->findLocation(conditionObject->location_name()->str());
+                        if ( locationPtr )
+                        {
+                            conditionBring->setLocation(locationPtr);
+                            newTrigger->addCondition(conditionBring);
+                        }
+                        else
+                        {
+                            CC_SAFE_DELETE(conditionBring);
+                        }
+                        
+                        break;
+                    }
+                    default: { cocos2d::log("invalid condition type"); break;}
+                }
+            }
+            
+            // set actions
+            for(auto act = trigger->actions()->begin() ; act != trigger->actions()->end(); ++act)
+            {
+                auto actType = act->action_type();
+                switch (actType)
+                {
+                    case DeadCreator::ActionBase_DisplayText:
+                    {
+                        auto actionObject = static_cast<const DeadCreator::DisplayText*>(act->action());
+                        auto actionDisplayText = new ActionDisplayText();
+                        actionDisplayText->setText(actionObject->text()->str());
+                        newTrigger->addAction(actionDisplayText);
+                        break;
+                    }
+                    default: { cocos2d::log("invalid action type"); break;}
+                }
+            }
+            
+            _layer->addTrigger(newTrigger);
         }
         
         _layer->updateCollisionRegion();

@@ -1753,6 +1753,7 @@ void GMXLayer::save(const std::string& path)
                                            builder.CreateVector(locations),
                                            builder.CreateVector(triggers));
     builder.Finish(file);
+    
     flatbuffers::SaveFile(path.c_str(),
                           reinterpret_cast<const char*>(builder.GetBufferPointer()),
                           builder.GetSize(),

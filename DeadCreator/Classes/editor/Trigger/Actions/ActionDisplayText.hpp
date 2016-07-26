@@ -65,7 +65,7 @@ namespace realtrick
         
         virtual flatbuffers::Offset<DeadCreator::Action> getActionObject(flatbuffers::FlatBufferBuilder& builder) override
         {
-            auto obj = DeadCreator::CreateDisplayText(builder);
+            auto obj = DeadCreator::CreateDisplayText(builder, builder.CreateString(_buf));
             return DeadCreator::CreateAction(builder, DeadCreator::ActionBase_DisplayText, obj.Union());
         }
         

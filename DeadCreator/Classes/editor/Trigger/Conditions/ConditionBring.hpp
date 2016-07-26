@@ -213,7 +213,20 @@ namespace realtrick
         
         virtual flatbuffers::Offset<DeadCreator::Condition> getConditionObject(flatbuffers::FlatBufferBuilder& builder) override
         {
-            auto obj = DeadCreator::CreateBring(builder, static_cast<int>(_playerType.getPlayerType()));
+            auto locationPtr = _location.getLocation();
+            DeadCreator::Size size(locationPtr->getLocationSize().first, locationPtr->getLocationSize().second);
+            DeadCreator::Vector2 pos(locationPtr->getPositionX(), locationPtr->getPositionY());
+            auto locationObject = DeadCreator::CreateLocation(builder,
+                                                              builder.CreateString(locationPtr->getLocationName()),
+                                                              &size, &pos);
+            
+            auto obj = DeadCreator::CreateBring(builder,
+                                                static_cast<int>(_playerType.getPlayerType()),
+                                                static_cast<DeadCreator::Approximation>(_approximation.getApproximationType()),
+                                                _number.getNumber(),
+                                                _entity.getEntityType(),
+                                                locationObject);
+            
             return DeadCreator::CreateCondition(builder, DeadCreator::ConditionBase_Bring, obj.Union());
         }
         

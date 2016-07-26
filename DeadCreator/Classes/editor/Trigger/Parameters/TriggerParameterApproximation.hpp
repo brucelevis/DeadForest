@@ -21,9 +21,11 @@ namespace realtrick
         enum class Type
         {
             INVALID = -1,
+            /* do not modify */
             AT_LEAST = 0,
-            AT_MOST,
-            EXACTLY
+            AT_MOST = 1,
+            EXACTLY = 2,
+            /* * * * * * * * */
         };
         
     public:

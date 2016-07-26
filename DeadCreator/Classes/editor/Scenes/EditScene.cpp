@@ -413,13 +413,6 @@ void EditScene::createGMXLayer(const std::string& filePath)
             }
         }
         
-        for ( auto iter = gmxFile->tiles()->begin(); iter != gmxFile->tiles()->end() ; ++ iter)
-        {
-            int xx = iter->indices()->x();
-            int yy = iter->indices()->y();
-            file->tileInfos[yy][xx] = iter->number()->str();
-        }
-        
         _layer = GMXLayer::create(*this, *file);
         _layer->setCurrFilePath(filePath);
         _layer->enableFirstFile(false);
@@ -433,17 +426,6 @@ void EditScene::createGMXLayer(const std::string& filePath)
             TileBase tile = TileBase(xx, yy, iter->number()->str(),
                                      indexToPosition(xx, yy, file->tileWidth, file->tileHeight, DUMMY_TILE_SIZE));
             _layer->setTile(xx, yy, tile, true);
-        }
-        
-        
-        // collision regions
-        for ( auto iter = gmxFile->collision_regions()->begin(); iter != gmxFile->collision_regions()->end(); ++ iter )
-        {
-            auto polygon = iter;
-            for( auto vert = polygon->vertices()->begin() ; vert != polygon->vertices()->end() ; ++ vert )
-            {
-                log("[%f, %f]", vert->x(), vert->y());
-            }
         }
         
         // entities

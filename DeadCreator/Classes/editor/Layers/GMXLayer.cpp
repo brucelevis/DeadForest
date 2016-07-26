@@ -659,6 +659,7 @@ void GMXLayer::setTile(int x, int y, const TileBase& tile, bool isExecCommand)
         static_cast<TileToolCommand*>(_currCommand)->pushTile(_tiles[y][x], tile);
     }
     
+    _file.tileInfos[y][x] = tile.getNumber();
     _tiles[y][x] = tile;
     _navigatorLayer->setTile(x, y, tile);
     
@@ -1687,7 +1688,16 @@ void GMXLayer::save(const std::string& path)
     {
         for(int j = 0 ; j < _file.numOfTileX + DUMMY_TILE_SIZE * 2; ++ j)
         {
-            if ( _tiles[i][j].getTileType() != static_cast<EditorTileType>(_file.defaultTile) )
+            if ( _tiles[i][j].getTileType() == static_cast<EditorTileType>(_file.defaultTile) )
+            {
+                if ( _tiles[i][j].getTileTail() != "1234" )
+                {
+                    DeadCreator::Coord coord(j ,i);
+                    auto tile = DeadCreator::CreateTileInfo(builder, builder.CreateString(_tiles[i][j].getNumber()), &coord);
+                    tileInfos.push_back(tile);
+                }
+            }
+            else
             {
                 DeadCreator::Coord coord(j ,i);
                 auto tile = DeadCreator::CreateTileInfo(builder, builder.CreateString(_tiles[i][j].getNumber()), &coord);

@@ -31,10 +31,10 @@ namespace realtrick
     enum class EditorTileType : int
     {
         INVALID = -1,
-        DIRT,
-        GRASS,
-        WATER,
-        HILL
+        DIRT = 0,
+        GRASS = 1,
+        WATER = 2,
+        HILL = 3,
     };
         
     class TileBase

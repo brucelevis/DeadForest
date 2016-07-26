@@ -180,6 +180,13 @@ namespace realtrick
             return ret;
         }
         
+        std::vector<int> getSelectedPlayers() const
+        {
+            std::vector<int> ret;
+            for(int i = 0 ; i < 8 ; ++i) if ( isPlayerSelected[i] ) ret.push_back(i);
+            return ret;
+        }
+        
         GameTrigger* clone() const { return new GameTrigger(*this); }
         
     };

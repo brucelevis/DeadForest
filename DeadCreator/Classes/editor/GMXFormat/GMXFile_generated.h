@@ -516,7 +516,8 @@ namespace DeadCreator {
             VT_COLLISION_REGIONS = 12,
             VT_ENTITIES = 14,
             VT_CELL_SPACE_SIZE = 16,
-            VT_LOCATIONS = 18
+            VT_LOCATIONS = 18,
+            VT_TRIGGERS = 20
         };
         TileType default_type() const { return static_cast<TileType>(GetField<int32_t>(VT_DEFAULT_TYPE, 0)); }
         const flatbuffers::Vector<flatbuffers::Offset<TileInfo>> *tiles() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<TileInfo>> *>(VT_TILES); }
@@ -526,6 +527,7 @@ namespace DeadCreator {
         const flatbuffers::Vector<flatbuffers::Offset<Entity>> *entities() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Entity>> *>(VT_ENTITIES); }
         const Size *cell_space_size() const { return GetStruct<const Size *>(VT_CELL_SPACE_SIZE); }
         const flatbuffers::Vector<flatbuffers::Offset<Location>> *locations() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Location>> *>(VT_LOCATIONS); }
+        const flatbuffers::Vector<flatbuffers::Offset<Trigger>> *triggers() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Trigger>> *>(VT_TRIGGERS); }
         bool Verify(flatbuffers::Verifier &verifier) const {
             return VerifyTableStart(verifier) &&
             VerifyField<int32_t>(verifier, VT_DEFAULT_TYPE) &&
@@ -544,6 +546,9 @@ namespace DeadCreator {
             VerifyField<flatbuffers::uoffset_t>(verifier, VT_LOCATIONS) &&
             verifier.Verify(locations()) &&
             verifier.VerifyVectorOfTables(locations()) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_TRIGGERS) &&
+            verifier.Verify(triggers()) &&
+            verifier.VerifyVectorOfTables(triggers()) &&
             verifier.EndTable();
         }
     };
@@ -559,10 +564,11 @@ namespace DeadCreator {
         void add_entities(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Entity>>> entities) { fbb_.AddOffset(GMXFile::VT_ENTITIES, entities); }
         void add_cell_space_size(const Size *cell_space_size) { fbb_.AddStruct(GMXFile::VT_CELL_SPACE_SIZE, cell_space_size); }
         void add_locations(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Location>>> locations) { fbb_.AddOffset(GMXFile::VT_LOCATIONS, locations); }
+        void add_triggers(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Trigger>>> triggers) { fbb_.AddOffset(GMXFile::VT_TRIGGERS, triggers); }
         GMXFileBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
         GMXFileBuilder &operator=(const GMXFileBuilder &);
         flatbuffers::Offset<GMXFile> Finish() {
-            auto o = flatbuffers::Offset<GMXFile>(fbb_.EndTable(start_, 8));
+            auto o = flatbuffers::Offset<GMXFile>(fbb_.EndTable(start_, 9));
             return o;
         }
     };
@@ -575,8 +581,10 @@ namespace DeadCreator {
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Polygon>>> collision_regions = 0,
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Entity>>> entities = 0,
                                                       const Size *cell_space_size = 0,
-                                                      flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Location>>> locations = 0) {
+                                                      flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Location>>> locations = 0,
+                                                      flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Trigger>>> triggers = 0) {
         GMXFileBuilder builder_(_fbb);
+        builder_.add_triggers(triggers);
         builder_.add_locations(locations);
         builder_.add_cell_space_size(cell_space_size);
         builder_.add_entities(entities);

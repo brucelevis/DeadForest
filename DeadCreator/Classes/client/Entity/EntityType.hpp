@@ -49,7 +49,7 @@ namespace realtrick
     enum class PlayerType : int
     {
         INVALID = -1,
-        PLAYER1 = 0,
+        PLAYER1 = 1,
         PLAYER2,
         PLAYER3,
         PLAYER4,

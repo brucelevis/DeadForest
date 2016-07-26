@@ -13,6 +13,7 @@
 #include "imgui_internal.h"
 
 #include "GameTrigger.hpp"
+#include "GMXFile_generated.h"
 
 namespace realtrick
 {
@@ -39,6 +40,9 @@ namespace realtrick
         void showModifyCondition(const char* title, bool& opened, GameTrigger* trigger, int condIndex);
         void showNewAction(const char* title, bool& opened, GameTrigger* newTrigger);
         void showModifyAction(const char* title, bool& opened, GameTrigger* trigger, int actIndex);
+        
+        void saveTriggers(flatbuffers::FlatBufferBuilder& builder,
+                          std::vector<flatbuffers::Offset<DeadCreator::Trigger>>& out_triggers);
         
     private:
         

@@ -68,8 +68,12 @@ namespace realtrick
         bool isModal() const { return _isModal; }
         void enableModal(bool enable) { _isModal = enable; }
         
-        void setSelectedPlayerType(PlayerType type) { _selectedPlayerType = static_cast<int>(type); }
-        PlayerType getSelectedPlayerType() const { return static_cast<PlayerType>(_selectedPlayerType); }
+        void setSelectedPlayerType(PlayerType type)
+        {
+            int temp = static_cast<int>(type); --temp;
+            _selectedPlayerType = temp;
+        }
+        PlayerType getSelectedPlayerType() { return static_cast<PlayerType>(_selectedPlayerType + 1); }
         
     private:
         
@@ -89,11 +93,9 @@ namespace realtrick
         bool _isEditEnable = false;
         bool _isPlayerEnable = false;
         bool _isWindowEnable = false;
-        
-        int _layerType = -1;
-        
         bool _isModal = false;
         
+        int _layerType = -1;
         int _selectedPlayerType = -1;
         
     };

@@ -758,6 +758,24 @@ void TriggerEditLayer::showModifyAction(const char* title, bool& opened, GameTri
 }
 
 
+void TriggerEditLayer::saveTriggers(flatbuffers::FlatBufferBuilder& builder,
+                                    std::vector<flatbuffers::Offset<DeadCreator::Trigger>>& out_triggers)
+{
+    for (auto& trigger : _triggers)
+    {
+        std::vector<int> playerVector = trigger->getSelectedPlayers();
+        std::vector<flatbuffers::Offset<DeadCreator::Condition>> conditionVector;
+        std::vector<flatbuffers::Offset<DeadCreator::Action>> actionVector;
+        for(auto& cond: trigger->conditions) conditionVector.push_back(cond->getConditionObject(builder));
+        for(auto& act: trigger->actions) actionVector.push_back(act->getActionObject(builder));
+        out_triggers.push_back(DeadCreator::CreateTrigger(builder,
+                                                      builder.CreateVector(playerVector),
+                                                      builder.CreateVector(conditionVector),
+                                                      builder.CreateVector(actionVector)));
+    }
+}
+
+
 
 
 

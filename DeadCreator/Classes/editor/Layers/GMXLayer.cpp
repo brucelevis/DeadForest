@@ -28,7 +28,6 @@
 using namespace cocos2d;
 using namespace realtrick;
 
-#include "flatbuffers.h"
 #include "util.h"
 #include "GMXFile_generated.h"
 
@@ -566,9 +565,13 @@ void GMXLayer::updateCocosLogic()
                     EditorEntity* ent = EditorEntity::create(getNextValidID(), selectedEntity);
                     ent->setPosition(_mousePosInWorld);
                     if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN )
+                    {
                         ent->setPlayerType(_imguiLayer.getSelectedPlayerType());
+                    }
                     else if ( _paletteLayer->getPaletteType() == PaletteType::ITEM )
+                    {
                         ent->setPlayerType(PlayerType::NEUTRAL);
+                    }
                     addEntity(ent, 5);
                 }
             }
@@ -1736,13 +1739,19 @@ void GMXLayer::save(const std::string& path)
                                                         &size, &pos));
     }
     
+    // triggers
+    std::vector<flatbuffers::Offset<DeadCreator::Trigger>> triggers;
+    _triggerEditLayer->saveTriggers(builder, triggers);
+    
+    
     auto file = DeadCreator::CreateGMXFile(builder,
                                            static_cast<DeadCreator::TileType>(_file.defaultTile),
                                            builder.CreateVector(tileInfos), &numOfTiles, &tileSize,
                                            builder.CreateVector(collisionRegions),
                                            builder.CreateVector(entities),
                                            &cellSpaceSize,
-                                           builder.CreateVector(locations));
+                                           builder.CreateVector(locations),
+                                           builder.CreateVector(triggers));
     builder.Finish(file);
     flatbuffers::SaveFile(path.c_str(),
                           reinterpret_cast<const char*>(builder.GetBufferPointer()),

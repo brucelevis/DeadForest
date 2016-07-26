@@ -145,7 +145,7 @@ void NavigatorLayer::showLayer(bool* opened)
     for(auto &ent : _entityMarks)
     {
         auto entity = ent.second;
-        std::string type = "player" + std::to_string(static_cast<int>(entity->getPlayerType()) + 1) + ".png";
+        std::string type = "player" + std::to_string(static_cast<int>(entity->getPlayerType())) + ".png";
         auto texID = reinterpret_cast<ImTextureID>(Director::getInstance()->getTextureCache()->addImage(type)->getName());
         
         ImVec2 param = ImVec2(entity->getPosition().x / worldSize.x, entity->getPosition().y / worldSize.y);

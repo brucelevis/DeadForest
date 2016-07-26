@@ -92,19 +92,8 @@ bool EditScene::init()
             
             if (ImGui::BeginMenu("Players", _isPlayerEnable))
             {
-                if (ImGui::MenuItem("Player 1")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER1); }
-                if (ImGui::MenuItem("Player 2")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER2); }
-                if (ImGui::MenuItem("Player 3")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER3); }
-                if (ImGui::MenuItem("Player 4")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER4); }
-                if (ImGui::MenuItem("Player 5")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER5); }
-                if (ImGui::MenuItem("Player 6")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER6); }
-                if (ImGui::MenuItem("Player 7")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER7); }
-                if (ImGui::MenuItem("Player 8")) { _selectedPlayerType = static_cast<int>(PlayerType::PLAYER8); }
-                
-                ImGui::Separator();
                 if (ImGui::MenuItem("Player Setting")) {}
-                if (ImGui::MenuItem("Force Setting")) {}
-                
+                if (ImGui::MenuItem("Force Setting")) {}   
                 ImGui::EndMenu();
             }
             

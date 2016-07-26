@@ -16,6 +16,8 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
+#include "GMXFile_generated.h"
+
 namespace realtrick
 {
     
@@ -39,6 +41,8 @@ namespace realtrick
         virtual void reset() override {}
         virtual ConditionBase* clone() const override { return nullptr; }
         virtual void deepCopy(TriggerComponentProtocol* copy) override { TriggerComponentProtocol::deepCopy(copy); }
+        
+        virtual flatbuffers::Offset<DeadCreator::Condition> getConditionObject(flatbuffers::FlatBufferBuilder& builder) = 0;
         
     };
     

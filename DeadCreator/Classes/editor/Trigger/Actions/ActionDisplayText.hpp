@@ -63,6 +63,12 @@ namespace realtrick
             std::strncpy(_buf, p->_buf, 32);
         }
         
+        virtual flatbuffers::Offset<DeadCreator::Action> getActionObject(flatbuffers::FlatBufferBuilder& builder) override
+        {
+            auto obj = DeadCreator::CreateDisplayText(builder);
+            return DeadCreator::CreateAction(builder, DeadCreator::ActionBase_DisplayText, obj.Union());
+        }
+        
     private:
         
         char _buf[32];

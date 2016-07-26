@@ -16,6 +16,8 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
+#include "GMXFile_generated.h"
+
 namespace realtrick
 {
     
@@ -40,6 +42,7 @@ namespace realtrick
         virtual ActionBase* clone() const override { return nullptr; }
         virtual void deepCopy(TriggerComponentProtocol* copy) override { TriggerComponentProtocol::deepCopy(copy); }
         
+        virtual flatbuffers::Offset<DeadCreator::Action> getActionObject(flatbuffers::FlatBufferBuilder& builder) = 0;
     };
     
 };

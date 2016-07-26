@@ -211,6 +211,12 @@ namespace realtrick
             _currLocation = p->_currLocation;
         }
         
+        virtual flatbuffers::Offset<DeadCreator::Condition> getConditionObject(flatbuffers::FlatBufferBuilder& builder) override
+        {
+            auto obj = DeadCreator::CreateBring(builder, static_cast<int>(_playerType.getPlayerType()));
+            return DeadCreator::CreateCondition(builder, DeadCreator::ConditionBase_Bring, obj.Union());
+        }
+        
     private:
         
         int _currPlayer = -1;

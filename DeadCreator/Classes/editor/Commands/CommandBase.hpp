@@ -38,7 +38,7 @@ namespace realtrick
             _commandName = rhs._commandName;
         }
         
-        virtual ~CommandBase() = default;
+        virtual ~CommandBase() { _layer = nullptr; }
         virtual void execute() = 0;
         virtual void undo() = 0;
         virtual CommandBase* clone() const = 0;

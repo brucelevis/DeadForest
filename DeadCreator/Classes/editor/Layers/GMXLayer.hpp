@@ -17,7 +17,6 @@
 #include "TileBase.hpp"
 #include "CommandQueue.hpp"
 #include "SizeProtocol.h"
-#include "HistoryLayer.hpp"
 
 namespace realtrick
 {
@@ -35,6 +34,7 @@ namespace realtrick
     class RenameLocationLayer;
     class EditorEntity;
     class GameTrigger;
+    class HistoryLayer;
     
     class GMXLayer : public cocos2d::Layer
     {
@@ -74,10 +74,10 @@ namespace realtrick
         bool& isShowHistory() { return _isShowHistory; }
         bool& isShowTriggerEdit() { return _isShowTriggerEdit; }
         
-        bool isRedo() const { return _historyLayer->isRedo(); }
-        bool isUndo() const { return _historyLayer->isUndo(); }
-        void redo() { _historyLayer->redo(); updateCollisionRegion(); }
-        void undo() { _historyLayer->undo(); updateCollisionRegion(); }
+        bool isRedo() const;
+        bool isUndo() const;
+        void redo();
+        void undo();
         
         PaletteLayer* getPaletteLayer() const { return _paletteLayer; }
         

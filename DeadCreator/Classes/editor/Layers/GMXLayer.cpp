@@ -217,7 +217,9 @@ void GMXLayer::showWindow()
     ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.8200000, 0.8200000, 0.8200000, 1.0000000));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(200,200));
-    ImGui::Begin(_file.fileName.c_str(), &_isShowWindow, ImVec2(0,0), 0.0f,
+    
+    ImGui::Begin((isUndo() ? std::string(_file.fileName + '*').c_str() : _file.fileName.c_str()),
+                 &_isShowWindow, ImVec2(0,0), 0.0f,
                  ImGuiWindowFlags_NoScrollbar |
                  ImGuiWindowFlags_NoCollapse |
                  ImGuiWindowFlags_NoBringToFrontOnFocus |
@@ -1852,6 +1854,10 @@ void GMXLayer::addTrigger(GameTrigger* trigger)
 }
 
 
+bool GMXLayer::isRedo() const { return _historyLayer->isRedo(); }
+bool GMXLayer::isUndo() const { return _historyLayer->isUndo(); }
+void GMXLayer::redo() { _historyLayer->redo(); updateCollisionRegion(); }
+void GMXLayer::undo() { _historyLayer->undo(); updateCollisionRegion(); }
 
 
 

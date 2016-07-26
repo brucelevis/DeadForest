@@ -10,6 +10,7 @@
 
 #include "CommandBase.hpp"
 #include "EditorEntity.hpp"
+#include "GMXLayer.hpp"
 
 namespace realtrick
 {
@@ -35,18 +36,26 @@ namespace realtrick
             _entity = rhs._entity;
         }
         
-        virtual ~AddEntityToolCommand();
+        virtual ~AddEntityToolCommand() { if ( _entity ) _layer->eraseEntity(_entity->getID()); }
         
-        virtual void execute() override;
-        virtual void undo() override;
-        virtual AddEntityToolCommand* clone() const override;
+        virtual void execute() override
+        {
+            _layer->addEntity(_entity, _entity->getLocalZOrder(), true);
+        }
+        
+        virtual void undo() override
+        {
+            _layer->eraseEntity(_entity->getID(), true);
+        }
+        
+        virtual AddEntityToolCommand* clone() const override { return new AddEntityToolCommand(*this); }
         virtual bool empty() const override { return !_entity; }
         void pushEntity(EditorEntity* ent) { if (_isBegan ) _entity = ent; }
         
     private:
         
-        virtual void beginImpl() override;
-        virtual void endImpl() override;
+        virtual void beginImpl() override { _entity = nullptr; }
+        virtual void endImpl() override { _entity = nullptr; }
         
     private:
         

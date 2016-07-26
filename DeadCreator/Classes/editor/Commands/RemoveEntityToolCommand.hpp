@@ -12,6 +12,7 @@
 
 #include "CommandBase.hpp"
 #include "EditorEntity.hpp"
+#include "GMXLayer.hpp"
 
 namespace realtrick
 {
@@ -37,18 +38,31 @@ namespace realtrick
             _entities = rhs._entities;
         }
         
-        virtual ~RemoveEntityToolCommand();
+        virtual ~RemoveEntityToolCommand() { _entities.clear(); }
+        virtual void execute() override
+        {
+            for( auto& ent : _entities )
+            {
+                _layer->eraseEntity(ent->getID(), true);
+            }
+        }
         
-        virtual void execute() override;
-        virtual void undo() override;
-        virtual RemoveEntityToolCommand* clone() const override;
+        virtual void undo() override
+        {
+            for( auto& ent : _entities )
+            {
+                _layer->addEntity(ent, ent->getLocalZOrder(), true);
+            }
+        }
+        
+        virtual RemoveEntityToolCommand* clone() const override { return new RemoveEntityToolCommand(*this); }
         virtual bool empty() const override { return _entities.empty(); }
         void pushEntity(const std::vector<EditorEntity*>& entities) { if ( _isBegan ) _entities = entities; }
         
     private:
         
-        virtual void beginImpl() override;
-        virtual void endImpl() override;
+        virtual void beginImpl() override { _entities.clear(); }
+        virtual void endImpl() override { _entities.clear(); }
         
     private:
         

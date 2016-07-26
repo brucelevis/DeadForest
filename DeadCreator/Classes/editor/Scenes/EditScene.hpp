@@ -17,9 +17,10 @@ namespace realtrick
     
     class GMXFile;
     class GMXLayer;
-    class NewFileWindow;
+    class NewFileLayer;
     class SaveAsLayer;
     class OpenLayer;
+    class SaveQueryLayer;
     
     enum LayerType
     {
@@ -74,13 +75,15 @@ namespace realtrick
     private:
         
         GMXLayer* _layer = nullptr;
-        NewFileWindow* _newFileWindow = nullptr;
+        NewFileLayer* _newFileLayer = nullptr;
         SaveAsLayer* _saveAsLayer = nullptr;
         OpenLayer* _openLayer = nullptr;
+        SaveQueryLayer* _saveQueryLayer = nullptr;
         
         bool _showNewMap = false;
         bool _showSaveAs = false;
         bool _showOpenMap = false;
+        bool _showSaveQueryLayer = false;
         
         bool _enableOpenMap = true;
         bool _enableSaveMap = false;

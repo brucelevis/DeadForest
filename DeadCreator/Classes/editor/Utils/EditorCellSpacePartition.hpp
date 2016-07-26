@@ -19,17 +19,13 @@ namespace realtrick
     
     class EditorEntity;
     
-    class EditorCell
+    struct  EditorCell
     {
         
-    public:
+        std::list<EditorEntity*> members;
+        cocos2d::Rect boundingBox;
         
-        std::list<EditorEntity*>                    members;
-        
-        cocos2d::Rect                               boundingBox;
-        
-        EditorCell(cocos2d::Rect rect): boundingBox(rect)
-        {}
+        EditorCell(cocos2d::Rect rect): boundingBox(rect) {}
         
     };
     

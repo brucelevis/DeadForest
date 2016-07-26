@@ -12,6 +12,7 @@
 
 #include "CommandBase.hpp"
 #include "TileBase.hpp"
+#include "GMXLayer.hpp"
 
 namespace realtrick
 {
@@ -40,15 +41,41 @@ namespace realtrick
         
         virtual ~TileToolCommand() = default;
         
-        virtual void execute() override;
-        virtual void undo() override;
-        virtual TileToolCommand* clone() const override;
-        void pushTile(const TileBase& prevTile, const TileBase& currTile);
+        virtual void execute() override
+        {
+            for( auto tile = _currTiles.cbegin() ; tile != _currTiles.cend() ; ++ tile)
+            {
+                _layer->setTile(tile->getIndexX(), tile->getIndexY(), *tile, true);
+            }
+        }
+        
+        virtual void undo() override
+        {
+            for( auto tile = _prevTiles.crbegin() ; tile != _prevTiles.crend() ; ++ tile)
+            {
+                _layer->setTile(tile->getIndexX(), tile->getIndexY(), *tile, true);
+            }
+        }
+        
+        virtual TileToolCommand* clone() const override { return new TileToolCommand(*this); }
+        void pushTile(const TileBase& prevTile, const TileBase& currTile)
+        {
+            if ( _isBegan )
+            {
+                _prevTiles.push_back(prevTile);
+                _currTiles.push_back(currTile);
+            }
+        }
+        
         virtual bool empty() const override { return _prevTiles.empty(); }
         
     private:
         
-        virtual void beginImpl() override;
+        virtual void beginImpl() override
+        {
+            _prevTiles.clear();
+            _currTiles.clear();
+        }
         
     private:
         

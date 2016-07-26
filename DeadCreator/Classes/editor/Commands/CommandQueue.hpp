@@ -12,6 +12,8 @@
 
 #include "cocos2d.h"
 
+#include "CommandBase.hpp"
+
 namespace realtrick
 {
     
@@ -23,23 +25,48 @@ namespace realtrick
     public:
         
         CommandQueue() = default;
+        virtual ~CommandQueue()
+        {
+            for ( auto& command : _commands ) CC_SAFE_DELETE(command);
+            _commands.clear();
+        }
+    
+        void redo()
+        {
+            _commands[_currIndex + 1]->execute();
+            _currIndex ++;
+        }
         
-        virtual ~CommandQueue();
-        
-        void redo();
-        void undo();
+        void undo()
+        {
+            _commands[_currIndex]->undo();
+            _currIndex--;
+        }
     
         int getIndex() const { return _currIndex; }
-        
-        bool isRedo() const;
-        bool isUndo() const;
-        
+        bool isRedo() const { return (_currIndex + 1 < _commands.size()); }
+        bool isUndo() const { return (_currIndex > -1); }
         int size() const { return static_cast<int>(_commands.size()); }
-        void setStateToIndex(int index);
+        void setStateToIndex(int index)
+        {
+            if ( _currIndex > index ) while( _currIndex != index ) { undo(); }
+            else while( _currIndex != index ) { redo(); }
+        }
         
         const CommandBase* operator[](size_t index) const { return _commands[index]; }
-        
-        void pushCommand(CommandBase* command);
+        void pushCommand(CommandBase* command)
+        {
+            while( _commands.size() > _currIndex + 1 )
+            {
+                auto remove = _commands.back();
+                delete remove;
+                remove = nullptr;
+                _commands.pop_back();
+            }
+            
+            _commands.push_back(command);
+            _currIndex ++;
+        }
         
     private:
         

@@ -16,9 +16,10 @@ using namespace cocos2d;
 #include "EditScene.hpp"
 #include "GMXLayer.hpp"
 #include "GMXFile.hpp"
-#include "NewFileWindow.hpp"
+#include "NewFileLayer.hpp"
 #include "SaveAsLayer.hpp"
 #include "OpenLayer.hpp"
+#include "SaveQueryLayer.hpp"
 #include "PaletteLayer.hpp"
 #include "LocationNode.hpp"
 #include "GameTrigger.hpp"
@@ -50,8 +51,8 @@ bool EditScene::init()
     file->tileHeight = 128;
     file->worldSize = Size(file->numOfTileX * file->tileWidth, file->numOfTileY * file->tileHeight);
     
-    _newFileWindow = NewFileWindow::create(this);
-    addChild(_newFileWindow);
+    _newFileLayer = NewFileLayer::create(this);
+    addChild(_newFileLayer);
     
     _saveAsLayer = SaveAsLayer::create(this);
     addChild(_saveAsLayer);
@@ -59,11 +60,15 @@ bool EditScene::init()
     _openLayer = OpenLayer::create(this);
     addChild(_openLayer);
     
+    _saveQueryLayer = SaveQueryLayer::create(this);
+    addChild(_saveQueryLayer);
+    
     addImGUI([this] {
         
-        if ( _showNewMap ) _newFileWindow->showNewFileWindow(&_showNewMap);
-        if ( _showSaveAs ) _saveAsLayer->showLayer(&_showSaveAs);
-        if ( _showOpenMap ) _openLayer->showLayer(&_showOpenMap);
+        if ( _showNewMap ) _newFileLayer->showLayer(_showNewMap);
+        if ( _showSaveAs ) _saveAsLayer->showLayer(_showSaveAs);
+        if ( _showOpenMap ) _openLayer->showLayer(_showOpenMap);
+        if ( _showSaveQueryLayer ) _saveQueryLayer->showLayer(_showSaveQueryLayer);
         
         if (ImGui::BeginMainMenuBar())
         {
@@ -563,14 +568,29 @@ void EditScene::closeGMXLayer()
 
 void EditScene::doNewButton()
 {
-    if ( _layer ) _layer->updateChunk(_layer->getCameraPosition());
+    if ( _layer )
+    {
+        _layer->updateChunk(_layer->getCameraPosition());
+        
+        // changed state
+        if ( isUndo() )
+        {
+            _showSaveQueryLayer = true;
+            return ;
+        }
+    }
+    
     _showNewMap = true;
 }
 
 
 void EditScene::doOpenButton()
 {
-    if ( _layer ) _layer->updateChunk(_layer->getCameraPosition());
+    if ( _layer )
+    {
+        _layer->updateChunk(_layer->getCameraPosition());
+    }
+    
     _showOpenMap = true;
 }
 
@@ -624,6 +644,9 @@ void EditScene::saveAsFile()
 {
     _showSaveAs = true;
 }
+
+
+
 
 
 

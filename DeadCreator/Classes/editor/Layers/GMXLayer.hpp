@@ -89,12 +89,7 @@ namespace realtrick
         
         bool eraseEntity(int id, bool isExecCommand = false);
         
-        static int getNextValidID()
-        {
-            static int validID = 0;
-            return validID++;
-        }
-        
+        static int getNextValidID() { static int validID = 0; return validID++; }
         static void enableTitleClicked() { TITLE_CLICKED = true; }
         static void disableTitleClicked() { TITLE_CLICKED = false; }
         static bool isTitleClicked() { return TITLE_CLICKED; }
@@ -121,7 +116,6 @@ namespace realtrick
         LocationNode* getGrabbedLocation() const { return _grabbedLocation; }
         bool isOverlappedLocationName(const std::string& name) const;
         const std::vector<LocationNode*>& getLocations() { return _locations; }
-        
         
     private:
         

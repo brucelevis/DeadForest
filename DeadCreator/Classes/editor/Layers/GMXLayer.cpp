@@ -1733,7 +1733,7 @@ void GMXLayer::save(const std::string& path)
         DeadCreator::Size size(_locations[i]->getLocationSize().first, _locations[i]->getLocationSize().second);
         locations.push_back(DeadCreator::CreateLocation(builder,
                                                         builder.CreateString(_locations[i]->getLocationName().c_str()),
-                                                        &pos, &size));
+                                                        &size, &pos));
     }
     
     auto file = DeadCreator::CreateGMXFile(builder,

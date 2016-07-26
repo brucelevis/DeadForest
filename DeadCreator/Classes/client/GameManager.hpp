@@ -73,10 +73,6 @@ namespace realtrick
         cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& p) const ;
         cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& p, const cocos2d::Vec2& camera) const ;
         
-        int getRemainHuman() const;
-        
-        std::string getCurrentLocation() const;
-        
         void addDynamicEntity(EntityBase* entity, int zOrder, int id);
         void addStaticEntity(cocos2d::Node* entity, int zOrder, int id);
         void removeEntity(int id);

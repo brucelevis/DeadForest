@@ -60,43 +60,36 @@ namespace realtrick
         
     private:
         
-        GameManager*                                    _gameMgr;
+        GameManager* _gameMgr;
         
-        std::vector<std::vector<Sprite*>>               _currTiles;
+        std::vector<std::vector<Sprite*>> _currTiles;
         
-        int                                             _numOfTileX;
-        int                                             _numOfTileY;
-        int                                             _tileWidth;
-        int                                             _tileHeight;
-        int                                             _worldWidth;
-        int                                             _worldHeight;
+        int _numOfTileX;
+        int _numOfTileY;
+        int _tileWidth;
+        int _tileHeight;
+        int _worldWidth;
+        int _worldHeight;
         
-        int                                             _cellWidth;
-        int                                             _cellHeight;
+        int _cellWidth;
+        int _cellHeight;
         
-        int                                             _numOfViewableTileX;
-        int                                             _numOfViewableTileY;
+        int _numOfViewableTileX;
+        int _numOfViewableTileY;
         
-        std::pair<int, int>                             _pivotIndex;
+        std::pair<int, int> _pivotIndex;
         
-        std::string                                     _data;
+        std::vector<Polygon> _collisionData;
+        std::vector<std::vector<std::string>> _tileData;
+        cocos2d::Vec2 _worldPosition;
         
-        rapidjson::Document                             _doc;
-        
-        std::vector<Polygon>                            _collisionData;
-        std::vector<std::vector<std::string>>           _tileData;
-        cocos2d::Vec2                                   _worldPosition;
-        
-        bool                                            _isNormal;
+        bool _isNormal;
         
     private:
         
         explicit GameMap(GameManager* gameMgr);
-        
         virtual ~GameMap();
-        
         bool initGMXFile(const DeadCreator::GMXFile* file);
-        
         inline TileType convertToTileType(char c);
         
     };

@@ -553,13 +553,6 @@ void EditScene::doNewButton()
     if ( _layer )
     {
         _layer->updateChunk(_layer->getCameraPosition());
-        
-        // changed state
-        if ( isUndo() )
-        {
-            _showSaveQueryLayer = true;
-            return ;
-        }
     }
     
     _showNewMap = true;

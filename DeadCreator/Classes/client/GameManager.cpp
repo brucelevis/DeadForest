@@ -276,31 +276,6 @@ namespace realtrick
     }
     
     
-    int GameManager::getRemainHuman() const
-    {
-        int ret = 0;
-        for( const auto& ent : _entities )
-        {
-            if ( ent.second->getEntityType() == EntityType::ENTITY_HUMAN )
-            {
-                EntityHuman* h = (EntityHuman*)ent.second;
-                if ( h->isAlive() ) ret ++;
-            }
-        }
-        return ret;
-    }
-    
-    
-    std::string GameManager::getCurrentLocation() const
-    {
-        Vec2 pos = _gameCamera->getCameraPos();
-        int xidx = (int)( ( pos.x + _cellSpace->getCellWidth() ) / _cellSpace->getCellWidth() );
-        int yidx = (int)( ( pos.y + _cellSpace->getCellHeight() ) / _cellSpace->getCellHeight() );
-        
-        return _to_string(xidx) + ", " + _to_string(yidx);
-    }
-    
-    
     void GameManager::pushLogic(double delaySeconds, MessageType type, void* extraInfo)
     {
         Dispatch.pushMessage(delaySeconds, _gameWorld->getLogicStream(), nullptr, type, extraInfo);

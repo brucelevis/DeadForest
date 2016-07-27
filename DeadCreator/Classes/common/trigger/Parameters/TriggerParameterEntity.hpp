@@ -24,7 +24,6 @@ namespace realtrick
             TriggerParameterEntity() : TriggerParameterBase(),
             _entityType(EntityType::DEFAULT)
             {
-                _parameterType = TriggerParameterBase::Type::ENTITY;
                 setParameterName("#invalid");
             }
             

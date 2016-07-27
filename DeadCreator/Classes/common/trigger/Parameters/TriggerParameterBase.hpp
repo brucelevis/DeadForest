@@ -20,23 +20,7 @@ namespace realtrick
             
         public:
             
-            enum class Type
-            {
-                INVALID = -1,
-                PLAYER = 0,
-                ENTITY,
-                LOCATION,
-                APPROXIMATION,
-                NUMBER,
-                TEXT,
-                SCORE,
-                SWITCH,
-                SWITCH_STATE,
-                ORDER
-            };
-            
             TriggerParameterBase() :
-            _parameterType(Type::INVALID),
             _parameterName("")
             {}
             
@@ -49,13 +33,11 @@ namespace realtrick
             
             void copyFrom(const TriggerParameterBase& rhs)
             {
-                _parameterType = rhs._parameterType;
                 _parameterName = rhs._parameterName;
             }
             
             virtual ~TriggerParameterBase() = default;
             
-            Type getType() const { return _parameterType; }
             virtual std::string getParameterName() const { return _parameterName; }
             virtual void setParameterName(const std::string& name) { _parameterName = name; }
             
@@ -66,12 +48,19 @@ namespace realtrick
             
         protected:
             
-            Type _parameterType;
             std::string _parameterName;
             
         };
         
     }
+    
+    namespace client
+    {
+        
+        
+        
+    }
+    
 }
 
 

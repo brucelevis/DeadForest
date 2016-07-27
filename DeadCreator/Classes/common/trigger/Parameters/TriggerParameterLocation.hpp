@@ -25,7 +25,6 @@ namespace realtrick
             TriggerParameterLocation() : TriggerParameterBase(),
             _location(nullptr)
             {
-                _parameterType = TriggerParameterBase::Type::ENTITY;
                 setParameterName("#invalid");
             }
             

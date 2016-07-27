@@ -36,7 +36,6 @@ namespace realtrick
             TriggerParameterBase(),
             _approximation(Type::INVALID)
             {
-                _parameterType = TriggerParameterBase::Type::APPROXIMATION;
                 setParameterName("#invalid");
             }
             

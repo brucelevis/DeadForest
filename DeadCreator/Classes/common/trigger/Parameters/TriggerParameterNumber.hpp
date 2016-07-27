@@ -24,7 +24,6 @@ namespace realtrick
             TriggerParameterNumber() : TriggerParameterBase(),
             _number(0)
             {
-                _parameterType = TriggerParameterBase::Type::NUMBER;
                 setParameterName("0");
             }
             

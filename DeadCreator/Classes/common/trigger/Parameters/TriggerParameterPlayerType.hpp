@@ -24,7 +24,6 @@ namespace realtrick
             TriggerParameterPlayerType() : TriggerParameterBase(),
             _playerType(PlayerType::INVALID)
             {
-                _parameterType = Type::PLAYER;
                 setParameterName("#invalid");
             }
             

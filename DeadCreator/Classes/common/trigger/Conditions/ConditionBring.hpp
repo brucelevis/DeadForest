@@ -153,6 +153,32 @@ namespace realtrick
         };
         
     }
+    
+    namespace client
+    {
+        
+        class ConditionBring : public ConditionBase
+        {
+            
+        public:
+            
+            virtual bool isReady() override
+            {
+                return true;
+            }
+            
+        private:
+            
+            int _player;
+            int _approximation;
+            int _number;
+            int _entity;
+            int _location;
+            
+        };
+        
+    }
+    
 }
 
 

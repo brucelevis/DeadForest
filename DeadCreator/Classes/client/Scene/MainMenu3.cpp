@@ -10,8 +10,7 @@
 #include "GameWorld.hpp"
 #include "GeneratedPackets.hpp"
 #include "Server.hpp"
-
-using namespace realtrick;
+using namespace realtrick::client;
 using namespace cocos2d;
 using namespace cocos2d::ui;
 

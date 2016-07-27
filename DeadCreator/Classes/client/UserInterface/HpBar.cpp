@@ -9,7 +9,7 @@
 #include "HpBar.hpp"
 #include "GameManager.hpp"
 
-using namespace realtrick::userinterface;
+using namespace realtrick::client;
 using namespace cocos2d;
 
 HpBar::HpBar(GameManager* mgr) :

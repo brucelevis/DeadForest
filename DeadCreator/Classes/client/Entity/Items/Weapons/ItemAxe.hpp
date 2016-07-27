@@ -13,33 +13,33 @@
 
 namespace realtrick
 {
-    
-    class ItemAxe : public WeaponBase
+    namespace client
     {
         
-    public:
+        class ItemAxe : public WeaponBase
+        {
+            
+        public:
+            
+            explicit ItemAxe(GameManager* mgr);
+            virtual ~ItemAxe();
+            
+            static ItemAxe* create(GameManager* mgr);
+            virtual ItemBase* clone() const override;
+            virtual void inWeapon() override;
+            virtual void outWeapon() override;
+            virtual void attack() override;
+            virtual void discard() override;
+            
+        };
         
-        static ItemAxe* create(GameManager* mgr);
-        
-        virtual ItemBase* clone() const override;
-        
-        virtual void inWeapon() override;
-        
-        virtual void outWeapon() override;
-        
-        virtual void attack() override;
-        
-        virtual void discard() override;
-        
-    private:
-        
-        ItemAxe(GameManager* mgr);
-        
-        virtual ~ItemAxe();
-        
-    };
-    
+    }
 }
+
+
+
+
+
 
 
 

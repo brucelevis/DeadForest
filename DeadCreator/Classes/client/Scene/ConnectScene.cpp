@@ -10,9 +10,7 @@
 #include "Server.hpp"
 #include "MainMenu3.hpp"
 #include "GeneratedPackets.hpp"
-
-
-using namespace realtrick;
+using namespace realtrick::client;
 using namespace cocos2d;
 
 

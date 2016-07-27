@@ -20,8 +20,7 @@
 #include "AimingNode.hpp"
 #include "HpBar.hpp"
 #include "InfoSystem.hpp"
-
-using namespace realtrick;
+using namespace realtrick::client;
 using namespace cocos2d;
 
 
@@ -58,7 +57,7 @@ bool UiLayer::init()
     
     _moveJoystick = JoystickEx::create("wooden_handle_n.png", "wooden_handle_n.png");
     _moveJoystick->setJoystickPad("wooden_pad.png");
-    _moveJoystick->setRotationType(realtrick::JoystickEx::RotationType::ROTATION_8);
+    _moveJoystick->setRotationType(JoystickEx::RotationType::ROTATION_8);
     _moveJoystick->setPosition(Vec2(150.0f, 150.0f));
     _moveJoystick->enableDoubleClick(false);
     _moveJoystick->setChangedDirectionAndStatusCallback([&](Ref* ref, const Vec2& dir, JoystickEx::ClickEventType type) {
@@ -182,15 +181,12 @@ bool UiLayer::init()
     _inGameUIRoot->addChild(_aimingNode);
 
     
-    _hpBar = userinterface::HpBar::create(_gameMgr);
+    _hpBar = HpBar::create(_gameMgr);
     _hpBar->setPosition(Vec2(_winSize.width * 0.03f, _winSize.height * 0.9f));
     addChild(_hpBar);
-    
-    
-    
+
     return true;
 }
-
 
 
 

@@ -13,35 +13,35 @@
 
 namespace realtrick
 {
-    
-    class ItemM16A2 : public WeaponBase
+    namespace client
     {
         
-    public:
+        class ItemM16A2 : public WeaponBase
+        {
+            
+        public:
+            
+            explicit ItemM16A2(GameManager* mgr);
+            virtual ~ItemM16A2();
+            
+            static ItemM16A2* create(GameManager* mgr);
+            
+            virtual ItemBase* clone() const override;
+            virtual void inWeapon() override;
+            virtual void outWeapon() override;
+            virtual void attack() override;
+            virtual void discard() override;
+            virtual int getReloadedBulletOnce() override { return getMaxRounds() - getNumOfLeftRounds(); }
+            
+        };
         
-        static ItemM16A2* create(GameManager* mgr);
-        
-        virtual ItemBase* clone() const override;
-        
-        virtual void inWeapon() override;
-        
-        virtual void outWeapon() override;
-        
-        virtual void attack() override;
-        
-        virtual void discard() override;
-        
-        virtual int getReloadedBulletOnce() override { return getMaxRounds() - getNumOfLeftRounds(); }
-        
-    private:
-        
-        ItemM16A2(GameManager* mgr);
-        
-        virtual ~ItemM16A2();
-        
-    };
-    
+    }
 }
+
+
+
+
+
 
 
 

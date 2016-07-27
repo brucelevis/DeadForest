@@ -21,7 +21,6 @@
 #include "RemoveEntityToolCommand.hpp"
 #include "CellSpacePartition.hpp"
 #include "GameWorld.hpp"
-#include "TestScene.hpp"
 #include "MainMenu3.hpp"
 #include "LocationNode.hpp"
 #include "RenameLocationLayer.hpp"
@@ -647,7 +646,7 @@ void GMXLayer::updateCocosLogic()
         
         if ( ImGui::IsKeyReleased(257) )
         {
-            Director::getInstance()->replaceScene(MainMenu3::createScene());
+            Director::getInstance()->replaceScene(client::MainMenu3::createScene());
         }
     }
 }

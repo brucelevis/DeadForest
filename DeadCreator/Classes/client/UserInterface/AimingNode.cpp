@@ -8,7 +8,7 @@
 
 #include "AimingNode.hpp"
 
-using namespace realtrick;
+using namespace realtrick::client;
 using namespace cocos2d;
 
 

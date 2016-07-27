@@ -12,24 +12,31 @@
 
 namespace realtrick
 {
-    
-    class BulletBase : public ItemBase
+    namespace client
     {
         
-    public:
+        class BulletBase : public ItemBase
+        {
+            
+        public:
+            
+            explicit BulletBase(GameManager* mgr);
+            BulletBase(const BulletBase& rhs);
+            virtual ~BulletBase();
+            virtual ItemBase* clone() const override = 0;
+            virtual void use() override {}
+            virtual void discard() override = 0;
+            
+        };
         
-        BulletBase(GameManager* mgr);
-        
-        BulletBase(const BulletBase& rhs);
-        
-        virtual ~BulletBase();
-
-        virtual ItemBase* clone() const override = 0;
-        
-        virtual void use() override {}
-        
-        virtual void discard() override = 0;
-        
-    };
-    
+    }
 }
+
+
+
+
+
+
+
+
+

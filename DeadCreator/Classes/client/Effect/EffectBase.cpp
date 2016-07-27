@@ -31,55 +31,52 @@
 #include "EffectBase.hpp"
 
 using namespace cocos2d;
+using namespace realtrick::client;
 
-namespace realtrick
+
+bool EffectBase::initGLProgramState(const std::string& fragmentFilename)
 {
+    auto fileUtils = FileUtils::getInstance();
+    auto fragmentFullPath = fileUtils->fullPathForFilename(fragmentFilename);
+    auto fragSource = fileUtils->getStringFromFile(fragmentFullPath);
+    auto glProgram = GLProgram::createWithByteArrays(ccPositionTextureColor_noMVP_vert, fragSource.c_str());
     
-    bool EffectBase::initGLProgramState(const std::string& fragmentFilename)
-    {
-        auto fileUtils = FileUtils::getInstance();
-        auto fragmentFullPath = fileUtils->fullPathForFilename(fragmentFilename);
-        auto fragSource = fileUtils->getStringFromFile(fragmentFullPath);
-        auto glProgram = GLProgram::createWithByteArrays(ccPositionTextureColor_noMVP_vert, fragSource.c_str());
-        
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WP8 || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-        _fragSource = fragSource;
+    _fragSource = fragSource;
 #endif
-        
-        _glProgramState = GLProgramState::getOrCreateWithGLProgram(glProgram);
-        _glProgramState->retain();
-        
-        return (_glProgramState != nullptr);
-    }
     
-    void EffectBase::prepareForRender(cocos2d::Sprite *sprite)
-    {}
+    _glProgramState = GLProgramState::getOrCreateWithGLProgram(glProgram);
+    _glProgramState->retain();
     
-    EffectBase::EffectBase() : _glProgramState(nullptr)
-    {
+    return (_glProgramState != nullptr);
+}
+
+void EffectBase::prepareForRender(cocos2d::Sprite *sprite)
+{}
+
+EffectBase::EffectBase() : _glProgramState(nullptr)
+{
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WP8 || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-        _backgroundListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED,
-                                                          [this](EventCustom*)
-                                                          {
-                                                              auto glProgram = _glProgramState->getGLProgram();
-                                                              glProgram->reset();
-                                                              glProgram->initWithByteArrays(ccPositionTextureColor_noMVP_vert, _fragSource.c_str());
-                                                              glProgram->link();
-                                                              glProgram->updateUniforms();
-                                                          }
-                                                          );
-        Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_backgroundListener, -1);
+    _backgroundListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED,
+                                                      [this](EventCustom*)
+                                                      {
+                                                          auto glProgram = _glProgramState->getGLProgram();
+                                                          glProgram->reset();
+                                                          glProgram->initWithByteArrays(ccPositionTextureColor_noMVP_vert, _fragSource.c_str());
+                                                          glProgram->link();
+                                                          glProgram->updateUniforms();
+                                                      }
+                                                      );
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_backgroundListener, -1);
 #endif
-    }
-    EffectBase::~EffectBase()
-    {
-        CC_SAFE_RELEASE_NULL(_glProgramState);
+}
+EffectBase::~EffectBase()
+{
+    CC_SAFE_RELEASE_NULL(_glProgramState);
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WP8 || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-        Director::getInstance()->getEventDispatcher()->removeEventListener(_backgroundListener);
+    Director::getInstance()->getEventDispatcher()->removeEventListener(_backgroundListener);
 #endif
-    }
-    
-};
+}
 
 
 

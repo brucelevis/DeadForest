@@ -12,50 +12,41 @@
 
 namespace realtrick
 {
-    
-    class GameManager;
-    
-    class AimingNode : public cocos2d::Node
+    namespace client
     {
         
-    public:
+        class GameManager;
         
-        static AimingNode* create(GameManager* mgr);
+        class AimingNode : public cocos2d::Node
+        {
+            
+        public:
+            
+            explicit AimingNode(GameManager* mgr);
+            virtual ~AimingNode() = default;
+            
+            virtual bool init() override;
+            static AimingNode* create(GameManager* mgr);
+            
+            void runHitAction();
+            void showOutter();
+            void hideOutter();
+            void showInner();
+            void hideInner();
+            void setRange(float range);
+            
+        private:
+            
+            GameManager* _gameMgr;
+            cocos2d::Sprite* _crossHair;
+            cocos2d::Sprite* _outter;
+            cocos2d::Sprite* _inner;
+            
+            float _range;
+            bool _isOutterOn;
+            bool _isInnerOn;
+            
+        };
         
-        virtual bool init() override;
-        
-        explicit AimingNode(GameManager* mgr);
-        
-        virtual ~AimingNode() = default;
-        
-        void runHitAction();
-        
-        void showOutter();
-        
-        void hideOutter();
-        
-        void showInner();
-        
-        void hideInner();
-        
-        void setRange(float range);
-        
-    private:
-        
-        GameManager* _gameMgr;
-        
-        cocos2d::Sprite* _crossHair;
-        
-        cocos2d::Sprite* _outter;
-        
-        cocos2d::Sprite* _inner;
-        
-        float _range;
-        
-        bool _isOutterOn;
-        
-        bool _isInnerOn;
-        
-    };
-    
+    }
 }

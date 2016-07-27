@@ -13,29 +13,41 @@
 
 namespace realtrick
 {
-    
-    class EntityHuman;
-    class Telegram;
-    
-    //
-    // HumanBackDeadState
-    //
-    class HumanBackDeadState : public State<EntityHuman>, public Singleton<HumanBackDeadState>
+    namespace client
     {
         
-    private:
+        class EntityHuman;
+        class Telegram;
         
-        friend Singleton<HumanBackDeadState>;
-        HumanBackDeadState() = default;
-        virtual ~HumanBackDeadState() = default;
+        //
+        // HumanBackDeadState
+        //
+        class HumanBackDeadState : public State<EntityHuman>, public Singleton<HumanBackDeadState>
+        {
+            
+        public:
+            
+            virtual void enter(EntityHuman* human) override;
+            virtual void execute(EntityHuman* human) override;
+            virtual void exit(EntityHuman* human) override;
+            virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
+            
+        private:
+            
+            friend Singleton<HumanBackDeadState>;
+            HumanBackDeadState() = default;
+            virtual ~HumanBackDeadState() = default;
+
+        };
         
-    public:
-        
-        virtual void enter(EntityHuman* human) override;
-        virtual void execute(EntityHuman* human) override;
-        virtual void exit(EntityHuman* human) override;
-        virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
-        
-    };
-    
+    }
 }
+
+
+
+
+
+
+
+
+

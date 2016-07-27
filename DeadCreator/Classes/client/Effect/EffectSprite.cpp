@@ -31,76 +31,72 @@
 #include "LightEffect.hpp"
 
 using namespace cocos2d;
+using namespace realtrick::client;
 
-namespace realtrick
+EffectSprite* EffectSprite::create()
 {
-    
-    EffectSprite* EffectSprite::create()
+    EffectSprite *sprite = new (std::nothrow) EffectSprite();
+    if (sprite && sprite->init())
     {
-        EffectSprite *sprite = new (std::nothrow) EffectSprite();
-        if (sprite && sprite->init())
-        {
-            sprite->autorelease();
-            return sprite;
-        }
-        CC_SAFE_DELETE(sprite);
-        return nullptr;
+        sprite->autorelease();
+        return sprite;
     }
-    
-    
-    EffectSprite *EffectSprite::create(const std::string& filename,
-                                       ui::Widget::TextureResType texResType)
+    CC_SAFE_DELETE(sprite);
+    return nullptr;
+}
+
+
+EffectSprite *EffectSprite::create(const std::string& filename,
+                                   ui::Widget::TextureResType texResType)
+{
+    auto ret = new (std::nothrow) EffectSprite;
+    if(ret && (texResType == ui::Widget::TextureResType::LOCAL) ? ret->initWithFile(filename) : ret->initWithSpriteFrameName(filename))
     {
-        auto ret = new (std::nothrow) EffectSprite;
-        if(ret && (texResType == ui::Widget::TextureResType::LOCAL) ? ret->initWithFile(filename) : ret->initWithSpriteFrameName(filename))
-        {
-            ret->autorelease();
-            return ret;
-        }
-        CC_SAFE_RELEASE(ret);
-        return nullptr;
+        ret->autorelease();
+        return ret;
     }
-    
-    EffectSprite* EffectSprite::createWithTexture(cocos2d::Texture2D* texture)
+    CC_SAFE_RELEASE(ret);
+    return nullptr;
+}
+
+EffectSprite* EffectSprite::createWithTexture(cocos2d::Texture2D* texture)
+{
+    auto ret = new (std::nothrow) EffectSprite;
+    if(ret && ret->initWithTexture(texture))
     {
-        auto ret = new (std::nothrow) EffectSprite;
-        if(ret && ret->initWithTexture(texture))
-        {
-            ret->autorelease();
-            return ret;
-        }
-        CC_SAFE_RELEASE(ret);
-        return nullptr;
+        ret->autorelease();
+        return ret;
     }
-    
-    void EffectSprite::setEffect(EffectBase *effect)
-    {
-        if( _effect != effect )
-        {
-            CC_SAFE_RELEASE(_effect);
-            _effect = effect;
-            CC_SAFE_RETAIN(_effect);
-            setGLProgramState(_effect->getGLProgramState());
-        }
-    }
-    
-    
-    void EffectSprite::draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t flags)
-    {
-        if (_effect != nullptr)
-        {
-            _effect->prepareForRender(this);
-        }
-        Sprite::draw(renderer, transform, flags);
-        renderer->render();
-    }
-    
-    
-    EffectSprite::~EffectSprite()
+    CC_SAFE_RELEASE(ret);
+    return nullptr;
+}
+
+void EffectSprite::setEffect(EffectBase *effect)
+{
+    if( _effect != effect )
     {
         CC_SAFE_RELEASE(_effect);
+        _effect = effect;
+        CC_SAFE_RETAIN(_effect);
+        setGLProgramState(_effect->getGLProgramState());
     }
-    
+}
+
+
+void EffectSprite::draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t flags)
+{
+    if (_effect != nullptr)
+    {
+        _effect->prepareForRender(this);
+    }
+    Sprite::draw(renderer, transform, flags);
+    renderer->render();
+}
+
+
+EffectSprite::~EffectSprite()
+{
+    CC_SAFE_RELEASE(_effect);
 }
 
 

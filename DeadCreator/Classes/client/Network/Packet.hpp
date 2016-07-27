@@ -12,8 +12,6 @@
 #include <cstring>
 #include <cstdlib>
 
-
-
 enum class PacketType : int
 {
     LOGIN = 1000,

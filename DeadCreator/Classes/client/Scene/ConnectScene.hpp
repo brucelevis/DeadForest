@@ -13,36 +13,43 @@
 
 namespace realtrick
 {
-    
-    class ConnectScene : public cocos2d::Layer
+    namespace client
     {
         
-    public:
+        class ConnectScene : public cocos2d::Layer
+        {
+            
+        public:
+            
+            ConnectScene();
+            virtual ~ConnectScene() = default;
+            virtual bool init() override;
+            
+            static ConnectScene* create();
+            static cocos2d::Scene* createScene();
+            
+            virtual void update(float dt) override;
+            
+        private:
+            
+            void doConnect();
+            
+        private:
+            
+            cocos2d::Size _winSize;
+            std::vector<cocos2d::Sprite*> _progressDots;
+            cocos2d::ui::Button* _retryButton;
+            
+        };
         
-        static ConnectScene* create();
-        
-        static cocos2d::Scene* createScene();
-        
-        virtual bool init() override;
-        
-        virtual void update(float dt) override;
-        
-        ConnectScene();
-        
-        virtual ~ConnectScene() = default;
-        
-    private:
-        
-        void doConnect();
-        
-    private:
-        
-        cocos2d::Size _winSize;
-        
-        std::vector<cocos2d::Sprite*> _progressDots;
-        
-        cocos2d::ui::Button* _retryButton;
-        
-    };
-    
+    }
 }
+
+
+
+
+
+
+
+
+

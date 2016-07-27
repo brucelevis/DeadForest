@@ -12,12 +12,11 @@
 
 namespace realtrick
 {
-    class ItemBase;
-    class GameManager;
-    
-    namespace userinterface
+    namespace client
     {
-    
+        
+        class ItemBase;
+        class GameManager;
         class AnimatedButton;
         class ItemSlot;
         
@@ -38,29 +37,21 @@ namespace realtrick
             
         public:
             
+            explicit ItemExtensionButtons(GameManager* mgr);
+            virtual ~ItemExtensionButtons();
+            
+            bool init(ItemSlot* slot);
             static ItemExtensionButtons* create(GameManager* mgr, ItemSlot* slot);
             
             void showButtons();
-            
             void hideButtons();
-            
             void setButtonSize(const cocos2d::Size& size);
             
         private:
             
             GameManager*                    _gameMgr;
-            
             ItemSlot*                       _ownSlot;
-            
             std::vector<AnimatedButton*>    _buttons;
-            
-        private:
-            
-            ItemExtensionButtons(GameManager* mgr);
-            
-            virtual ~ItemExtensionButtons();
-            
-            bool init(ItemSlot* slot);
             
         };
         

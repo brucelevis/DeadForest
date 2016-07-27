@@ -16,7 +16,7 @@
 
 namespace realtrick
 {
-    namespace userinterface
+    namespace client
     {
         
         struct InfoWithTime
@@ -32,49 +32,35 @@ namespace realtrick
             
         public:
             
+            InfoSystem();
+            virtual ~InfoSystem();
+            
+            bool init(const std::string& fontPath, float fontSize, const cocos2d::Color3B& color, int viewLine);
             static InfoSystem* create(const std::string& fontPath = "",
                                       float fontSize = 12,
                                       const cocos2d::Color3B& color = cocos2d::Color3B::WHITE,
                                       int viewLine = 3);
             
             void pushMessage(const std::string& msg);
-            
             void setDeathTime(float t) { _deathTime = t; }
-            
             void fontOffset(float offset) { _fontOffset = offset; }
             
         private:
             
-            InfoSystem();
-            
-            virtual ~InfoSystem();
-            
-            bool init(const std::string& fontPath, float fontSize, const cocos2d::Color3B& color, int viewLine);
-            
             void _discharge(const std::string& msg);
-            
             void update(float dt) override;
             
         private:
             
             float                                               _disableTime;
-            
             std::string                                         _fontFilePath;
-            
             float                                               _fontSize;
-            
             cocos2d::Color3B                                    _fontColor;
-            
             std::list<cocos2d::ui::Text*>                       _lines;
-            
             int                                                 _maxLine;
-            
             float                                               _fontOffset;
-            
             std::priority_queue<InfoWithTime>                   _pq;
-            
             std::chrono::duration<double>                       _lastTime;
-            
             float                                               _deathTime;
             
         };

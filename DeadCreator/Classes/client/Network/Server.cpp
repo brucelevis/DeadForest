@@ -15,7 +15,7 @@
 
 #include "cocos2d.h"
 using namespace cocos2d;
-using namespace realtrick;
+using namespace realtrick::client;
 
 
 void Server::connect()

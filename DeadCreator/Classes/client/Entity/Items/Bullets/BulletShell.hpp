@@ -12,24 +12,36 @@
 
 namespace realtrick
 {
-    
-    class BulletShell : public BulletBase
+    namespace client
     {
         
-    public:
+        class BulletShell : public BulletBase
+        {
+            
+        public:
+            
+            static BulletShell* create(GameManager* mgr);
+            
+            virtual BulletShell* clone() const override;
+            
+            virtual void discard() override;
+            
+        private:
+            
+            BulletShell(GameManager* mgr);
+            
+            virtual ~BulletShell();
+            
+        };
         
-        static BulletShell* create(GameManager* mgr);
-        
-        virtual BulletShell* clone() const override;
-        
-        virtual void discard() override;
-        
-    private:
-        
-        BulletShell(GameManager* mgr);
-        
-        virtual ~BulletShell();
-        
-    };
-    
+    }
 }
+
+
+
+
+
+
+
+
+

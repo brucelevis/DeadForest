@@ -59,39 +59,38 @@ namespace realtrick
         PLAYER8 = 8,
         CURRENT_PLAYER = 9,
         NEUTRAL = 12,
-    };
-    
-    inline void addMask(int& src, int mask)                         { src |= mask; }
-    inline bool isMasked(int src, int mask)                         { return ((src & mask) == mask); }
-    inline void removeMask(int& src, int mask)                      { if ( isMasked(src, mask) ) src ^= mask; }
-    
-    enum TileType : short
-    {
-        _1,
-        _2,
-        _3,
-        _4,
-        _12,
-        _13,
-        _14,
-        _23,
-        _24,
-        _34,
-        _123,
-        _124,
-        _134,
-        _234,
-        _1234
-    };
-    
+        };
+        
+        inline void addMask(int& src, int mask)                         { src |= mask; }
+        inline bool isMasked(int src, int mask)                         { return ((src & mask) == mask); }
+        inline void removeMask(int& src, int mask)                      { if ( isMasked(src, mask) ) src ^= mask; }
+        
+        enum TileType : short
+        {
+            _1,
+            _2,
+            _3,
+            _4,
+            _12,
+            _13,
+            _14,
+            _23,
+            _24,
+            _34,
+            _123,
+            _124,
+            _134,
+            _234,
+            _1234
+        };
+        
 }
-
-
-
-
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
+    
+    
+    

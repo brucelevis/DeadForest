@@ -19,7 +19,7 @@
 #include "WeaponStatus.hpp"
 #include "UiLayer.hpp"
 using namespace cocos2d;
-using namespace realtrick;
+using namespace realtrick::client;
 
 EntityHuman::EntityHuman(GameManager* mgr) : DynamicEntity(mgr),
 _FSM(nullptr),
@@ -74,10 +74,10 @@ bool EntityHuman::init()
     
     _enduranceTime  = 5.0f;
     
-    _inventory = userinterface::Inventory::create(_gameMgr);
+    _inventory = Inventory::create(_gameMgr);
     _inventory->retain();
     
-    _weaponStatus = userinterface::WeaponStatus::create(_gameMgr);
+    _weaponStatus = WeaponStatus::create(_gameMgr);
     _weaponStatus->retain();
     
     _aimingSystem = new AimingSystem(_gameMgr, this);
@@ -254,9 +254,6 @@ void EntityHuman::setFootGauge(float g)
     
     _footGauge = g;
 }
-
-
-
 
 
 

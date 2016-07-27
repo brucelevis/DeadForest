@@ -14,69 +14,72 @@
 
 namespace realtrick
 {
-    
-    class EditScene;
-    
-    class SaveQueryLayer : public cocos2d::Node
+    namespace editor
     {
         
-    public:
+        class EditScene;
         
-        explicit SaveQueryLayer(EditScene* layer) : _imguiLayer(layer) {}
-        virtual ~SaveQueryLayer() = default;
-        static SaveQueryLayer* create(EditScene* layer)
+        class SaveQueryLayer : public cocos2d::Node
         {
-            auto ret = new (std::nothrow) SaveQueryLayer(layer);
-            if ( ret && ret->init() )
+            
+        public:
+            
+            explicit SaveQueryLayer(EditScene* layer) : _imguiLayer(layer) {}
+            virtual ~SaveQueryLayer() = default;
+            static SaveQueryLayer* create(EditScene* layer)
             {
-                ret->autorelease();
-                return ret;
+                auto ret = new (std::nothrow) SaveQueryLayer(layer);
+                if ( ret && ret->init() )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
             }
-            CC_SAFE_DELETE(ret);
-            return nullptr;
-        }
-    
-        void showLayer(bool& opened)
-        {
-            ImGui::OpenPopup("Save Changes?");
-            if (ImGui::BeginPopupModal("Save Changes?", &opened, ImGuiWindowFlags_AlwaysAutoResize))
+            
+            void showLayer(bool& opened)
             {
-                _imguiLayer->enableModal(true);
-                if (ImGui::Button("Yes", ImVec2(60, 20)))
+                ImGui::OpenPopup("Save Changes?");
+                if (ImGui::BeginPopupModal("Save Changes?", &opened, ImGuiWindowFlags_AlwaysAutoResize))
                 {
-                    opened = false;
-                    closeWindow();
+                    _imguiLayer->enableModal(true);
+                    if (ImGui::Button("Yes", ImVec2(60, 20)))
+                    {
+                        opened = false;
+                        closeWindow();
+                    }
+                    
+                    ImGui::SameLine();
+                    if (ImGui::Button("No", ImVec2(60, 20)))
+                    {
+                        opened = false;
+                        closeWindow();
+                    }
+                    
+                    ImGui::SameLine();
+                    if (ImGui::Button("Cancel", ImVec2(100, 20)))
+                    {
+                        opened = false;
+                        closeWindow();
+                    }
+                    ImGui::EndPopup();
                 }
-                
-                ImGui::SameLine();
-                if (ImGui::Button("No", ImVec2(60, 20)))
-                {
-                    opened = false;
-                    closeWindow();
-                }
-                
-                ImGui::SameLine();
-                if (ImGui::Button("Cancel", ImVec2(100, 20)))
-                {
-                    opened = false;
-                    closeWindow();
-                }
-                ImGui::EndPopup();
             }
-        }
+            
+            void closeWindow()
+            {
+                _imguiLayer->enableModal(false);
+                ImGui::CloseCurrentPopup();
+            }
+            
+        private:
+            
+            EditScene* _imguiLayer;
+            
+        };
         
-        void closeWindow()
-        {
-            _imguiLayer->enableModal(false);
-            ImGui::CloseCurrentPopup();
-        }
-        
-    private:
-        
-        EditScene* _imguiLayer;
-        
-    };
-    
+    }
 }
 
 

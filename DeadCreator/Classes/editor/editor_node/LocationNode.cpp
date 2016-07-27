@@ -10,6 +10,7 @@
 #include "GMXLayer.hpp"
 using namespace cocos2d;
 using namespace realtrick;
+using namespace realtrick::editor;
 
 #include "imgui.h"
 #include "imgui_internal.h"

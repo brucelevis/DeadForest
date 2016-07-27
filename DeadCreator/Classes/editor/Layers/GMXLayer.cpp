@@ -27,6 +27,7 @@
 #include "RenameLocationLayer.hpp"
 using namespace cocos2d;
 using namespace realtrick;
+using namespace realtrick::editor;
 
 #include "util.h"
 #include "GMXFile_generated.h"

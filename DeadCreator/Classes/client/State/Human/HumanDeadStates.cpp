@@ -23,7 +23,7 @@ namespace realtrick
         human->setDead();
         human->getBodyAnimator()->enableShadow(false);
         human->getBodyAnimator()->pushAnimationFrames(&AnimHumanBackDead::getInstance());
-        human->setVelocity( Vec2::ZERO );
+        human->setVelocity( cocos2d::Vec2::ZERO );
     }
     
     

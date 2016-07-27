@@ -16,74 +16,77 @@
 
 namespace realtrick
 {
-    
-    class TileToolCommand : public CommandBase
+    namespace editor
     {
         
-    public:
-        
-        explicit TileToolCommand(GMXLayer* layer) :
-        CommandBase(layer)
+        class TileToolCommand : public CommandBase
         {
-            _commandName = "Tile Tool";
-        }
-        
-        TileToolCommand(const TileToolCommand& rhs) : CommandBase(rhs)
-        {
-            copyFrom(rhs);
-        }
-        
-        void copyFrom(const TileToolCommand& rhs)
-        {
-            _prevTiles = rhs._prevTiles;
-            _currTiles = rhs._currTiles;
-        }
-        
-        virtual ~TileToolCommand() = default;
-        
-        virtual void execute() override
-        {
-            for( auto tile = _currTiles.cbegin() ; tile != _currTiles.cend() ; ++ tile)
+            
+        public:
+            
+            explicit TileToolCommand(GMXLayer* layer) :
+            CommandBase(layer)
             {
-                _layer->setTile(tile->getIndexX(), tile->getIndexY(), *tile, true);
+                _commandName = "Tile Tool";
             }
-        }
-        
-        virtual void undo() override
-        {
-            for( auto tile = _prevTiles.crbegin() ; tile != _prevTiles.crend() ; ++ tile)
+            
+            TileToolCommand(const TileToolCommand& rhs) : CommandBase(rhs)
             {
-                _layer->setTile(tile->getIndexX(), tile->getIndexY(), *tile, true);
+                copyFrom(rhs);
             }
-        }
-        
-        virtual TileToolCommand* clone() const override { return new TileToolCommand(*this); }
-        void pushTile(const TileBase& prevTile, const TileBase& currTile)
-        {
-            if ( _isBegan )
+            
+            void copyFrom(const TileToolCommand& rhs)
             {
-                _prevTiles.push_back(prevTile);
-                _currTiles.push_back(currTile);
+                _prevTiles = rhs._prevTiles;
+                _currTiles = rhs._currTiles;
             }
-        }
+            
+            virtual ~TileToolCommand() = default;
+            
+            virtual void execute() override
+            {
+                for( auto tile = _currTiles.cbegin() ; tile != _currTiles.cend() ; ++ tile)
+                {
+                    _layer->setTile(tile->getIndexX(), tile->getIndexY(), *tile, true);
+                }
+            }
+            
+            virtual void undo() override
+            {
+                for( auto tile = _prevTiles.crbegin() ; tile != _prevTiles.crend() ; ++ tile)
+                {
+                    _layer->setTile(tile->getIndexX(), tile->getIndexY(), *tile, true);
+                }
+            }
+            
+            virtual TileToolCommand* clone() const override { return new TileToolCommand(*this); }
+            void pushTile(const TileBase& prevTile, const TileBase& currTile)
+            {
+                if ( _isBegan )
+                {
+                    _prevTiles.push_back(prevTile);
+                    _currTiles.push_back(currTile);
+                }
+            }
+            
+            virtual bool empty() const override { return _prevTiles.empty(); }
+            
+        private:
+            
+            virtual void beginImpl() override
+            {
+                _prevTiles.clear();
+                _currTiles.clear();
+            }
+            
+        private:
+            
+            std::vector<TileBase> _prevTiles;
+            std::vector<TileBase> _currTiles;
+            
+        };
         
-        virtual bool empty() const override { return _prevTiles.empty(); }
-        
-    private:
-        
-        virtual void beginImpl() override
-        {
-            _prevTiles.clear();
-            _currTiles.clear();
-        }
-        
-    private:
-        
-        std::vector<TileBase> _prevTiles;
-        std::vector<TileBase> _currTiles;
-        
-    };
-    
+    }
 }
 
 

@@ -18,6 +18,8 @@
 #include "UiLayer.hpp"
 #include "Camera2D.hpp"
 #include "AimingNode.hpp"
+using namespace cocos2d;
+
 
 namespace realtrick
 {

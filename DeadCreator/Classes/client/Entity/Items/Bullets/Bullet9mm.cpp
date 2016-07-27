@@ -47,7 +47,7 @@ namespace realtrick
     {
         Bullet9mm* item = Bullet9mm::create(_gameMgr);
         item->setAmount( getAmount() );
-        item->setPosition(Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));
+        item->setPosition(cocos2d::Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));
         _gameMgr->addDynamicEntity(item, Z_ORDER_ITEMS, _gameMgr->getNextValidID());
     }
     

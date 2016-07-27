@@ -16,60 +16,63 @@
 
 namespace realtrick
 {
-    
-    class RemoveEntityToolCommand : public CommandBase
+    namespace editor
     {
         
-    public:
-        
-        explicit RemoveEntityToolCommand(GMXLayer* layer) :
-        CommandBase(layer)
+        class RemoveEntityToolCommand : public CommandBase
         {
-            _commandName = "Remove Entity";
-        }
-        
-        RemoveEntityToolCommand(const RemoveEntityToolCommand& rhs) : CommandBase(rhs)
-        {
-            copyFrom(rhs);
-        }
-        
-        void copyFrom(const RemoveEntityToolCommand& rhs)
-        {
-            _entities = rhs._entities;
-        }
-        
-        virtual ~RemoveEntityToolCommand() { _entities.clear(); }
-        virtual void execute() override
-        {
-            for( auto& ent : _entities )
+            
+        public:
+            
+            explicit RemoveEntityToolCommand(GMXLayer* layer) :
+            CommandBase(layer)
             {
-                _layer->eraseEntity(ent->getID(), true);
+                _commandName = "Remove Entity";
             }
-        }
-        
-        virtual void undo() override
-        {
-            for( auto& ent : _entities )
+            
+            RemoveEntityToolCommand(const RemoveEntityToolCommand& rhs) : CommandBase(rhs)
             {
-                _layer->addEntity(ent, ent->getLocalZOrder(), true);
+                copyFrom(rhs);
             }
-        }
+            
+            void copyFrom(const RemoveEntityToolCommand& rhs)
+            {
+                _entities = rhs._entities;
+            }
+            
+            virtual ~RemoveEntityToolCommand() { _entities.clear(); }
+            virtual void execute() override
+            {
+                for( auto& ent : _entities )
+                {
+                    _layer->eraseEntity(ent->getID(), true);
+                }
+            }
+            
+            virtual void undo() override
+            {
+                for( auto& ent : _entities )
+                {
+                    _layer->addEntity(ent, ent->getLocalZOrder(), true);
+                }
+            }
+            
+            virtual RemoveEntityToolCommand* clone() const override { return new RemoveEntityToolCommand(*this); }
+            virtual bool empty() const override { return _entities.empty(); }
+            void pushEntity(const std::vector<EditorEntity*>& entities) { if ( _isBegan ) _entities = entities; }
+            
+        private:
+            
+            virtual void beginImpl() override { _entities.clear(); }
+            virtual void endImpl() override { _entities.clear(); }
+            
+        private:
+            
+            std::vector<EditorEntity*> _entities;
+            
+        };
         
-        virtual RemoveEntityToolCommand* clone() const override { return new RemoveEntityToolCommand(*this); }
-        virtual bool empty() const override { return _entities.empty(); }
-        void pushEntity(const std::vector<EditorEntity*>& entities) { if ( _isBegan ) _entities = entities; }
-        
-    private:
-        
-        virtual void beginImpl() override { _entities.clear(); }
-        virtual void endImpl() override { _entities.clear(); }
-        
-    private:
-        
-        std::vector<EditorEntity*> _entities;
-        
-    };
-    
+    }
 }
 
 

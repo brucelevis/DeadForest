@@ -16,6 +16,7 @@
 #include "WeaponStatus.hpp"
 #include "HumanOwnedAnimations.hpp"
 #include "Items.hpp"
+using namespace cocos2d;
 
 namespace realtrick
 {

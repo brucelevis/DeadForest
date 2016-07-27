@@ -14,6 +14,7 @@
 #include "TileBase.hpp"
 #include "TileHelperFunctions.hpp"
 using namespace realtrick;
+using namespace cocos2d;
 
 
 GameMap::GameMap(GameManager* gameMgr) : _gameMgr(gameMgr),
@@ -95,15 +96,15 @@ bool GameMap::initGMXFile(const DeadCreator::GMXFile *file)
         _tileData[i].resize(_numOfTileX);
     }
     
-    auto defaultTile = static_cast<EditorTileType>(file->default_type());
+    auto defaultTile = static_cast<editor::EditorTileType>(file->default_type());
     for(int i = 0; i < _numOfTileY; ++ i)
     {
         for(int j = 0; j < _numOfTileX; ++ j)
         {
-            if ( EditorTileType::DIRT == defaultTile ) _tileData[i][j] = "1_" + std::to_string(random(1, 3)) + "_1234";
-            else if ( EditorTileType::GRASS == defaultTile ) _tileData[i][j] = "2_" + std::to_string(random(1, 3)) + "_1234";
-            else if ( EditorTileType::WATER == defaultTile ) _tileData[i][j] = "3_" + std::to_string(random(1, 3)) + "_1234";
-            else if ( EditorTileType::HILL == defaultTile ) _tileData[i][j] = "5_" + std::to_string(random(1, 3)) + "_1234";
+            if ( editor::EditorTileType::DIRT == defaultTile ) _tileData[i][j] = "1_" + std::to_string(random(1, 3)) + "_1234";
+            else if ( editor::EditorTileType::GRASS == defaultTile ) _tileData[i][j] = "2_" + std::to_string(random(1, 3)) + "_1234";
+            else if ( editor::EditorTileType::WATER == defaultTile ) _tileData[i][j] = "3_" + std::to_string(random(1, 3)) + "_1234";
+            else if ( editor::EditorTileType::HILL == defaultTile ) _tileData[i][j] = "5_" + std::to_string(random(1, 3)) + "_1234";
         }
     }
     

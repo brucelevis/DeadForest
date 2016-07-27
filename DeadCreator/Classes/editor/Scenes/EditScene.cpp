@@ -26,6 +26,7 @@ using namespace cocos2d;
 #include "Conditions.hpp"
 #include "Actions.hpp"
 using namespace realtrick;
+using namespace realtrick::editor;
 
 #include "GMXFile_generated.h"
 #include "util.h"

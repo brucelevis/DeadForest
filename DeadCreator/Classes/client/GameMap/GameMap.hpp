@@ -16,7 +16,6 @@
 #include "Physics.hpp"
 #include "ParamLoader.hpp"
 #include "json/document.h"
-#include "ParseStructures.hpp"
 using namespace rapidjson;
 
 #include "GMXFile_generated.h"
@@ -26,6 +25,61 @@ namespace realtrick
     
     class GameManager;
     
+    
+    struct NameCoord
+    {
+        std::string name;
+        cocos2d::Vec2 pos;
+        
+        NameCoord()
+        {
+            pos = cocos2d::Vec2::ZERO;
+        }
+        
+        NameCoord(std::string name, cocos2d::Vec2 pos) : name(name), pos(pos)
+        {}
+        
+        NameCoord(const NameCoord& rhs) : name(rhs.name), pos(rhs.pos)
+        {}
+        
+        NameCoord operator=(const NameCoord& rhs)
+        {
+            if(&rhs == this)
+                return *this;
+            name = rhs.name;
+            pos = rhs.pos;
+            return *this;
+        }
+        
+    };
+    
+    struct NameCoordAmount
+    {
+        std::string name;
+        cocos2d::Vec2 pos;
+        int amount;
+        
+        NameCoordAmount()
+        {
+            pos = cocos2d::Vec2::ZERO;
+        }
+        
+        NameCoordAmount(std::string name, cocos2d::Vec2 pos, int amount) : name(name), pos(pos), amount(amount)
+        {}
+        
+        NameCoordAmount(const NameCoordAmount& rhs) : name(rhs.name), pos(rhs.pos), amount(rhs.amount)
+        {}
+        
+        NameCoordAmount operator=(const NameCoordAmount& rhs)
+        {
+            if(&rhs == this)
+                return *this;
+            name = rhs.name;
+            pos = rhs.pos;
+            amount = rhs.amount;
+            return *this;
+        }
+    };
     
     class GameMap : public cocos2d::Node
     {
@@ -40,7 +94,7 @@ namespace realtrick
         
         virtual void visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags) override;
         
-        void updateChunk(const Vec2& position);
+        void updateChunk(const cocos2d::Vec2& position);
         TileType getStepOnTileType(const cocos2d::Vec2& pos);
         
         int getTileWidth() const                                                    { return _tileWidth; }
@@ -62,7 +116,7 @@ namespace realtrick
         
         GameManager* _gameMgr;
         
-        std::vector<std::vector<Sprite*>> _currTiles;
+        std::vector<std::vector<cocos2d::Sprite*>> _currTiles;
         
         int _numOfTileX;
         int _numOfTileY;

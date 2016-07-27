@@ -49,6 +49,19 @@ namespace realtrick
         };
         
     }
+    
+    namespace client
+    {
+        
+        class ConditionBase
+        {
+            
+            
+            
+        };
+        
+    }
+    
 };
 
 

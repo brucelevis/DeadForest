@@ -32,7 +32,7 @@ namespace realtrick
             
         public:
             
-            EntityHuman(GameManager* mgr);
+            explicit EntityHuman(GameManager* mgr);
             virtual ~EntityHuman();
             
             virtual bool init() override;

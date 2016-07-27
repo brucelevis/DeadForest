@@ -22,6 +22,7 @@ namespace realtrick
 {
     namespace editor
     {
+        
         class ActionBase : public TriggerComponentProtocol
         {
             
@@ -45,7 +46,21 @@ namespace realtrick
             
             virtual flatbuffers::Offset<DeadCreator::Action> getActionObject(flatbuffers::FlatBufferBuilder& builder) = 0;
         };
+        
     }
+    
+    namespace client
+    {
+        
+        class ActionBase
+        {
+            
+            
+            
+        };
+        
+    };
+    
 };
 
 

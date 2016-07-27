@@ -10,7 +10,7 @@
 
 #include "cocos2d.h"
 #include "Physics.hpp"
-#include "Clipper/clipper.hpp"
+#include "clipper.hpp"
 
 namespace realtrick
 {

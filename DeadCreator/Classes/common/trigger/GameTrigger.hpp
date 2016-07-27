@@ -194,6 +194,30 @@ namespace realtrick
         };
         
     }
+    
+    namespace client
+    {
+        
+        class ConditionBase;
+        class ActionBase;
+        
+        class GameTrigger
+        {
+            
+        public:
+            
+            GameTrigger() {}
+            virtual ~GameTrigger() {}
+            
+        private:
+            
+            std::vector<int> _players;
+            std::vector<ConditionBase*> _conditions;
+            std::vector<ActionBase*> _actions;
+            
+        };
+        
+    }
 }
 
 

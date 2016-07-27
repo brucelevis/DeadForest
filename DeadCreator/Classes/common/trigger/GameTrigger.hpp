@@ -209,6 +209,23 @@ namespace realtrick
             GameTrigger() {}
             virtual ~GameTrigger() {}
             
+            bool isReady()
+            {
+                for (auto& cond : _conditions)
+                {
+                    if ( !cond->isReady() ) return false;
+                }
+                return true;
+            }
+            
+            void doAction()
+            {
+                for(auto& act : _actions)
+                {
+                    act->doAction();
+                }
+            }
+            
         private:
             
             std::vector<int> _players;

@@ -16,6 +16,7 @@
 #include "EntityEmptyCartridge.hpp"
 #include "EntityBase.hpp"
 #include "LogicStream.hpp"
+#include "TriggerSystem.hpp"
 using namespace cocos2d;
 using namespace std;
 using namespace realtrick::client;
@@ -32,6 +33,8 @@ void GameManager::update(float dt)
     {
         entity.second->update(dt);
     }
+    
+    _triggerSystem->update(dt);
     
     if ( _debugNode->isVisible() )
     {
@@ -69,6 +72,7 @@ _debugNode(nullptr)
     _debugNode->setPosition(_winSize / 2);
     _debugNode->setVisible(Prm.getValueAsBool("useDebug"));
     _gameWorld->addChild(_debugNode, std::numeric_limits<int>::max() - 1);
+    _triggerSystem = new TriggerSystem(this);
 }
 
 
@@ -137,6 +141,7 @@ void GameManager::clear()
 {
     _entities.clear();
     CC_SAFE_DELETE(_cellSpace);
+    CC_SAFE_DELETE(_triggerSystem);
     _player = nullptr;
 }
 

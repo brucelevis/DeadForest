@@ -52,10 +52,13 @@ namespace realtrick
     namespace client
     {
         
-        class ActionBase
+        struct ActionBase
         {
             
+            ActionBase() = default;
+            virtual ~ActionBase() = default;
             
+            virtual void doAction() = 0;
             
         };
         

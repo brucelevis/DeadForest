@@ -53,10 +53,13 @@ namespace realtrick
     namespace client
     {
         
-        class ConditionBase
+        struct ConditionBase
         {
             
+            ConditionBase() = default;
+            virtual ~ConditionBase() = default;
             
+            virtual bool isReady() = 0;
             
         };
         

@@ -40,6 +40,7 @@ namespace realtrick
         class GameWorld;
         class Camera2D;
         class RenderTarget;
+        class TriggerSystem;
         
         class GameManager
         {
@@ -96,6 +97,7 @@ namespace realtrick
             GameMap*                                    _gameMap;
             Camera2D*                                   _gameCamera;
             cocos2d::DrawNode*                          _debugNode;
+            TriggerSystem*                              _triggerSystem;
             static int                                  _nextValidID;
             
         };

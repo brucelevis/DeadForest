@@ -101,10 +101,10 @@ bool GameMap::initGMXFile(const DeadCreator::GMXFile *file)
     {
         for(int j = 0; j < _numOfTileX; ++ j)
         {
-            if ( editor::EditorTileType::DIRT == defaultTile ) _tileData[i][j] = "1_" + std::to_string(random(1, 3)) + "_1234";
-            else if ( editor::EditorTileType::GRASS == defaultTile ) _tileData[i][j] = "2_" + std::to_string(random(1, 3)) + "_1234";
-            else if ( editor::EditorTileType::WATER == defaultTile ) _tileData[i][j] = "3_" + std::to_string(random(1, 3)) + "_1234";
-            else if ( editor::EditorTileType::HILL == defaultTile ) _tileData[i][j] = "5_" + std::to_string(random(1, 3)) + "_1234";
+            if ( editor::EditorTileType::DIRT == defaultTile ) _tileData[i][j] = "1_" + _to_string(random(1, 3)) + "_1234";
+            else if ( editor::EditorTileType::GRASS == defaultTile ) _tileData[i][j] = "2_" + _to_string(random(1, 3)) + "_1234";
+            else if ( editor::EditorTileType::WATER == defaultTile ) _tileData[i][j] = "3_" + _to_string(random(1, 3)) + "_1234";
+            else if ( editor::EditorTileType::HILL == defaultTile ) _tileData[i][j] = "5_" + _to_string(random(1, 3)) + "_1234";
         }
     }
     

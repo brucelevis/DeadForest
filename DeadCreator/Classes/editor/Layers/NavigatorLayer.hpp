@@ -12,6 +12,7 @@
 #include "GMXlayer.hpp"
 #include "SizeProtocol.h"
 #include "TileHelperFunctions.hpp"
+#include "StringHelper.hpp"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -158,7 +159,7 @@ namespace realtrick
                 for(auto &ent : _entityMarks)
                 {
                     auto entity = ent.second;
-                    std::string type = "player" + std::to_string(static_cast<int>(entity->getPlayerType())) + ".png";
+                    std::string type = "player" + _to_string(static_cast<int>(entity->getPlayerType())) + ".png";
                     auto texID = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage(type)->getName());
                     
                     ImVec2 param = ImVec2(entity->getPosition().x / worldSize.x, entity->getPosition().y / worldSize.y);

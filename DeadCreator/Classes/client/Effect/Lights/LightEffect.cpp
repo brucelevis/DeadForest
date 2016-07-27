@@ -80,7 +80,7 @@ void LightEffect::prepareForRender(cocos2d::Sprite *sprite)
     
     for( int i = 0 ; i < (int)_lights.size() ; ++ i)
     {
-        std::string idx = GameManager::_to_string(i);
+        std::string idx = _to_string(i);
         gl->setUniformInt("u_lightType" + idx, _lights.at(i)->getLightType());
         gl->setUniformVec3("u_lightColor" + idx, _lights.at(i)->getColor());
         gl->setUniformFloat("u_isEnable" + idx, _lights.at(i)->isEnable() ? 1.0 : 0.0);

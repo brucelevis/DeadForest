@@ -25,6 +25,7 @@ using namespace cocos2d;
 #include "GameTrigger.hpp"
 #include "Conditions.hpp"
 #include "Actions.hpp"
+#include "StringHelper.hpp"
 using namespace realtrick;
 using namespace realtrick::editor;
 
@@ -402,13 +403,13 @@ void EditScene::createGMXLayer(const std::string& filePath)
                 std::string tileName;
                 
                 if ( file->defaultTile == static_cast<int>(EditorTileType::DIRT))
-                    tileName = "1_" + std::to_string(random(1, 3)) + "_1234";
+                    tileName = "1_" + _to_string(random(1, 3)) + "_1234";
                 else if ( file->defaultTile == static_cast<int>(EditorTileType::GRASS))
-                    tileName = "2_" + std::to_string(random(1, 3)) + "_1234";
+                    tileName = "2_" + _to_string(random(1, 3)) + "_1234";
                 else if ( file->defaultTile == static_cast<int>(EditorTileType::WATER))
-                    tileName = "3_" + std::to_string(random(1, 3)) + "_1234";
+                    tileName = "3_" + _to_string(random(1, 3)) + "_1234";
                 else if ( file->defaultTile == static_cast<int>(EditorTileType::HILL))
-                    tileName = "5_" + std::to_string(random(1, 3)) + "_1234";
+                    tileName = "5_" + _to_string(random(1, 3)) + "_1234";
                 
                 file->tileInfos[i][j] = tileName;
             }

@@ -137,7 +137,7 @@ void ItemM16A2::attack()
             Dispatch.pushMessage(0.0, collider.second, _owner, MessageType::HITTED_BY_GUN, &d);
             
             SoundSource s;
-            s.fileName = "GunShotAt" + GameManager::_to_string(random(0, 1)) + ".mp3";
+            s.fileName = "GunShotAt" + _to_string(random(0, 1)) + ".mp3";
             s.position = worldPos + shootAt * collider.first;
             s.soundRange = 2000.0f;
             Dispatch.pushMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);

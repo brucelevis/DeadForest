@@ -185,7 +185,7 @@ void HumanGlock17Attack::enter(EntityHuman* human)
     human->getBodyAnimator()->pushAnimationFrames(&AnimHumanGlock17Attack::getInstance());
     
     SoundSource s;
-    s.fileName = "Glock17Fire" + GameManager::_to_string(random(0, 2)) + ".mp3";
+    s.fileName = "Glock17Fire" + _to_string(random(0, 2)) + ".mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 2000.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);

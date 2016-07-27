@@ -18,6 +18,7 @@
 #include "GameMap.hpp"
 #include "EntityHuman.hpp"
 #include "SoundSource.hpp"
+#include "StringHelper.hpp"
 
 #define Z_ORDER_GAME_MAP    0
 #define Z_ORDER_SHADOW      1
@@ -46,7 +47,6 @@ namespace realtrick
         public:
             
             explicit GameManager(GameWorld* world);
-            
             virtual ~GameManager();
             
             void clear();
@@ -81,13 +81,6 @@ namespace realtrick
             EntityBase* getEntityFromID(int ID);
             
             void pushLogic(double delaySeconds, MessageType type, void* extraInfo);
-            
-            template <typename T> static inline std::string _to_string(T number)
-            {
-                std::ostringstream convStream;
-                convStream << number;
-                return convStream.str();
-            }
             
         private:
             

@@ -12,6 +12,7 @@
 #include "GMXLayer.hpp"
 #include "CommandQueue.hpp"
 #include "CommandBase.hpp"
+#include "StringHelper.hpp"
 
 namespace realtrick
 {
@@ -116,7 +117,7 @@ namespace realtrick
                         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0000, 0.0000, 0.0000, 0.5000));
                     }
                     
-                    std::string commandName = _commandQueue[i]->getCommandName()  + "[" + std::to_string(i) + "]";
+                    std::string commandName = _commandQueue[i]->getCommandName()  + "[" + _to_string(i) + "]";
                     if ( ImGui::Selectable(commandName.c_str(), isSelected) )
                     {
                         _commandQueue.setStateToIndex(i);

@@ -34,7 +34,7 @@ namespace realtrick
             
             void setRemainBullet(int num)
             {
-                _remainBulletText->setString(GameManager::_to_string(num));
+                _remainBulletText->setString(_to_string(num));
                 _numOfRemainBullet = num;
             }
             
@@ -52,7 +52,7 @@ namespace realtrick
             
             void _setEntryBulletNumber(int num)
             {
-                _entryBulletText->setString(GameManager::_to_string(num));
+                _entryBulletText->setString(_to_string(num));
                 _numOfEntryBullet = num;
             }
             

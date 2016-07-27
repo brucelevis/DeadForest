@@ -57,7 +57,7 @@ void AnimationPlayer::pushAnimationFrames(AnimationBase* animation)
         endIndex = animation->getStartFrame();
         for(int i = startIndex ; i >= endIndex; -- i)
         {
-            std::string frameName = animation->getFileName() + GameManager::_to_string(i);
+            std::string frameName = animation->getFileName() + _to_string(i);
             _frameQueue.push_back(std::make_pair(frameName, i));
         }
     }
@@ -67,7 +67,7 @@ void AnimationPlayer::pushAnimationFrames(AnimationBase* animation)
         endIndex = animation->getMaxFrame();
         for(int i = startIndex ; i < endIndex; ++ i)
         {
-            std::string frameName = animation->getFileName() + GameManager::_to_string(i);
+            std::string frameName = animation->getFileName() + _to_string(i);
             _frameQueue.push_back(std::make_pair(frameName, i));
         }
     }
@@ -90,7 +90,7 @@ void AnimationPlayer::pushFramesAtoB(AnimationBase* anim, int startIndex, int en
         
         for(int i = startIndex ; i <= endIndex ; ++ i)
         {
-            std::string frameName = anim->getFileName() + GameManager::_to_string(i);
+            std::string frameName = anim->getFileName() + _to_string(i);
             _frameQueue.push_back(std::make_pair(frameName, i));
         }
     }
@@ -101,7 +101,7 @@ void AnimationPlayer::pushFramesAtoB(AnimationBase* anim, int startIndex, int en
         
         for(int i = startIndex ; i >= endIndex ; -- i)
         {
-            std::string frameName = anim->getFileName() + GameManager::_to_string(i);
+            std::string frameName = anim->getFileName() + _to_string(i);
             _frameQueue.push_back(std::make_pair(frameName, i));
         }
     }
@@ -113,12 +113,12 @@ void AnimationPlayer::pushOneFrameUnique(AnimationBase* anim, int index)
     // 인덱스와 프레임이름이 하나라도 틀리면 푸시한다.
     if ( _frameQueue.empty() )
     {
-        _frameQueue.push_back({ anim->getFileName() + GameManager::_to_string(index), index });
+        _frameQueue.push_back({ anim->getFileName() + _to_string(index), index });
         _currAnimation = anim;
     }
-    else if ( _frameQueue.back().second != index || _frameQueue.back().first != anim->getFileName() + GameManager::_to_string(index) )
+    else if ( _frameQueue.back().second != index || _frameQueue.back().first != anim->getFileName() + _to_string(index) )
     {
-        _frameQueue.push_back({ anim->getFileName() + GameManager::_to_string(index), index });
+        _frameQueue.push_back({ anim->getFileName() + _to_string(index), index });
         _currAnimation = anim;
     }
 }

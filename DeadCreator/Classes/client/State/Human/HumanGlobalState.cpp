@@ -59,7 +59,7 @@ bool HumanGlobalState::onMessage(EntityHuman* human, const Telegram& msg)
         }
         
         
-        EntityBlood* blood = EntityBlood::create(human->getGameManager(), "blood" + GameManager::_to_string(random(1,4)) + ".png", random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
+        EntityBlood* blood = EntityBlood::create(human->getGameManager(), "blood" + _to_string(random(1,4)) + ".png", random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
         blood->setWorldPosition(Vec2(human->getWorldPosition().x + random(-30, 30), human->getWorldPosition().y + random(-30, 30)));
         blood->setScale(0.2f);
         human->getGameManager()->addDynamicEntity(blood, Z_ORDER_ITEMS, human->getGameManager()->getNextValidID());

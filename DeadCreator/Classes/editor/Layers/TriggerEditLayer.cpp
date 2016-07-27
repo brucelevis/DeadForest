@@ -16,6 +16,7 @@
 #include "ActionBase.hpp"
 #include "Conditions.hpp"
 #include "Actions.hpp"
+#include "StringHelper.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::editor;
@@ -104,7 +105,7 @@ void TriggerEditLayer::showLayer(bool* opened)
         ImGui::BeginChild("dummy1", ImVec2(0, TRIGGER_PLAYER_HEIGHT), true);
         for(int i = 0 ; i < 8 ; ++ i)
         {
-            std::string name = "Player " + std::to_string(i + 1);
+            std::string name = "Player " + _to_string(i + 1);
             if (ImGui::Selectable(name.c_str(), &_isSelectedPlayer[i]))
             {
                 for(int j = 0 ; j < 8 ; ++j ) { _isSelectedPlayer[j] = false; }
@@ -261,7 +262,7 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
             for(int i = 0 ; i < 8 ; ++ i)
             {
-                std::string playerType = "Player " + std::to_string(i + 1);
+                std::string playerType = "Player " + _to_string(i + 1);
                 ImGui::Checkbox(playerType.c_str(), &trigger->isPlayerSelected[i]);
             }
             ImGui::PopStyleColor();

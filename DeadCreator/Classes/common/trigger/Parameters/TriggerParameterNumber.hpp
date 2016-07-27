@@ -9,6 +9,7 @@
 #pragma once
 
 #include "TriggerParameterBase.hpp"
+#include "StringHelper.hpp"
 
 namespace realtrick
 {
@@ -46,7 +47,7 @@ namespace realtrick
             void setNumber(int number)
             {
                 _number = number;
-                setParameterName(std::to_string(number));
+                setParameterName(_to_string(number));
             }
             
             virtual TriggerParameterNumber* clone() const override
@@ -65,7 +66,7 @@ namespace realtrick
                     if ( _number < 0 ) _number = 0;
                     if ( _number > 255 ) _number = 255;
                     
-                    setParameterName(std::to_string(_number));
+                    setParameterName(_to_string(_number));
                 }
                 ImGui::PopItemWidth();
             }

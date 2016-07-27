@@ -222,7 +222,7 @@ void EntityHuman::setFootGauge(float g)
         if ( onTile == GameMap::TileType::DIRT )
         {
             SoundSource s;
-            s.fileName = "Dirt" + GameManager::_to_string(random(1, 4)) + ".mp3";
+            s.fileName = "Dirt" + _to_string(random(1, 4)) + ".mp3";
             s.position = getWorldPosition();
             s.soundRange = 50.0f;
             s.volume = 0.2f;
@@ -231,7 +231,7 @@ void EntityHuman::setFootGauge(float g)
         else if ( onTile == GameMap::TileType::GRASS )
         {
             SoundSource s;
-            s.fileName = "Grass" + GameManager::_to_string(random(1, 4)) + ".mp3";
+            s.fileName = "Grass" + _to_string(random(1, 4)) + ".mp3";
             s.position = getWorldPosition();
             s.soundRange = 50.0f;
             s.volume = 0.2f;
@@ -240,7 +240,7 @@ void EntityHuman::setFootGauge(float g)
         else if ( onTile == GameMap::TileType::WATER )
         {
             SoundSource s;
-            s.fileName = "Water" + GameManager::_to_string(random(1, 4)) + ".mp3";
+            s.fileName = "Water" + _to_string(random(1, 4)) + ".mp3";
             s.position = getWorldPosition();
             s.volume = 0.2f;
             s.soundRange = 50.0f;

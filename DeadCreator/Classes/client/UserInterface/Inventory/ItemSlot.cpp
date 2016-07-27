@@ -177,7 +177,7 @@ void ItemSlot::setItemAmount(int amount)
         else
         {
             _item->setAmount(amount);
-            _numOfItems->setString(GameManager::_to_string(amount));
+            _numOfItems->setString(_to_string(amount));
             _numOfItems->setVisible(true);
         }
     }

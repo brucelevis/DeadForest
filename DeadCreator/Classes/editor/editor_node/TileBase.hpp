@@ -12,6 +12,7 @@
 
 #include "cocos2d.h"
 #include "TileHelperFunctions.hpp"
+#include "StringHelper.hpp"
 
 #define DUMMY_TILE_SIZE 4
 
@@ -102,7 +103,7 @@ namespace realtrick
                     if ( _type == EditorTileType::GRASS ) ret += "2_";
                     if ( _type == EditorTileType::WATER ) ret += "3_";
                     if ( _type == EditorTileType::HILL ) ret += "5_";
-                    ret += std::to_string(cocos2d::random(1,3)) + "_";
+                    ret += _to_string(cocos2d::random(1,3)) + "_";
                     
                     return ret;
                 }
@@ -119,7 +120,7 @@ namespace realtrick
                     if ( type == EditorTileType::GRASS ) ret += "2_";
                     if ( type == EditorTileType::WATER ) ret += "3_";
                     if ( type == EditorTileType::HILL ) ret += "5_";
-                    ret += std::to_string(cocos2d::random(1,3)) + "_";
+                    ret += _to_string(cocos2d::random(1,3)) + "_";
                     
                     return ret;
                 }
@@ -128,7 +129,7 @@ namespace realtrick
                 {
                     std::string ret;
                     ret += number[0];
-                    ret += "_" + std::to_string(cocos2d::random(1,3)) + "_";
+                    ret += "_" + _to_string(cocos2d::random(1,3)) + "_";
                     return ret;
                 }
                 

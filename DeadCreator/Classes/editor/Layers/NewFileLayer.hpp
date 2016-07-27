@@ -11,6 +11,7 @@
 #include "cocos2d.h"
 #include "EditScene.hpp"
 #include "GMXFile.hpp"
+#include "StringHelper.hpp"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -106,7 +107,7 @@ namespace realtrick
                         // create map
                         GMXFile* file = new GMXFile();
                         
-                        file->fileName = "untitled_map_" + std::to_string(nextNumber++);
+                        file->fileName = "untitled_map_" + _to_string(nextNumber++);
                         file->tileWidth = atoi(items1[_tileSizeXItem]);
                         file->tileHeight = atoi(items2[_tileSizeYItem]);
                         file->numOfTileX = atoi(items3[_numOfTileX]);
@@ -129,10 +130,10 @@ namespace realtrick
                             {
                                 std::string tileName;
                                 
-                                if ( _currentTile == static_cast<int>(EditorTileType::DIRT)) tileName = "1_" + std::to_string(cocos2d::random(1, 3)) + "_1234";
-                                else if ( _currentTile == static_cast<int>(EditorTileType::GRASS)) tileName = "2_" + std::to_string(cocos2d::random(1, 3)) + "_1234";
-                                else if ( _currentTile == static_cast<int>(EditorTileType::WATER)) tileName = "3_" + std::to_string(cocos2d::random(1, 3)) + "_1234";
-                                else if ( _currentTile == static_cast<int>(EditorTileType::HILL)) tileName = "5_" + std::to_string(cocos2d::random(1, 3)) + "_1234";
+                                if ( _currentTile == static_cast<int>(EditorTileType::DIRT)) tileName = "1_" + _to_string(cocos2d::random(1, 3)) + "_1234";
+                                else if ( _currentTile == static_cast<int>(EditorTileType::GRASS)) tileName = "2_" + _to_string(cocos2d::random(1, 3)) + "_1234";
+                                else if ( _currentTile == static_cast<int>(EditorTileType::WATER)) tileName = "3_" + _to_string(cocos2d::random(1, 3)) + "_1234";
+                                else if ( _currentTile == static_cast<int>(EditorTileType::HILL)) tileName = "5_" + _to_string(cocos2d::random(1, 3)) + "_1234";
                                 
                                 file->tileInfos[i][j] = tileName;
                             }

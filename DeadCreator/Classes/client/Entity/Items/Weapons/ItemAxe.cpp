@@ -99,7 +99,7 @@ void ItemAxe::attack()
     if ( isHit )
     {
         SoundSource s;
-        s.fileName = "AxeHit" + GameManager::_to_string(random(0,2)) + ".mp3";
+        s.fileName = "AxeHit" + _to_string(random(0,2)) + ".mp3";
         s.position = worldPos;
         s.soundRange = 200.0f;
         Dispatch.pushMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
@@ -113,7 +113,7 @@ void ItemAxe::attack()
     else
     {
         SoundSource s;
-        s.fileName = "AxeSwing" + GameManager::_to_string(random(0,2)) + ".mp3";
+        s.fileName = "AxeSwing" + _to_string(random(0,2)) + ".mp3";
         s.position = worldPos;
         s.soundRange = 200.0f;
         Dispatch.pushMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);

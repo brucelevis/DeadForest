@@ -24,6 +24,7 @@
 #include "MainMenu3.hpp"
 #include "LocationNode.hpp"
 #include "RenameLocationLayer.hpp"
+#include "StringHelper.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::editor;
@@ -405,11 +406,11 @@ void GMXLayer::updateCocosLogic()
                     location->setLocationZOrder(_locations.size());
                     location->setSelected(true);
                     int number = 0;
-                    while ( isOverlappedLocationName(std::string("Location") + std::to_string(number)) )
+                    while ( isOverlappedLocationName(std::string("Location") + _to_string(number)) )
                     {
                         number ++;
                     }
-                    location->setLocationName(std::string("Location") + std::to_string(number));
+                    location->setLocationName(std::string("Location") + _to_string(number));
                     addLocation(location);
                     
                     _grabbedLocation = location;

@@ -480,7 +480,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         auto conditionObject = static_cast<const DeadCreator::Bring*>(cond->condition());
                         auto conditionBring = new ConditionBring();
                         conditionBring->setPlayerType(static_cast<PlayerType>(conditionObject->player()));
-                        conditionBring->setApproximation(static_cast<TriggerParameterApproximation::Type>(conditionObject->approximation()));
+                        conditionBring->setApproximation(static_cast<ApproximationType>(conditionObject->approximation()));
                         conditionBring->setEntity(static_cast<EntityType>(conditionObject->entity_type()));
                         conditionBring->setNumber(conditionObject->number());
                         

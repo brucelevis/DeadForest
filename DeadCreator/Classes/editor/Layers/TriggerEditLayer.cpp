@@ -66,21 +66,8 @@ bool TriggerEditLayer::init()
     _isSelectedPlayer[0] = true;
     _selectedPlayer = 0;
     
-    GameTrigger::ConditionType condIter = GameTrigger::ConditionType::BEGIN;
-    GameTrigger::increase(condIter);
-    while ( condIter != GameTrigger::ConditionType::END )
-    {
-        _conditionList.push_back(GameTrigger::createCondition(condIter));
-        GameTrigger::increase(condIter);
-    }
-    
-    GameTrigger::ActionType actIter = GameTrigger::ActionType::BEGIN;
-    GameTrigger::increase(actIter);
-    while ( actIter != GameTrigger::ActionType::END )
-    {
-        _actionList.push_back(GameTrigger::createAction(actIter));
-        GameTrigger::increase(actIter);
-    }
+    _conditionList.push_back(new ConditionBring());
+    _actionList.push_back(new ActionDisplayText());
     
     return true;
 }

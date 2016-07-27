@@ -61,6 +61,16 @@ namespace realtrick
         NEUTRAL = 12,
     };
         
+    enum class ApproximationType : int
+    {
+        INVALID = -1,
+        /* do not modify */
+        AT_LEAST = 0,
+        AT_MOST = 1,
+        EXACTLY = 2,
+        /* * * * * * * * */
+    };
+        
     inline void addMask(int& src, int mask)                         { src |= mask; }
     inline bool isMasked(int src, int mask)                         { return ((src & mask) == mask); }
     inline void removeMask(int& src, int mask)                      { if ( isMasked(src, mask) ) src ^= mask; }

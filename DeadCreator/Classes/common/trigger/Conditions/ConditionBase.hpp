@@ -10,6 +10,8 @@
 
 #include <vector>
 
+#include "cocos2d.h"
+
 #include "TriggerComponentProtocol.hpp"
 #include "TriggerParameterBase.hpp"
 
@@ -53,13 +55,26 @@ namespace realtrick
     namespace client
     {
         
-        struct ConditionBase
+        class GameManager;
+        class GameTrigger;
+        
+        class ConditionBase : public cocos2d::Ref
         {
             
-            ConditionBase() = default;
-            virtual ~ConditionBase() = default;
+        public:
+            
+            explicit ConditionBase(GameManager* mgr) : _gameMgr(mgr)
+            {}
+            
+            virtual ~ConditionBase() { _owner = nullptr; _gameMgr = nullptr; }
             
             virtual bool isReady() = 0;
+            void setOwner(GameTrigger* owner) { _owner = owner; }
+            
+        protected:
+            
+            GameTrigger* _owner;
+            GameManager* _gameMgr;
             
         };
         

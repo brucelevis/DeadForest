@@ -13,8 +13,8 @@
 
 #include "EntityType.hpp"
 #include "ConditionBase.hpp"
-#include "Conditions.hpp"
-#include "Actions.hpp"
+#include "ActionBase.hpp"
+
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -24,9 +24,6 @@ namespace realtrick
     namespace editor
     {
         
-        class ConditionBase;
-        class ActionBase;
-        
         struct GameTrigger
         {
             
@@ -35,68 +32,6 @@ namespace realtrick
             bool isPlayerSelected[8];
             std::vector<ConditionBase*> conditions;
             std::vector<ActionBase*> actions;
-            
-            enum class ConditionType : int
-            {
-                BEGIN = 0,
-                BRING,
-                END,
-            };
-            
-            enum class ActionType : int
-            {
-                BEGIN = 0,
-                DISPLAY_TEXT,
-                END,
-            };
-            
-            struct ConditionData
-            {
-                ConditionType type;
-                std::string name;
-                
-                ConditionData() = default;
-                ConditionData(ConditionType t, const std::string& n) : type(t), name(n) {}
-            };
-            
-            struct ActionData
-            {
-                ActionType type;
-                std::string name;
-                
-                ActionData() = default;
-                ActionData(ActionType t, const std::string& n) : type(t), name(n) {}
-            };
-            
-            static void increase(ConditionType& type)
-            {
-                int temp = static_cast<int>(type);
-                type = static_cast<GameTrigger::ConditionType>(++temp);
-            }
-            
-            static void increase(ActionType& type)
-            {
-                int temp = static_cast<int>(type);
-                type = static_cast<GameTrigger::ActionType>(++temp);
-            }
-            
-            static ConditionBase* createCondition(ConditionType type)
-            {
-                switch (type)
-                {
-                    case ConditionType::BRING: return new ConditionBring();
-                    default: { cocos2d::log("Invalid Condition Type"); return nullptr; }
-                }
-            }
-            
-            static ActionBase* createAction(ActionType type)
-            {
-                switch (type)
-                {
-                    case ActionType::DISPLAY_TEXT: return new ActionDisplayText();
-                    default: { cocos2d::log("Invalid Action Type"); return nullptr; }
-                }
-            }
             
             GameTrigger() { for ( int i = 0 ; i < 8 ; ++ i) isPlayerSelected[i] = false; }
             GameTrigger(const GameTrigger& rhs) { copyFrom(rhs); }
@@ -198,15 +133,17 @@ namespace realtrick
     namespace client
     {
         
-        class ConditionBase;
-        class ActionBase;
+        class GameManager;
         
-        class GameTrigger
+        class GameTrigger : public cocos2d::Ref
         {
             
         public:
             
-            GameTrigger() {}
+            explicit GameTrigger(GameManager* mgr) :
+            _gameMgr(mgr)
+            {}
+            
             virtual ~GameTrigger() {}
             
             bool isReady()
@@ -226,11 +163,19 @@ namespace realtrick
                 }
             }
             
+            void addCondition(ConditionBase* condition) { condition->setOwner(this); _conditions.pushBack(condition); }
+            void addAction(ActionBase* action) { _actions.pushBack(action); }
+            
+            GameManager* getGameManager() const { return _gameMgr; }
+            std::bitset<9> getPlayers() const { return _players; }
+            
         private:
             
-            std::vector<int> _players;
-            std::vector<ConditionBase*> _conditions;
-            std::vector<ActionBase*> _actions;
+            GameManager* _gameMgr;
+            
+            std::bitset<9> _players;
+            cocos2d::Vector<ConditionBase*> _conditions;
+            cocos2d::Vector<ActionBase*> _actions;
             
         };
         

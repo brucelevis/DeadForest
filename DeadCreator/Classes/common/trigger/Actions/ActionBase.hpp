@@ -10,6 +10,8 @@
 
 #include <vector>
 
+#include "cocos2d.h"
+
 #include "TriggerComponentProtocol.hpp"
 #include "TriggerParameterBase.hpp"
 
@@ -45,6 +47,7 @@ namespace realtrick
             virtual void deepCopy(TriggerComponentProtocol* copy) override { TriggerComponentProtocol::deepCopy(copy); }
             
             virtual flatbuffers::Offset<DeadCreator::Action> getActionObject(flatbuffers::FlatBufferBuilder& builder) = 0;
+            
         };
         
     }
@@ -52,13 +55,23 @@ namespace realtrick
     namespace client
     {
         
-        struct ActionBase
+        class GameTrigger;
+        
+        class ActionBase : public cocos2d::Ref
         {
+           
+        public:
             
-            ActionBase() = default;
+            explicit ActionBase(GameTrigger* owner) : _owner(owner)
+            {}
+            
             virtual ~ActionBase() = default;
             
             virtual void doAction() = 0;
+            
+        protected:
+            
+            GameTrigger* _owner;
             
         };
         

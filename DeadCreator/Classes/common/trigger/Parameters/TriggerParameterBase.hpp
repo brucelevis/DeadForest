@@ -53,14 +53,6 @@ namespace realtrick
         };
         
     }
-    
-    namespace client
-    {
-        
-        
-        
-    }
-    
 }
 
 

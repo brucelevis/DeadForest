@@ -18,7 +18,6 @@
 #include "LogicStream.hpp"
 #include "TriggerSystem.hpp"
 using namespace cocos2d;
-using namespace std;
 using namespace realtrick::client;
 
 #include "GMXFile_generated.h"
@@ -29,16 +28,18 @@ int GameManager::_nextValidID = 0;
 
 void GameManager::update(float dt)
 {
-    for( const auto& entity : _entities )
-    {
-        entity.second->update(dt);
-    }
     
+    // entitiy loop
+    for( const auto& entity : _entities )
+        entity.second->update(dt);
+    
+    // trigger loop
     _triggerSystem->update(dt);
     
+    
+    // debug
     if ( _debugNode->isVisible() )
     {
-        // 공간분할 디버그
         const std::vector<Cell>& cells = _cellSpace->getCells();
         int idx = _cellSpace->positionToIndex(_gameCamera->getCameraPos());
         for( int i = 0 ; i < (int)cells.size() ; ++ i)
@@ -267,15 +268,14 @@ std::vector<Polygon> GameManager::getNeighborWalls(const cocos2d::Vec2& position
 
 cocos2d::Vec2 GameManager::worldToLocal(const cocos2d::Vec2& p) const
 {
-    if ( !_gameCamera ) throw runtime_error("camera not exist.");
-    
+    if ( !_gameCamera ) throw std::runtime_error("camera not exist.");
     return p - _gameCamera->getCameraPos();
 }
 
 
 cocos2d::Vec2 GameManager::worldToLocal(const cocos2d::Vec2& p, const cocos2d::Vec2& camera) const
 {
-    if ( !_gameCamera ) throw runtime_error("camera not exist.");
+    if ( !_gameCamera ) throw std::runtime_error("camera not exist.");
     return p - camera;
 }
 
@@ -293,13 +293,8 @@ void GameManager::loadGMXFile(const std::string& filePath)
     if ( ret )
     {
         const DeadCreator::GMXFile* file = DeadCreator::GetGMXFile(loadedData.c_str());
-        log("default tile: %d", file->default_type());
-        log("tile width: %d", file->tile_size()->width());
-        log("tile height: %d", file->tile_size()->height());
-        log("number of tile x: %d", file->number_of_tiles()->x());
-        log("number of tile y: %d", file->number_of_tiles()->y());
-        log("cell space size: %d, %d", file->cell_space_size()->width(), file->cell_space_size()->height());
         
+        // load cell space partition
         Size worldSize = Size(file->tile_size()->width() * file->number_of_tiles()->x(),
                               file->tile_size()->height() * file->number_of_tiles()->y());
         
@@ -307,9 +302,13 @@ void GameManager::loadGMXFile(const std::string& filePath)
                                             file->cell_space_size()->width(),
                                             file->cell_space_size()->height());
         
+        
+        // load tiles
         _gameMap = GameMap::createWithGMXFile(this, file);
         addStaticEntity(_gameMap, Z_ORDER_GAME_MAP, getNextValidID());
         
+        
+        // load entities
         bool isFirst = true;
         for ( auto entity = file->entities()->begin(); entity != file->entities()->end(); ++ entity )
         {
@@ -389,6 +388,21 @@ void GameManager::loadGMXFile(const std::string& filePath)
                 
             }
         }
+        
+        // load locations
+        
+        
+        
+        // load triggers
+        for ( auto trigger = file->triggers()->begin() ; trigger != file->triggers()->end() ; ++trigger)
+        {
+            
+        }
+        
+        GameTrigger* trigger = new GameTrigger(this);
+        ConditionBring* cond = ConditionBring::create(this, PlayerType::PLAYER1, ApproximationType::AT_LEAST, 1, EntityType::ENTITY_HUMAN, cocos2d::Rect(0,0,10000,10000));
+        trigger->addCondition(cond);
+        _triggerSystem->addTrigger(trigger);
         
     }
 }

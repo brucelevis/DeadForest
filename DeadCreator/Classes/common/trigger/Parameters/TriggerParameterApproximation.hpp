@@ -20,21 +20,9 @@ namespace realtrick
             
         public:
             
-            enum class Type
-            {
-                INVALID = -1,
-                /* do not modify */
-                AT_LEAST = 0,
-                AT_MOST = 1,
-                EXACTLY = 2,
-                /* * * * * * * * */
-            };
-            
-        public:
-            
             TriggerParameterApproximation() :
             TriggerParameterBase(),
-            _approximation(Type::INVALID)
+            _approximation(ApproximationType::INVALID)
             {
                 setParameterName("#invalid");
             }
@@ -55,13 +43,12 @@ namespace realtrick
             
             virtual ~TriggerParameterApproximation() = default;
             
-            Type getApproximationType() const { return _approximation; }
-            void setApproximationType(Type type)
+            ApproximationType getApproximationType() const { return _approximation; }
+            void setApproximationType(ApproximationType type)
             {
-                if ( type == Type::AT_LEAST ) setParameterName("at least");
-                else if ( type == Type::AT_MOST ) setParameterName("at most");
-                else if ( type == Type::EXACTLY ) setParameterName("exactly");
-                
+                if ( type == ApproximationType::AT_LEAST ) setParameterName("at least");
+                else if ( type == ApproximationType::AT_MOST ) setParameterName("at most");
+                else if ( type == ApproximationType::EXACTLY ) setParameterName("exactly");
                 
                 _approximation = type;
                 _currApproximation = static_cast<int>(type);
@@ -87,7 +74,7 @@ namespace realtrick
                 };
                 if (ImGui::Combo("", &_currApproximation, items2, 3, 3))
                 {
-                    setApproximationType(static_cast<TriggerParameterApproximation::Type>(_currApproximation));
+                    setApproximationType(static_cast<ApproximationType>(_currApproximation));
                 }
                 ImGui::PopItemWidth();
                 ImGui::PopStyleColor();
@@ -95,7 +82,7 @@ namespace realtrick
             
         private:
             
-            Type _approximation;
+            ApproximationType _approximation;
             int _currApproximation = -1;
             
         };

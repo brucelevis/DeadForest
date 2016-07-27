@@ -8,10 +8,13 @@
 
 #pragma once
 
-#include "ConditionBase.hpp"
 #include "TriggerParameters.hpp"
 #include "EditorEntity.hpp"
 #include "GMXLayer.hpp"
+#include "GameTrigger.hpp"
+
+#include "GameManager.hpp"
+#include "EntityBase.hpp"
 
 namespace realtrick
 {
@@ -137,7 +140,7 @@ namespace realtrick
             }
             
             void setPlayerType(PlayerType type) { _playerType.setPlayerType(type); }
-            void setApproximation(TriggerParameterApproximation::Type type) { _approximation.setApproximationType(type); }
+            void setApproximation(ApproximationType type) { _approximation.setApproximationType(type); }
             void setNumber(int number) { _number.setNumber(number); }
             void setEntity(EntityType type) { _entity.setEntityType(type); }
             void setLocation(LocationNode* loc) { _location.setLocation(loc); }
@@ -162,18 +165,87 @@ namespace realtrick
             
         public:
             
+            explicit ConditionBring(GameManager* mgr) : ConditionBase(mgr)
+            {}
+            
+            virtual ~ConditionBring() = default;
+            
+            static ConditionBring* create(GameManager* mgr, PlayerType playerType, ApproximationType appType, int number, EntityType entType, const cocos2d::Rect& loc)
+            {
+                auto ret = new (std::nothrow) ConditionBring(mgr);
+                if ( ret && ret->init(playerType, appType, number, entType, loc) )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
+            bool init(PlayerType playerType, ApproximationType appType, int number, EntityType entType, const cocos2d::Rect& loc)
+            {
+                _player = playerType;
+                _approximation = appType;
+                _number = number;
+                _entity = entType;
+                _location = loc;
+                
+                if ( playerType == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
+                else _maskedPlayer.set(static_cast<int>(playerType));
+                
+                return true;
+            }
+            
             virtual bool isReady() override
             {
-                return true;
+                const auto& entities = _gameMgr->getEntities();
+                
+                // 플레이어 타입인지 체크. (o)
+                // 엔티티 타입 체크. (o)
+                // 충돌됐는지 체크. (o)
+                // 숫자맞는지 체크. (x)
+                int numberOfReadyEntities = 0;
+                for( auto& ent : entities)
+                {
+                    auto entity = ent.second;
+                    int player = static_cast<int>(entity->getPlayerType());
+                    
+                    if (_maskedPlayer[player] &&
+                        _entity == entity->getEntityType() &&
+                        _location.intersectsCircle(entity->getPosition(), 30) )
+                    {
+                        numberOfReadyEntities++;
+                    }
+                }
+                
+                if ( _approximation == ApproximationType::AT_LEAST && numberOfReadyEntities >= _number )
+                {
+                    cocos2d::log("condition bring isReady() called. (at least)");
+                    return true;
+                }
+                else if ( _approximation == ApproximationType::AT_MOST && numberOfReadyEntities <= _number )
+                {
+                    cocos2d::log("condition bring isReady() called. (at most)");
+                    return true;
+                }
+                else if ( _approximation == ApproximationType::EXACTLY && numberOfReadyEntities == _number )
+                {
+                    cocos2d::log("condition bring isReady() called. (exactly)");
+                    return true;
+                }
+                
+                return false;
             }
             
         private:
             
-            int _player;
-            int _approximation;
+            PlayerType _player;
+            ApproximationType _approximation;
             int _number;
-            int _entity;
-            int _location;
+            EntityType _entity;
+            cocos2d::Rect _location;
+            
+            std::bitset<9> _maskedPlayer;
             
         };
         

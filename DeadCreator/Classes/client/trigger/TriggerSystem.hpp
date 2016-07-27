@@ -10,7 +10,10 @@
 
 #include <vector>
 
+#include "cocos2d.h"
 #include "GameTrigger.hpp"
+#include "Conditions.hpp"
+#include "Actions.hpp"
 
 namespace realtrick
 {
@@ -33,14 +36,18 @@ namespace realtrick
                 for (auto& trigger : _triggers)
                 {
                     if ( trigger->isReady() )
+                    {
                         trigger->doAction();
+                    }
                 }
             }
+            
+            void addTrigger(GameTrigger* trigger) { _triggers.pushBack(trigger); }
             
         private:
             
             GameManager* _gameMgr;
-            std::vector<GameTrigger*> _triggers;
+            cocos2d::Vector<GameTrigger*> _triggers;
             
         };
         

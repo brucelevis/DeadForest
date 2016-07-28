@@ -70,6 +70,8 @@ namespace realtrick
             
         private:
             
+            cocos2d::ClippingRectangleNode*     _root;
+            
             cocos2d::Size                       _winSize;
             GameManager*                        _gameMgr;
             Camera2D*                           _gameCamera;

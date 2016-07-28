@@ -12,6 +12,7 @@
 #include "LightEffect.hpp"
 #include "EffectSprite.hpp"
 #include "EntityBase.hpp"
+#include "SizeProtocol.h"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -62,7 +63,7 @@ bool RenderTarget::init()
     if ( !Node::init() )
         return false;
     
-    _winSize = Director::getInstance()->getVisibleSize();
+    _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     
     _effect = LightEffect::create("lights.fsh");
     _effect->retain();
@@ -71,14 +72,13 @@ bool RenderTarget::init()
     dl->setColor(Vec3(0.7f, 0.7f, 0.7f));
     dl->setIntensity(1.0f);
     _effect->addLight(dl);
-    
-    
+
     _deferredRenderTarget = EffectSprite::create("normal_bg.png");
     _deferredRenderTarget->setPosition(_winSize / 2);
     _deferredRenderTarget->setEffect(_effect);
     _deferredRenderTarget->setFlippedY(true);
     addChild(_deferredRenderTarget);
-    
+
     _staticTarget = Node::create();
     _dynamicTarget = Node::create();
     
@@ -87,12 +87,12 @@ bool RenderTarget::init()
     
     _staticTarget->retain();
     _dynamicTarget->retain();
-    
+
     _normalTex = RenderTexture::create(_winSize.width, _winSize.height);
     _staticTex = RenderTexture::create(_winSize.width, _winSize.height);
     _dynamicTex = RenderTexture::create(_winSize.width, _winSize.height);
     _occulusionTex = RenderTexture::create(_winSize.width, _winSize.height);
-    
+
     _occulusionBuilder = OcculusionBuilder::create(_winSize);
     _occulusionBuilder->setDebugNode(_gameMgr->getDebugNode());
     

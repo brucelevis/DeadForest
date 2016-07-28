@@ -44,7 +44,7 @@ namespace realtrick
                 return nullptr;
             }
             
-            void showLayer(bool* opened)
+            void showLayer(bool& opened)
             {
                 ImGuiContext& g = *GImGui;
                 ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 430) / 2, (g.IO.DisplaySize.x - 200) / 2), ImGuiSetCond_Once);
@@ -78,7 +78,7 @@ namespace realtrick
                     
                     if (ImGui::ButtonEx("Ok", ImVec2(60, 20), _okButtonFlags))
                     {
-                        *opened = false;
+                        opened = false;
                         _gmxLayer.getGrabbedLocation()->setLocationName(_locationName);
                         closeWindow();
                     }
@@ -88,7 +88,7 @@ namespace realtrick
                     if (ImGui::Button("Cancel", ImVec2(100, 20)))
                     {
                         closeWindow();
-                        *opened = false;
+                        opened = false;
                     }
                     
                     ImGui::EndPopup();

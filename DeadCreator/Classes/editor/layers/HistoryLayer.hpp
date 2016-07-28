@@ -46,7 +46,7 @@ namespace realtrick
                 return nullptr;
             }
             
-            void showLayer(bool* opened)
+            void showLayer(bool& opened)
             {
                 ImGuiContext& g = *GImGui;
                 float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
@@ -55,7 +55,7 @@ namespace realtrick
                 ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Once);
                 
                 ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
-                ImGui::Begin("history", opened, ImVec2(0,0), 0.9f,
+                ImGui::Begin("history", &opened, ImVec2(0,0), 0.9f,
                              ImGuiWindowFlags_NoScrollbar |
                              ImGuiWindowFlags_NoCollapse |
                              ImGuiWindowFlags_NoResize |

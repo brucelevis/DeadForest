@@ -72,7 +72,7 @@ bool TriggerEditLayer::init()
     return true;
 }
 
-void TriggerEditLayer::showLayer(bool* opened)
+void TriggerEditLayer::showLayer(bool& opened)
 {
     ImGuiContext& g = *GImGui;
     ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - TRIGGER_EDIT_WIDTH) / 2,
@@ -208,9 +208,9 @@ void TriggerEditLayer::showLayer(bool* opened)
 }
 
 
-void TriggerEditLayer::closeWindow(bool* opened)
+void TriggerEditLayer::closeWindow(bool& opened)
 {
-    *opened = false;
+    opened = false;
     
     for(int i = 0 ; i < 8 ; ++i ) _isSelectedPlayer[i] = false;
     _isSelectedPlayer[0] = true;

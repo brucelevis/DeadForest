@@ -23,6 +23,7 @@ namespace realtrick
         class SaveAsLayer;
         class OpenLayer;
         class SaveQueryLayer;
+        class PlayGameLayer;
         
         enum LayerType
         {
@@ -74,6 +75,9 @@ namespace realtrick
             void setSelectedPlayerType(PlayerType type) { _selectedPlayerType = static_cast<int>(type) - 1; }
             PlayerType getSelectedPlayerType() { return static_cast<PlayerType>(_selectedPlayerType + 1); }
             
+            void playGame();
+            void stopGame();
+            
         private:
             
             GMXLayer* _layer = nullptr;
@@ -81,11 +85,14 @@ namespace realtrick
             SaveAsLayer* _saveAsLayer = nullptr;
             OpenLayer* _openLayer = nullptr;
             SaveQueryLayer* _saveQueryLayer = nullptr;
+            PlayGameLayer* _playGameLayer = nullptr;
             
+            bool _showGMXLayer = false;
             bool _showNewMap = false;
             bool _showSaveAs = false;
             bool _showOpenMap = false;
             bool _showSaveQueryLayer = false;
+            bool _showPlayGameLayer = false;
             
             bool _enableOpenMap = true;
             bool _enableSaveMap = false;
@@ -98,6 +105,8 @@ namespace realtrick
             
             int _layerType = -1;
             int _selectedPlayerType = -1;
+            
+            std::string _prevFilePath;
             
         };
         

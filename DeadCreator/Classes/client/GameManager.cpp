@@ -67,7 +67,7 @@ _gameMap(nullptr),
 _gameCamera(nullptr),
 _debugNode(nullptr)
 {
-    _winSize = cocos2d::Director::getInstance()->getVisibleSize();
+    _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     
     _debugNode = DrawNode::create();
     _debugNode->setPosition(_winSize / 2);

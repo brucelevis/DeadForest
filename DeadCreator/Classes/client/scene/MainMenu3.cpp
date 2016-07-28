@@ -10,13 +10,14 @@
 #include "GameWorld.hpp"
 #include "GeneratedPackets.hpp"
 #include "Server.hpp"
+#include "SizeProtocol.h"
 using namespace realtrick::client;
 using namespace cocos2d;
 using namespace cocos2d::ui;
 
 
 MainMenu3::MainMenu3() :
-_winSize(Director::getInstance()->getVisibleSize()),
+_winSize(Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT)),
 _roomID(0),
 _isButtonMoving_multi(false),
 _menuCenterIndex_multi(0),

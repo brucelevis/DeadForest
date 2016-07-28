@@ -34,8 +34,8 @@ namespace realtrick
             static TriggerEditLayer* create(GMXLayer& layer);
             virtual bool init() override;
             
-            void showLayer(bool* opened);
-            void closeWindow(bool* opened);
+            void showLayer(bool& opened);
+            void closeWindow(bool& opened);
             
             void showTrigger(const char* title, bool& opened, GameTrigger* trigger, bool isModify = false, int index = -1);
             void showNewCondition(const char* title, bool& opened, GameTrigger* newTrigger);

@@ -96,12 +96,6 @@ bool GMXLayer::init()
     
     this->scheduleUpdate();
     
-    _imguiLayer.addImGUI([this] {
-        
-        if ( _isShowWindow ) showWindow();
-        
-    }, "##GMXLayer");
-    
     _clipNode = ClippingRectangleNode::create();
     addChild(_clipNode);
     
@@ -204,7 +198,7 @@ void GMXLayer::initFile()
 }
 
 
-void GMXLayer::showWindow()
+void GMXLayer::showLayer(bool& opened)
 {
     auto& g = *GImGui;
     float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
@@ -220,7 +214,7 @@ void GMXLayer::showWindow()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(200,200));
     
     ImGui::Begin((isUndo() ? std::string(_file.fileName + '*').c_str() : _file.fileName.c_str()),
-                 &_isShowWindow, ImVec2(0,0), 0.0f,
+                 &opened, ImVec2(0,0), 0.0f,
                  ImGuiWindowFlags_NoScrollbar |
                  ImGuiWindowFlags_NoCollapse |
                  ImGuiWindowFlags_NoBringToFrontOnFocus |
@@ -269,7 +263,7 @@ void GMXLayer::showWindow()
     ImGui::PopStyleVar(2);
     ImGui::PopStyleColor();
     
-    if ( _isShowWindow == false )
+    if ( opened == false )
     {
         setVisible(false);
         _isShowPalette = false;
@@ -277,11 +271,11 @@ void GMXLayer::showWindow()
         _imguiLayer.closeGMXLayer();
     }
     
-    if ( _isShowPalette ) _paletteLayer->showLayer(&_isShowPalette);
-    if ( _isShowNavigator ) _navigatorLayer->showLayer(&_isShowNavigator);
-    if ( _isShowHistory ) _historyLayer->showLayer(&_isShowHistory);
-    if ( _isShowRenameLocationLayer ) _renameLocationLayer->showLayer(&_isShowRenameLocationLayer);
-    if ( _isShowTriggerEdit ) _triggerEditLayer->showLayer(&_isShowTriggerEdit);
+    if ( _isShowPalette ) _paletteLayer->showLayer(_isShowPalette);
+    if ( _isShowNavigator ) _navigatorLayer->showLayer(_isShowNavigator);
+    if ( _isShowHistory ) _historyLayer->showLayer(_isShowHistory);
+    if ( _isShowRenameLocationLayer ) _renameLocationLayer->showLayer(_isShowRenameLocationLayer);
+    if ( _isShowTriggerEdit ) _triggerEditLayer->showLayer(_isShowTriggerEdit);
 }
 
 
@@ -643,11 +637,6 @@ void GMXLayer::updateCocosLogic()
                 removeLocation(_grabbedLocation);
             }
             
-        }
-        
-        if ( ImGui::IsKeyReleased(257) )
-        {
-            Director::getInstance()->replaceScene(client::MainMenu3::createScene());
         }
     }
 }
@@ -1869,6 +1858,8 @@ bool GMXLayer::isRedo() const { return _historyLayer->isRedo(); }
 bool GMXLayer::isUndo() const { return _historyLayer->isUndo(); }
 void GMXLayer::redo() { _historyLayer->redo(); updateCollisionRegion(); }
 void GMXLayer::undo() { _historyLayer->undo(); updateCollisionRegion(); }
+
+
 
 
 

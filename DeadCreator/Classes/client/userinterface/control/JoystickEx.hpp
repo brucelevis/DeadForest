@@ -77,7 +77,7 @@ namespace realtrick
             {
                 cocos2d::Vec2 ret = getPosition();
                 cocos2d::Node* p = getParent();
-                while( !p )
+                while( p && p->isVisible() )
                 {
                     ret += p->getPosition();
                     p = p->getParent();

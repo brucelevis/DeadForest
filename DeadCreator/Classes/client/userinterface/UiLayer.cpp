@@ -20,6 +20,7 @@
 #include "AimingNode.hpp"
 #include "HpBar.hpp"
 #include "InfoSystem.hpp"
+#include "SizeProtocol.h"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -53,7 +54,7 @@ bool UiLayer::init()
     if ( !Node::init() )
         return false;
     
-    _winSize = Director::getInstance()->getVisibleSize();
+    _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     
     _moveJoystick = JoystickEx::create("wooden_handle_n.png", "wooden_handle_n.png");
     _moveJoystick->setJoystickPad("wooden_pad.png");

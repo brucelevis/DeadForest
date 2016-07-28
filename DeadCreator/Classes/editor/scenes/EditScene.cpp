@@ -21,6 +21,7 @@ using namespace cocos2d;
 #include "OpenLayer.hpp"
 #include "SaveQueryLayer.hpp"
 #include "PaletteLayer.hpp"
+#include "PlayGameLayer.hpp"
 #include "LocationNode.hpp"
 #include "GameTrigger.hpp"
 #include "Conditions.hpp"
@@ -46,13 +47,6 @@ bool EditScene::init()
     if ( !ImGuiLayer::init() )
         return false;
     
-    GMXFile* file = new GMXFile();
-    file->numOfTileY = 256;
-    file->numOfTileX = 256;
-    file->tileWidth = 128;
-    file->tileHeight = 128;
-    file->worldSize = Size(file->numOfTileX * file->tileWidth, file->numOfTileY * file->tileHeight);
-    
     _newFileLayer = NewFileLayer::create(this);
     addChild(_newFileLayer);
     
@@ -65,12 +59,17 @@ bool EditScene::init()
     _saveQueryLayer = SaveQueryLayer::create(this);
     addChild(_saveQueryLayer);
     
+    _playGameLayer = PlayGameLayer::create(this);
+    addChild(_playGameLayer);
+    
     addImGUI([this] {
         
         if ( _showNewMap ) _newFileLayer->showLayer(_showNewMap);
         if ( _showSaveAs ) _saveAsLayer->showLayer(_showSaveAs);
         if ( _showOpenMap ) _openLayer->showLayer(_showOpenMap);
         if ( _showSaveQueryLayer ) _saveQueryLayer->showLayer(_showSaveQueryLayer);
+        if ( _showPlayGameLayer ) _playGameLayer->showLayer(_showPlayGameLayer);
+        if ( _layer && _showGMXLayer ) _layer->showLayer(_showGMXLayer);
         
         if (ImGui::BeginMainMenuBar())
         {
@@ -298,6 +297,20 @@ bool EditScene::init()
         }
         if ( _layer && ImGui::IsItemHovered()) ImGui::SetTooltip("trigger");
         
+        ImGui::SameLine();
+        if ( ImGuiLayer::imageButton("play_btn.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
+                                     -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
+        {
+            if ( _layer )
+            {
+                _showPlayGameLayer = !_showPlayGameLayer;
+                
+                if ( _showPlayGameLayer ) playGame();
+                else stopGame();
+            }
+        }
+        if ( _layer && ImGui::IsItemHovered()) ImGui::SetTooltip("play");
+        
         ImGui::PopStyleColor(2);
         
         ImGui::SameLine();
@@ -339,9 +352,9 @@ bool EditScene::init()
         ImGui::End();
         ImGui::PopStyleVar(1);
         
-//        static bool isShowDemo = true;
-//        ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-//        ImGui::ShowTestWindow(&isShowDemo);
+        static bool isShowDemo = true;
+        ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
+        ImGui::ShowTestWindow(&isShowDemo);
         
     }, "##main menu");
     
@@ -355,6 +368,8 @@ void EditScene::createGMXLayer(GMXFile* file)
     
     _layer = GMXLayer::create(*this, *file);
     addChild(_layer);
+    
+    _showGMXLayer = true;
     
     // menu
     setEnableEditMenu(true);
@@ -419,6 +434,8 @@ void EditScene::createGMXLayer(const std::string& filePath)
         _layer->setCurrFilePath(filePath);
         _layer->enableFirstFile(false);
         addChild(_layer);
+        
+        _showGMXLayer = true;
         
         // tile infos
         for ( auto iter = gmxFile->tiles()->begin(); iter != gmxFile->tiles()->end() ; ++ iter)
@@ -623,6 +640,24 @@ void EditScene::saveAsFile()
 }
 
 
+void EditScene::playGame()
+{
+    _prevFilePath = _layer->getCurrFilePath();
+    closeGMXLayer();
+    
+    _playGameLayer->playGame();
+    
+    enableModal(true);
+}
+
+
+void EditScene::stopGame()
+{
+    _playGameLayer->stopGame();
+    createGMXLayer(_prevFilePath);
+    
+    enableModal(false);
+}
 
 
 

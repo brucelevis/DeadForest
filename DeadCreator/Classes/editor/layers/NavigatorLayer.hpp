@@ -72,7 +72,7 @@ namespace realtrick
                 
             }
             
-            void showLayer(bool* opened)
+            void showLayer(bool& opened)
             {
                 ImGuiContext& g = *GImGui;
                 float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
@@ -86,7 +86,7 @@ namespace realtrick
                 ImGui::SetNextWindowSize(ImVec2(_layerSize.width, _layerSize.height), ImGuiSetCond_Always);
                 
                 ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
-                ImGui::Begin("navigator", opened,
+                ImGui::Begin("navigator", &opened,
                              ImGuiWindowFlags_NoScrollbar |
                              ImGuiWindowFlags_NoCollapse |
                              ImGuiWindowFlags_NoResize |

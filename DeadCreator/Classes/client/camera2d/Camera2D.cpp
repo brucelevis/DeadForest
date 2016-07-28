@@ -7,6 +7,7 @@
 //
 
 #include "Camera2D.hpp"
+#include "SizeProtocol.h"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -38,7 +39,7 @@ bool Camera2D::init()
     if ( !Node::init() )
         return false;
     
-    _worldSize = Director::getInstance()->getVisibleSize();
+    _worldSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     
     return true;
 }

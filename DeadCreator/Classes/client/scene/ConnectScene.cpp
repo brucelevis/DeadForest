@@ -10,6 +10,7 @@
 #include "Server.hpp"
 #include "MainMenu3.hpp"
 #include "GeneratedPackets.hpp"
+#include "SizeProtocol.h"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -109,7 +110,7 @@ bool ConnectScene::init()
     if ( !Layer::init() )
         return false;
     
-    _winSize = Director::getInstance()->getVisibleSize();
+    _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     
     this->scheduleUpdate();
     

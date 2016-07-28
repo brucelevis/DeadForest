@@ -43,7 +43,7 @@ namespace realtrick
             
         public:
             
-            explicit GMXLayer(EditScene& _imguiLayer, GMXFile& file);
+            explicit GMXLayer(EditScene& imguiLayer, GMXFile& file);
             virtual ~GMXLayer();
             
             static GMXLayer* create(EditScene& imguiLayer, GMXFile& file);
@@ -69,7 +69,7 @@ namespace realtrick
             cocos2d::Size getWorldSize() const { return _file.worldSize; }
             
             void initFile();
-            void showWindow();
+            void showLayer(bool& opened);
             
             bool& isShowPalette() { return _isShowPalette; }
             bool& isShowNavigator() { return _isShowNavigator; }
@@ -160,7 +160,6 @@ namespace realtrick
             int _viewX;
             int _viewY;
             
-            bool _isShowWindow = true;
             bool _isLeftMouseClickEventDone = false;
             
             cocos2d::Vec2 _mousePosInWorld;

@@ -17,6 +17,7 @@
 #include "NetworkStream.hpp"
 #include "TileBase.hpp"
 #include "TileHelperFunctions.hpp"
+#include "SizeProtocol.h"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -43,13 +44,16 @@ bool GameWorld::init()
         return false;
     }
     
-    _winSize = Director::getInstance()->getVisibleSize();
+    _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     this->scheduleUpdate();
     
     _gameMgr = new GameManager(this);
     
+    _root = ClippingRectangleNode::create(cocos2d::Rect(0, 0, _winSize.width, _winSize.height));
+    addChild(_root);
+    
     _renderTarget = RenderTarget::create(_gameMgr);
-    addChild(_renderTarget);
+    _root->addChild(_renderTarget);
     
     _gameCamera = Camera2D::create(_gameMgr);
     addChild(_gameCamera);
@@ -74,7 +78,7 @@ void GameWorld::loadUiLayer()
     setPlayerPtr(_gameMgr->getPlayerPtr());
     
     _uiLayer = UiLayer::create(_gameMgr);
-    addChild(_uiLayer);
+    _root->addChild(_uiLayer);
     
     // init game map
     _gameMgr->getGameMap()->updateChunk(_player->getWorldPosition());

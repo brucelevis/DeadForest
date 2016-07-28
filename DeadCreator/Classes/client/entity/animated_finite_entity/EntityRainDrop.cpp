@@ -12,6 +12,7 @@
 #include "MessageDispatcher.hpp"
 #include "MessageTypes.hpp"
 #include "Camera2D.hpp"
+#include "SizeProtocol.h"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -49,7 +50,7 @@ bool EntityRainDrop::init(const std::vector<std::string> frames, float deathTime
     if ( !Node::init() || frames.empty() )
         return false;
     
-    _winSize = Director::getInstance()->getVisibleSize();
+    _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     _frames = frames;
     _deathTime = deathTime;
     _texType = type;

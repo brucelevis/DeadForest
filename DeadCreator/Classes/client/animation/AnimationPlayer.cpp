@@ -143,10 +143,8 @@ void AnimationPlayer::processAnimation(float dt)
         _frameQueue.pop_front();
         
         _baseSprite->setSpriteFrame(_currFrameName + ".png");
-        
         _shadowSprite->setSpriteFrame(_currFrameName + ".png");
         _shadowSprite->setColor(Color3B::BLACK);
-        
         _normalSprite->setSpriteFrame(_currFrameName + "_n.png");
     }
 }

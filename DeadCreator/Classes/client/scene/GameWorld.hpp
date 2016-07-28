@@ -21,11 +21,6 @@ namespace realtrick
     {
         
         class GameManager;
-        class EntityHuman;
-        class Camera2D;
-        class ItemBase;
-        class UiLayer;
-        class LogicStream;
         
         class GameWorld : public cocos2d::Layer
         {
@@ -41,19 +36,10 @@ namespace realtrick
             
             virtual void update(float dt) override;
             
-            cocos2d::Size getWorldSize() const { return _winSize; }
-            
-            LogicStream* getLogicStream() const { return _logicStream; }
-            void seteLogicStream(LogicStream* stream) { _logicStream = stream; }
-            
-            void pushLogic(double delaySeconds, MessageType type, void* extraInfo);
-
-            
         private:
             
             cocos2d::Size                       _winSize;
             GameManager*                        _gameMgr;
-            LogicStream*                        _logicStream;
             
         };
         

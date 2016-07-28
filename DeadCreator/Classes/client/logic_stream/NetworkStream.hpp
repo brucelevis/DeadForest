@@ -23,7 +23,7 @@ namespace realtrick
             explicit NetworkStream(GameManager* mgr) : LogicStream(mgr) {}
             virtual ~NetworkStream() = default;
             virtual bool handleMessage(const Telegram& msg) override;
-            virtual void processPacket(float dt) override;
+            virtual void update(float dt) override;
             
         };
     }

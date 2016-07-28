@@ -42,6 +42,7 @@ namespace realtrick
         class RenderTarget;
         class TriggerSystem;
         class UiLayer;
+        class LogicStream;
         
         class GameManager : public cocos2d::Node
         {
@@ -56,14 +57,17 @@ namespace realtrick
             
             void clear();
             void update(float dt) override;
-            void setPlayer(EntityHuman* player);
+            void setPlayer(EntityHuman* player) { _player = player; }
             
             EntityHuman* getPlayerPtr() const { return _player; }
+            
             const std::map<int, EntityBase*>& getEntities() const { return _entities; }
+            
             GameMap* getGameMap() const { return _gameMap; }
+            
             CellSpacePartition* getCellSpace() const { return _cellSpace; }
+            
             static int getNextValidID() { static int _nextValidID = 0; return _nextValidID++; }
-            GameWorld* getGameWorld() const { return _gameWorld; }
             
             std::list<EntityBase*> getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const;
             std::list<EntityBase*> getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const;
@@ -95,10 +99,6 @@ namespace realtrick
             
         private:
             
-            void _setGameWorld(GameWorld* world)        { _gameWorld = world; }
-            
-        private:
-            
             GameWorld*                                  _gameWorld;
             cocos2d::Size                               _winSize;
             EntityHuman*                                _player;
@@ -113,9 +113,11 @@ namespace realtrick
             cocos2d::ClippingRectangleNode*             _clipNode;
             cocos2d::Node*                              _rootNode;
             UiLayer*                                    _uiLayer;
+            LogicStream*                                _logicStream;
             
             int                                         _bgmID;
             bool                                        _isPaused;
+            
         };
         
     }

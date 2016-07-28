@@ -15,16 +15,17 @@ namespace realtrick
     namespace client
     {
         
-    class SingleStream : public LogicStream
-    {
-        
-    public:
-        
-        explicit SingleStream(GameManager* mgr) : LogicStream(mgr) {}
-        virtual ~SingleStream() = default;
-        virtual bool handleMessage(const Telegram& msg) override;
-        
-    };
+        class SingleStream : public LogicStream
+        {
+            
+        public:
+            
+            explicit SingleStream(GameManager* mgr) : LogicStream(mgr) {}
+            virtual ~SingleStream() = default;
+            virtual bool handleMessage(const Telegram& msg) override;
+            virtual void update(float dt) {}
+            
+        };
         
     }
 }

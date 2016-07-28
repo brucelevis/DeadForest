@@ -21,8 +21,9 @@
 using namespace cocos2d;
 using namespace realtrick::client;
 
-void NetworkStream::processPacket(float dt)
+void NetworkStream::update(float dt)
 {
+    // process packet
     if ( !Server::getInstance().isQueueEmpty() )
     {
         Packet* packet;

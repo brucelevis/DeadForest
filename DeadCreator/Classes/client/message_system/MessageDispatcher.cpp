@@ -18,7 +18,12 @@ using namespace realtrick::client;
 
 void MessageDispatcher::_discharge(const Telegram& msg)
 {
-    bool ret = msg.receiver->handleMessage(msg);
+    bool ret = false;
+    if ( msg.receiver )
+    {
+        ret = msg.receiver->handleMessage(msg);
+    }
+    
     if( ret == false)
     {
         cocos2d::log("<MessageDispatcher:_discharge> Message is not handled. MessageType: [%d]", static_cast<int>(msg.msg));

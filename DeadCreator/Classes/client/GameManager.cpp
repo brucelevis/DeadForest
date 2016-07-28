@@ -18,35 +18,14 @@
 #include "LogicStream.hpp"
 #include "UiLayer.hpp"
 #include "TriggerSystem.hpp"
+#include "SingleStream.hpp"
+#include "NetworkStream.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
 #include "GMXFile_generated.h"
 #include "util.h"
 
-
-void GameManager::update(float dt)
-{
-    if ( _isPaused ) return ;
-    
-    _debugNode->clear();
-    drawCellSpaceDebugNode();
-    
-    pair<int, int> oldIndex = getFocusedTileIndex(_gameCamera->getCameraPos(), _gameMap->getTileWidth(), _gameMap->getTileHeight(), DUMMY_TILE_SIZE);
-    
-    // 1. entitiy update
-    for( const auto& entity : _entities )
-        entity.second->update(dt);
-    
-    // 2. trigger update / execute
-    _triggerSystem->update(dt);
-    
-    // 3. game camera / chunk update (if cell space is changed)
-    _gameCamera->setCameraPos(_player->getWorldPosition());
-    if ( oldIndex != getFocusedTileIndex(_gameCamera->getCameraPos(), _gameMap->getTileWidth(), _gameMap->getTileHeight(), DUMMY_TILE_SIZE) )
-        _gameMap->updateChunk(_gameCamera->getCameraPos());
-
-}
 
 GameManager::GameManager(GameWorld* world) :
 _gameWorld(world),
@@ -78,6 +57,7 @@ void GameManager::clear()
     CC_SAFE_DELETE(_cellSpace);
     CC_SAFE_DELETE(_triggerSystem);
     CC_SAFE_DELETE(_gameCamera);
+    CC_SAFE_DELETE(_logicStream);
     _player = nullptr;
     
     experimental::AudioEngine::stop(_bgmID);
@@ -107,6 +87,10 @@ bool GameManager::init()
     _triggerSystem = new TriggerSystem(this);
     _gameCamera = new Camera2D();
     
+    // single or network (?)
+    if( Prm.getValueAsBool("useNetwork") ) { _logicStream = new NetworkStream(this); }
+    else { _logicStream = new SingleStream(this); }
+    
     _clipNode = ClippingRectangleNode::create(cocos2d::Rect(0,0, _winSize.width, _winSize.height));
     addChild(_clipNode);
     
@@ -119,13 +103,38 @@ bool GameManager::init()
     _debugNode->setVisible(Prm.getValueAsBool("useDebug"));
     _clipNode->addChild(_debugNode, std::numeric_limits<int>::max() - 1);
     
+    this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
+    
     return true;
 }
 
 
-void GameManager::setPlayer(EntityHuman* player)
+void GameManager::update(float dt)
 {
-    _player = player;
+    // "IMPORTANT" logicStream's update() must call before checking pause.
+    // because network stream will load data through this method (although game is puased, load game must process)
+    _logicStream->update(dt);
+    
+    // checking pause is done
+    if ( _isPaused ) return ;
+    
+    // draw debug node
+    _debugNode->clear();
+    drawCellSpaceDebugNode();
+    
+    pair<int, int> oldIndex = getFocusedTileIndex(_gameCamera->getCameraPos(), _gameMap->getTileWidth(), _gameMap->getTileHeight(), DUMMY_TILE_SIZE);
+    
+    // 1. update entities
+    for( const auto& entity : _entities )
+        entity.second->update(dt);
+    
+    // 2. trigger update and execute
+    _triggerSystem->update(dt);
+    
+    // 3. set game camera position and chunk update (if cell space is changed)
+    _gameCamera->setCameraPos(_player->getWorldPosition());
+    if ( oldIndex != getFocusedTileIndex(_gameCamera->getCameraPos(), _gameMap->getTileWidth(), _gameMap->getTileHeight(), DUMMY_TILE_SIZE) )
+        _gameMap->updateChunk(_gameCamera->getCameraPos());
 }
 
 
@@ -168,6 +177,25 @@ void GameManager::removeEntity(int id)
     iter->second->removeFromParent();
     _entities.erase(iter);
     _cellSpace->removeEntityFromCell(iter->second);
+}
+
+
+void GameManager::loadUiLayer()
+{
+    _uiLayer = UiLayer::create(this);
+    _clipNode->addChild(_uiLayer);
+    
+    _bgmID = experimental::AudioEngine::play2d("rainfall.mp3", true);
+    experimental::AudioEngine::setVolume(_bgmID, 0.3f);
+    
+    setZoom(Prm.getValueAsFloat("cameraZoom"));
+}
+
+
+void GameManager::setZoom(float r)
+{
+    _rootNode->setScale(r);
+    _debugNode->setScale(r);
 }
 
 
@@ -306,7 +334,7 @@ cocos2d::Vec2 GameManager::worldToLocal(const cocos2d::Vec2& p, const cocos2d::V
 
 void GameManager::pushLogic(double delaySeconds, MessageType type, void* extraInfo)
 {
-    Dispatch.pushMessage(delaySeconds, _gameWorld->getLogicStream(), nullptr, type, extraInfo);
+    Dispatch.pushMessage(delaySeconds, _logicStream, nullptr, type, extraInfo);
 }
 
 
@@ -504,25 +532,6 @@ void GameManager::drawCellSpaceDebugNode()
                                  Color4F::RED);
         }
     }
-}
-
-
-void GameManager::loadUiLayer()
-{
-    _uiLayer = UiLayer::create(this);
-    _clipNode->addChild(_uiLayer);
-    
-    _bgmID = experimental::AudioEngine::play2d("rainfall.mp3", true);
-    experimental::AudioEngine::setVolume(_bgmID, 0.3f);
-    
-    setZoom(Prm.getValueAsFloat("cameraZoom"));
-}
-
-
-void GameManager::setZoom(float r)
-{
-    _rootNode->setScale(r);
-    _debugNode->setScale(r);
 }
 
 

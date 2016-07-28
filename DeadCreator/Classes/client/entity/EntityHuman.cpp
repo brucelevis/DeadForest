@@ -102,12 +102,17 @@ EntityHuman* EntityHuman::create(GameManager* mgr)
 
 void EntityHuman::update(float dt)
 {
-    moveEntity();
-    rotateEntity();
+    // move and rotate
+    this->moveEntity();
+    this->rotateEntity();
     
-    setFootGauge( getFootGauge() + _speed * dt );
+    // calculate foot guage to foot step sound.
+    this->setFootGauge( getFootGauge() + _speed * dt );
     
+    // 1. update finite state machine
     if ( _FSM ) _FSM->update(dt);
+    
+    // 2. update animation
     if ( _bodyAnimationPlayer ) _bodyAnimationPlayer->processAnimation(dt);
 }
 

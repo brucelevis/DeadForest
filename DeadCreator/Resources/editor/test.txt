@@ -1,0 +1,3 @@
+<Root>
+    <BasicAttr tileWidth="128" tileHeight="128" numOfTileX="128" numOfTileY="256"/>
+</Root>

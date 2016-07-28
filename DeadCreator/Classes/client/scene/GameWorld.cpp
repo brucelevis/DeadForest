@@ -21,6 +21,19 @@
 using namespace cocos2d;
 using namespace realtrick::client;
 
+GameWorld::GameWorld() :
+_root(nullptr),
+_winSize(Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT)),
+_gameMgr(nullptr),
+_gameCamera(nullptr),
+_player(nullptr),
+_renderTarget(nullptr),
+_uiLayer(nullptr),
+_logicStream(nullptr),
+_isPaused(true)
+{}
+
+
 GameWorld::~GameWorld()
 {
     CC_SAFE_DELETE(_gameMgr);
@@ -44,7 +57,7 @@ bool GameWorld::init()
         return false;
     }
     
-    _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+    
     this->scheduleUpdate();
     
     _gameMgr = new GameManager(this);
@@ -93,8 +106,8 @@ void GameWorld::loadUiLayer()
 
 void GameWorld::setZoom(float r)
 {
-    _gameMgr->getDebugNode()->setScale(r);
-    _renderTarget->setZoom(r);
+    if ( _gameMgr) _gameMgr->getDebugNode()->setScale(r);
+    if ( _renderTarget ) _renderTarget->setZoom(r);
 }
 
 
@@ -104,22 +117,7 @@ void GameWorld::update(float dt)
     
     if ( _isPaused ) return ;
     
-    _gameMgr->getDebugNode()->clear();
-    
-    Vec2 oldCameraPos = _gameCamera->getCameraPos();
-    pair<int, int> oldIndex = getFocusedTileIndex(oldCameraPos, _gameMgr->getGameMap()->getTileWidth(),
-                                                  _gameMgr->getGameMap()->getTileHeight(),
-                                                  DUMMY_TILE_SIZE);
-    
     _gameMgr->update(dt);
-    _gameCamera->setCameraPos(_player->getWorldPosition());
-    
-    if ( oldIndex != getFocusedTileIndex(_gameCamera->getCameraPos(), _gameMgr->getGameMap()->getTileWidth(),
-                                         _gameMgr->getGameMap()->getTileHeight(),
-                                         DUMMY_TILE_SIZE))
-    {
-        _gameMgr->getGameMap()->updateChunk(oldCameraPos);
-    }
     
     Dispatch.dispatchDelayedMessages();
 }
@@ -132,13 +130,13 @@ void GameWorld::pushLogic(double delaySeconds, MessageType type, void* extraInfo
 void GameWorld::pauseGame()
 {
     _isPaused = true;
-    _renderTarget->pauseGame();
+    if ( _renderTarget )_renderTarget->pauseGame();
 }
 
 void GameWorld::resumeGame()
 {
     _isPaused = false;
-    _renderTarget->resumeGame();
+    if (_renderTarget) _renderTarget->resumeGame();
 }
 
 

@@ -72,6 +72,7 @@ namespace realtrick
             void setGameCamera(Camera2D* camera) { _gameCamera = camera; }
             Camera2D* getGameCamera() const { return _gameCamera; }
             cocos2d::DrawNode* getDebugNode() const { return _debugNode; }
+            void drawCellSpaceDebugNode();
             
             cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& p) const ;
             cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& p, const cocos2d::Vec2& camera) const ;

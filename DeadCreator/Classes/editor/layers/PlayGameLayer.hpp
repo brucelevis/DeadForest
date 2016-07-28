@@ -12,6 +12,7 @@
 
 #include "MainMenu3.hpp"
 #include "GameWorld.hpp"
+#include "DummyScene.hpp"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -78,7 +79,8 @@ namespace realtrick
                 volatile int i = 0;
                 for(; i < 10000000 ; ++ i) {}
                 
-                _gameLayer = realtrick::client::GameWorld::create();
+                _gameLayer = realtrick::client::DummyScene::create();
+//                _gameLayer = realtrick::client::MainMenu3::create();
                 addChild(_gameLayer);
             }
             
@@ -91,7 +93,7 @@ namespace realtrick
             
             EditScene* _imguiLayer;
             
-            cocos2d::Layer* _gameLayer;
+            cocos2d::Node* _gameLayer;
             
         };
         

@@ -28,34 +28,23 @@ int GameManager::_nextValidID = 0;
 
 void GameManager::update(float dt)
 {
+    _debugNode->clear();
+    drawCellSpaceDebugNode();
     
-    // entitiy loop
+    pair<int, int> oldIndex = getFocusedTileIndex(_gameCamera->getCameraPos(), _gameMap->getTileWidth(), _gameMap->getTileHeight(), DUMMY_TILE_SIZE);
+    
+    // 1. entitiy update
     for( const auto& entity : _entities )
         entity.second->update(dt);
     
-    // trigger loop
+    // 2. trigger update / execute
     _triggerSystem->update(dt);
     
-    
-    // debug
-    if ( _debugNode->isVisible() )
-    {
-        const std::vector<Cell>& cells = _cellSpace->getCells();
-        int idx = _cellSpace->positionToIndex(_gameCamera->getCameraPos());
-        for( int i = 0 ; i < (int)cells.size() ; ++ i)
-        {
-            if ( idx == i )
-            {
-                _debugNode->drawSolidRect(worldToLocal(cells[i].boundingBox.origin),
-                                          worldToLocal(Vec2(cells[i].boundingBox.getMaxX(), cells[i].boundingBox.getMaxY())),
-                                          Color4F(1.0f, 0.0f, 1.0f, 0.1f));
-            }
-            
-            _debugNode->drawRect(worldToLocal(cells[i].boundingBox.origin),
-                                 worldToLocal(Vec2(cells[i].boundingBox.getMaxX(), cells[i].boundingBox.getMaxY())),
-                                 Color4F::RED);
-        }
-    }
+    // 3. game camera / chunk update (if cell space is changed)
+    _gameCamera->setCameraPos(_player->getWorldPosition());
+    if ( oldIndex != getFocusedTileIndex(_gameCamera->getCameraPos(), _gameMap->getTileWidth(), _gameMap->getTileHeight(), DUMMY_TILE_SIZE) )
+        _gameMap->updateChunk(_gameCamera->getCameraPos());
+
 }
 
 GameManager::GameManager(GameWorld* world) :
@@ -110,17 +99,26 @@ void GameManager::addDynamicEntity(EntityBase* entity, int zOrder, int id)
         throw std::runtime_error("<GameManager::registEntity> ID is already exist.");
     }
     
-    entity->setTag(id);
-    _entities.insert( {id, entity} );
-    _cellSpace->addEntity(entity);
-    _gameWorld->getRenderTarget()->addDynamicEntity(entity, zOrder);
+    auto renderTarget = _gameWorld->getRenderTarget();
+    if ( renderTarget )
+    {
+        entity->setTag(id);
+        _entities.insert( {id, entity} );
+        _cellSpace->addEntity(entity);
+        renderTarget->addDynamicEntity(entity, zOrder);
+    }
 }
 
 
 void GameManager::addStaticEntity(cocos2d::Node* entity, int zOrder, int id)
 {
     entity->setTag(id);
-    _gameWorld->getRenderTarget()->addStaticEntity(entity, zOrder);
+    
+    auto renderTarget = _gameWorld->getRenderTarget();
+    if ( renderTarget )
+    {
+        renderTarget->addStaticEntity(entity, zOrder);
+    }
 }
 
 
@@ -456,6 +454,28 @@ void GameManager::loadGMXFile(const std::string& filePath)
             }
             
             _triggerSystem->addTrigger(newTrigger);
+        }
+    }
+}
+
+void GameManager::drawCellSpaceDebugNode()
+{
+    if ( _debugNode->isVisible() )
+    {
+        const std::vector<Cell>& cells = _cellSpace->getCells();
+        int idx = _cellSpace->positionToIndex(_gameCamera->getCameraPos());
+        for( int i = 0 ; i < (int)cells.size() ; ++ i)
+        {
+            if ( idx == i )
+            {
+                _debugNode->drawSolidRect(worldToLocal(cells[i].boundingBox.origin),
+                                          worldToLocal(Vec2(cells[i].boundingBox.getMaxX(), cells[i].boundingBox.getMaxY())),
+                                          Color4F(1.0f, 0.0f, 1.0f, 0.1f));
+            }
+            
+            _debugNode->drawRect(worldToLocal(cells[i].boundingBox.origin),
+                                 worldToLocal(Vec2(cells[i].boundingBox.getMaxX(), cells[i].boundingBox.getMaxY())),
+                                 Color4F::RED);
         }
     }
 }

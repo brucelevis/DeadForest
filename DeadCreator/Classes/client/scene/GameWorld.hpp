@@ -33,7 +33,7 @@ namespace realtrick
             
         public:
             
-            GameWorld() : _isPaused(true) {}
+            GameWorld();
             virtual ~GameWorld();
             
             static cocos2d::Scene* createScene();

@@ -6,24 +6,15 @@
 //
 //
 
-#include <AudioEngine.h>
 
 #include "GameWorld.hpp"
 #include "GameManager.hpp"
 #include "MessageDispatcher.hpp"
-#include "ParamLoader.hpp"
-#include "EntityHuman.hpp"
-#include "Items.hpp"
 #include "Camera2D.hpp"
-#include "GameMap.hpp"
-#include "ClipperWrapper.hpp"
-#include "EntityRainDrop.hpp"
 #include "RenderTarget.hpp"
 #include "UiLayer.hpp"
-#include "LogicStream.hpp"
 #include "SingleStream.hpp"
 #include "NetworkStream.hpp"
-#include "AimingNode.hpp"
 #include "TileBase.hpp"
 #include "TileHelperFunctions.hpp"
 using namespace cocos2d;

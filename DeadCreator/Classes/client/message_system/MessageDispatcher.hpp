@@ -14,6 +14,8 @@
 #include "MessageTypes.hpp"
 #include "Singleton.hpp"
 
+#define Dispatch MessageDispatcher::getInstance()
+
 namespace realtrick
 {
     namespace client
@@ -21,8 +23,6 @@ namespace realtrick
         
         class Telegram;
         class MessageNode;
-        
-#define Dispatch MessageDispatcher::getInstance()
         
         class MessageDispatcher : public Singleton<MessageDispatcher>
         {
@@ -39,7 +39,7 @@ namespace realtrick
             
         private:
             
-            std::set<Telegram>                              _priorityQ;
+            std::set<Telegram> _priorityQ;
             
         };
         

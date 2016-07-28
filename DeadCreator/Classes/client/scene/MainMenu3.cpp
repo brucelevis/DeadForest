@@ -27,9 +27,7 @@ _menuCenterIndex_custom(0)
 
 
 MainMenu3::~MainMenu3()
-{
-    
-}
+{}
 
 
 MainMenu3* MainMenu3::create()

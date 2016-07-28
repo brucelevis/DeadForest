@@ -22,9 +22,7 @@ namespace realtrick
         
         class GameManager;
         class EntityHuman;
-        class OcculusionBuilder;
         class Camera2D;
-        class GameFlow;
         class ItemBase;
         class RenderTarget;
         class UiLayer;

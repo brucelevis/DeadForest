@@ -16,12 +16,14 @@ namespace realtrick
     namespace client
     {
         
+        class GameManager;
+        
         class FiniteEntityBase : public EntityBase
         {
             
         public:
             
-            FiniteEntityBase(GameManager* mgr);
+            explicit FiniteEntityBase(GameManager* mgr);
             
             FiniteEntityBase(const FiniteEntityBase& rhs);
             

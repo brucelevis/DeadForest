@@ -21,8 +21,7 @@ EntityEmptyCartridge::EntityEmptyCartridge(const EntityEmptyCartridge& rhs) : An
 
 
 EntityEmptyCartridge::~EntityEmptyCartridge()
-{
-}
+{}
 
 
 EntityEmptyCartridge* EntityEmptyCartridge::EntityEmptyCartridge::create(GameManager* mgr, const std::vector<std::string>& frames, float deathTime, cocos2d::ui::Widget::TextureResType type)

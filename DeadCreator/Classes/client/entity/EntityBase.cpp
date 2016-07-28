@@ -20,6 +20,7 @@ _entityType(0)
     ADD_FAMILY_MASK(_familyMask, ENTITY_BASE);
 }
 
+
 EntityBase::EntityBase(const EntityBase& rhs)
 {
     _gameMgr = rhs._gameMgr;
@@ -27,6 +28,7 @@ EntityBase::EntityBase(const EntityBase& rhs)
     _entityType = rhs._entityType;
     _tag = rhs._tag;
 }
+
 
 void EntityBase::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags)
 {

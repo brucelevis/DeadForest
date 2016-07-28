@@ -22,39 +22,30 @@ namespace realtrick
     class ParamLoader : public Singleton<ParamLoader>
     {
         
+        friend class Singleton<ParamLoader>;
+        
     public:
         
         virtual ~ParamLoader() { _container.clear(); }
         
         inline double           getValueAsDouble(const std::string& key) const;
-        
         inline float            getValueAsFloat(const std::string& key) const;
-        
         inline int              getValueAsInt(const std::string& key) const;
-        
         inline std::string      getValueAsString(const std::string& key) const;
-        
         inline bool             getValueAsBool(const std::string& key) const;
-        
-        friend Singleton<ParamLoader>;
-        
-    private:
-        
-        std::unordered_map<std::string, std::string>        _container;
-        
-        std::string                                         _fileName;
-        
-        std::string                                         _fileData;
-        
-        std::string::size_type                              _pointer;
         
     private:
         
         void                        _parse();
-        
         void                        _removeCommentFromLine(std::string& line);
-        
         ParamLoader();
+        
+    private:
+        
+        std::unordered_map<std::string, std::string>        _container;
+        std::string                                         _fileName;
+        std::string                                         _fileData;
+        std::string::size_type                              _pointer;
         
     };
     

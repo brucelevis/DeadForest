@@ -16,13 +16,15 @@ namespace realtrick
 {
     namespace client
     {
+    
+        class GameManager;
         
         class AnimatedFiniteEntity : public EntityBase
         {
             
         public:
             
-            AnimatedFiniteEntity(GameManager* mgr);
+            explicit AnimatedFiniteEntity(GameManager* mgr);
             virtual ~AnimatedFiniteEntity();
             AnimatedFiniteEntity(const AnimatedFiniteEntity& rhs);
             virtual bool init(const std::vector<std::string> frames, float deathTime, cocos2d::ui::Widget::TextureResType type);

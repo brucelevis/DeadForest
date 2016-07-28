@@ -15,6 +15,8 @@ namespace realtrick
     namespace client
     {
         
+    class GameManager;
+        
     class EntityBlood : public FiniteEntityBase
     {
         
@@ -25,7 +27,7 @@ namespace realtrick
                                    float deathTime,
                                    cocos2d::ui::Widget::TextureResType type = cocos2d::ui::Widget::TextureResType::LOCAL);
         
-        EntityBlood(GameManager* mgr);
+        explicit EntityBlood(GameManager* mgr);
         EntityBlood(const EntityBlood& rhs);
         virtual ~EntityBlood();
         FiniteEntityBase* clone() const override;

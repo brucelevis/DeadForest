@@ -35,13 +35,11 @@ EntityBlood::EntityBlood(GameManager* mgr) : FiniteEntityBase(mgr)
 
 EntityBlood::EntityBlood(const EntityBlood& rhs) : FiniteEntityBase(rhs)
 {
-    
 }
 
 
 EntityBlood::~EntityBlood()
 {
-    
 }
 
 

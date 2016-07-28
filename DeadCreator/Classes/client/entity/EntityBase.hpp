@@ -32,10 +32,13 @@ namespace realtrick
             
             GameManager*    getGameManager() const      { return _gameMgr; }
             int             getFamilyMask() const       { return _familyMask; }
+            
             int             getEntityType() const       { return _entityType; }
             void            setEntityType(int type)     { _entityType = type; }
+            
             cocos2d::Vec2   getWorldPosition() const    { return _worldPosition; }
             void            setWorldPosition(const cocos2d::Vec2& pos)  { _worldPosition = pos; }
+            
             void            setPlayerType(PlayerType type) { _playerType = type; }
             PlayerType      getPlayerType() const { return _playerType; }
             

@@ -15,6 +15,8 @@ namespace realtrick
     namespace client
     {
         
+        class GameManager;
+        
         class EntityEmptyCartridge : public AnimatedFiniteEntity
         {
             
@@ -25,7 +27,7 @@ namespace realtrick
                                                 float deathTime,
                                                 cocos2d::ui::Widget::TextureResType type = cocos2d::ui::Widget::TextureResType::LOCAL);
             
-            EntityEmptyCartridge(GameManager* mgr);
+            explicit EntityEmptyCartridge(GameManager* mgr);
             EntityEmptyCartridge(const EntityEmptyCartridge& rhs);
             virtual ~EntityEmptyCartridge();
             AnimatedFiniteEntity* clone() const override;

@@ -27,7 +27,6 @@ _currIdx(0)
 
 AnimatedFiniteEntity::~AnimatedFiniteEntity()
 {
-    
 }
 
 

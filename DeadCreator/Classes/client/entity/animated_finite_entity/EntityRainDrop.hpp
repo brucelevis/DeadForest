@@ -15,6 +15,8 @@ namespace realtrick
     namespace client
     {
         
+        class GameManager;
+        
         class EntityRainDrop : public AnimatedFiniteEntity
         {
             
@@ -25,7 +27,7 @@ namespace realtrick
                                           float deathTime,
                                           cocos2d::ui::Widget::TextureResType type = cocos2d::ui::Widget::TextureResType::LOCAL);
             
-            EntityRainDrop(GameManager* mgr);
+            explicit EntityRainDrop(GameManager* mgr);
             
             EntityRainDrop(const EntityRainDrop& rhs);
             

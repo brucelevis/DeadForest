@@ -24,8 +24,6 @@ using namespace realtrick::client;
 #include "util.h"
 
 
-int GameManager::_nextValidID = 0;
-
 void GameManager::update(float dt)
 {
     _debugNode->clear();
@@ -63,12 +61,24 @@ _debugNode(nullptr)
     _debugNode->setVisible(Prm.getValueAsBool("useDebug"));
     _gameWorld->addChild(_debugNode, std::numeric_limits<int>::max() - 1);
     _triggerSystem = new TriggerSystem(this);
+    
+    _gameCamera = new Camera2D();
 }
 
 
 GameManager::~GameManager()
 {
     this->clear();
+}
+
+
+void GameManager::clear()
+{
+    _entities.clear();
+    CC_SAFE_DELETE(_cellSpace);
+    CC_SAFE_DELETE(_triggerSystem);
+    CC_SAFE_DELETE(_gameCamera);
+    _player = nullptr;
 }
 
 
@@ -133,15 +143,6 @@ void GameManager::removeEntity(int id)
     iter->second->removeFromParent();
     _entities.erase(iter);
     _cellSpace->removeEntityFromCell(iter->second);
-}
-
-
-void GameManager::clear()
-{
-    _entities.clear();
-    CC_SAFE_DELETE(_cellSpace);
-    CC_SAFE_DELETE(_triggerSystem);
-    _player = nullptr;
 }
 
 

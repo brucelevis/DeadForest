@@ -42,7 +42,6 @@ namespace realtrick
             
             virtual void update(float dt) override;
             
-            Camera2D* getGameCamera() const { return _gameCamera; }
             cocos2d::Size getWorldSize() const { return _winSize; }
             GameManager* getGameManager() const { return _gameMgr; }
             EntityHuman* getPlayerPtr() const { return _player; }
@@ -74,7 +73,6 @@ namespace realtrick
             
             cocos2d::Size                       _winSize;
             GameManager*                        _gameMgr;
-            Camera2D*                           _gameCamera;
             EntityHuman*                        _player;
             RenderTarget*                       _renderTarget;
             UiLayer*                            _uiLayer;

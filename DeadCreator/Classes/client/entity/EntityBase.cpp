@@ -32,7 +32,7 @@ EntityBase::EntityBase(const EntityBase& rhs)
 
 void EntityBase::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags)
 {
-    setPosition( getWorldPosition() - _gameMgr->getGameWorld()->getGameCamera()->getCameraPos() );
+    setPosition( getWorldPosition() - _gameMgr->getGameCamera()->getCameraPos() );
     Node::visit(renderer, transform, flags);
 }
 

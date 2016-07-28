@@ -58,7 +58,7 @@ namespace realtrick
             const std::map<int, EntityBase*>& getEntities() const { return _entities; }
             GameMap* getGameMap() const { return _gameMap; }
             CellSpacePartition* getCellSpace() const { return _cellSpace; }
-            static int getNextValidID() { return _nextValidID++; }
+            static int getNextValidID() { static int _nextValidID = 0; return _nextValidID++; }
             GameWorld* getGameWorld() const { return _gameWorld; }
             
             std::list<EntityBase*> getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const;
@@ -69,7 +69,6 @@ namespace realtrick
             
             void loadGMXFile(const std::string& filePath);
             
-            void setGameCamera(Camera2D* camera) { _gameCamera = camera; }
             Camera2D* getGameCamera() const { return _gameCamera; }
             cocos2d::DrawNode* getDebugNode() const { return _debugNode; }
             void drawCellSpaceDebugNode();
@@ -100,7 +99,6 @@ namespace realtrick
             cocos2d::DrawNode*                          _debugNode;
             TriggerSystem*                              _triggerSystem;
             std::map<std::string, cocos2d::Rect>        _locations;
-            static int                                  _nextValidID;
             
         };
         

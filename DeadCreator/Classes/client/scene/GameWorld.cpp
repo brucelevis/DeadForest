@@ -25,7 +25,6 @@ GameWorld::GameWorld() :
 _root(nullptr),
 _winSize(Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT)),
 _gameMgr(nullptr),
-_gameCamera(nullptr),
 _player(nullptr),
 _renderTarget(nullptr),
 _uiLayer(nullptr),
@@ -68,10 +67,6 @@ bool GameWorld::init()
     _renderTarget = RenderTarget::create(_gameMgr);
     _root->addChild(_renderTarget);
     
-    _gameCamera = Camera2D::create(_gameMgr);
-    addChild(_gameCamera);
-    _gameMgr->setGameCamera(_gameCamera);
-    
     // 일단 중지
     pauseGame();
     
@@ -94,8 +89,8 @@ void GameWorld::loadUiLayer()
     _root->addChild(_uiLayer);
     
     // init game map
-    _gameMgr->getGameMap()->updateChunk(_player->getWorldPosition());
-    _gameCamera->setCameraPos(_player->getWorldPosition());
+//    _gameMgr->getGameMap()->updateChunk(_player->getWorldPosition());
+//    _gameCamera->setCameraPos(_player->getWorldPosition());
     
     int id = experimental::AudioEngine::play2d("rainfall.mp3", true);
     experimental::AudioEngine::setVolume(id, 0.3f);

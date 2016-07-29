@@ -13,6 +13,7 @@
 #include "Camera2D.hpp"
 #include "TileBase.hpp"
 #include "TileHelperFunctions.hpp"
+using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
 

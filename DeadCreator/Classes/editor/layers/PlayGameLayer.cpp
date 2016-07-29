@@ -13,6 +13,7 @@
 #include "EditScene.hpp"
 using namespace realtrick::editor;
 using namespace realtrick::client;
+using namespace cocos2d;
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -35,7 +36,7 @@ void PlayGameLayer::showLayer(bool& opened)
                  ImGuiWindowFlags_NoCollapse |
                  ImGuiWindowFlags_NoBringToFrontOnFocus);
     
-    setPosition(ImGui::GetWindowPos().x, cocos2d::Director::getInstance()->getVisibleSize().height - ImGui::GetWindowPos().y - 640 - 25);
+    setPosition(ImGui::GetWindowPos().x, Director::getInstance()->getVisibleSize().height - ImGui::GetWindowPos().y - 640 - 25);
     
     auto origin = ImGui::GetCursorScreenPos();
     auto canvasSize = cocos2d::Size(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
@@ -45,17 +46,20 @@ void PlayGameLayer::showLayer(bool& opened)
     if ( _isGameStarted )
     {
         auto drawList = ImGui::GetWindowDrawList();
-        
+        auto game = _gameLayer->getGameManager();
         ImGui::SetCursorScreenPos(origin);
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 1.00, 1.00));
         if ( isFPSOn )
         {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 1.00, 1.00));
             ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
+            ImGui::PopStyleColor();
         }
+    
+        ImVec2 world(1560, 2000);
+        ImVec2 local = ImVec2(world.x - game->getPlayerPtr()->getWorldPosition().x, world.y - game->getPlayerPtr()->getWorldPosition().y);
         
-        drawList->AddCircle(ImVec2(origin.x + 50, origin.y + 50), 30, ImColor(ImVec4(1,1,1,1)));
+        drawList->AddCircle(ImVec2(568 + origin.x + local.x, 320 + origin.y - local.y), 3.0f, ImColor(ImVec4(1,1,1,1)));
         
-        ImGui::PopStyleColor();
     }
     ImGui::End();
     

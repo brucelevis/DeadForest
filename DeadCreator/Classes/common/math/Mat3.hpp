@@ -42,6 +42,8 @@ namespace realtrick
         
         void translate(const cocos2d::Vec2& trans);
         
+        void inverse();
+        
         cocos2d::Vec2 getTransformedVector(const cocos2d::Vec2& v);
         
         std::vector<cocos2d::Vec2> getTransformedVector(std::vector<cocos2d::Vec2> v);

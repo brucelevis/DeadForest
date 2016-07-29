@@ -21,6 +21,7 @@
 #include "SingleStream.hpp"
 #include "NetworkStream.hpp"
 using namespace cocos2d;
+using namespace realtrick;
 using namespace realtrick::client;
 
 #include "GMXFile_generated.h"
@@ -215,7 +216,7 @@ std::list<EntityBase*> GameManager::getNeighborsOnAttack(const cocos2d::Vec2& po
     for ( const int idx : cellIndices )
     {
         const Cell& currCell = _cellSpace->getCell(idx);
-        if ( physics::intersect(realtrick::client::Rect(currCell.boundingBox.origin.x,
+        if ( physics::intersect(realtrick::Rect(currCell.boundingBox.origin.x,
                                                 currCell.boundingBox.origin.y,
                                                 currCell.boundingBox.size.width,
                                                 currCell.boundingBox.size.height), Segment(position, position + dir * range)) )
@@ -281,7 +282,7 @@ std::vector<Polygon> GameManager::getNeighborWalls(const cocos2d::Vec2& position
     for ( const int idx : cellIndices )
     {
         const Cell& currCell = _cellSpace->getCell(idx);
-        if ( physics::intersect(realtrick::client::Rect(currCell.boundingBox.origin, currCell.boundingBox.size.width, currCell.boundingBox.size.height), ray) )
+        if ( physics::intersect(realtrick::Rect(currCell.boundingBox.origin, currCell.boundingBox.size.width, currCell.boundingBox.size.height), ray) )
         {
             for ( const auto &wall : currCell.walls )
             {

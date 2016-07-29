@@ -14,10 +14,10 @@
 #include "cocos2d.h"
 #include "Singleton.hpp"
 
+#define Prm ParamLoader::getInstance()
+
 namespace realtrick
 {
-    
-#define Prm ParamLoader::getInstance()
     
     class ParamLoader : public Singleton<ParamLoader>
     {
@@ -52,6 +52,10 @@ namespace realtrick
 }
 
 #include "ParamLoader.inl"
+
+
+
+
 
 
 

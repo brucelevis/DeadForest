@@ -90,9 +90,6 @@ void ItemAxe::attack()
                 
                 isHit = true;
             }
-            
-            // DEBUG:
-            _gameMgr->getDebugNode()->drawCircle(_gameMgr->worldToLocal(worldPos), 20.0f, 360.0f, 20, false, Color4F::YELLOW);
         }
     }
     
@@ -118,8 +115,6 @@ void ItemAxe::attack()
         s.soundRange = 200.0f;
         Dispatch.pushMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
     }
-    
-    _gameMgr->getDebugNode()->drawSegment(_gameMgr->worldToLocal(worldPos), _gameMgr->worldToLocal(worldPos + _owner->getHeading() * getRange()), 0.5f, Color4F::YELLOW);
 }
 
 

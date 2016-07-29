@@ -18,8 +18,7 @@ _shadowColor(Color4F(0, 0, 0, 1)),
 _visibleColor(Color4F(1, 1, 1, 1)),
 _windingOrder(WindingOrder::CCW),
 _eyePos(Vec2::ZERO),
-_cameraMask(CameraFlag::DEFAULT),
-_debugNode(nullptr)
+_cameraMask(CameraFlag::DEFAULT)
 {
 }
 
@@ -322,44 +321,6 @@ void OcculusionBuilder::invalidateTexture(cocos2d::RenderTexture* tex,
         tex->end();
         
         if ( !storedVert.empty() ) storedVert.pop_back();
-    }
-    
-    
-    // 디버그용
-    if ( _debugNode->isVisible() )
-    {
-        // 보이는 벽 랜더링
-        for(int i = 0 ; i < visibleWalls.size() ; ++ i)
-        {
-            _debugNode->drawSegment(_worldToLocal(visibleWalls[i].start), _worldToLocal(visibleWalls[i].end), 1.2f, Color4F::ORANGE);
-        }
-        
-        // 광선, 정점 랜더링
-        for( int i = 0 ; i < storedVert.size() ; ++ i)
-        {
-            _debugNode->drawSegment(Vec2::ZERO, _worldToLocal(storedVert[i]), 0.3f, Color4F::MAGENTA);
-            _debugNode->drawDot(_worldToLocal(storedVert[i]), 3.0f, Color4F::RED);
-        }
-        
-        // 클리핑 다각형 랜더링
-        for( const auto& cp : clippedPloygon )
-        {
-            Polygon clipPoly = cp;
-            if ( !clipPoly.vertices.empty() ) clipPoly.pushVertex(clipPoly.vertices.front());
-            for(int i = 0 ; i < clipPoly.vertices.size() - 1; ++ i)
-            {
-                _debugNode->drawSegment(_worldToLocal(clipPoly.vertices[i]), _worldToLocal(clipPoly.vertices[i+1]), 2.0f, Color4F::RED);
-            }
-            if ( !clipPoly.vertices.empty() ) clipPoly.vertices.pop_back();
-        }
-        
-        // 경계면 랜더링
-        if ( !clipBoundary.vertices.empty() ) clipBoundary.pushVertex(clipBoundary.vertices.front());
-        for( int i = 0; i < clipBoundary.vertices.size() - 1 ; ++ i)
-        {
-            _debugNode->drawSegment(_worldToLocal(clipBoundary.vertices[i]), _worldToLocal(clipBoundary.vertices[i+1]), 0.5f, Color4F::GRAY);
-        }
-        if ( !clipBoundary.vertices.empty() ) clipBoundary.vertices.pop_back();
     }
 }
 

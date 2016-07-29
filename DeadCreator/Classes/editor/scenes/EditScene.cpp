@@ -352,11 +352,6 @@ bool EditScene::init()
                      ImGuiWindowFlags_NoScrollbar |
                      ImGuiWindowFlags_NoSavedSettings);
         
-        ImGui::Columns(2, "extra_info", false);
-        ImGui::Text("(%.2f FPS)", ImGui::GetIO().Framerate);
-        
-        ImGui::SameLine();
-        ImGui::NextColumn();
         static Vec2 worldPosition = Vec2::ZERO;
         if ( _layer ) worldPosition = _layer->getMousePosInWorld();
         ImGui::Text("Mouse Position (World) (%.0f, %.0f)", worldPosition.x, worldPosition.y);

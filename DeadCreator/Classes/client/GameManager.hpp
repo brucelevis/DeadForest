@@ -78,7 +78,6 @@ namespace realtrick
             void loadGMXFile(const std::string& filePath);
             
             Camera2D* getGameCamera() const { return _gameCamera; }
-            cocos2d::DrawNode* getDebugNode() const { return _debugNode; }
             void drawCellSpaceDebugNode();
             
             cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& p) const ;
@@ -106,7 +105,6 @@ namespace realtrick
             CellSpacePartition*                         _cellSpace;
             GameMap*                                    _gameMap;
             Camera2D*                                   _gameCamera;
-            cocos2d::DrawNode*                          _debugNode;
             TriggerSystem*                              _triggerSystem;
             std::map<std::string, cocos2d::Rect>        _locations;
             

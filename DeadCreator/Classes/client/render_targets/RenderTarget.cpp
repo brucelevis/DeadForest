@@ -94,7 +94,6 @@ bool RenderTarget::init()
     _occulusionTex = RenderTexture::create(_winSize.width, _winSize.height);
 
     _occulusionBuilder = OcculusionBuilder::create(_winSize);
-    _occulusionBuilder->setDebugNode(_gameMgr->getDebugNode());
     
     _normalTex->retain();
     _staticTex->retain();

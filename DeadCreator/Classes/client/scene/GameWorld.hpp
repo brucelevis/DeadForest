@@ -36,6 +36,8 @@ namespace realtrick
             
             virtual void update(float dt) override;
             
+            GameManager* getGameManager() const { return _gameMgr; }
+            
         private:
             
             cocos2d::Size                       _winSize;

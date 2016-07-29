@@ -100,8 +100,6 @@ void ItemM1897::attack()
                     closestIntersectPoint[s].push_back(std::make_pair(worldPos.distance(d->getWorldPosition()), d));
                 }
             }
-            // DEBUG:
-            _gameMgr->getDebugNode()->drawCircle(_gameMgr->worldToLocal(worldPos), 20.0f, 360.0f, 20, false, Color4F::YELLOW);
         }
     }
     
@@ -147,21 +145,6 @@ void ItemM1897::attack()
                 Dispatch.pushMessage(0.0, collider.second, _owner, MessageType::HITTED_BY_GUN, &s);
                 
                 isHit = true;
-            }
-            
-            // DEBUG:
-            if ( _gameMgr->getDebugNode()->isVisible() )
-            {
-                _gameMgr->getDebugNode()->drawSegment(_gameMgr->worldToLocal(worldPos), _gameMgr->worldToLocal(worldPos + shootAts[s].second * collider.first), 0.5f, Color4F::YELLOW);
-                _gameMgr->getDebugNode()->drawDot(_gameMgr->worldToLocal(worldPos + shootAts[s].second * collider.first), 5.0f, Color4F::RED);
-            }
-        }
-        else
-        {
-            // DEBUG:
-            if ( _gameMgr->getDebugNode()->isVisible() )
-            {
-                _gameMgr->getDebugNode()->drawSegment(_gameMgr->worldToLocal(worldPos), _gameMgr->worldToLocal(worldPos + shootAts[s].second * getRange()), 0.5f, Color4F::YELLOW);
             }
         }
     }

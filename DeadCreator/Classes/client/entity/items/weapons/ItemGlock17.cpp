@@ -94,9 +94,6 @@ void ItemGlock17::attack()
             {
                 closestIntersectPoint.push_back(std::make_pair(worldPos.distance(d->getWorldPosition()), d));
             }
-            
-            // DEBUG:
-            _gameMgr->getDebugNode()->drawCircle(_gameMgr->worldToLocal(worldPos), 20.0f, 360.0f, 20, false, Color4F::YELLOW);
         }
     }
     
@@ -148,20 +145,6 @@ void ItemGlock17::attack()
             }
         }
         
-        // DEBUG:
-        if ( _gameMgr->getDebugNode()->isVisible() )
-        {
-            _gameMgr->getDebugNode()->drawSegment(_gameMgr->worldToLocal(worldPos), _gameMgr->worldToLocal(worldPos + shootAt * collider.first), 0.5f, Color4F::YELLOW);
-            _gameMgr->getDebugNode()->drawDot(_gameMgr->worldToLocal(worldPos + shootAt * collider.first), 5.0f, Color4F::RED);
-        }
-    }
-    else
-    {
-        // DEBUG:
-        if ( _gameMgr->getDebugNode()->isVisible() )
-        {
-            _gameMgr->getDebugNode()->drawSegment(_gameMgr->worldToLocal(worldPos), _gameMgr->worldToLocal(worldPos + shootAt * getRange()), 0.5f, Color4F::YELLOW);
-        }
     }
 }
 

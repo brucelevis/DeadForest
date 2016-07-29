@@ -34,7 +34,6 @@ _player(nullptr),
 _cellSpace(nullptr),
 _gameMap(nullptr),
 _gameCamera(nullptr),
-_debugNode(nullptr),
 _triggerSystem(nullptr),
 _clipNode(nullptr),
 _rootNode(nullptr),
@@ -98,11 +97,6 @@ bool GameManager::init()
     _rootNode->setPosition(_winSize / 2);
     _clipNode->addChild(_rootNode);
     
-    _debugNode = DrawNode::create();
-    _debugNode->setPosition(_winSize / 2);
-    _debugNode->setVisible(Prm.getValueAsBool("useDebug"));
-    _clipNode->addChild(_debugNode, std::numeric_limits<int>::max() - 1);
-    
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
     return true;
@@ -118,10 +112,6 @@ void GameManager::update(float dt)
     
     // checking pause is done
     if ( _isPaused ) return ;
-    
-    // draw debug node
-    _debugNode->clear();
-    drawCellSpaceDebugNode();
     
     pair<int, int> oldIndex = getFocusedTileIndex(_gameCamera->getCameraPos(), _gameMap->getTileWidth(), _gameMap->getTileHeight(), DUMMY_TILE_SIZE);
     
@@ -196,7 +186,6 @@ void GameManager::loadUiLayer()
 void GameManager::setZoom(float r)
 {
     _rootNode->setScale(r);
-    _debugNode->setScale(r);
 }
 
 
@@ -212,14 +201,6 @@ std::list<EntityBase*> GameManager::getNeighborsOnMove(const cocos2d::Vec2& posi
             for ( const auto &entity : currCell.members )
             {
                 ret.push_back(entity);
-            }
-            
-            // debug node
-            if ( _debugNode->isVisible() )
-            {
-                _debugNode->drawSolidRect(worldToLocal(currCell.boundingBox.origin),
-                                          worldToLocal(Vec2(currCell.boundingBox.origin.x + currCell.boundingBox.size.width,
-                                                            currCell.boundingBox.origin.y + currCell.boundingBox.size.height)), Color4F(1.0, 1.0, 0.0, 0.1));
             }
         }
     }
@@ -512,30 +493,6 @@ void GameManager::loadGMXFile(const std::string& filePath)
         }
     }
 }
-
-
-void GameManager::drawCellSpaceDebugNode()
-{
-    if ( _debugNode->isVisible() )
-    {
-        const std::vector<Cell>& cells = _cellSpace->getCells();
-        int idx = _cellSpace->positionToIndex(_gameCamera->getCameraPos());
-        for( int i = 0 ; i < (int)cells.size() ; ++ i)
-        {
-            if ( idx == i )
-            {
-                _debugNode->drawSolidRect(worldToLocal(cells[i].boundingBox.origin),
-                                          worldToLocal(Vec2(cells[i].boundingBox.getMaxX(), cells[i].boundingBox.getMaxY())),
-                                          Color4F(1.0f, 0.0f, 1.0f, 0.1f));
-            }
-            
-            _debugNode->drawRect(worldToLocal(cells[i].boundingBox.origin),
-                                 worldToLocal(Vec2(cells[i].boundingBox.getMaxX(), cells[i].boundingBox.getMaxY())),
-                                 Color4F::RED);
-        }
-    }
-}
-
 
 
 

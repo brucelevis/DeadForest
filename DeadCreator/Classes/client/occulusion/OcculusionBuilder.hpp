@@ -62,9 +62,6 @@ namespace realtrick
                                    const cocos2d::Size& boundarySize,
                                    const FieldOfView& fov);
             
-            void setDebugNode(cocos2d::DrawNode* debugNode)         { _debugNode = debugNode; }
-            cocos2d::DrawNode* getDebugNode() const                 { return _debugNode; }
-            
         private:
             
             inline bool _isVisibleWall(const Segment& wall) const;
@@ -83,7 +80,6 @@ namespace realtrick
             WindingOrder                            _windingOrder;
             cocos2d::Vec2                           _eyePos;
             cocos2d::CameraFlag                     _cameraMask;
-            cocos2d::DrawNode*                      _debugNode;
             FieldOfView                             _fov;
 
         };

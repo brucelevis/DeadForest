@@ -60,11 +60,8 @@ namespace realtrick
             void setPlayer(EntityHuman* player) { _player = player; }
             
             EntityHuman* getPlayerPtr() const { return _player; }
-            
             const std::map<int, EntityBase*>& getEntities() const { return _entities; }
-            
             GameMap* getGameMap() const { return _gameMap; }
-            
             CellSpacePartition* getCellSpace() const { return _cellSpace; }
             
             static int getNextValidID() { static int _nextValidID = 0; return _nextValidID++; }
@@ -96,6 +93,8 @@ namespace realtrick
             bool isPaused() const { return _isPaused; }
             void pauseGame() { _isPaused = true; }
             void resumeGame() { _isPaused = false; }
+            
+            const std::map<std::string, cocos2d::Rect>& getLocationMap() const { return _locations; }
             
         private:
             

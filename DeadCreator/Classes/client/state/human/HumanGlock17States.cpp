@@ -29,6 +29,7 @@ void HumanGlock17IdleLoop::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushAnimationFrames(&AnimHumanGlock17IdleLoop::getInstance());
     human->setVelocity( Vec2::ZERO );
+    human->setStateName("idle");
 }
 
 void HumanGlock17IdleLoop::execute(EntityHuman* human)
@@ -117,6 +118,7 @@ void HumanGlock17MoveLoop::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushFramesAtoB(&AnimHumanGlock17MoveLoop::getInstance(), 0, 5);
     human->setRunStats(true);
+    human->setStateName("run");
 }
 
 void HumanGlock17MoveLoop::execute(EntityHuman* human)
@@ -193,6 +195,8 @@ void HumanGlock17Attack::enter(EntityHuman* human)
     human->getEquipedWeapon()->attack();
     human->getEquipedWeapon()->setNumOfLeftRounds( human->getEquipedWeapon()->getNumOfLeftRounds() - 1);
     human->getWeaponStatus()->setWeaponStatus(human->getEquipedWeapon());
+    
+    human->setStateName("attack");
 }
 
 void HumanGlock17Attack::execute(EntityHuman* human)
@@ -240,6 +244,8 @@ void HumanGlock17Reload::enter(EntityHuman* human)
     s.position = human->getWorldPosition();
     s.soundRange = 400.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->setStateName("reload");
 }
 
 void HumanGlock17Reload::execute(EntityHuman* human)
@@ -283,6 +289,8 @@ void HumanGlock17Out::enter(EntityHuman* human)
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->setStateName("equip weapon");
 }
 
 void HumanGlock17Out::execute(EntityHuman* human)
@@ -326,6 +334,8 @@ void HumanGlock17In::enter(EntityHuman* human)
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->setStateName("release weapon");
 }
 
 void HumanGlock17In::execute(EntityHuman* human)

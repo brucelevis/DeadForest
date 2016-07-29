@@ -130,10 +130,10 @@ namespace realtrick
                             {
                                 std::string tileName;
                                 
-                                if ( _currentTile == static_cast<int>(EditorTileType::DIRT)) tileName = "1_" + _to_string(cocos2d::random(1, 3)) + "_1234";
-                                else if ( _currentTile == static_cast<int>(EditorTileType::GRASS)) tileName = "2_" + _to_string(cocos2d::random(1, 3)) + "_1234";
-                                else if ( _currentTile == static_cast<int>(EditorTileType::WATER)) tileName = "3_" + _to_string(cocos2d::random(1, 3)) + "_1234";
-                                else if ( _currentTile == static_cast<int>(EditorTileType::HILL)) tileName = "5_" + _to_string(cocos2d::random(1, 3)) + "_1234";
+                                if ( _currentTile == static_cast<int>(TileType::DIRT)) tileName = "1_" + _to_string(cocos2d::random(1, 3)) + "_1234";
+                                else if ( _currentTile == static_cast<int>(TileType::GRASS)) tileName = "2_" + _to_string(cocos2d::random(1, 3)) + "_1234";
+                                else if ( _currentTile == static_cast<int>(TileType::WATER)) tileName = "3_" + _to_string(cocos2d::random(1, 3)) + "_1234";
+                                else if ( _currentTile == static_cast<int>(TileType::HILL)) tileName = "5_" + _to_string(cocos2d::random(1, 3)) + "_1234";
                                 
                                 file->tileInfos[i][j] = tileName;
                             }

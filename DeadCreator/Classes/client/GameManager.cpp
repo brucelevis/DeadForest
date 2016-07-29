@@ -181,7 +181,6 @@ void GameManager::loadUiLayer()
     _bgmID = experimental::AudioEngine::play2d("rainfall.mp3", true);
     experimental::AudioEngine::setVolume(_bgmID, 0.3f);
     
-//    setZoom(1);
     setZoom(Prm.getValueAsFloat("cameraZoom"));
 }
 
@@ -201,7 +200,7 @@ std::list<EntityBase*> GameManager::getNeighborsOnMove(const cocos2d::Vec2& posi
             }
         }
     }
-    return std::move(ret);
+    return ret;
 }
 
 
@@ -230,7 +229,7 @@ std::list<EntityBase*> GameManager::getNeighborsOnAttack(const cocos2d::Vec2& po
         ret.push_back(entity);
     }
     
-    return std::move(ret);
+    return ret;
 }
 
 std::vector<Polygon> GameManager::getNeighborWalls(const cocos2d::Vec2& position, float speed) const
@@ -248,7 +247,7 @@ std::vector<Polygon> GameManager::getNeighborWalls(const cocos2d::Vec2& position
             }
         }
     }
-    return std::move(ret);
+    return ret;
 }
 
 
@@ -267,7 +266,7 @@ std::vector<Polygon> GameManager::getNeighborWalls(const cocos2d::Vec2& position
             }
         }
     }
-    return std::move(ret);
+    return ret;
 }
 
 
@@ -293,7 +292,7 @@ std::vector<Polygon> GameManager::getNeighborWalls(const cocos2d::Vec2& position
         ret.push_back(wall);
     }
     
-    return std::move(ret);
+    return ret;
 }
 
 

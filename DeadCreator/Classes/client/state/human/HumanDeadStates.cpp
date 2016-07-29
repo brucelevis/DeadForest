@@ -22,6 +22,7 @@ void HumanBackDeadState::enter(EntityHuman* human)
     human->getBodyAnimator()->enableShadow(false);
     human->getBodyAnimator()->pushAnimationFrames(&AnimHumanBackDead::getInstance());
     human->setVelocity( cocos2d::Vec2::ZERO );
+    human->setStateName("dead");
 }
 
 

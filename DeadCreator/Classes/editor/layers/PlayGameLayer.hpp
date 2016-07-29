@@ -9,9 +9,8 @@
 #pragma once
 
 #include "cocos2d.h"
-
+#include "Mat3.hpp"
 #include "SizeProtocol.h"
-#include "MainMenu3.hpp"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -63,15 +62,16 @@ namespace realtrick
             void closeLayer();
             void setGameStart(bool enable) { _isGameStarted = enable; }
             
+            cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& p);
+            cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& origin, const cocos2d::Vec2& p);
+            
         private:
             
             EditScene* _imguiLayer;
             client::DummyScene* _gameLayer = nullptr;
             
-            cocos2d::ClippingRectangleNode* _clipNode = nullptr;
-            cocos2d::DrawNode* _debugNode = nullptr;
-            
             bool _isGameStarted = false;
+            realtrick::Mat3 _cameraTransform;
             
         };
         

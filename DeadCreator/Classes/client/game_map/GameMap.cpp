@@ -97,21 +97,22 @@ bool GameMap::initGMXFile(const DeadCreator::GMXFile *file)
         _tileData[i].resize(_numOfTileX);
     }
     
-    auto defaultTile = static_cast<editor::EditorTileType>(file->default_type());
+    auto defaultTile = static_cast<TileType>(file->default_type());
     for(int i = 0; i < _numOfTileY; ++ i)
     {
         for(int j = 0; j < _numOfTileX; ++ j)
         {
-            if ( editor::EditorTileType::DIRT == defaultTile ) _tileData[i][j] = "1_" + _to_string(random(1, 3)) + "_1234";
-            else if ( editor::EditorTileType::GRASS == defaultTile ) _tileData[i][j] = "2_" + _to_string(random(1, 3)) + "_1234";
-            else if ( editor::EditorTileType::WATER == defaultTile ) _tileData[i][j] = "3_" + _to_string(random(1, 3)) + "_1234";
-            else if ( editor::EditorTileType::HILL == defaultTile ) _tileData[i][j] = "5_" + _to_string(random(1, 3)) + "_1234";
+            auto pos = indexToPosition(j, i, file->tile_size()->width(), file->tile_size()->height(), DUMMY_TILE_SIZE);
+            if ( TileType::DIRT == defaultTile ) _tileData[i][j]= TileBase(j, i,"1_" + _to_string(random(1, 3)) + "_1234", pos);
+            else if ( TileType::GRASS == defaultTile ) _tileData[i][j]= TileBase(j, i,"2_" + _to_string(random(1, 3)) + "_1234", pos);
+            else if ( TileType::WATER == defaultTile ) _tileData[i][j]= TileBase(j, i,"3_" + _to_string(random(1, 3)) + "_1234", pos);
+            else if ( TileType::HILL == defaultTile ) _tileData[i][j]= TileBase(j, i,"5_" + _to_string(random(1, 3)) + "_1234", pos);
         }
     }
     
     for ( auto tile = file->tiles()->begin(); tile != file->tiles()->end() ; ++ tile )
     {
-        _tileData[tile->indices()->y()][tile->indices()->x()] =  tile->number()->str();
+        _tileData[tile->indices()->y()][tile->indices()->x()].setNumber(tile->number()->str());
     }
     
     return true;
@@ -131,7 +132,7 @@ void GameMap::updateChunk(const Vec2& position)
         {
             if( xIdx == _numOfViewableTileX) xIdx = 0, yIdx ++;
             
-            _currTiles[yIdx][xIdx]->setSpriteFrame(_tileData[y][x] + ".png");
+            _currTiles[yIdx][xIdx]->setSpriteFrame(_tileData[y][x].getNumber() + ".png");
             _currTiles[yIdx][xIdx]->setPosition(indexToPosition(x, y, _tileWidth, _tileHeight, DUMMY_TILE_SIZE));
             
             xIdx++;
@@ -147,17 +148,10 @@ void GameMap::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform,
 }
 
 
-std::vector<Segment> GameMap::getNeighborWall(const cocos2d::Vec2 position) const
-{
-    std::vector<Segment> ret;
-    
-    return ret;
-}
-
-GameMap::TileType GameMap::getStepOnTileType(const cocos2d::Vec2& pos)
+TileType GameMap::getStepOnTileType(const cocos2d::Vec2& pos)
 {
     std::pair<int, int> idx = getFocusedTileIndex(pos, _tileWidth, _tileHeight, DUMMY_TILE_SIZE);
-    std::string tile = _tileData[idx.second][idx.first];
+    TileBase& tile = _tileData[idx.second][idx.first];
     Vec2 center = indexToPosition(idx.first, idx.second, _tileWidth, _tileHeight, DUMMY_TILE_SIZE);
     
     Vec2 region1 = center + Vec2(0.0f, _tileHeight / 4.0f);
@@ -165,25 +159,23 @@ GameMap::TileType GameMap::getStepOnTileType(const cocos2d::Vec2& pos)
     Vec2 region3 = center - Vec2(0.0f, _tileHeight / 4.0f);
     Vec2 region4 = center - Vec2(_tileWidth / 4.0f, 0.0f);
     
-    std::string tileType;
-    for (unsigned k = 4; k < tile.size(); ++k)
-        tileType += tile[k];
+    std::string tileType = tile.getTileTail();
     
     if ( physics::isContainPointInDiamond(region1, _tileWidth / 4.0f, pos) && (tileType.find('1') != std::string::npos) )
     {
-        return convertToTileType(tile.front());
+        return tile.getTileType();
     }
     else if ( physics::isContainPointInDiamond(region2, _tileWidth / 4.0f, pos) && (tileType.find('2') != std::string::npos) )
     {
-        return convertToTileType(tile.front());
+        return tile.getTileType();
     }
     else if ( physics::isContainPointInDiamond(region3, _tileWidth / 4.0f, pos) && (tileType.find('3') != std::string::npos) )
     {
-        return convertToTileType(tile.front());
+        return tile.getTileType();
     }
     else if ( physics::isContainPointInDiamond(region4, _tileWidth / 4.0f, pos) && (tileType.find('4') != std::string::npos) )
     {
-        return convertToTileType(tile.front());
+        return tile.getTileType();
     }
     
     return TileType::DIRT;

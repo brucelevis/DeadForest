@@ -9,7 +9,7 @@
 #include "Mat3.hpp"
 using namespace realtrick;
 
-void Mat3::_copy(const Mat3& copy)
+void Mat3::copyFrom(const Mat3& copy)
 {
     _11 = copy._11;         _12 = copy._12;         _13 = copy._13;
     _21 = copy._21;         _22 = copy._22;         _23 = copy._23;
@@ -39,14 +39,13 @@ Mat3::Mat3()
 
 Mat3::Mat3(const Mat3& copy)
 {
-    _copy(copy);
+    copyFrom(copy);
 }
 
 Mat3& Mat3::operator=(const Mat3& rhs)
 {
-    if(this == &rhs)
-        return *this;
-    _copy(rhs);
+    if (this != &rhs)
+        copyFrom(rhs);
     return *this;
 }
 

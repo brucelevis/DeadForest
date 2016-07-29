@@ -23,6 +23,7 @@ void HumanFistIdleLoop::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushAnimationFrames(&AnimHumanFistIdleLoop::getInstance());
     human->setVelocity( Vec2::ZERO );
+    human->setStateName("idle");
 }
 
 void HumanFistIdleLoop::execute(EntityHuman* human)
@@ -79,6 +80,7 @@ void HumanFistMoveLoop::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushFramesAtoB(&AnimHumanFistMoveLoop::getInstance(), 0, 5);
     human->setRunStats(true);
+    human->setStateName("run");
 }
 
 void HumanFistMoveLoop::execute(EntityHuman* human)
@@ -137,6 +139,7 @@ bool HumanFistMoveLoop::onMessage(EntityHuman* human, const Telegram& msg) { ret
 void HumanFistAttack::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushOneFrameUnique(&AnimHumanFistAttack::getInstance(), 0);
+    human->setStateName("attack");
 }
 
 void HumanFistAttack::execute(EntityHuman* human)
@@ -197,6 +200,7 @@ bool HumanFistAttack::onMessage(EntityHuman* human, const Telegram& msg) { retur
 void HumanFistOut::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushAnimationFrames(&AnimHumanFistOut::getInstance());
+    human->setStateName("release completed");
 }
 
 void HumanFistOut::execute(EntityHuman* human)
@@ -240,6 +244,8 @@ void HumanFistIn::enter(EntityHuman* human)
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->setStateName("pick weapon");
 }
 
 void HumanFistIn::execute(EntityHuman* human)

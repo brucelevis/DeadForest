@@ -29,6 +29,7 @@ void HumanM16A2IdleLoop::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushAnimationFrames(&AnimHumanM16A2IdleLoop::getInstance());
     human->setVelocity( Vec2::ZERO );
+    human->setStateName("idle");
 }
 
 void HumanM16A2IdleLoop::execute(EntityHuman* human)
@@ -117,6 +118,7 @@ void HumanM16A2MoveLoop::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushFramesAtoB(&AnimHumanM16A2MoveLoop::getInstance(), 0, 5);
     human->setRunStats(true);
+    human->setStateName("run");
 }
 
 void HumanM16A2MoveLoop::execute(EntityHuman* human)
@@ -194,6 +196,8 @@ void HumanM16A2Attack::enter(EntityHuman* human)
     Dispatch.pushMessage(0.24, human, human, MessageType::M16A2_SHOOT, nullptr);
     
     human->getBodyAnimator()->pushAnimationFrames(&AnimHumanM16A2Attack::getInstance());
+    
+    human->setStateName("attack");
 }
 
 void HumanM16A2Attack::execute(EntityHuman* human)
@@ -257,6 +261,8 @@ void HumanM16A2Reload::enter(EntityHuman* human)
     s.position = human->getWorldPosition();
     s.soundRange = 400.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->setStateName("reload");
 }
 
 void HumanM16A2Reload::execute(EntityHuman* human)
@@ -300,6 +306,8 @@ void HumanM16A2Out::enter(EntityHuman* human)
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->setStateName("equip weapon");
 }
 
 void HumanM16A2Out::execute(EntityHuman* human)
@@ -343,6 +351,8 @@ void HumanM16A2In::enter(EntityHuman* human)
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->setStateName("release weapon");
 }
 
 void HumanM16A2In::execute(EntityHuman* human)

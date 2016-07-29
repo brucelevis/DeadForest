@@ -57,7 +57,7 @@ namespace realtrick
             void updateChunk(const cocos2d::Vec2& pivot);
             bool isUpdateChunk(const cocos2d::Vec2& newPos, const cocos2d::Vec2& oldPos);
             
-            void putTile(EditorTileType type, int x, int y);
+            void putTile(TileType type, int x, int y);
             
             void setLayerPosition(const cocos2d::Vec2& pos) { _layerPosition = pos; }
             cocos2d::Vec2 getTileRootWorldPosition() const { return _tileRootWorldPosition; }

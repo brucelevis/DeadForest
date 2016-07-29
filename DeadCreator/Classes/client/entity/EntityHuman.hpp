@@ -99,8 +99,11 @@ namespace realtrick
             WeaponStatus* getWeaponStatus() const { return _weaponStatus; }
             AimingSystem* getAimingSystem() const { return _aimingSystem; }
             
-            void setUserNickName(const std::string name) { _userNickName = name; }
+            void setUserNickName(const std::string& name) { _userNickName = name; }
             std::string getUserNickName() const { return _userNickName; }
+            
+            void setStateName(const std::string& name) { _stateName = name; }
+            std::string getStateName() const { return _stateName; }
             
         private:
             
@@ -138,6 +141,8 @@ namespace realtrick
             WeaponStatus*                   _weaponStatus;
             AimingSystem*                   _aimingSystem;
             std::string                     _userNickName;
+            
+            std::string                     _stateName;
             
         };
         

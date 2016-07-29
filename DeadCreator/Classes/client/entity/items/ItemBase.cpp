@@ -25,6 +25,7 @@ _inGameNormal(nullptr),
 _texType(ui::Widget::TextureResType::LOCAL)
 {
     ADD_FAMILY_MASK(_familyMask, ITEM_BASE);
+    setBoundingRadius(20.0f);
 }
 
 

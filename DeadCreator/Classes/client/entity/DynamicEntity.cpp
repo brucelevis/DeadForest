@@ -25,7 +25,6 @@ _acceleration(Vec2::ZERO),
 _mass(1.0f),
 _maxSpeed(0.0f),
 _turnSpeed(0.0f),
-_boundingRadius(0.0f),
 _speed(0.0f)
 {
     ADD_FAMILY_MASK(_familyMask, DYNAMIC_ENTITY);

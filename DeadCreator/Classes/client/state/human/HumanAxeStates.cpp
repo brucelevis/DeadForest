@@ -23,6 +23,7 @@ void HumanAxeIdleLoop::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushAnimationFrames(&AnimHumanAxeIdleLoop::getInstance());
     human->setVelocity( Vec2::ZERO );
+    human->setStateName("idle");
 }
 
 void HumanAxeIdleLoop::execute(EntityHuman* human)
@@ -79,6 +80,7 @@ void HumanAxeMoveLoop::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushFramesAtoB(&AnimHumanAxeMoveLoop::getInstance(), 0, 5);
     human->setRunStats(true);
+    human->setStateName("run");
 }
 
 void HumanAxeMoveLoop::execute(EntityHuman* human)
@@ -137,6 +139,7 @@ bool HumanAxeMoveLoop::onMessage(EntityHuman* human, const Telegram& msg) { retu
 void HumanAxeAttack::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushOneFrameUnique(&AnimHumanAxeAttack::getInstance(), 0);
+    human->setStateName("attack");
 }
 
 void HumanAxeAttack::execute(EntityHuman* human)
@@ -204,6 +207,8 @@ void HumanAxeOut::enter(EntityHuman* human)
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->setStateName("equip weapon");
 }
 
 void HumanAxeOut::execute(EntityHuman* human)
@@ -247,6 +252,8 @@ void HumanAxeIn::enter(EntityHuman* human)
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->setStateName("release weapon");
 }
 
 void HumanAxeIn::execute(EntityHuman* human)

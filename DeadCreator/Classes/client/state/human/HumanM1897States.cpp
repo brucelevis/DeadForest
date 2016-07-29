@@ -30,6 +30,7 @@ void HumanM1897IdleLoop::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushAnimationFrames(&AnimHumanM1897IdleLoop::getInstance());
     human->setVelocity( Vec2::ZERO );
+    human->setStateName("idle");
 }
 
 void HumanM1897IdleLoop::execute(EntityHuman* human)
@@ -118,6 +119,8 @@ void HumanM1897MoveLoop::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushFramesAtoB(&AnimHumanM1897MoveLoop::getInstance(), 0, 7);
     human->setRunStats(true);
+    
+    human->setStateName("run");
 }
 
 void HumanM1897MoveLoop::execute(EntityHuman* human)
@@ -186,6 +189,7 @@ bool HumanM1897MoveLoop::onMessage(EntityHuman* human, const Telegram& msg)
 void HumanM1897Attack::enter(EntityHuman* human)
 {
     human->getBodyAnimator()->pushFramesAtoB(&AnimHumanM1897Attack::getInstance(), 0, 3);
+    human->setStateName("attack");
 }
 
 void HumanM1897Attack::execute(EntityHuman* human)
@@ -261,6 +265,8 @@ void HumanM1897Reload::enter(EntityHuman* human)
     s.position = human->getWorldPosition();
     s.soundRange = 400.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->setStateName("reload");
 }
 
 void HumanM1897Reload::execute(EntityHuman* human)
@@ -304,6 +310,8 @@ void HumanM1897Out::enter(EntityHuman* human)
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->setStateName("equip weapon");
 }
 
 void HumanM1897Out::execute(EntityHuman* human)
@@ -347,6 +355,8 @@ void HumanM1897In::enter(EntityHuman* human)
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
     Dispatch.pushMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->setStateName("release weapon");
 }
 
 void HumanM1897In::execute(EntityHuman* human)

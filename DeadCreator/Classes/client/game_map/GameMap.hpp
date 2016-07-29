@@ -19,6 +19,8 @@
 using namespace rapidjson;
 
 #include "GMXFile_generated.h"
+#include "EntityType.hpp"
+#include "TileBase.hpp"
 
 namespace realtrick
 {
@@ -87,10 +89,6 @@ namespace realtrick
             
         public:
             
-            enum class TileType { GRASS, DIRT, WATER };
-            
-        public:
-            
             explicit GameMap(GameManager* gameMgr);
             virtual ~GameMap();
             bool initGMXFile(const DeadCreator::GMXFile* file);
@@ -110,27 +108,10 @@ namespace realtrick
             int getCellHeight() const                                                   { return _cellHeight; }
             
             const std::vector<Polygon>& getCollisionData() const                        { return _collisionData; }
-            const std::vector<std::vector<std::string>>& getTileData() const            { return _tileData; }
+            const std::vector<std::vector<TileBase>>& getTileData() const               { return _tileData; }
             
             cocos2d::Vec2 getWorldPosition() const                                      { return _worldPosition; }
             void setWorldPosition(const cocos2d::Vec2& worldPos)                        { _worldPosition = worldPos; }
-            
-            std::vector<Segment> getNeighborWall(const cocos2d::Vec2 position) const;
-            
-        private:
-            
-            inline TileType convertToTileType(char c)
-            {
-                TileType ret = TileType::DIRT;
-                switch ( c )
-                {
-                    case '1': ret = TileType::DIRT; break;
-                    case '2': ret = TileType::GRASS; break;
-                    case '3': ret = TileType::WATER; break;
-                    default: break;
-                }
-                return ret;
-            }
             
         private:
             
@@ -154,7 +135,7 @@ namespace realtrick
             std::pair<int, int> _pivotIndex;
             
             std::vector<Polygon> _collisionData;
-            std::vector<std::vector<std::string>> _tileData;
+            std::vector<std::vector<TileBase>> _tileData;
             cocos2d::Vec2 _worldPosition;
             
             bool _isNormal;

@@ -39,7 +39,8 @@ _enduranceTime(0.0f),
 _isRun(false),
 _isAiming(false),
 _footGauge(0.0f),
-_userNickName("")
+_userNickName(""),
+_stateName("idle")
 {
     setEntityType(ENTITY_HUMAN);
     setBoundingRadius(Prm.getValueAsFloat("boundingRadius"));
@@ -141,14 +142,16 @@ bool EntityHuman::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBa
     if ( other->getEntityType() == ENTITY_HUMAN )
     {
         EntityHuman* human = static_cast<EntityHuman*>(other);
-        if( human->isAlive() && physics::intersect(Circle(futurePosition, getBoundingRadius()), Circle(human->getWorldPosition(), 20.0f)) )
+        if( human->isAlive() && physics::intersect(Circle(futurePosition, getBoundingRadius()),
+                                                   Circle(human->getWorldPosition(), other->getBoundingRadius())) )
         {
             return true;
         }
     }
     else if ( isMasked(other->getFamilyMask(), ITEM_BASE) )
     {
-        if ( physics::intersect(Circle(futurePosition, getBoundingRadius()), Circle(other->getWorldPosition(), 20.0f)))
+        if ( physics::intersect(Circle(futurePosition, getBoundingRadius()),
+                                Circle(other->getWorldPosition(), other->getBoundingRadius())))
         {
             ItemAndOwner data;
             data.owner = this;
@@ -221,38 +224,21 @@ void EntityHuman::setFootGauge(float g)
 {
     if ( g > 50.0f )
     {
-        GameMap* map = _gameMgr->getGameMap();
-        GameMap::TileType onTile = map->getStepOnTileType(getWorldPosition());
-        
-        if ( onTile == GameMap::TileType::DIRT )
-        {
-            SoundSource s;
-            s.fileName = "Dirt" + _to_string(random(1, 4)) + ".mp3";
-            s.position = getWorldPosition();
-            s.soundRange = 50.0f;
-            s.volume = 0.2f;
-            Dispatch.pushMessage(0.0, this, this, MessageType::PLAY_SOUND, &s);
-        }
-        else if ( onTile == GameMap::TileType::GRASS )
-        {
-            SoundSource s;
-            s.fileName = "Grass" + _to_string(random(1, 4)) + ".mp3";
-            s.position = getWorldPosition();
-            s.soundRange = 50.0f;
-            s.volume = 0.2f;
-            Dispatch.pushMessage(0.0, this, this, MessageType::PLAY_SOUND, &s);
-        }
-        else if ( onTile == GameMap::TileType::WATER )
-        {
-            SoundSource s;
-            s.fileName = "Water" + _to_string(random(1, 4)) + ".mp3";
-            s.position = getWorldPosition();
-            s.volume = 0.2f;
-            s.soundRange = 50.0f;
-            Dispatch.pushMessage(0.0, this, this, MessageType::PLAY_SOUND, &s);
-        }
-        
         _footGauge = 0.0f;
+        
+        GameMap* map = _gameMgr->getGameMap();
+        TileType onTile = map->getStepOnTileType(getWorldPosition());
+        
+        SoundSource s;
+        s.position = getWorldPosition();
+        s.soundRange = 50.0f;
+        s.volume = 0.2f;
+        
+        if ( onTile == TileType::DIRT ) s.fileName = "Dirt" + _to_string(random(1, 4)) + ".mp3";
+        else if ( onTile == TileType::GRASS ) s.fileName = "Grass" + _to_string(random(1, 4)) + ".mp3";
+        else if ( onTile == TileType::WATER ) s.fileName = "Water" + _to_string(random(1, 4)) + ".mp3";
+        
+        Dispatch.pushMessage(0.0, this, this, MessageType::PLAY_SOUND, &s);
         
         return ;
     }

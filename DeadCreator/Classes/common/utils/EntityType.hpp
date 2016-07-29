@@ -61,6 +61,15 @@ namespace realtrick
         NEUTRAL = 12,
     };
         
+    enum class TileType : int
+    {
+        INVALID = -1,
+        DIRT = 0,
+        GRASS = 1,
+        WATER = 2,
+        HILL = 3,
+    };
+        
     enum class ApproximationType : int
     {
         INVALID = -1,

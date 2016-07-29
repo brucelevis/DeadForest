@@ -57,6 +57,9 @@ namespace realtrick
             void setLayerType(LayerType type) { _layerType = type; }
             int getLayerType() const { return _layerType; }
             
+            bool isNew();
+            bool isOpen();
+            bool isSave();
             bool isUndo();
             bool isRedo();
             
@@ -93,6 +96,8 @@ namespace realtrick
             bool _showOpenMap = false;
             bool _showSaveQueryLayer = false;
             bool _showPlayGameLayer = false;
+            
+            bool _isEditMode = false;
             
             bool _enableOpenMap = true;
             bool _enableSaveMap = false;

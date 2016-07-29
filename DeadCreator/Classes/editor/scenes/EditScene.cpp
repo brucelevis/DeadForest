@@ -65,6 +65,8 @@ bool EditScene::init()
     
     addImGUI([this] {
         
+        _isEditMode = (_layer && !_showPlayGameLayer);
+        
         if ( _showNewMap ) _newFileLayer->showLayer(_showNewMap);
         if ( _showSaveAs ) _saveAsLayer->showLayer(_showSaveAs);
         if ( _showOpenMap ) _openLayer->showLayer(_showOpenMap);
@@ -74,12 +76,12 @@ bool EditScene::init()
         
         if (ImGui::BeginMainMenuBar())
         {
-            if (ImGui::BeginMenu("File", _isFileEnable))
+            if (ImGui::BeginMenu("File", _isFileEnable && !_showPlayGameLayer))
             {
-                if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap, true)) { doNewButton(); }
-                if (ImGui::MenuItem("Open", "Ctrl+O", false, _enableOpenMap)) { doOpenButton(); }
-                if (ImGui::MenuItem("Save", "Ctrl+S", false, _enableSaveMap)) { saveFile(_layer->getCurrFilePath()); }
-                if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", &_showSaveAs, _enableSaveMap)) { saveAsFile(); }
+                if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap, isNew() )) { doNewButton(); }
+                if (ImGui::MenuItem("Open", "Ctrl+O", false, isOpen() )) { doOpenButton(); }
+                if (ImGui::MenuItem("Save", "Ctrl+S", false, isSave() )) { saveFile(_layer->getCurrFilePath()); }
+                if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S", &_showSaveAs, isSave() )) { saveAsFile(); }
                 
                 ImGui::Separator();
                 if (ImGui::MenuItem("Quit", "Alt+F4")) {}
@@ -87,7 +89,7 @@ bool EditScene::init()
                 ImGui::EndMenu();
             }
             
-            if (ImGui::BeginMenu("Edit", _isEditEnable))
+            if (ImGui::BeginMenu("Edit", _isEditEnable && !_showPlayGameLayer))
             {
                 if ( ImGui::MenuItem("Undo", "CTRL+Z", false, isUndo()) ) { _layer->undo(); }
                 if ( ImGui::MenuItem("Redo", "CTRL+Y", false, isRedo()) ) { _layer->redo(); }
@@ -100,14 +102,14 @@ bool EditScene::init()
                 ImGui::EndMenu();
             }
             
-            if (ImGui::BeginMenu("Players", _isPlayerEnable))
+            if (ImGui::BeginMenu("Players", _isPlayerEnable && !_showPlayGameLayer))
             {
                 if (ImGui::MenuItem("Player Setting")) {}
                 if (ImGui::MenuItem("Force Setting")) {}   
                 ImGui::EndMenu();
             }
             
-            if (ImGui::BeginMenu("Windows", _isWindowEnable))
+            if (ImGui::BeginMenu("Windows", _isWindowEnable && !_showPlayGameLayer))
             {
                 ImGui::MenuItem("Navigator", "SHIFT+N", &_layer->isShowNavigator());
                 ImGui::MenuItem("Palette", "SHIFT+P", &_layer->isShowPalette());
@@ -150,21 +152,30 @@ bool EditScene::init()
                      ImGuiWindowFlags_NoBringToFrontOnFocus|
                      ImGuiWindowFlags_ShowBorders);
         
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
-        if ( ImGuiLayer::imageButton("new.png", 20, 20,
-                                     ImVec2(0,0),
-                                     ImVec2(1,1), -1,
-                                     ImVec4(0,0,0,0),
-                                     ImVec4(1, 1, 1, 1.0)) )
+        
+        static float newAlpha;
+        if ( isNew() )
         {
-            doNewButton();
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
+            newAlpha = 1.0f;
         }
-        if ( ImGui::IsItemHovered()) ImGui::SetTooltip("new");
+        else
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0, 0.0, 0.0, 0.0));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
+            newAlpha = 0.2f;
+        }
+        if ( ImGuiLayer::imageButton("new.png", 20, 20,
+                                     ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, newAlpha)) )
+        {
+            if ( isNew() ) doNewButton();
+        }
+        if ( isNew() && ImGui::IsItemHovered()) ImGui::SetTooltip("new");
         ImGui::PopStyleColor(2);
         
         static float openAlpha;
-        if ( _enableOpenMap )
+        if ( isOpen() )
         {
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
@@ -181,13 +192,13 @@ bool EditScene::init()
                                     ImVec2(0,0),
                                     ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, openAlpha)))
         {
-            doOpenButton();
+            if ( isOpen() ) doOpenButton();
         }
-        if ( _enableOpenMap && ImGui::IsItemHovered()) ImGui::SetTooltip("open");
+        if ( _enableOpenMap && !_showPlayGameLayer && ImGui::IsItemHovered()) ImGui::SetTooltip("open");
         ImGui::PopStyleColor(2);
         
         static float saveAlpha;
-        if ( _enableSaveMap )
+        if ( isSave() )
         {
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
@@ -204,9 +215,9 @@ bool EditScene::init()
                                     ImVec2(0,0),
                                     ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, saveAlpha)) )
         {
-            doSaveButton();
+            if ( isSave() ) doSaveButton();
         }
-        if ( _enableSaveMap && ImGui::IsItemHovered()) ImGui::SetTooltip("save");
+        if ( _enableSaveMap && _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("save");
         ImGui::PopStyleColor(2);
         
         ImGui::SameLine();
@@ -252,7 +263,7 @@ bool EditScene::init()
         ImGui::PopStyleColor(2);
         
         static float windowAlpha;
-        if ( _layer )
+        if ( _isEditMode )
         {
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
@@ -269,40 +280,40 @@ bool EditScene::init()
         if (ImGuiLayer::imageButton("navi.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                     -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
-            if ( _layer ) { _layer->isShowNavigator() = !_layer->isShowNavigator(); }
+            if ( _isEditMode ) { _layer->isShowNavigator() = !_layer->isShowNavigator(); }
         }
-        if ( _layer && ImGui::IsItemHovered()) ImGui::SetTooltip("navigator");
+        if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("navigator");
 
     
         ImGui::SameLine();
         if ( ImGuiLayer::imageButton("palette.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                      -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, windowAlpha)))
         {
-            if ( _layer ) { _layer->isShowPalette() = !_layer->isShowPalette(); }
+            if ( _isEditMode ) { _layer->isShowPalette() = !_layer->isShowPalette(); }
         }
-        if ( _layer && ImGui::IsItemHovered()) ImGui::SetTooltip("palette");
+        if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("palette");
         
         ImGui::SameLine();
         if (ImGuiLayer::imageButton("history.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                     -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
-            if ( _layer ) { _layer->isShowHistory() = !_layer->isShowHistory(); }
+            if ( _isEditMode ) { _layer->isShowHistory() = !_layer->isShowHistory(); }
         }
-        if ( _layer && ImGui::IsItemHovered()) ImGui::SetTooltip("history");
+        if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("history");
         
         ImGui::SameLine();
         if ( ImGuiLayer::imageButton("trigger.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                      -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
-            if ( _layer ) { _layer->isShowTriggerEdit() = !_layer->isShowTriggerEdit(); }
+            if ( _isEditMode ) { _layer->isShowTriggerEdit() = !_layer->isShowTriggerEdit(); }
         }
-        if ( _layer && ImGui::IsItemHovered()) ImGui::SetTooltip("trigger");
+        if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("trigger");
         
         ImGui::SameLine();
         if ( ImGuiLayer::imageButton("play_btn.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                      -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
-            if ( _layer )
+            if ( _isEditMode )
             {
                 _showPlayGameLayer = !_showPlayGameLayer;
                 
@@ -310,7 +321,7 @@ bool EditScene::init()
                 else stopGame();
             }
         }
-        if ( _layer && ImGui::IsItemHovered()) ImGui::SetTooltip("simulation");
+        if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("simulation");
         
         ImGui::PopStyleColor(2);
         
@@ -606,15 +617,33 @@ void EditScene::changeLayerType(LayerType type)
 }
 
 
+bool EditScene::isNew()
+{
+    return !_showPlayGameLayer;
+}
+
+
+bool EditScene::isOpen()
+{
+    return _enableOpenMap && !_showPlayGameLayer;
+}
+
+
+bool EditScene::isSave()
+{
+    return (_enableSaveMap && _isEditMode);
+}
+
+
 bool EditScene::isUndo()
 {
-    return (_layer &&  _layer->isUndo());
+    return (_layer &&  _layer->isUndo() && _isEditMode);
 }
 
 
 bool EditScene::isRedo()
 {
-    return (_layer &&  _layer->isRedo());
+    return (_layer &&  _layer->isRedo() && _isEditMode);
 }
 
 
@@ -643,6 +672,8 @@ void EditScene::saveAsFile()
 
 void EditScene::playGame()
 {
+    _layer->save("temp_game_map");
+    
     _playGameLayer->playGame();
     _layer->setVisible(false);
     enableModal(true);
@@ -653,6 +684,15 @@ void EditScene::stopGame()
 {
     _layer->setVisible(true);
     enableModal(false);
+    
+    try
+    {
+        boost::filesystem::remove(boost::filesystem::path("temp_game_map"));
+    }
+    catch ( std::exception& e)
+    {
+        cocos2d::log("%s", e.what());
+    }
 }
 
 

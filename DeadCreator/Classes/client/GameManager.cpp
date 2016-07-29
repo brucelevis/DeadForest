@@ -111,7 +111,8 @@ bool GameManager::init()
 
 void GameManager::update(float dt)
 {
-    // "IMPORTANT" logicStream's update() must call before checking pause.
+    // """IMPORTANT"""
+    // logicStream's update() must call before checking pause.
     // because network stream will load data through this method (although game is puased, load game must process)
     _logicStream->update(dt);
     
@@ -511,6 +512,7 @@ void GameManager::loadGMXFile(const std::string& filePath)
         }
     }
 }
+
 
 void GameManager::drawCellSpaceDebugNode()
 {

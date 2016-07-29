@@ -23,7 +23,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
 {
     if ( msg.msg == MessageType::LOAD_GAME_PLAYER)
     {
-        _gameMgr->loadGMXFile("/Users/jun/Desktop/test_map.gmx");
+        _gameMgr->loadGMXFile("temp_game_map");
         _gameMgr->pushLogic(0.0, MessageType::LOAD_GAME_COMPLETE, nullptr);
         
         return true;

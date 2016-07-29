@@ -96,19 +96,46 @@ void PlayGameLayer::showLayer(bool& opened)
                 drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
             }
             
-            // diamond lines
-            
+            // center recet
+            auto indices = getFocusedTileIndex(game->getPlayerPtr()->getWorldPosition(), 128, 128, 4);
+            const auto& tiles = game->getGameMap()->getTileData();
+            for( int i = indices.second - map->getNumOfViewableTileY() / 2 ; i < indices.second + map->getNumOfViewableTileY() / 2 ; ++ i)
+            {
+                for(int j = indices.first - map->getNumOfViewableTileX() / 2 ; j < indices.first + map->getNumOfViewableTileX() / 2 ; ++ j)
+                {
+                    if ( j < 0 || i < 0 || i >= map->getNumofTileY() || j >= map->getNumofTileX() ) continue;
+                    
+                    auto left = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(-64, 0));
+                    auto bottom = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(0, -64));
+                    auto right = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(64, 0));
+                    
+                    drawList->AddLine(ImVec2(right.x, right.y), ImVec2(bottom.x, bottom.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
+                    drawList->AddLine(ImVec2(bottom.x, bottom.y), ImVec2(left.x, left.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
+                }
+            }
         }
         
         if ( isCellSpaceOn )
         {
-            const auto& cells = game->getCellSpace()->getCells();
+            auto cellSpace = game->getCellSpace();
+            
+            auto currCellIndex = cellSpace->positionToIndex(game->getPlayerPtr()->getWorldPosition());
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 0.00, 1.00));
+            ImGui::Text(std::string("current cell: " + _to_string(currCellIndex)).c_str(), NULL);
+            ImGui::PopStyleColor();
+
+            const auto& cells = cellSpace->getCells();
             for (const auto& cell : cells )
             {
-                const auto& cellOrigin = worldToLocal(origin, cell.boundingBox.origin);
-                const auto& cellDest = worldToLocal(origin, cell.boundingBox.origin + cell.boundingBox.size);
+                const auto& cellSize = cell.boundingBox.size;
                 
-                drawList->AddRect(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(cellDest.x, cellDest.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
+                const auto cellOrigin = worldToLocal(origin, cell.boundingBox.origin);
+                const auto top = worldToLocal(origin, cell.boundingBox.origin + Vec2(0, cellSize.height));
+                const auto right = worldToLocal(origin, cell.boundingBox.origin + Vec2(cellSize.width , 0));
+                
+                drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(top.x, top.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
+                drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(right.x, right.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
+                
             }
         }
         
@@ -130,16 +157,26 @@ void PlayGameLayer::showLayer(bool& opened)
                     drawList->AddCircle(ImVec2(center.x, center.y), rad, ImColor(ImVec4(1.0, 0.0, 1.0, 0.7)), 20, 0.0f);
                 }
             }
+            
+            auto walls = game->getNeighborWalls(game->getPlayerPtr()->getWorldPosition(), 0.0f);
+            for( const auto& wall : walls )
+            {
+                for( int i = 0 ; i < wall.vertices.size() - 1; ++ i)
+                {
+                    auto a = worldToLocal(origin, wall.vertices[i]);
+                    auto b = worldToLocal(origin, wall.vertices[i + 1]);
+                    drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
+                }
+                auto a = worldToLocal(origin, wall.vertices.back());
+                auto b = worldToLocal(origin, wall.vertices.front());
+                drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
+            }
+            
         }
         
         if ( isLocationViewOn )
         {
             const auto& locations = game->getLocationMap();
-            
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 0.00, 1.00));
-            ImGui::Text(std::string("'" + _to_string(locations.size()) + "' Location exist.").c_str(), NULL);
-            ImGui::PopStyleColor();
-
             for( const auto& location : locations )
             {
                 const auto& name = location.first;
@@ -198,7 +235,7 @@ void PlayGameLayer::playGame()
 
 void PlayGameLayer::closeLayer()
 {
-    
+    _gameLayer->removeFromParentAndCleanup(true);
     _imguiLayer->stopGame();
 }
 

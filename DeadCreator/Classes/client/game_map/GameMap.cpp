@@ -103,6 +103,7 @@ bool GameMap::initGMXFile(const DeadCreator::GMXFile *file)
         for(int j = 0; j < _numOfTileX; ++ j)
         {
             auto pos = indexToPosition(j, i, file->tile_size()->width(), file->tile_size()->height(), DUMMY_TILE_SIZE);
+            
             if ( TileType::DIRT == defaultTile ) _tileData[i][j]= TileBase(j, i,"1_" + _to_string(random(1, 3)) + "_1234", pos);
             else if ( TileType::GRASS == defaultTile ) _tileData[i][j]= TileBase(j, i,"2_" + _to_string(random(1, 3)) + "_1234", pos);
             else if ( TileType::WATER == defaultTile ) _tileData[i][j]= TileBase(j, i,"3_" + _to_string(random(1, 3)) + "_1234", pos);
@@ -130,10 +131,11 @@ void GameMap::updateChunk(const Vec2& position)
     {
         for(int x = originIndex.first - _numOfViewableTileX / 2; x < originIndex.first + _numOfViewableTileX / 2 ; ++ x)
         {
+            if ( x < 0 || y < 0 || y >= _numOfTileY || x >= _numOfTileX ) continue;
             if( xIdx == _numOfViewableTileX) xIdx = 0, yIdx ++;
             
             _currTiles[yIdx][xIdx]->setSpriteFrame(_tileData[y][x].getNumber() + ".png");
-            _currTiles[yIdx][xIdx]->setPosition(indexToPosition(x, y, _tileWidth, _tileHeight, DUMMY_TILE_SIZE));
+            _currTiles[yIdx][xIdx]->setPosition(_tileData[y][x].getPosition());
             
             xIdx++;
         }

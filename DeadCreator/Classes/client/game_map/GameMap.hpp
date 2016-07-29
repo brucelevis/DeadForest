@@ -100,18 +100,22 @@ namespace realtrick
             void updateChunk(const cocos2d::Vec2& position);
             TileType getStepOnTileType(const cocos2d::Vec2& pos);
             
-            int getTileWidth() const                                                    { return _tileWidth; }
-            int getTileHeight() const                                                   { return _tileHeight; }
-            int getWorldWidth() const                                                   { return _worldWidth; }
-            int getWorldHeight() const                                                  { return _worldHeight; }
-            int getCellWidth() const                                                    { return _cellWidth; }
-            int getCellHeight() const                                                   { return _cellHeight; }
+            int getTileWidth() const { return _tileWidth; }
+            int getTileHeight() const { return _tileHeight; }
+            int getWorldWidth() const { return _worldWidth; }
+            int getWorldHeight() const { return _worldHeight; }
+            int getCellWidth() const { return _cellWidth; }
+            int getCellHeight() const { return _cellHeight; }
+            int getNumofTileX() const { return _numOfTileX; }
+            int getNumofTileY() const { return _numOfTileY; }
+            int getNumOfViewableTileX() const { return _numOfViewableTileX; }
+            int getNumOfViewableTileY() const { return _numOfViewableTileY; }
             
-            const std::vector<Polygon>& getCollisionData() const                        { return _collisionData; }
-            const std::vector<std::vector<TileBase>>& getTileData() const               { return _tileData; }
+            const std::vector<Polygon>& getCollisionData() const { return _collisionData; }
+            const std::vector<std::vector<TileBase>>& getTileData() const { return _tileData; }
             
-            cocos2d::Vec2 getWorldPosition() const                                      { return _worldPosition; }
-            void setWorldPosition(const cocos2d::Vec2& worldPos)                        { _worldPosition = worldPos; }
+            cocos2d::Vec2 getWorldPosition() const { return _worldPosition; }
+            void setWorldPosition(const cocos2d::Vec2& worldPos) { _worldPosition = worldPos; }
             
         private:
             

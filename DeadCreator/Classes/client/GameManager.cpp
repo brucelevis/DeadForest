@@ -40,7 +40,8 @@ _clipNode(nullptr),
 _rootNode(nullptr),
 _uiLayer(nullptr),
 _bgmID(0),
-_isPaused(true)
+_isPaused(true),
+_zoomScale(1)
 {
 }
 
@@ -180,13 +181,8 @@ void GameManager::loadUiLayer()
     _bgmID = experimental::AudioEngine::play2d("rainfall.mp3", true);
     experimental::AudioEngine::setVolume(_bgmID, 0.3f);
     
+//    setZoom(1);
     setZoom(Prm.getValueAsFloat("cameraZoom"));
-}
-
-
-void GameManager::setZoom(float r)
-{
-    _rootNode->setScale(r);
 }
 
 

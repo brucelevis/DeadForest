@@ -10,6 +10,7 @@
 
 #include "cocos2d.h"
 
+#include "SizeProtocol.h"
 #include "MainMenu3.hpp"
 
 #include "imgui.h"
@@ -47,6 +48,14 @@ namespace realtrick
                 CC_SAFE_DELETE(ret);
                 return nullptr;
             }
+            
+            virtual bool init() override
+            {
+                if ( !cocos2d::Node::init() )
+                    return false;
+                
+                return true;
+            }
 
             void showLayer(bool& opened);
             
@@ -58,6 +67,9 @@ namespace realtrick
             
             EditScene* _imguiLayer;
             client::DummyScene* _gameLayer = nullptr;
+            
+            cocos2d::ClippingRectangleNode* _clipNode = nullptr;
+            cocos2d::DrawNode* _debugNode = nullptr;
             
             bool _isGameStarted = false;
             

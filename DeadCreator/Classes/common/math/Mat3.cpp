@@ -110,9 +110,7 @@ void Mat3::translate(const cocos2d::Vec2& trans)
 void Mat3::inverse()
 {
     float det = (_11 * _22 * _33 + _21 * _32 * _13 + _12 * _23 * _31) - (_13 * _22 * _31 + _12 * _21 * _33 + _11 * _23 * _32);
-    
-    // can not zero
-    if ( det > -FLT_EPSILON && det < FLT_EPSILON) return ;
+    if ( det > -FLT_EPSILON && det < FLT_EPSILON) throw std::range_error("determinant is zero");
     
     Mat3 temp(*this);
     _11 = (temp._22 * temp._33 - temp._23 * temp._32) / det;

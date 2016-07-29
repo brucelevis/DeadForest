@@ -90,7 +90,8 @@ namespace realtrick
             void pushLogic(double delaySeconds, MessageType type, void* extraInfo);
             
             void loadUiLayer();
-            void setZoom(float r);
+            void setZoom(float r) { _zoomScale = r; _rootNode->setScale(r); }
+            float getZoomScale() const { return _zoomScale; }
             
             bool isPaused() const { return _isPaused; }
             void pauseGame() { _isPaused = true; }
@@ -115,6 +116,7 @@ namespace realtrick
             
             int                                         _bgmID;
             bool                                        _isPaused;
+            float                                       _zoomScale;
             
         };
         

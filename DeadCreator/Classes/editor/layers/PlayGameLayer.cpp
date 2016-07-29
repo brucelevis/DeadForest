@@ -21,7 +21,7 @@ using namespace cocos2d;
 
 void PlayGameLayer::showLayer(bool& opened)
 {
-    static bool isFPSOn = true;
+    static bool isStatusOn = true;
     static bool isCellSpaceOn = false;
     static bool isIntersectionViewOn = false;
     static bool isNavGraphOn = false;
@@ -45,20 +45,35 @@ void PlayGameLayer::showLayer(bool& opened)
     // game layer
     if ( _isGameStarted )
     {
-        auto drawList = ImGui::GetWindowDrawList();
-        auto game = _gameLayer->getGameManager();
         ImGui::SetCursorScreenPos(origin);
-        if ( isFPSOn )
+        
+        auto game = _gameLayer->getGameManager();
+        
+        _debugNode->clear();
+        _debugNode->setScale(game->getZoomScale());
+        
+        if ( isStatusOn )
         {
+            static auto renderer = Director::getInstance()->getRenderer();
+            
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 1.00, 1.00));
             ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
+            ImGui::Text("Vertices: %d", static_cast<int>(renderer->getDrawnVertices()));
+            ImGui::Text("Batches: %d", static_cast<int>(renderer->getDrawnBatches()));
             ImGui::PopStyleColor();
         }
-    
-        ImVec2 world(1560, 2000);
-        ImVec2 local = ImVec2(world.x - game->getPlayerPtr()->getWorldPosition().x, world.y - game->getPlayerPtr()->getWorldPosition().y);
         
-        drawList->AddCircle(ImVec2(568 + origin.x + local.x, 320 + origin.y - local.y), 3.0f, ImColor(ImVec4(1,1,1,1)));
+        if ( isNavGraphOn )
+        {
+            Mat3 mat;
+            mat.translate(game->getPlayerPtr()->getWorldPosition());
+            mat.inverse();
+            
+            Vec2 local = mat.getTransformedVector(Vec2(1560, 2000));
+            
+           
+            _debugNode->drawDot(local, 3.0f, Color4F::WHITE);
+        }
         
     }
     ImGui::End();
@@ -73,7 +88,7 @@ void PlayGameLayer::showLayer(bool& opened)
         
         if (ImGui::TreeNode("debug"))
         {
-            ImGui::Checkbox("fps", &isFPSOn);
+            ImGui::Checkbox("status", &isStatusOn);
             ImGui::Checkbox("cell", &isCellSpaceOn);
             ImGui::Checkbox("intersection", &isIntersectionViewOn);
             ImGui::Checkbox("graph", &isNavGraphOn);
@@ -93,11 +108,20 @@ void PlayGameLayer::playGame()
 {
     _gameLayer = realtrick::client::DummyScene::create(this);
     addChild(_gameLayer);
+    
+    _clipNode = ClippingRectangleNode::create(cocos2d::Rect(0, 0, GAME_SCREEN_HEIGHT, GAME_SCREEN_HEIGHT));
+    addChild(_clipNode);
+    
+    _debugNode = DrawNode::create();
+    _debugNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
+    _clipNode->addChild(_debugNode);
 }
 
 void PlayGameLayer::closeLayer()
 {
     _gameLayer->removeFromParentAndCleanup(true);
+    _clipNode->removeFromParentAndCleanup(true);
+    
     _imguiLayer->stopGame();
 }
 

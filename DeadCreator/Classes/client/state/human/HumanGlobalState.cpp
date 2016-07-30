@@ -12,12 +12,12 @@
 #include "Telegram.hpp"
 #include "EntityHuman.hpp"
 #include "ui/CocosGUI.h"
-#include "EntityBlood.hpp"
 #include "GameManager.hpp"
 #include "GameWorld.hpp"
 #include "UiLayer.hpp"
 #include "Camera2D.hpp"
 #include "AimingNode.hpp"
+#include "AnimatedFiniteEntity.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -59,7 +59,8 @@ bool HumanGlobalState::onMessage(EntityHuman* human, const Telegram& msg)
         }
         
         
-        EntityBlood* blood = EntityBlood::create(human->getGameManager(), "blood" + _to_string(random(1,4)) + ".png", random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
+        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(human->getGameManager(), {"blood" + _to_string(random(1,4)) + ".png"},
+                                                          random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
         blood->setWorldPosition(Vec2(human->getWorldPosition().x + random(-30, 30), human->getWorldPosition().y + random(-30, 30)));
         blood->setScale(0.2f);
         human->getGameManager()->addEntity(blood, Z_ORDER_ITEMS, human->getGameManager()->getNextValidID());
@@ -79,7 +80,8 @@ bool HumanGlobalState::onMessage(EntityHuman* human, const Telegram& msg)
         
         for(int i = 0 ; i < 5 ; ++ i)
         {
-            EntityBlood* blood = EntityBlood::create(human->getGameManager(), "blood1.png", random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
+            AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(human->getGameManager(), {"blood1.png"},
+                                                                       random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
             blood->setWorldPosition(Vec2(human->getWorldPosition().x + random(-20, 20), human->getWorldPosition().y + random(-20, 20)));
             blood->setScale(0.3f);
             human->getGameManager()->addEntity(blood, Z_ORDER_ITEMS, human->getGameManager()->getNextValidID());
@@ -92,11 +94,6 @@ bool HumanGlobalState::onMessage(EntityHuman* human, const Telegram& msg)
         SoundSource s =  *static_cast<SoundSource*>(msg.extraInfo);
         float t = (1.0f - (s.position - human->getGameManager()->getGameCamera()->getCameraPos()).getLength() / s.soundRange) * s.volume;
         experimental::AudioEngine::setVolume( experimental::AudioEngine::play2d(s.fileName), t);
-        
-        return true;
-    }
-    else if ( msg.msg == MessageType::SCREEN_VIBRATE_EVENT )
-    {
         
         return true;
     }

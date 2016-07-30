@@ -20,14 +20,14 @@ namespace realtrick
     {
         
         class AnimationBase;
-        class EntityHuman;
+        class DynamicEntity;
         
         class AnimationPlayer
         {
             
         public:
             
-            AnimationPlayer(EntityHuman* owner, AnimationBase* animation, int zOrder);
+            AnimationPlayer(DynamicEntity* owner, AnimationBase* animation, int zOrder);
             
             void pushAnimationFrames(AnimationBase* animation);
             void pushOneFrame(const std::pair<std::string, int>& pair_string_int);
@@ -60,7 +60,7 @@ namespace realtrick
             
         private:
             
-            EntityHuman*                                            _owner;
+            DynamicEntity*                                          _owner;
             AnimationBase*                                          _currAnimation;
             
             std::deque<std::pair<std::string, int>>                 _frameQueue;

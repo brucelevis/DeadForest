@@ -17,7 +17,7 @@ using namespace cocos2d;
 using namespace realtrick::client;
 
 
-AnimationPlayer::AnimationPlayer(EntityHuman* owner, AnimationBase* animation, int zOrder) :
+AnimationPlayer::AnimationPlayer(DynamicEntity* owner, AnimationBase* animation, int zOrder) :
 _owner(owner),
 _accumulatedTime(0.0f),
 _currFrame(0),

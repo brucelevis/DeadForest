@@ -13,7 +13,6 @@
 #include "MessageTypes.hpp"
 #include "Inventory.hpp"
 #include "Items.hpp"
-#include "EntityRainDrop.hpp"
 #include "Camera2D.hpp"
 #include "WeaponStatus.hpp"
 #include "CircularBezel.hpp"

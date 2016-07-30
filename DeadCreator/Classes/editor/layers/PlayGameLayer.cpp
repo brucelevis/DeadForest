@@ -148,7 +148,7 @@ void PlayGameLayer::showLayer(bool& opened)
                 const Cell& currCell = cellSpace->getCell(idx);
                 for ( const auto& ent : currCell.members )
                 {
-                    if (isMasked(ent->getFamilyMask(), FamilyMask::FINITE_BASE) ||
+                    if (ent->getEntityType() == EntityType::ENTITY_FINITE ||
                         isMasked(ent->getFamilyMask(), FamilyMask::BULLET_BASE) )
                         continue;
                     

@@ -51,8 +51,6 @@ namespace realtrick
             AnimationPlayer* getBodyAnimator() const { return _bodyAnimationPlayer; }
             
             bool isFovOn() const { return _isFovOn; }
-            void setBodyRot(float rot) { _bodyRot = rot; }
-            float getBodyRot() const { return _bodyRot; }
             
             bool isAlive() const { return _isAlive; }
             void setDead() { _isAlive = false; }
@@ -101,8 +99,7 @@ namespace realtrick
             bool                            _isAlive;
             bool                            _isRun;
             bool                            _isFovOn;
-    
-            float                           _bodyRot;
+
             float                           _walkSpeed;
             float                           _runSpeed;
             float                           _footGauge;

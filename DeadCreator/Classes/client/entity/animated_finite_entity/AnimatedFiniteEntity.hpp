@@ -28,9 +28,13 @@ namespace realtrick
             virtual ~AnimatedFiniteEntity();
             AnimatedFiniteEntity(const AnimatedFiniteEntity& rhs);
             virtual bool init(const std::vector<std::string> frames, float deathTime, cocos2d::ui::Widget::TextureResType type);
+            static AnimatedFiniteEntity* create(GameManager* mgr,
+                                                const std::vector<std::string>& frames,
+                                                float deathTime,
+                                                cocos2d::ui::Widget::TextureResType type = cocos2d::ui::Widget::TextureResType::LOCAL);
             
             void enableNormal(bool enable) override {}
-            virtual AnimatedFiniteEntity* clone() const = 0;
+            AnimatedFiniteEntity* clone() const { return new AnimatedFiniteEntity(*this); }
             void setInterval(float interval) { _interval = interval; }
             bool handleMessage(const Telegram& msg) override;
             

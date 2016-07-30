@@ -23,7 +23,6 @@ namespace realtrick
         CONSUMPTION         = 0x00000000000010,
         STUFF               = 0x00000000000020,
         BULLET_BASE         = 0x00000000000040,
-        FINITE_BASE         = 0x00000000000080
     };
     
     enum EntityType : int
@@ -41,10 +40,8 @@ namespace realtrick
         BULLET_SHELL,
         BULLET_AXE,
         ENTITY_HUMAN,
-        ENTITY_BLOOD,
-        ENTITY_EMPTY_CARTRIDGE,
-        ENTITY_RAIN_DROP,
         ENTITY_ZOMBIE,
+        ENTITY_FINITE,
     };
     
     enum class PlayerType : int

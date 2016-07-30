@@ -35,8 +35,6 @@ namespace realtrick
             
             explicit PaletteLayer(GMXLayer& gmxLayer):
             _gmxLayer(gmxLayer),
-            _layerSize(cocos2d::Size(200,200)),
-            _layerPosition(cocos2d::Vec2(200, 200)),
             _boundingBoxPadding(cocos2d::Rect::ZERO)
             {}
             
@@ -58,7 +56,7 @@ namespace realtrick
                 ImGuiContext& g = *GImGui;
                 float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
                 
-                ImGui::SetNextWindowPos(ImVec2(_layerPosition.x, _layerPosition.y), ImGuiSetCond_Once);
+                ImGui::SetNextWindowPos(ImVec2(200, 200), ImGuiSetCond_Once);
                 ImGui::SetNextWindowSize(ImVec2(205, 300), ImGuiSetCond_Once);
                 
                 ImGui::Begin("Palette", &opened, ImVec2(0,0), 0.9f,
@@ -68,20 +66,18 @@ namespace realtrick
                              ImGuiWindowFlags_NoScrollWithMouse |
                              ImGuiWindowFlags_ShowBorders);
                 
-                _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-                _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
-                
-                _boundingBoxPadding.setRect(_layerPosition.x + g.Style.WindowPadding.x,
-                                            _layerPosition.y + g.Style.WindowPadding.y + height,
-                                            _layerSize.width - g.Style.WindowPadding.x * 2.0f,
-                                            _layerSize.height - g.Style.WindowPadding.y * 2.0f - height);
+                _boundingBoxPadding.setRect(ImGui::GetWindowPos().x + g.Style.WindowPadding.x,
+                                            ImGui::GetWindowPos().y + g.Style.WindowPadding.y + height,
+                                            ImGui::GetWindowSize().x - g.Style.WindowPadding.x * 2.0f,
+                                            ImGui::GetWindowSize().y - g.Style.WindowPadding.y * 2.0f - height);
                 
                 static cocos2d::Vec2 mousePosInCocos2dMatrix;
                 mousePosInCocos2dMatrix = cocos2d::Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
                 
                 if ( ImGui::IsMouseHoveringWindow() && ImGui::GetIO().MouseClicked[0] )
                 {
-                    cocos2d::Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerSize.height - _layerPosition.y, _layerSize.width, _layerSize.height);
+                    cocos2d::Rect boundingBox(ImGui::GetWindowPos().x,
+                                              ImGui::GetIO().DisplaySize.y - ImGui::GetWindowSize().y - ImGui::GetWindowPos().y, ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
                     if ( boundingBox.containsPoint(mousePosInCocos2dMatrix) )
                     {
                         GMXLayer::enableTitleClicked();
@@ -142,7 +138,7 @@ namespace realtrick
                 {
                     if ( ent.second.paletteType == static_cast<PaletteType>(_paletteType) )
                     {
-                        if ( counter % 3 != 0) ImGui::SameLine();
+                        if ( counter % 3 != 0 ) ImGui::SameLine();
                         if ( ImGuiLayer::imageButton(ent.second.fileName, 50, 50) )
                         {
                             _selectedItem = static_cast<int>(ent.second.entityType);
@@ -171,8 +167,6 @@ namespace realtrick
             
             GMXLayer& _gmxLayer;
             
-            cocos2d::Size _layerSize;
-            cocos2d::Vec2 _layerPosition;
             cocos2d::Rect _boundingBoxPadding;
             
             int _paletteType = 0;

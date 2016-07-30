@@ -25,19 +25,14 @@ namespace realtrick
         class WeaponBase;
         class ItemSlot;
         
-        
         enum MessageType : int
         {
-            JOYSTICK_CONTROLED = 0,
-            RELOAD_WEAPON,
+            RELOAD_WEAPON = 0,
             HITTED_BY_GUN,
             HITTED_BY_AXE,
             WEAPON_READY,
             REMOVE_SELF,
-            SHOW_NEXT_FRAME,
-            REPEAT_FRAMES,
             PLAY_SOUND,
-            VICTORY_GAME,
             DIE,
             LOAD_GAME_PLAYER,
             LOAD_GAME_COMPLETE,
@@ -52,7 +47,7 @@ namespace realtrick
             BEZEL_CLICK_INPUT,
             M16A2_SHOOT,
             CROSS_HAIR_EVENT,
-            SCREEN_VIBRATE_EVENT
+            SHOW_NEXT_FRAME,
         };
         
         enum HumanBehaviorType

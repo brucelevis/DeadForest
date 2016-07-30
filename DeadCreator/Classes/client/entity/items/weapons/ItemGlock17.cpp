@@ -9,8 +9,7 @@
 #include "ItemGlock17.hpp"
 #include "EntityHuman.hpp"
 #include "GameManager.hpp"
-#include "EntityBlood.hpp"
-#include "EntityEmptyCartridge.hpp"
+#include "AnimatedFiniteEntity.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -71,7 +70,7 @@ void ItemGlock17::attack()
     std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
     Vec2 worldPos = _owner->getWorldPosition();
     
-    EntityEmptyCartridge* es = EntityEmptyCartridge::create(_gameMgr, {"es0.png", "es1.png", "es2.png", "es3.png", "es4.png" }, 5.0f, ui::Widget::TextureResType::PLIST);
+    AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_gameMgr, {"es0.png", "es1.png", "es2.png", "es3.png", "es4.png" }, 5.0f, ui::Widget::TextureResType::PLIST);
     es->setWorldPosition(worldPos + _owner->getHeading() * random(-30.0f, 30.0f) + _owner->getRight() * random(20.0f, 40.0f));
     es->setRotation(_owner->getBodyRot());
     _gameMgr->addEntity(es, Z_ORDER_ITEMS, _gameMgr->getNextValidID());

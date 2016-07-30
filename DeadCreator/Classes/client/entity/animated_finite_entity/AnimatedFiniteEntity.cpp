@@ -17,11 +17,11 @@ using namespace cocos2d;
 
 AnimatedFiniteEntity::AnimatedFiniteEntity(GameManager* mgr) : EntityBase(mgr),
 _base(nullptr),
-_interval(0.03f),
+_interval(0.05f),
 _deathTime(0.0f),
 _currIdx(0)
 {
-    ADD_FAMILY_MASK(_familyMask, FamilyMask::FINITE_BASE);
+    setEntityType(EntityType::ENTITY_FINITE);
 }
 
 
@@ -35,6 +35,20 @@ AnimatedFiniteEntity::AnimatedFiniteEntity(const AnimatedFiniteEntity& rhs) : En
     _base = nullptr;
     _frames = rhs._frames;
     _deathTime = rhs._deathTime;
+}
+
+
+AnimatedFiniteEntity* AnimatedFiniteEntity::create(GameManager* mgr, const std::vector<std::string>& frames,
+                                                   float deathTime, cocos2d::ui::Widget::TextureResType type)
+{
+    AnimatedFiniteEntity* ret = new (std::nothrow) AnimatedFiniteEntity(mgr);
+    if ( ret && ret->init(frames, deathTime, type) )
+    {
+        ret->autorelease();
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
 }
 
 
@@ -65,14 +79,8 @@ bool AnimatedFiniteEntity::handleMessage(const Telegram& msg)
         
         _currIdx ++;
         
-        if ( _frames.size() > _currIdx )
-        {
-            Dispatch.pushMessage(0.1, this, this, MessageType::SHOW_NEXT_FRAME, nullptr);
-        }
-        else
-        {
-            Dispatch.pushMessage(_deathTime, this, this, MessageType::REMOVE_SELF, nullptr);
-        }
+        if ( _frames.size() > _currIdx ) Dispatch.pushMessage(_interval, this, this, MessageType::SHOW_NEXT_FRAME, nullptr);
+        else Dispatch.pushMessage(_deathTime, this, this, MessageType::REMOVE_SELF, nullptr);
         
         return true;
     }

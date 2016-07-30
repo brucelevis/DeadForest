@@ -22,8 +22,7 @@ _right(Vec2::ZERO),
 _velocity(Vec2::ZERO),
 _maxSpeed(0.0f),
 _turnSpeed(0.0f),
-_speed(0.0f),
-_bodyRot(0.0f)
+_speed(0.0f)
 {
     ADD_FAMILY_MASK(_familyMask, DYNAMIC_ENTITY);
 }

@@ -8,9 +8,6 @@
 
 #pragma once
 
-#include <stack>
-#include <string>
-
 #include "DynamicEntity.hpp"
 #include "StateMachine.hpp"
 #include "AnimationPlayer.hpp"
@@ -74,6 +71,9 @@ namespace realtrick
             float getRunSpeed() const { return _runSpeed; }
             void setRunSpeed(float speed) { _runSpeed = speed; }
             
+            void setBodyRot(float rot) { _bodyRot = rot; }
+            float getBodyRot() const { return _bodyRot; }
+            
             void setRunStats(bool enable) { _isRun = enable; }
             bool isRun() const { return _isRun; }
             
@@ -103,6 +103,7 @@ namespace realtrick
             float                           _walkSpeed;
             float                           _runSpeed;
             float                           _footGauge;
+            float                           _bodyRot;
             
             Inventory*                      _inventory;
             WeaponStatus*                   _weaponStatus;

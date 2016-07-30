@@ -47,9 +47,6 @@ namespace realtrick
             float getTurnSpeed() const { return _turnSpeed; }
             void setTurnSpeed(float speed) { _turnSpeed = speed; }
             
-            void setBodyRot(float rot) { _bodyRot = rot; }
-            float getBodyRot() const { return _bodyRot; }
-            
             virtual bool handleMessage(const Telegram& msg) override { return false; }
             
             virtual void update(float dt) override {}
@@ -72,7 +69,6 @@ namespace realtrick
             float                       _maxSpeed;
             float                       _turnSpeed;
             float                       _speed;
-            float                       _bodyRot;
             
         };
         

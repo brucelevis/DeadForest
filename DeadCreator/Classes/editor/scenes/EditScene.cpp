@@ -327,7 +327,7 @@ bool EditScene::init()
         
         ImGui::SameLine();
         ImGui::PushItemWidth(200);
-        if (ImGui::Combo("##layer", &_layerType, "Tile Layer\0Entity Layer\0Doodad Layer\0Location Layer\0", 4))
+        if (ImGui::Combo("##layer", &_layerType, "Tile Layer\0Entity Layer\0Location Layer\0", 4))
         {
             if ( _layer ) _layer->getPaletteLayer()->setSelectedItem(-1);
             changeLayerType( static_cast<LayerType>(_layerType) );
@@ -598,7 +598,7 @@ void EditScene::doOpenButton()
 
 void EditScene::changeLayerType(LayerType type)
 {
-    _layerType = type;
+    _layerType = static_cast<int>(type);
     if ( _layer )
     {
         if ( type == LayerType::LOCATION ) _layer->setVisibleLocations(true);

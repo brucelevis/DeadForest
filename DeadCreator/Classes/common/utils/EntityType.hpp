@@ -43,7 +43,8 @@ namespace realtrick
         ENTITY_HUMAN,
         ENTITY_BLOOD,
         ENTITY_EMPTY_CARTRIDGE,
-        ENTITY_RAIN_DROP
+        ENTITY_RAIN_DROP,
+        ENTITY_ZOMBIE,
     };
     
     enum class PlayerType : int

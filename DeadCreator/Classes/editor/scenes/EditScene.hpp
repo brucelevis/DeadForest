@@ -11,6 +11,7 @@
 #include "cocos2d.h"
 #include "ImGuiLayer.h"
 #include "EditorEntity.hpp"
+#include "EditorType.hpp"
 
 namespace realtrick
 {
@@ -24,14 +25,6 @@ namespace realtrick
         class OpenLayer;
         class SaveQueryLayer;
         class PlayGameLayer;
-        
-        enum LayerType
-        {
-            TILE = 0,
-            ENTITY,
-            DOODAD,
-            LOCATION,
-        };
         
         class EditScene : public ImGuiLayer
         {
@@ -54,8 +47,8 @@ namespace realtrick
             void createGMXLayer(const std::string& filePath);
             void closeGMXLayer();
             
-            void setLayerType(LayerType type) { _layerType = type; }
-            int getLayerType() const { return _layerType; }
+            void setLayerType(LayerType type) { _layerType = static_cast<int>(type); }
+            LayerType getLayerType() const { return static_cast<LayerType>(_layerType); }
             
             bool isNew();
             bool isOpen();

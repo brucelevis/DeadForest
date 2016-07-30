@@ -14,31 +14,27 @@
 #include "ItemGlock17.hpp"
 #include "GameWorld.hpp"
 #include "Items.hpp"
-#include "AnimatedButton.hpp"
 #include "Inventory.hpp"
 #include "WeaponStatus.hpp"
-#include "UiLayer.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
 EntityHuman::EntityHuman(GameManager* mgr) : DynamicEntity(mgr),
 _FSM(nullptr),
 _bodyAnimationPlayer(nullptr),
-_isWeaponEquipCompletly(false),
 _equipedWeapon(nullptr),
 _inputMask(0),
 _blood(0),
 _maxBlood(0),
 _isAlive(false),
+_isRun(false),
 _isFovOn(false),
 _bodyRot(0.0f),
 _walkSpeed(Prm.getValueAsFloat("walkSpeed")),
 _runSpeed(Prm.getValueAsFloat("runSpeed")),
-_noEventTime(0.0f),
-_enduranceTime(0.0f),
-_isRun(false),
-_isAiming(false),
 _footGauge(0.0f),
+_inventory(nullptr),
+_weaponStatus(nullptr),
 _userNickName(""),
 _stateName("idle")
 {
@@ -55,7 +51,6 @@ EntityHuman::~EntityHuman()
     CC_SAFE_DELETE(_FSM);
     CC_SAFE_RELEASE(_inventory);
     CC_SAFE_RELEASE(_weaponStatus);
-    CC_SAFE_DELETE(_aimingSystem);
 }
 
 
@@ -73,16 +68,11 @@ bool EntityHuman::init()
     
     setAlive();
     
-    _enduranceTime  = 5.0f;
-    
     _inventory = Inventory::create(_gameMgr);
     _inventory->retain();
     
     _weaponStatus = WeaponStatus::create(_gameMgr);
     _weaponStatus->retain();
-    
-    _aimingSystem = new AimingSystem(_gameMgr, this);
-    _aimingSystem->enableSystem(true);
     
     return true;
 }
@@ -108,32 +98,13 @@ void EntityHuman::update(float dt)
     this->rotateEntity();
     
     // calculate foot guage to foot step sound.
-    this->setFootGauge( getFootGauge() + _speed * dt );
+    this->setFootGauge( _footGauge + _speed * dt );
     
     // 1. update finite state machine
     if ( _FSM ) _FSM->update(dt);
     
     // 2. update animation
     if ( _bodyAnimationPlayer ) _bodyAnimationPlayer->processAnimation(dt);
-}
-
-
-void EntityHuman::setDead()
-{
-    _isAlive = false;
-}
-
-
-void EntityHuman::setAlive()
-{
-    _isAlive = true;
-    _blood = _maxBlood;
-}
-
-
-bool EntityHuman::handleMessage(const Telegram& msg)
-{
-    return _FSM->handleMessage(msg);
 }
 
 
@@ -205,18 +176,6 @@ void EntityHuman::rotateEntity()
     }
     
     setBodyRot(-physics::getAngleFromZero(getHeading()));
-}
-
-
-void EntityHuman::enableNormal(bool enable)
-{
-    getBodyAnimator()->enableNormal(enable);
-}
-
-
-void EntityHuman::disableShadow()
-{
-    getBodyAnimator()->enableShadow(false);
 }
 
 

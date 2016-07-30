@@ -356,6 +356,7 @@ void GameManager::loadGMXFile(const std::string& filePath)
                 {
                     setPlayer(human);
                     isFirst = false;
+                    
                 }
             }
             else

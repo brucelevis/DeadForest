@@ -1,8 +1,8 @@
 //
 //  Camera2D.hpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by mac on 2016. 2. 14..
+//  Created by NamJunHyeon on 2016. 2. 14..
 //
 //
 

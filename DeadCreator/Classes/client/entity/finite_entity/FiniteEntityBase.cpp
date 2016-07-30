@@ -1,8 +1,8 @@
 //
 //  FiniteEntityBase.cpp
-//  TheDeadForest-v2
+//  DeadCreator
 //
-//  Created by mac on 2016. 3. 2..
+//  Created by NamJunHyeon on 2016. 3. 2..
 //
 //
 

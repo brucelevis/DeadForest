@@ -1,8 +1,8 @@
 //
 //  Lights.cpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by mac on 2016. 2. 9..
+//  Created by NamJunHyeon on 2016. 2. 9..
 //
 //
 

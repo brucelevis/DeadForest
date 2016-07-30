@@ -2,7 +2,7 @@
 //  NewFileLayer.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 6. 24..
+//  Created by NamJunHyeon on 2016. 6. 24..
 //
 //
 

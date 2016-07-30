@@ -1,8 +1,8 @@
 //
 //  EntityBase.cpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by mac on 2016. 1. 3..
+//  Created by NamJunHyeon on 2016. 1. 3..
 //
 //
 

@@ -1,8 +1,8 @@
 //
 //  ClipperWrapper.hpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by mac on 2016. 2. 11..
+//  Created by NamJunHyeon on 2016. 2. 11..
 //
 //
 

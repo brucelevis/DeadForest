@@ -1,8 +1,8 @@
 //
 //  HpBar.hpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by mac on 2016. 5. 16..
+//  Created by NamJunHyeon on 2016. 5. 16..
 //
 //
 

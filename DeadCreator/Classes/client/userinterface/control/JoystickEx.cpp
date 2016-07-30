@@ -1,8 +1,8 @@
 //
 //  JoystickEx.cpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by mac on 2016. 1. 20..
+//  Created by NamJunHyeon on 2016. 1. 20..
 //
 //
 

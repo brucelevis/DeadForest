@@ -1,8 +1,8 @@
 //
 //  EffectBase.hpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by mac on 2016. 2. 8..
+//  Created by NamJunHyeon on 2016. 2. 8..
 //
 //
 

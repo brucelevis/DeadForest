@@ -1,8 +1,8 @@
 //
 //  Bullet9mm.hpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by mac on 2016. 2. 3..
+//  Created by NamJunHyeon on 2016. 2. 3..
 //
 //
 

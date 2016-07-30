@@ -1,8 +1,8 @@
 //
 //  ItemSlot.cpp
-//  TheDeadForest-v2
+//  DeadCreator
 //
-//  Created by mac on 2016. 2. 20..
+//  Created by NamJunHyeon on 2016. 2. 20..
 //
 //
 

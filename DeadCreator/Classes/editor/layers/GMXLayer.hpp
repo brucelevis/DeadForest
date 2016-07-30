@@ -2,7 +2,7 @@
 //  GMXLayer.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 6. 28..
+//  Created by NamJunHyeon on 2016. 6. 28..
 //
 //
 

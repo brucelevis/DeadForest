@@ -1,8 +1,8 @@
 //
 //  WeaponStatus.cpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by mac on 2016. 5. 14..
+//  Created by NamJunHyeon on 2016. 5. 14..
 //
 //
 

@@ -1,8 +1,8 @@
 //
 //  ItemGlock17.hpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by mac on 2016. 1. 13..
+//  Created by NamJunHyeon on 2016. 1. 13..
 //
 //
 

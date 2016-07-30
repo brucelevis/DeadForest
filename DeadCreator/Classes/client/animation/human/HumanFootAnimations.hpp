@@ -1,8 +1,8 @@
 //
 //  HumanFootAnimations.hpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by mac on 2015. 12. 27..
+//  Created by NamJunHyeon on 2015. 12. 27..
 //
 //
 

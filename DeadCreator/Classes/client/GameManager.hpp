@@ -1,8 +1,8 @@
 //
 //  GameManager.hpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by 남준현 on 2015. 11. 27..
+//  Created by NamJunHyeon on 2015. 11. 27..
 //
 //
 

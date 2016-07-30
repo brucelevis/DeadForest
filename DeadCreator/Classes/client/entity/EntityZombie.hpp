@@ -2,7 +2,7 @@
 //  EntityZombie.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 7. 30..
+//  Created by NamJunHyeon on 2016. 7. 30..
 //
 //
 
@@ -18,6 +18,11 @@ namespace realtrick
     namespace client
     {
         
+        class WeaponBase;
+        class GameManager;
+        class Inventory;
+        class WeaponStatus;
+        
         class EntityZombie : public DynamicEntity
         {
             
@@ -29,15 +34,26 @@ namespace realtrick
             virtual bool init() override;
             static EntityZombie* create(GameManager* mgr);
             
+            void setFootGauge(float g);
+            
+            virtual void update(float dt) override;
+            virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other) override;
+            virtual bool isIntersectWall(const cocos2d::Vec2& futurePosition, const Polygon& wall) override;
+            virtual void rotateEntity() override;
+            
+            virtual bool handleMessage(const Telegram& msg) override { return _FSM->handleMessage(msg); }
+            virtual void enableNormal(bool enable) override { this->getBodyAnimator()->enableNormal(enable); }
+            
             StateMachine<EntityZombie>* getFSM() const { return _FSM; }
             AnimationPlayer* getBodyAnimator() const { return _bodyAnimationPlayer; }
             
+            bool isFovOn() const { return _isFovOn; }
             void setBodyRot(float rot) { _bodyRot = rot; }
             float getBodyRot() const { return _bodyRot; }
             
             bool isAlive() const { return _isAlive; }
-            void setDead();
-            void setAlive();
+            void setDead() { _isAlive = false; }
+            void setAlive() { _isAlive = true; _blood = _maxBlood; }
             
             int getBlood() const { return _blood; }
             void setBlood(int blood) { _blood = blood; }
@@ -48,22 +64,8 @@ namespace realtrick
             float getRunSpeed() const { return _runSpeed; }
             void setRunSpeed(float speed) { _runSpeed = speed; }
             
-            virtual bool handleMessage(const Telegram& msg) override;
-            
-            virtual void update(float dt) override;
-            
-            virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other) override;
-            virtual bool isIntersectWall(const cocos2d::Vec2& futurePosition, const Polygon& wall) override;
-            
-            virtual void rotateEntity() override;
-            
             void setRunStats(bool enable) { _isRun = enable; }
             bool isRun() const { return _isRun; }
-            
-            void enableNormal(bool enable) override;
-            
-            void setFootGauge(float g);
-            float getFootGauge() const { return _footGauge; }
             
             void setStateName(const std::string& name) { _stateName = name; }
             std::string getStateName() const { return _stateName; }
@@ -78,6 +80,7 @@ namespace realtrick
             
             bool                            _isAlive;
             bool                            _isRun;
+            bool                            _isFovOn;
             
             float                           _bodyRot;
             float                           _walkSpeed;

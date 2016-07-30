@@ -1,8 +1,8 @@
 //
 //  Packet.hpp
-//  TheDeadForest-v2
+//  DeadCreator
 //
-//  Created by mac on 2016. 5. 3..
+//  Created by NamJunHyeon on 2016. 5. 3..
 //
 //
 

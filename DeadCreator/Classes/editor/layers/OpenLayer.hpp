@@ -2,7 +2,7 @@
 //  OpenLayer.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 7. 10..
+//  Created by NamJunHyeon on 2016. 7. 10..
 //
 //
 

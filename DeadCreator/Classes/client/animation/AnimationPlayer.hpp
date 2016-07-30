@@ -1,8 +1,8 @@
 //
 //  AnimationPlayer.hpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by 남준현 on 2015. 11. 14..
+//  Created by NamJunHyeon on 2015. 11. 14..
 //
 //
 
@@ -36,10 +36,10 @@ namespace realtrick
             
             void processAnimation(float dt);
             
-            bool isQueueEmpty() const                       { return _frameQueue.empty(); }
-            void clearFrameQueue()                          { _frameQueue.clear(); }
+            bool isQueueEmpty() const { return _frameQueue.empty(); }
+            void clearFrameQueue() { _frameQueue.clear(); }
             
-            AnimationBase* getCurrAnimation() const         { return _currAnimation; }
+            AnimationBase* getCurrAnimation() const { return _currAnimation; }
             void setCurrAnimation(AnimationBase* animation) { _currAnimation = animation; }
             
             int getFrameIndex() const;
@@ -48,29 +48,31 @@ namespace realtrick
             
             void enableShadow(bool enable);
             void enableNormal(bool enable);
-            void enableForceStop(bool enable) { _isForceStopped = enable; }
             
+            void enableForceStop(bool enable) { _isForceStopped = enable; }
             bool isForceStopped() const { return _isForceStopped; }
-            std::string getCurrFrameName() const            { return _currFrameName; }
-            cocos2d::Sprite* getBaseSprite() const          { return _baseSprite; }
-            cocos2d::Sprite* getShadowSprite() const        { return _shadowSprite; }
+            
+            std::string getCurrFrameName() const { return _currFrameName; }
             
         private:
             
-            AnimationPlayer() = delete;
             std::string _getFrameName() const;
             
         private:
             
             EntityHuman*                                            _owner;
             AnimationBase*                                          _currAnimation;
+            
             std::deque<std::pair<std::string, int>>                 _frameQueue;
             float                                                   _accumulatedTime;
+            
             cocos2d::Sprite*                                        _baseSprite;
             cocos2d::Sprite*                                        _shadowSprite;
             cocos2d::Sprite*                                        _normalSprite;
+            
             std::string                                             _currFrameName;
             int                                                     _currFrame;
+            
             bool                                                    _isForceStopped;
             
         };

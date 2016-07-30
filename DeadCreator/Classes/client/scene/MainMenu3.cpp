@@ -1,8 +1,8 @@
 //
 //  MainMenu3.cpp
-//  TheDeadForest-v2
+//  DeadCreator
 //
-//  Created by mac on 2016. 5. 1..
+//  Created by NamJunHyeon on 2016. 5. 1..
 //
 //
 

@@ -1,8 +1,8 @@
 //
 //  ParamLoader.inl
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by 남준현 on 2015. 10. 20..
+//  Created by NamJunHyeon on 2015. 10. 20..
 //
 //
 

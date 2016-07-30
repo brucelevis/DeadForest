@@ -1,8 +1,8 @@
 //
 //  HumanM1897States.cpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by 남준현 on 2015. 11. 14..
+//  Created by NamJunHyeon on 2015. 11. 14..
 //
 //
 

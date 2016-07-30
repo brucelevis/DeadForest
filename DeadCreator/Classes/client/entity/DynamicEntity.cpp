@@ -1,16 +1,16 @@
 //
 //  DynamicEntity.cpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by mac on 2016. 1. 2..
+//  Created by NamJunHyeon on 2016. 1. 2..
 //
 //
 
 #include "DynamicEntity.hpp"
 #include "GameManager.hpp"
-
 using namespace cocos2d;
 using namespace realtrick::client;
+
 
 DynamicEntity::DynamicEntity(GameManager* gameMgr) :
 EntityBase(gameMgr),
@@ -20,9 +20,6 @@ _moving(Vec2::UNIT_X),
 _left(Vec2::ZERO),
 _right(Vec2::ZERO),
 _velocity(Vec2::ZERO),
-_force(Vec2::ZERO),
-_acceleration(Vec2::ZERO),
-_mass(1.0f),
 _maxSpeed(0.0f),
 _turnSpeed(0.0f),
 _speed(0.0f)
@@ -30,10 +27,6 @@ _speed(0.0f)
     ADD_FAMILY_MASK(_familyMask, DYNAMIC_ENTITY);
 }
 
-DynamicEntity::~DynamicEntity()
-{
-    
-}
 
 void DynamicEntity::moveEntity()
 {

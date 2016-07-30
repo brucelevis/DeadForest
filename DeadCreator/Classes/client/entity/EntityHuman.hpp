@@ -1,8 +1,8 @@
 //
 //  EntityHuman.hpp
-//  TheDeadForest
+//  DeadCreator
 //
-//  Created by 남준현 on 2015. 11. 15..
+//  Created by NamJunHyeon on 2015. 11. 15..
 //
 //
 
@@ -38,6 +38,7 @@ namespace realtrick
             static EntityHuman* create(GameManager* mgr);
             
             void setFootGauge(float g);
+            
             virtual void update(float dt) override;
             virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other) override;
             virtual bool isIntersectWall(const cocos2d::Vec2& futurePosition, const Polygon& wall) override;

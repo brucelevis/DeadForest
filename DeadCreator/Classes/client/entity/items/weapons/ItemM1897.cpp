@@ -63,7 +63,7 @@ void ItemM1897::outWeapon()
 void ItemM1897::attack()
 {
     log("<ItemM1897:attack> attack!");
-    vector<vector<pair<float, EntityBase*>>> closestIntersectPoint(_numOfShells);
+    vector<vector<pair<float, GameObject*>>> closestIntersectPoint(_numOfShells);
     Vec2 worldPos = _owner->getWorldPosition();
     
     AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_game, {"ess0.png", "ess1.png", "ess2.png", "ess3.png", "ess4.png" },
@@ -86,7 +86,7 @@ void ItemM1897::attack()
         shootAts[i].second = randomRotation.getTransformedVector(typicalHeading);
     }
     
-    const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, typicalHeading, getRange());
+    const std::list<GameObject*>& members = _game->getNeighborsOnAttack(worldPos, typicalHeading, getRange());
     for (const auto &d : members)
     {
         if ( d == _owner ) continue;
@@ -130,7 +130,7 @@ void ItemM1897::attack()
     {
         if ( closestIntersectPoint[s].empty() == false )
         {
-            auto collider = *(min_element(std::begin(closestIntersectPoint[s]), std::end(closestIntersectPoint[s]), [](const std::pair<float, EntityBase*>& p1, const std::pair<float, EntityBase*>& p2) {
+            auto collider = *(min_element(std::begin(closestIntersectPoint[s]), std::end(closestIntersectPoint[s]), [](const std::pair<float, GameObject*>& p1, const std::pair<float, GameObject*>& p2) {
                 return p1.first < p2.first;
             }));
             
@@ -143,7 +143,7 @@ void ItemM1897::attack()
                 s.receiverID = collider.second->getTag();
                 s.senderID = _owner->getTag();
                 s.damage = getDamage();
-                Dispatch.pushMessage(0.0, collider.second, _owner, MessageType::HITTED_BY_GUN, &s);
+                _game->sendMessage(0.0, collider.second, _owner, MessageType::HITTED_BY_GUN, &s);
                 
                 isHit = true;
             }
@@ -155,7 +155,7 @@ void ItemM1897::attack()
         if ( _owner->getTag() == _game->getPlayerPtr()->getTag() )
         {
             // 총쏜사람이 플레이어일 경우 크로스헤어 이벤트를 발동시킨다.
-            Dispatch.pushMessage(0.0, _owner, _owner, MessageType::CROSS_HAIR_EVENT, nullptr);
+            _game->sendMessage(0.0, _owner, _owner, MessageType::CROSS_HAIR_EVENT, nullptr);
         }
     }
 }

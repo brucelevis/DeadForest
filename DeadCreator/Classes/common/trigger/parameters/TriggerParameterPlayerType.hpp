@@ -9,7 +9,7 @@
 #pragma once
 
 #include "TriggerParameterBase.hpp"
-#include "EntityType.hpp"
+#include "Types.hpp"
 
 namespace realtrick
 {

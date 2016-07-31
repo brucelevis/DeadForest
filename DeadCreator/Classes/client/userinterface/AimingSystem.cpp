@@ -36,10 +36,10 @@ void AimingSystem::update()
     {
         Vec2 worldPos = _owner->getWorldPosition();
         Vec2 shootAt = _owner->getHeading();
-        std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
+        std::vector<std::pair<float, GameObject*>> closestIntersectPoint;
         Segment bulletRay = Segment(worldPos, worldPos + shootAt * equipedWeapon->getRange());
 
-        const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, equipedWeapon->getRange());
+        const std::list<GameObject*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, equipedWeapon->getRange());
         for (const auto &d : members)
         {
             if ( d == _owner ) continue;
@@ -74,7 +74,7 @@ void AimingSystem::update()
         
         if ( closestIntersectPoint.empty() == false )
         {
-            auto collider = *(min_element(std::begin(closestIntersectPoint), std::end(closestIntersectPoint), [](const std::pair<float, EntityBase*>& p1, const std::pair<float, EntityBase*>& p2) {
+            auto collider = *(min_element(std::begin(closestIntersectPoint), std::end(closestIntersectPoint), [](const std::pair<float, GameObject*>& p1, const std::pair<float, GameObject*>& p2) {
                 return p1.first < p2.first;
             }));
             

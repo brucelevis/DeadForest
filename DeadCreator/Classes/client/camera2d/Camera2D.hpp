@@ -9,7 +9,7 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "EntityBase.hpp"
+#include "GameObject.hpp"
 
 namespace realtrick
 {
@@ -18,13 +18,16 @@ namespace realtrick
         
         class Game;
         
-        class Camera2D
+        class Camera2D : public cocos2d::Ref
         {
             
         public:
             
             Camera2D() = default;
             virtual ~Camera2D() = default;
+            
+            CREATE_FUNC(Camera2D);
+            bool init() { return true; }
             
             void setCameraPos(const cocos2d::Vec2& pos) { _cameraPosition = pos; }
             cocos2d::Vec2 getCameraPos() const { return _cameraPosition; }
@@ -35,8 +38,8 @@ namespace realtrick
             
         };
         
-    } // client
-} // realtrick
+    }
+}
 
 
 

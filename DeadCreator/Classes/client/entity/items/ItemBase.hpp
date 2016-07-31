@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "EntityBase.hpp"
+#include "GameObject.hpp"
 #include "ui/CocosGUI.h"
 
 namespace realtrick
@@ -19,7 +19,7 @@ namespace realtrick
         class EntityHuman;
         class Game;
         
-        class ItemBase : public EntityBase
+        class ItemBase : public GameObject
         {
             
         public:

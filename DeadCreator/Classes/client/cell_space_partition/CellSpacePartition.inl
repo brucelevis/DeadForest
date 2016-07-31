@@ -7,7 +7,7 @@
 //
 
 #include "CellSpacePartition.hpp"
-#include "EntityBase.hpp"
+#include "GameObject.hpp"
 #include "ClipperWrapper.hpp"
 
 
@@ -17,7 +17,7 @@ namespace realtrick
     namespace client
     {
         
-        inline void CellSpacePartition::addEntity(EntityBase* ent)
+        inline void CellSpacePartition::addEntity(GameObject* ent)
         {
             int idx = positionToIndex(ent->getWorldPosition());
             _cells[idx].members.push_back(ent);
@@ -80,7 +80,7 @@ namespace realtrick
         }
         
         
-        inline bool CellSpacePartition::updateEntity(EntityBase* ent, cocos2d::Vec2 oldPos)
+        inline bool CellSpacePartition::updateEntity(GameObject* ent, cocos2d::Vec2 oldPos)
         {
             int oldIdx = positionToIndex(oldPos);
             int newIdx = positionToIndex(ent->getWorldPosition());
@@ -94,7 +94,7 @@ namespace realtrick
         }
         
         
-        inline void CellSpacePartition::removeEntityFromCell(EntityBase* ent)
+        inline void CellSpacePartition::removeEntityFromCell(GameObject* ent)
         {
             int index = positionToIndex(ent->getWorldPosition());
             auto iter = std::find(std::begin(_cells[index].members), std::end(_cells[index].members), ent);

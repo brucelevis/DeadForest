@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include "EntityType.hpp"
+#include "Types.hpp"
 
 #include "imgui.h"
 #include "imgui_internal.h"

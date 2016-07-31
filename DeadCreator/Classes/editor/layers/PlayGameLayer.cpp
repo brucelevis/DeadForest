@@ -12,7 +12,9 @@
 using namespace realtrick::editor;
 
 #include "Game.hpp"
+#include "GameResource.hpp"
 #include "GameMap.hpp"
+#include "RenderingSystem.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -76,43 +78,43 @@ void PlayGameLayer::showLayer(bool& opened)
             ImGui::SetCursorScreenPos(before);
         }
         
-        if ( isNavGraphOn )
-        {
-            auto map = game->getGameMap();
-            
-            // rectangle lines
-            for(int i = 0 ; i < map->getWorldHeight() ; i = i + map->getTileHeight() / 4 )
-            {
-                auto a = worldToLocal(origin, Vec2(0, i));
-                auto b = worldToLocal(origin, Vec2(map->getWorldWidth(), i));
-                drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
-            }
-            
-            for(int i = 0 ; i < map->getWorldWidth() ; i = i + map->getTileWidth() / 4 )
-            {
-                auto a = worldToLocal(origin, Vec2(i, 0));
-                auto b = worldToLocal(origin, Vec2(i, map->getWorldHeight()));
-                drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
-            }
-            
-            // center recet
-            auto indices = getFocusedTileIndex(game->getPlayerPtr()->getWorldPosition(), 128, 128, 4);
-            const auto& tiles = game->getGameMap()->getTileData();
-            for( int i = indices.second - map->getNumOfViewableTileY() / 2 ; i < indices.second + map->getNumOfViewableTileY() / 2 ; ++ i)
-            {
-                for(int j = indices.first - map->getNumOfViewableTileX() / 2 ; j < indices.first + map->getNumOfViewableTileX() / 2 ; ++ j)
-                {
-                    if ( j < 0 || i < 0 || i >= map->getNumofTileY() || j >= map->getNumofTileX() ) continue;
-                    
-                    auto left = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(-64, 0));
-                    auto bottom = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(0, -64));
-                    auto right = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(64, 0));
-                    
-                    drawList->AddLine(ImVec2(right.x, right.y), ImVec2(bottom.x, bottom.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
-                    drawList->AddLine(ImVec2(bottom.x, bottom.y), ImVec2(left.x, left.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
-                }
-            }
-        }
+//        if ( isNavGraphOn )
+//        {
+//            auto map = game->getGameMap();
+//            
+//            // rectangle lines
+//            for(int i = 0 ; i < map->getWorldHeight() ; i = i + map->getTileHeight() / 4 )
+//            {
+//                auto a = worldToLocal(origin, Vec2(0, i));
+//                auto b = worldToLocal(origin, Vec2(map->getWorldWidth(), i));
+//                drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
+//            }
+//            
+//            for(int i = 0 ; i < map->getWorldWidth() ; i = i + map->getTileWidth() / 4 )
+//            {
+//                auto a = worldToLocal(origin, Vec2(i, 0));
+//                auto b = worldToLocal(origin, Vec2(i, map->getWorldHeight()));
+//                drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
+//            }
+//            
+//            // center recet
+//            auto indices = getFocusedTileIndex(game->getPlayerPtr()->getWorldPosition(), 128, 128, 4);
+//            const auto& tiles = game->getGameMap()->getTileData();
+//            for( int i = indices.second - map->getNumOfViewableTileY() / 2 ; i < indices.second + map->getNumOfViewableTileY() / 2 ; ++ i)
+//            {
+//                for(int j = indices.first - map->getNumOfViewableTileX() / 2 ; j < indices.first + map->getNumOfViewableTileX() / 2 ; ++ j)
+//                {
+//                    if ( j < 0 || i < 0 || i >= map->getNumofTileY() || j >= map->getNumofTileX() ) continue;
+//                    
+//                    auto left = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(-64, 0));
+//                    auto bottom = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(0, -64));
+//                    auto right = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(64, 0));
+//                    
+//                    drawList->AddLine(ImVec2(right.x, right.y), ImVec2(bottom.x, bottom.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
+//                    drawList->AddLine(ImVec2(bottom.x, bottom.y), ImVec2(left.x, left.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
+//                }
+//            }
+//        }
         
         if ( isCellSpaceOn )
         {
@@ -134,7 +136,6 @@ void PlayGameLayer::showLayer(bool& opened)
                 
                 drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(top.x, top.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
                 drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(right.x, right.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
-                
             }
         }
         
@@ -151,7 +152,7 @@ void PlayGameLayer::showLayer(bool& opened)
                         isMasked(ent->getFamilyMask(), FamilyMask::BULLET_BASE) )
                         continue;
                     
-                    auto rad = ent->getBoundingRadius() * game->getZoomScale();
+                    auto rad = ent->getBoundingRadius() * game->getRenderingSysetm()->getZoomScale();
                     auto center = worldToLocal(origin, ent->getWorldPosition());
                     drawList->AddCircle(ImVec2(center.x, center.y), rad, ImColor(ImVec4(1.0, 0.0, 1.0, 0.7)), 20, 0.0f);
                 }
@@ -175,7 +176,7 @@ void PlayGameLayer::showLayer(bool& opened)
         
         if ( isLocationViewOn )
         {
-            const auto& locations = game->getLocationMap();
+            const auto& locations = game->getGameResource()->getLocations();
             for( const auto& location : locations )
             {
                 const auto& name = location.first;
@@ -244,7 +245,7 @@ cocos2d::Vec2 PlayGameLayer::worldToLocal(const cocos2d::Vec2& p)
     auto game = _gameLayer->getGame();
     _cameraTransform.identity();
     _cameraTransform.translate(-game->getPlayerPtr()->getWorldPosition());
-    return _cameraTransform.getTransformedVector(p) * game->getZoomScale();
+    return _cameraTransform.getTransformedVector(p) * game->getRenderingSysetm()->getZoomScale();
 }
 
 

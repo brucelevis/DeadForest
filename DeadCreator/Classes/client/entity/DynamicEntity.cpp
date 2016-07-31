@@ -13,7 +13,7 @@ using namespace realtrick::client;
 
 
 DynamicEntity::DynamicEntity(Game* game) :
-EntityBase(game),
+GameObject(game),
 _heading(Vec2::UNIT_X),
 _targetHeading(Vec2::UNIT_X),
 _moving(Vec2::UNIT_X),
@@ -44,7 +44,7 @@ void DynamicEntity::moveEntity()
     
     
     // 엔티티들과의 충돌처리
-    const std::list<EntityBase*> members = _game->getNeighborsOnMove(oldPos, _speed);
+    const std::list<GameObject*> members = _game->getNeighborsOnMove(oldPos, _speed);
     for ( const auto &entity : members )
     {
         if ( entity == this ) continue;

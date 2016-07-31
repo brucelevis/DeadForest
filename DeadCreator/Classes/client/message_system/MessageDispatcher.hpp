@@ -12,22 +12,21 @@
 #include <vector>
 
 #include "MessageTypes.hpp"
-#include "Singleton.hpp"
-
-#define Dispatch MessageDispatcher::getInstance()
+#include "Telegram.hpp"
+#include "MessageNode.hpp"
 
 namespace realtrick
 {
     namespace client
     {
         
-        class Telegram;
-        class MessageNode;
-        
-        class MessageDispatcher : public Singleton<MessageDispatcher>
+        class MessageDispatcher
         {
             
         public:
+            
+            MessageDispatcher() = default;
+            virtual ~MessageDispatcher() { clearQueue(); }
             
             void pushMessage(double delaySeconds, MessageNode* receiver, MessageNode* sender, MessageType type, void* extraInfo);
             void dispatchDelayedMessages();
@@ -35,7 +34,7 @@ namespace realtrick
             
         private:
             
-            void _discharge(const Telegram& msg);
+            void discharge(const Telegram& msg);
             
         private:
             

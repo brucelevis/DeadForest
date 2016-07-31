@@ -11,7 +11,7 @@
 #include <deque>
 #include <string>
 
-#include "EntityType.hpp"
+#include "Types.hpp"
 #include "cocos2d.h"
 
 namespace realtrick

@@ -17,7 +17,7 @@ using namespace realtrick::client;
 
 void HumanBackDeadState::enter(EntityHuman* human)
 {
-    Dispatch.pushMessage(5.0f, human, human, MessageType::DIE, nullptr);
+    human->getGame()->sendMessage(5.0f, human, human, MessageType::DIE, nullptr);
     human->setDead();
     human->getBodyAnimator()->enableShadow(false);
     human->getBodyAnimator()->pushAnimationFrames(&AnimHumanBackDead::getInstance());
@@ -41,7 +41,7 @@ bool HumanBackDeadState::onMessage(EntityHuman* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::DIE )
     {
-        human->getGameManager()->removeEntity(human->getTag());
+        human->getGame()->removeEntity(human->getTag());
         
         return true;
     }

@@ -11,10 +11,11 @@
 #include "Items.hpp"
 #include "Camera2D.hpp"
 #include "RenderTarget.hpp"
-#include "EntityBase.hpp"
+#include "GameObject.hpp"
 #include "LogicStream.hpp"
 #include "UiLayer.hpp"
 #include "TriggerSystem.hpp"
+#include "RenderingSystem.hpp"
 #include "SingleStream.hpp"
 #include "NetworkStream.hpp"
 #include "GameResource.hpp"
@@ -30,15 +31,9 @@ Game::Game() :
 _winSize(Size::ZERO),
 _player(nullptr),
 _cellSpace(nullptr),
-_gameMap(nullptr),
-_gameCamera(nullptr),
 _triggerSystem(nullptr),
-_clipNode(nullptr),
-_rootNode(nullptr),
-_uiLayer(nullptr),
 _bgmID(0),
-_isPaused(true),
-_zoomScale(1)
+_isPaused(true)
 {
 }
 
@@ -53,15 +48,14 @@ void Game::clear()
 {
     _entities.clear();
     CC_SAFE_DELETE(_cellSpace);
-    CC_SAFE_DELETE(_triggerSystem);
-    CC_SAFE_DELETE(_gameCamera);
     CC_SAFE_DELETE(_logicStream);
     CC_SAFE_RELEASE_NULL(_gameResource);
+    CC_SAFE_RELEASE_NULL(_triggerSystem);
     _player = nullptr;
     
     experimental::AudioEngine::stop(_bgmID);
     
-    Dispatch.clearQueue();
+    CC_SAFE_DELETE(_messenger);
 }
 
 
@@ -95,19 +89,11 @@ bool Game::init()
     this->scheduleUpdate();
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     
-    _triggerSystem = new TriggerSystem(this);
-    _gameCamera = new Camera2D();
+    _messenger = new MessageDispatcher();
     
     // single or network (?)
     if( Prm.getValueAsBool("useNetwork") ) { _logicStream = new NetworkStream(this); }
     else { _logicStream = new SingleStream(this); }
-    
-    _clipNode = ClippingRectangleNode::create(cocos2d::Rect(0,0, _winSize.width, _winSize.height));
-    addChild(_clipNode);
-    
-    _rootNode = Node::create();
-    _rootNode->setPosition(_winSize / 2);
-    _clipNode->addChild(_rootNode);
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
@@ -125,7 +111,9 @@ void Game::update(float dt)
     // checking pause is done
     if ( _isPaused ) return ;
     
-    pair<int, int> oldIndex = getFocusedTileIndex(_gameCamera->getCameraPos(), _gameMap->getTileWidth(), _gameMap->getTileHeight(), DUMMY_TILE_SIZE);
+    pair<int, int> oldIndex = getFocusedTileIndex(_renderingSystem->getCameraPosition(),
+                                                  _gameResource->getTileWidth(),
+                                                  _gameResource->getTileHeight(), DUMMY_TILE_SIZE);
     
     // 1. update entities
     for( const auto& entity : _entities )
@@ -135,15 +123,20 @@ void Game::update(float dt)
     _triggerSystem->update(dt);
     
     // 3. set game camera position and chunk update (if cell space is changed)
-    _gameCamera->setCameraPos(_player->getWorldPosition());
-    if ( oldIndex != getFocusedTileIndex(_gameCamera->getCameraPos(), _gameMap->getTileWidth(), _gameMap->getTileHeight(), DUMMY_TILE_SIZE) )
-        _gameMap->updateChunk(_gameCamera->getCameraPos());
+    _renderingSystem->setCameraPosition(_player->getWorldPosition());
     
-    Dispatch.dispatchDelayedMessages();
+    if ( oldIndex != getFocusedTileIndex(_renderingSystem->getCameraPosition(),
+                                         _gameResource->getTileWidth(),
+                                         _gameResource->getTileHeight(), DUMMY_TILE_SIZE) )
+    {
+        _renderingSystem->updateChunk();
+    }
+    
+    _messenger->dispatchDelayedMessages();
 }
 
 
-EntityBase* Game::getEntityFromID(int ID)
+GameObject* Game::getEntityFromID(int ID)
 {
     auto iter = _entities.find(ID);
     if(iter != _entities.end())
@@ -156,7 +149,7 @@ EntityBase* Game::getEntityFromID(int ID)
     }
 }
 
-void Game::addEntity(EntityBase* entity, int zOrder, int id)
+void Game::addEntity(GameObject* entity, int zOrder, int id)
 {
     auto iter = _entities.find(id);
     if( iter != _entities.end())
@@ -167,7 +160,7 @@ void Game::addEntity(EntityBase* entity, int zOrder, int id)
     entity->setTag(id);
     _entities.insert( {id, entity} );
     _cellSpace->addEntity(entity);
-    _rootNode->addChild(entity, zOrder);
+    _renderingSystem->addEntity(entity, zOrder);
 }
 
 
@@ -179,7 +172,7 @@ void Game::removeEntity(int id)
         throw std::runtime_error("<Game::removeEntity> ID is not exist.");
     }
     
-    iter->second->removeFromParent();
+    iter->second->removeFromParentAndCleanup(true);
     _entities.erase(iter);
     _cellSpace->removeEntityFromCell(iter->second);
 }
@@ -187,19 +180,14 @@ void Game::removeEntity(int id)
 
 void Game::loadUiLayer()
 {
-    _uiLayer = UiLayer::create(this);
-    _clipNode->addChild(_uiLayer);
-    
     _bgmID = experimental::AudioEngine::play2d("rainfall.mp3", true);
     experimental::AudioEngine::setVolume(_bgmID, 0.3f);
-    
-    setZoom(Prm.getValueAsFloat("cameraZoom"));
 }
 
 
-std::list<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const
+std::list<GameObject*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const
 {
-    std::list<EntityBase*> ret;
+    std::list<GameObject*> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
     for ( const int idx : cellIndices )
     {
@@ -216,9 +204,9 @@ std::list<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, f
 }
 
 
-std::list<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const
+std::list<GameObject*> Game::getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const
 {
-    std::list<EntityBase*> ret;
+    std::list<GameObject*> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCellsNotCurrent(position);
     for ( const int idx : cellIndices )
     {
@@ -308,23 +296,9 @@ std::vector<Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const
 }
 
 
-cocos2d::Vec2 Game::worldToLocal(const cocos2d::Vec2& p) const
-{
-    if ( !_gameCamera ) throw std::runtime_error("camera not exist.");
-    return p - _gameCamera->getCameraPos();
-}
-
-
-cocos2d::Vec2 Game::worldToLocal(const cocos2d::Vec2& p, const cocos2d::Vec2& camera) const
-{
-    if ( !_gameCamera ) throw std::runtime_error("camera not exist.");
-    return p - camera;
-}
-
-
 void Game::pushLogic(double delaySeconds, MessageType type, void* extraInfo)
 {
-    Dispatch.pushMessage(delaySeconds, _logicStream, nullptr, type, extraInfo);
+    _messenger->pushMessage(delaySeconds, _logicStream, nullptr, type, extraInfo);
 }
 
 
@@ -343,11 +317,6 @@ void Game::loadResource(const std::string& filePath)
         _cellSpace = new CellSpacePartition(worldSize.width, worldSize.height,
                                             file->cell_space_size()->width(),
                                             file->cell_space_size()->height());
-        
-        
-        // load tiles
-        _gameMap = GameMap::createWithGMXFile(this, file);
-        _rootNode->addChild(_gameMap, Z_ORDER_GAME_MAP, getNextValidID());
         
         
         // load entities
@@ -431,74 +400,6 @@ void Game::loadResource(const std::string& filePath)
             }
         }
         
-        // load locations
-        for ( auto location = file->locations()->begin(); location != file->locations()->end(); ++location)
-        {
-            std::string name = location->name()->str();
-            Size size(location->size()->width(), location->size()->height());
-            Vec2 pos(location->pos()->x(), location->pos()->y());
-            cocos2d::Rect rect(pos.x, pos.y, size.width * file->tile_size()->width() / 4, size.height * file->tile_size()->height() / 4);
-            
-            log("name: [%s], size: [%.0f, %.0f], pos: [%.0f, %.0f]", name.c_str(), size.width, size.height, pos.x, pos.y);
-            
-            _locations.insert( { name, rect });
-        }
-        
-        
-        // load triggers
-        for ( auto trigger = file->triggers()->begin() ; trigger != file->triggers()->end() ; ++trigger)
-        {
-            GameTrigger* newTrigger = new GameTrigger(this);
-            
-            // set players
-            for(auto index = trigger->players()->begin(); index != trigger->players()->end(); ++index)
-            {
-                newTrigger->addPlayer(*index);
-            }
-            
-            // set conditions
-            for(auto cond = trigger->conditions()->begin() ; cond != trigger->conditions()->end(); ++cond)
-            {
-                auto condType = cond->condition_type();
-                switch (condType)
-                {
-                    case DeadCreator::ConditionBase_Bring:
-                    {
-                        auto conditionObject = static_cast<const DeadCreator::Bring*>(cond->condition());
-                        auto conditionBring = ConditionBring::create(this,
-                                                                     static_cast<PlayerType>(conditionObject->player()),
-                                                                     static_cast<ApproximationType>(conditionObject->approximation()),
-                                                                     conditionObject->number(),
-                                                                     static_cast<EntityType>(conditionObject->entity_type()),
-                                                                     _locations[conditionObject->location_name()->str()]);
-                        newTrigger->addCondition(conditionBring);
-                        
-                        break;
-                    }
-                    default: { cocos2d::log("invalid condition type"); break;}
-                }
-            }
-            
-            // set actions
-            for(auto act = trigger->actions()->begin() ; act != trigger->actions()->end(); ++act)
-            {
-                auto actType = act->action_type();
-                switch (actType)
-                {
-                    case DeadCreator::ActionBase_DisplayText:
-                    {
-//                        auto actionObject = static_cast<const DeadCreator::DisplayText*>(act->action());
-//                        auto actionDisplayText = new ActionDisplayText();
-//                        actionDisplayText->setText(actionObject->text()->str());
-//                        newTrigger->addAction(actionDisplayText);
-                        break;
-                    }
-                    default: { cocos2d::log("invalid action type"); break;}
-                }
-            }
-            
-            _triggerSystem->addTrigger(newTrigger);
-        }
     }
 }
 
@@ -507,8 +408,58 @@ void Game::loadGMXFile(const std::string& path)
 {
     _gameResource = GameResource::createWithGMXFile(path);
     _gameResource->retain();
+    
+    _triggerSystem = TriggerSystem::createWithResouce(this, _gameResource);
+    _triggerSystem->retain();
+    
+    _renderingSystem = RenderingSystem::create(this, _gameResource);
+    _renderingSystem->setZoom(Prm.getValueAsFloat("cameraZoom"));
+    addChild(_renderingSystem);
 }
 
+
+void Game::sendMessage(double delaySeconds, MessageNode* receiver, MessageNode* sender, MessageType type, void* extraInfo)
+{
+    _messenger->pushMessage(delaySeconds, receiver, sender, type, extraInfo);
+}
+
+
+TileType Game::getStepOnTileType(const cocos2d::Vec2& pos)
+{
+    static const auto& tileData = _gameResource->getTileData();
+    static const auto tileWidth = _gameResource->getTileWidth();
+    static const auto tileHeight = _gameResource->getTileHeight();
+    
+    std::pair<int, int> idx = getFocusedTileIndex(pos, tileWidth, tileHeight, DUMMY_TILE_SIZE);
+    const auto& tile = tileData[idx.second][idx.first];
+    Vec2 center = indexToPosition(idx.first, idx.second, tileWidth, tileHeight, DUMMY_TILE_SIZE);
+
+    Vec2 region1 = center + Vec2(0.0f, tileHeight / 4.0f);
+    Vec2 region2 = center + Vec2(tileWidth / 4.0f, 0.0f);
+    Vec2 region3 = center - Vec2(0.0f, tileHeight / 4.0f);
+    Vec2 region4 = center - Vec2(tileWidth / 4.0f, 0.0f);
+
+    std::string tileType = tile.getTileTail();
+
+    if ( physics::isContainPointInDiamond(region1, tileWidth / 4.0f, pos) && (tileType.find('1') != std::string::npos) )
+    {
+        return tile.getTileType();
+    }
+    else if ( physics::isContainPointInDiamond(region2, tileWidth / 4.0f, pos) && (tileType.find('2') != std::string::npos) )
+    {
+        return tile.getTileType();
+    }
+    else if ( physics::isContainPointInDiamond(region3, tileWidth / 4.0f, pos) && (tileType.find('3') != std::string::npos) )
+    {
+        return tile.getTileType();
+    }
+    else if ( physics::isContainPointInDiamond(region4, tileWidth / 4.0f, pos) && (tileType.find('4') != std::string::npos) )
+    {
+        return tile.getTileType();
+    }
+
+    return TileType::DIRT;
+}
 
 
 

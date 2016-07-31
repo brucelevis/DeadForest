@@ -14,7 +14,7 @@
 #include "GameTrigger.hpp"
 
 #include "Game.hpp"
-#include "EntityBase.hpp"
+#include "GameObject.hpp"
 
 namespace realtrick
 {

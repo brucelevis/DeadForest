@@ -1,5 +1,5 @@
 //
-//  EntityType.hpp
+//  Types.hpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2015. 11. 28..

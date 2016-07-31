@@ -13,7 +13,7 @@
 #include "ParamLoader.hpp"
 
 #include "GMXFile_generated.h"
-#include "EntityType.hpp"
+#include "Types.hpp"
 #include "Tileset.hpp"
 
 #include "Conditions.hpp"

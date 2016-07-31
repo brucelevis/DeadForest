@@ -67,7 +67,7 @@ void ItemGlock17::outWeapon()
 void ItemGlock17::attack()
 {
     log("<ItemGlock17:attack> attack!");
-    std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
+    std::vector<std::pair<float, GameObject*>> closestIntersectPoint;
     Vec2 worldPos = _owner->getWorldPosition();
     
     AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_game, {"es0.png", "es1.png", "es2.png", "es3.png", "es4.png" }, 5.0f, ui::Widget::TextureResType::PLIST);
@@ -81,7 +81,7 @@ void ItemGlock17::attack()
     Vec2 shootAt = rotMat.getTransformedVector(_owner->getHeading());
     Segment bulletRay = Segment(worldPos, worldPos + shootAt * getRange());
     
-    const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, getRange());
+    const std::list<GameObject*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, getRange());
     for (const auto &d : members)
     {
         if ( d == _owner ) continue;
@@ -116,7 +116,7 @@ void ItemGlock17::attack()
     
     if ( closestIntersectPoint.empty() == false )
     {
-        auto collider = *(min_element(std::begin(closestIntersectPoint), std::end(closestIntersectPoint), [](const std::pair<float, EntityBase*>& p1, const std::pair<float, EntityBase*>& p2) {
+        auto collider = *(min_element(std::begin(closestIntersectPoint), std::end(closestIntersectPoint), [](const std::pair<float, GameObject*>& p1, const std::pair<float, GameObject*>& p2) {
             return p1.first < p2.first;
         }));
         
@@ -129,18 +129,18 @@ void ItemGlock17::attack()
             d.receiverID = collider.second->getTag();
             d.senderID = _owner->getTag();
             d.damage = getDamage();
-            Dispatch.pushMessage(0.0, collider.second, _owner, MessageType::HITTED_BY_GUN, &d);
+            _game->sendMessage(0.0, collider.second, _owner, MessageType::HITTED_BY_GUN, &d);
             
             SoundSource s;
             s.fileName = "GunShotAt" + _to_string(random(0, 1)) + ".mp3";
             s.position = worldPos + shootAt * collider.first;
             s.soundRange = 2000.0f;
-            Dispatch.pushMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
+            _game->sendMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
             
             if ( _owner->getTag() == _game->getPlayerPtr()->getTag() )
             {
                 // 총쏜사람이 플레이어일 경우 크로스헤어 이벤트를 발동시킨다.
-                Dispatch.pushMessage(0.0, _owner, _owner, MessageType::CROSS_HAIR_EVENT, nullptr);
+                _game->sendMessage(0.0, _owner, _owner, MessageType::CROSS_HAIR_EVENT, nullptr);
             }
         }
         

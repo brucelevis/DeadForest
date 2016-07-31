@@ -10,7 +10,7 @@
 
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
-#include "EntityType.hpp"
+#include "Types.hpp"
 
 #define INVENTORY_PAD 20.0f
 

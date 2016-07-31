@@ -8,15 +8,13 @@
 
 #include <chrono>
 
-#include "MessageDispatcher.hpp"
-#include "MessageNode.hpp"
-#include "Telegram.hpp"
-
 #include "cocos2d.h"
+
+#include "MessageDispatcher.hpp"
 using namespace realtrick::client;
 
 
-void MessageDispatcher::_discharge(const Telegram& msg)
+void MessageDispatcher::discharge(const Telegram& msg)
 {
     bool ret = false;
     if ( msg.receiver )
@@ -40,7 +38,7 @@ void MessageDispatcher::pushMessage(double delaySeconds,
     Telegram tel(delaySeconds, receiver, sender, type, extraInfo);
     if(tel.dispatchTime <= std::chrono::duration<double>::zero())
     {
-        _discharge(tel);
+        discharge(tel);
     }
     else
     {
@@ -60,7 +58,7 @@ void MessageDispatcher::dispatchDelayedMessages()
            (_priorityQ.begin()->dispatchTime >= std::chrono::duration<double>::zero()))
     {
         const Telegram& telegram = *_priorityQ.begin();
-        _discharge(telegram);
+        discharge(telegram);
         _priorityQ.erase(_priorityQ.begin());
     }
 }

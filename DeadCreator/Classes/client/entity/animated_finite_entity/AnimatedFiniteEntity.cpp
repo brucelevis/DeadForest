@@ -15,7 +15,7 @@ using namespace realtrick::client;
 using namespace cocos2d;
 
 
-AnimatedFiniteEntity::AnimatedFiniteEntity(Game* game) : EntityBase(game),
+AnimatedFiniteEntity::AnimatedFiniteEntity(Game* game) : GameObject(game),
 _base(nullptr),
 _interval(0.05f),
 _deathTime(0.0f),
@@ -30,7 +30,7 @@ AnimatedFiniteEntity::~AnimatedFiniteEntity()
 }
 
 
-AnimatedFiniteEntity::AnimatedFiniteEntity(const AnimatedFiniteEntity& rhs) : EntityBase(rhs)
+AnimatedFiniteEntity::AnimatedFiniteEntity(const AnimatedFiniteEntity& rhs) : GameObject(rhs)
 {
     _base = nullptr;
     _frames = rhs._frames;
@@ -64,7 +64,7 @@ bool AnimatedFiniteEntity::init(const std::vector<std::string> frames, float dea
     _base = Sprite::create();
     addChild(_base);
     
-    Dispatch.pushMessage(0.0, this, this, MessageType::SHOW_NEXT_FRAME, nullptr);
+    _game->sendMessage(0.0, this, this, MessageType::SHOW_NEXT_FRAME, nullptr);
     
     return true;
 }
@@ -79,8 +79,8 @@ bool AnimatedFiniteEntity::handleMessage(const Telegram& msg)
         
         _currIdx ++;
         
-        if ( _frames.size() > _currIdx ) Dispatch.pushMessage(_interval, this, this, MessageType::SHOW_NEXT_FRAME, nullptr);
-        else Dispatch.pushMessage(_deathTime, this, this, MessageType::REMOVE_SELF, nullptr);
+        if ( _frames.size() > _currIdx ) _game->sendMessage(_interval, this, this, MessageType::SHOW_NEXT_FRAME, nullptr);
+        else _game->sendMessage(_deathTime, this, this, MessageType::REMOVE_SELF, nullptr);
         
         return true;
     }

@@ -107,7 +107,7 @@ void EntityHuman::update(float dt)
 }
 
 
-bool EntityHuman::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other)
+bool EntityHuman::isIntersectOther(const cocos2d::Vec2& futurePosition, GameObject* other)
 {
     if ( other->getEntityType() == ENTITY_HUMAN )
     {
@@ -184,8 +184,7 @@ void EntityHuman::setFootGauge(float g)
     {
         _footGauge = 0.0f;
         
-        GameMap* map = _game->getGameMap();
-        TileType onTile = map->getStepOnTileType(getWorldPosition());
+        TileType onTile = _game->getStepOnTileType(getWorldPosition());
         
         SoundSource s;
         s.position = getWorldPosition();
@@ -196,7 +195,7 @@ void EntityHuman::setFootGauge(float g)
         else if ( onTile == TileType::GRASS ) s.fileName = "Grass" + _to_string(random(1, 4)) + ".mp3";
         else if ( onTile == TileType::WATER ) s.fileName = "Water" + _to_string(random(1, 4)) + ".mp3";
         
-        Dispatch.pushMessage(0.0, this, this, MessageType::PLAY_SOUND, &s);
+        _game->sendMessage(0.0, this, this, MessageType::PLAY_SOUND, &s);
         
         return ;
     }

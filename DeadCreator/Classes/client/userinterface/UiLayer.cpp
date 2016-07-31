@@ -20,6 +20,7 @@
 #include "HpBar.hpp"
 #include "InfoSystem.hpp"
 #include "SizeProtocol.h"
+#include "ParamLoader.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -111,51 +112,51 @@ bool UiLayer::init()
     });
     addChild(_bezel, Z_ORDER_UI - 1);
     
-    _weaponStatus = _game->getPlayerPtr()->getWeaponStatus();
-    _weaponStatus->setPosition(Vec2(_winSize.width * 0.9f, _winSize.height * 0.9f));
-    addChild(_weaponStatus, Z_ORDER_UI - 1);
-    
-    
-    _inventory = _game->getPlayerPtr()->getInventory();
-    _inventory->setPosition(Vec2(_winSize / 2));
-    addChild(_inventory, Z_ORDER_UI);
-    
-    
-    _inventorySwitch = ui::CheckBox::create("inventory_n.png", "inventory_s.png");
-    _inventorySwitch->setPosition(Vec2(_winSize.width / 2.0f, 50.0f));
-    _inventorySwitch->setScale(1.3f);
-    _inventorySwitch->addEventListener([this](Ref* ref, ui::CheckBox::EventType type)
-                                       {
-                                           if ( type == ui::CheckBox::EventType::SELECTED )
-                                           {
-                                               // 인벤토리를 열면 모든 조이스틱을 비활성화 시킨다.
-                                               _inventory->open();
-                                               _attackJoystick->disableJoystick();
-                                               _moveJoystick->disableJoystick();
-                                               _weaponStatus->disableButton();
-                                               
-                                               EntityHuman* player = _game->getPlayerPtr();
-                                               
-                                               MoveJoystickData data1;
-                                               data1.ref = ref;
-                                               data1.dir = player->getMoving();
-                                               data1.type = JoystickEx::ClickEventType::ENDED;
-                                               _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data1);
-                                               
-                                               AttJoystickData data2;
-                                               data2.ref = ref;
-                                               data2.type = ui::Widget::TouchEventType::ENDED;
-                                               _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data2);
-                                           }
-                                           else
-                                           {
-                                               _inventory->close();
-                                               _attackJoystick->enableJoystick();
-                                               _moveJoystick->enableJoystick();
-                                               _weaponStatus->enableButton();
-                                           }
-                                       });
-    addChild(_inventorySwitch, Z_ORDER_UI);
+//    _weaponStatus = _game->getPlayerPtr()->getWeaponStatus();
+//    _weaponStatus->setPosition(Vec2(_winSize.width * 0.9f, _winSize.height * 0.9f));
+//    addChild(_weaponStatus, Z_ORDER_UI - 1);
+//    
+//    
+//    _inventory = _game->getPlayerPtr()->getInventory();
+//    _inventory->setPosition(Vec2(_winSize / 2));
+//    addChild(_inventory, Z_ORDER_UI);
+//    
+//    
+//    _inventorySwitch = ui::CheckBox::create("inventory_n.png", "inventory_s.png");
+//    _inventorySwitch->setPosition(Vec2(_winSize.width / 2.0f, 50.0f));
+//    _inventorySwitch->setScale(1.3f);
+//    _inventorySwitch->addEventListener([this](Ref* ref, ui::CheckBox::EventType type)
+//                                       {
+//                                           if ( type == ui::CheckBox::EventType::SELECTED )
+//                                           {
+//                                               // 인벤토리를 열면 모든 조이스틱을 비활성화 시킨다.
+//                                               _inventory->open();
+//                                               _attackJoystick->disableJoystick();
+//                                               _moveJoystick->disableJoystick();
+//                                               _weaponStatus->disableButton();
+//                                               
+//                                               EntityHuman* player = _game->getPlayerPtr();
+//                                               
+//                                               MoveJoystickData data1;
+//                                               data1.ref = ref;
+//                                               data1.dir = player->getMoving();
+//                                               data1.type = JoystickEx::ClickEventType::ENDED;
+//                                               _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data1);
+//                                               
+//                                               AttJoystickData data2;
+//                                               data2.ref = ref;
+//                                               data2.type = ui::Widget::TouchEventType::ENDED;
+//                                               _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data2);
+//                                           }
+//                                           else
+//                                           {
+//                                               _inventory->close();
+//                                               _attackJoystick->enableJoystick();
+//                                               _moveJoystick->enableJoystick();
+//                                               _weaponStatus->enableButton();
+//                                           }
+//                                       });
+//    addChild(_inventorySwitch, Z_ORDER_UI);
     
     
     //

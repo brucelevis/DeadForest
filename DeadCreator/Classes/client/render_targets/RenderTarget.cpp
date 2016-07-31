@@ -11,8 +11,9 @@
 #include "OcculusionBuilder.hpp"
 #include "LightEffect.hpp"
 #include "EffectSprite.hpp"
-#include "EntityBase.hpp"
+#include "GameObject.hpp"
 #include "SizeProtocol.h"
+#include "ParamLoader.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -113,7 +114,7 @@ cocos2d::Texture2D* RenderTarget::getNormalTex() const
 {
     for ( auto &child : _dynamicTarget->getChildren() )
     {
-        EntityBase* ent = dynamic_cast<EntityBase*>(child);
+        GameObject* ent = dynamic_cast<GameObject*>(child);
         if ( ent ) ent->enableNormal(true);
     }
     
@@ -126,7 +127,7 @@ cocos2d::Texture2D* RenderTarget::getNormalTex() const
     
     for ( auto &child : _dynamicTarget->getChildren() )
     {
-        EntityBase* ent = dynamic_cast<EntityBase*>(child);
+        GameObject* ent = dynamic_cast<GameObject*>(child);
         if ( ent ) ent->enableNormal(false);
     }
     
@@ -193,7 +194,7 @@ void RenderTarget::setZoom(float ratio)
 }
 
 
-void RenderTarget::addDynamicEntity(EntityBase* entity, int zOrder)
+void RenderTarget::addDynamicEntity(GameObject* entity, int zOrder)
 {
     _dynamicTarget->addChild(entity, zOrder);
 }

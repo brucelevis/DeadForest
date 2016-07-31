@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 
-#include "EntityType.hpp"
+#include "Types.hpp"
 #include "ConditionBase.hpp"
 #include "ActionBase.hpp"
 
@@ -183,7 +183,7 @@ namespace realtrick
             void addCondition(ConditionBase* condition) { condition->setOwner(this); _conditions.pushBack(condition); }
             void addAction(ActionBase* action) { action->setOwner(this); _actions.pushBack(action); }
             
-            Game* getGameManager() const { return _game; }
+            Game* getGame() const { return _game; }
             std::bitset<9> getPlayers() const { return _players; }
             
         private:

@@ -100,7 +100,7 @@ void WeaponBase::reload()
             }
             
             _owner->getWeaponStatus()->disableButton();
-            Dispatch.pushMessage(0.0, _owner, this, MessageType::RELOAD_WEAPON, nullptr);
+            _game->sendMessage(0.0, _owner, this, MessageType::RELOAD_WEAPON, nullptr);
             
             double animatedTime = _owner->getBodyAnimator()->getCurrAnimation()->getMaxFrame() * _owner->getBodyAnimator()->getCurrAnimation()->getFrameSwapTime();
             _game->pushLogic(animatedTime, MessageType::RELOAD_COMPLETE, nullptr);

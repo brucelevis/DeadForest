@@ -21,12 +21,12 @@ namespace realtrick
     namespace client
     {
         
-        class EntityBase;
+        class GameObject;
         
         struct Cell
         {
             
-            std::list<EntityBase*>                      members;
+            std::list<GameObject*>                      members;
             std::vector<Polygon>                        walls;
             cocos2d::Rect                               boundingBox;
             
@@ -62,13 +62,13 @@ namespace realtrick
                 }
             }
             
-            inline void                     addEntity(EntityBase* ent);
+            inline void                     addEntity(GameObject* ent);
             inline void                     addWall(const Polygon& wall);
             
-            inline bool                     updateEntity(EntityBase* ent, cocos2d::Vec2 oldPos);
+            inline bool                     updateEntity(GameObject* ent, cocos2d::Vec2 oldPos);
             inline void                     calculateNeighbors(cocos2d::Vec2 targetPos, float queryRadius);
             
-            inline void                     removeEntityFromCell(EntityBase* ent);
+            inline void                     removeEntityFromCell(GameObject* ent);
             inline int                      positionToIndex(const cocos2d::Vec2& pos) const;
             
             inline const Cell&              getCell(const cocos2d::Vec2& pos) const;

@@ -1,5 +1,5 @@
 //
-//  EntityBase.hpp
+//  GameObject.hpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2015. 11. 12..
@@ -9,7 +9,7 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "EntityType.hpp"
+#include "Types.hpp"
 #include "MessageNode.hpp"
 #include "MessageDispatcher.hpp"
 
@@ -21,16 +21,16 @@ namespace realtrick
         class Telegram;
         class Game;
         
-        class EntityBase : public cocos2d::Node, public MessageNode
+        class GameObject : public cocos2d::Node, public MessageNode
         {
             
         public:
             
-            explicit EntityBase(Game* game);
-            virtual ~EntityBase() { _game = nullptr; }
-            EntityBase(const EntityBase& rhs);
+            explicit GameObject(Game* game);
+            virtual ~GameObject() { _game = nullptr; }
+            GameObject(const GameObject& rhs);
             
-            Game* getGameManager() const      { return _game; }
+            Game* getGame() const           { return _game; }
             int getFamilyMask() const       { return _familyMask; }
             
             int getEntityType() const       { return _entityType; }
@@ -45,14 +45,13 @@ namespace realtrick
             float getBoundingRadius() const { return _boundingRadius; }
             void setBoundingRadius(float r) { _boundingRadius = r; }
             
-            virtual void visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags) override;
             virtual bool handleMessage(const Telegram& msg) override { return false; }
             virtual void update(float dt) override {}
             virtual void enableNormal(bool enable) {}
             
         protected:
             
-            Game*            _game;
+            Game*                   _game;
             int                     _familyMask;
             int                     _entityType;
             cocos2d::Vec2           _worldPosition;

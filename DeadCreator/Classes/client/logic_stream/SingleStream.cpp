@@ -22,8 +22,8 @@ bool SingleStream::handleMessage(const Telegram& msg)
 {
     if ( msg.msg == MessageType::LOAD_GAME_PLAYER)
     {
-        _game->loadResource("temp_game_map");
         _game->loadGMXFile("temp_game_map");
+        _game->loadResource("temp_game_map");
         _game->pushLogic(0.0, MessageType::LOAD_GAME_COMPLETE, nullptr);
         
         return true;
@@ -127,7 +127,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
             s.fileName = "AxeGet.mp3";
             s.position = player->getWorldPosition();
             s.soundRange = 200.0f;
-            Dispatch.pushMessage(0.0, player, player, MessageType::PLAY_SOUND, &s);
+            _game->sendMessage(0.0, player, player, MessageType::PLAY_SOUND, &s);
         }
         else
         {
@@ -135,7 +135,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
             s.fileName = "M16A2Enter.mp3";
             s.position = player->getWorldPosition();
             s.soundRange = 200.0f;
-            Dispatch.pushMessage(0.0, player, player, MessageType::PLAY_SOUND, &s);
+            _game->sendMessage(0.0, player, player, MessageType::PLAY_SOUND, &s);
         }
         
         if ( isMasked(data.item->getFamilyMask(), FamilyMask::BULLET_BASE) )

@@ -11,7 +11,7 @@
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 #include "Game.hpp"
-#include "EntityType.hpp"
+#include "Types.hpp"
 
 namespace realtrick
 {

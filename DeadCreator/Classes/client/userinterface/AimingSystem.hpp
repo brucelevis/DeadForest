@@ -15,7 +15,7 @@ namespace realtrick
         
         class Game;
         class EntityHuman;
-        class EntityBase;
+        class GameObject;
         
         class AimingSystem
         {
@@ -29,7 +29,7 @@ namespace realtrick
             bool isEnableSystem() const { return _isEnableSystem; }
             void enableSystem(bool enable) { _isEnableSystem = enable; }
             bool isHitableEntity() const { return _isHitableEntity; }
-            EntityBase* getClosestHiableEntity() const { return _closestHitableEntity; }
+            GameObject* getClosestHiableEntity() const { return _closestHitableEntity; }
             
             void update();
             
@@ -37,7 +37,7 @@ namespace realtrick
             
             Game* _game;
             EntityHuman* _owner;
-            EntityBase* _closestHitableEntity;
+            GameObject* _closestHitableEntity;
             
             bool _isEnableSystem;
             bool _isHitableEntity;

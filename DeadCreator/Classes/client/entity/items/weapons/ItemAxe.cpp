@@ -69,7 +69,7 @@ void ItemAxe::attack()
     // 엔티티들과의 충돌처리
     bool isHit = false;
     Vec2 shootAt = _owner->getHeading();
-    const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, getRange());
+    const std::list<GameObject*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, getRange());
     for (const auto &d : members)
     {
         if ( d == _owner ) continue;
@@ -85,7 +85,7 @@ void ItemAxe::attack()
                 s.damage = getDamage();
                 s.receiverID = d->getTag();
                 s.senderID = _owner->getTag();
-                Dispatch.pushMessage(0.0, human, _owner, MessageType::HITTED_BY_AXE, &s);
+                _game->sendMessage(0.0, human, _owner, MessageType::HITTED_BY_AXE, &s);
                 
                 isHit = true;
             }
@@ -98,12 +98,12 @@ void ItemAxe::attack()
         s.fileName = "AxeHit" + _to_string(random(0,2)) + ".mp3";
         s.position = worldPos;
         s.soundRange = 200.0f;
-        Dispatch.pushMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
+        _game->sendMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
         
         if ( _owner->getTag() == _game->getPlayerPtr()->getTag() )
         {
             // 총쏜사람이 플레이어일 경우 크로스헤어 이벤트를 발동시킨다.
-            Dispatch.pushMessage(0.0, _owner, _owner, MessageType::CROSS_HAIR_EVENT, nullptr);
+            _game->sendMessage(0.0, _owner, _owner, MessageType::CROSS_HAIR_EVENT, nullptr);
         }
     }
     else
@@ -112,7 +112,7 @@ void ItemAxe::attack()
         s.fileName = "AxeSwing" + _to_string(random(0,2)) + ".mp3";
         s.position = worldPos;
         s.soundRange = 200.0f;
-        Dispatch.pushMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
+        _game->sendMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
     }
 }
 

@@ -10,7 +10,7 @@
 
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
-#include "EntityType.hpp"
+#include "Types.hpp"
 #include "EditorType.hpp"
 
 namespace realtrick

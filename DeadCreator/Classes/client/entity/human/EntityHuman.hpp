@@ -37,7 +37,7 @@ namespace realtrick
             void setFootGauge(float g);
             
             virtual void update(float dt) override;
-            virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other) override;
+            virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, GameObject* other) override;
             virtual bool isIntersectWall(const cocos2d::Vec2& futurePosition, const Polygon& wall) override;
             virtual void rotateEntity() override;
 

@@ -35,12 +35,10 @@ namespace realtrick
     namespace client
     {
         
-        class EntityBase;
+        class GameObject;
         class EntityHuman;
-        class Camera2D;
-        class RenderTarget;
         class TriggerSystem;
-        class UiLayer;
+        class RenderingSystem;
         class LogicStream;
         class GameResource;
         
@@ -58,76 +56,68 @@ namespace realtrick
             
             void clear();
             void update(float dt) override;
+            
+            // game resource
+            void loadGMXFile(const std::string& path);
+            GameResource* getGameResource() const { return _gameResource; }
+            
+            // entity manager
             void setPlayer(EntityHuman* player) { _player = player; }
-            
             EntityHuman* getPlayerPtr() const { return _player; }
-            const std::map<int, EntityBase*>& getEntities() const { return _entities; }
-            GameMap* getGameMap() const { return _gameMap; }
+            const std::map<int, GameObject*>& getEntities() const { return _entities; }
             CellSpacePartition* getCellSpace() const { return _cellSpace; }
+            void addEntity(GameObject* entity, int zOrder, int id);
+            void removeEntity(int id);
+            GameObject* getEntityFromID(int ID);
+            int getNextValidID() { static int nextValidID = 0; return nextValidID++; }
             
-            static int getNextValidID() { static int _nextValidID = 0; return _nextValidID++; }
+            // rendering system
+            RenderingSystem* getRenderingSysetm() const { return _renderingSystem; }
             
-            std::list<EntityBase*> getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const;
-            std::list<EntityBase*> getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const;
+            
+            std::list<GameObject*> getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const;
+            std::list<GameObject*> getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const;
             std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& position, float speed) const;
             std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const;
             std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& position, const Segment& ray) const;
             
+            
+            // load operation
             void loadResource(const std::string& filePath);
+            void loadUiLayer();
             
-            Camera2D* getGameCamera() const { return _gameCamera; }
-            void drawCellSpaceDebugNode();
+            TileType getStepOnTileType(const cocos2d::Vec2& pos);
             
-            cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& p) const ;
-            cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& p, const cocos2d::Vec2& camera) const ;
-            
-            void addEntity(EntityBase* entity, int zOrder, int id);
-            void removeEntity(int id);
-            EntityBase* getEntityFromID(int ID);
+            void sendMessage(double delaySeconds, MessageNode* receiver, MessageNode* sender, MessageType type, void* extraInfo);
             
             void pushLogic(double delaySeconds, MessageType type, void* extraInfo);
-            
-            void loadUiLayer();
-            void setZoom(float r) { _zoomScale = r; _rootNode->setScale(r); }
-            float getZoomScale() const { return _zoomScale; }
-            
             bool isPaused() const { return _isPaused; }
             void pauseGame() { _isPaused = true; }
             void resumeGame() { _isPaused = false; }
             
-            const std::map<std::string, cocos2d::Rect>& getLocationMap() const { return _locations; }
-            
-            // temp
-            void loadGMXFile(const std::string& path);
-            
         private:
             
-            cocos2d::Size                               _winSize;
+            cocos2d::Size _winSize;
             
             // map data
-            GameMap*                                    _gameMap;
             GameResource* _gameResource;
             
             // entitiy manager
-            EntityHuman*                                _player;
-            std::map<int, EntityBase*>                  _entities;
-            CellSpacePartition*                         _cellSpace;
+            EntityHuman* _player;
+            std::map<int, GameObject*> _entities;
+            CellSpacePartition* _cellSpace;
             
             // trigger system
-            TriggerSystem*                              _triggerSystem;
-            std::map<std::string, cocos2d::Rect>        _locations;
+            TriggerSystem* _triggerSystem;
             
             // rendering system
-            Camera2D*                                   _gameCamera;
-            cocos2d::ClippingRectangleNode*             _clipNode;
-            cocos2d::Node*                              _rootNode;
-            UiLayer*                                    _uiLayer;
-            float                                       _zoomScale;
+            RenderingSystem* _renderingSystem;
             
             // game
-            LogicStream*                                _logicStream;
-            bool                                        _isPaused;
-            int                                         _bgmID;
+            LogicStream* _logicStream;
+            bool _isPaused;
+            int _bgmID;
+            MessageDispatcher* _messenger;
             
         };
         

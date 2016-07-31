@@ -20,7 +20,6 @@
 #include "AddEntityToolCommand.hpp"
 #include "RemoveEntityToolCommand.hpp"
 #include "CellSpacePartition.hpp"
-#include "GameWorld.hpp"
 #include "MainMenu3.hpp"
 #include "LocationNode.hpp"
 #include "RenameLocationLayer.hpp"
@@ -175,7 +174,7 @@ void GMXLayer::initFile()
         for(int j = 0 ; j < x ; ++ j)
         {
             Vec2 tilePosition = indexToPosition(j, i, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
-            _tiles[i][j] = TileBase(j, i, _file.tileInfos[i][j], tilePosition);
+            _tiles[i][j] = Tileset(j, i, _file.tileInfos[i][j], tilePosition);
         }
     }
     
@@ -642,7 +641,7 @@ void GMXLayer::updateCocosLogic()
 }
 
 
-void GMXLayer::setTile(int x, int y, const TileBase& tile, bool isExecCommand)
+void GMXLayer::setTile(int x, int y, const Tileset& tile, bool isExecCommand)
 {
     if ( !isExecCommand )
     {
@@ -761,13 +760,13 @@ void GMXLayer::putTile(TileType type, int x, int y)
     const int tileHeight = _file.tileHeight;
     const int dummy = DUMMY_TILE_SIZE;
     
-    std::stack<TileBase> s;
+    std::stack<Tileset> s;
     
-    TileBase init = TileBase(x, y, TileBase::getTileHeader(type) + "1234", indexToPosition(x, y, tileWidth, tileHeight, dummy));
+    Tileset init = Tileset(x, y, Tileset::getTileHeader(type) + "1234", indexToPosition(x, y, tileWidth, tileHeight, dummy));
     s.push(init);
     while( !s.empty() )
     {
-        TileBase temp = s.top();
+        Tileset temp = s.top();
         s.pop();
         
         std::string number = temp.getNumber();
@@ -777,17 +776,17 @@ void GMXLayer::putTile(TileType type, int x, int y)
         if ( temp.getNumber().at(0) != '1')
         {
             // 추가하는 로직
-            if ( TileBase::getTileTail(temp.getNumber()) == "1234" )
+            if ( Tileset::getTileTail(temp.getNumber()) == "1234" )
             {
                 auto nei = getNeighborTiles(xx, yy);
-                s.push(TileBase(nei[0].first, nei[0].second, TileBase::getTileHeader(number) + "2", indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(number) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[2].first, nei[2].second, TileBase::getTileHeader(number) + "3", indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(number) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[4].first, nei[4].second, TileBase::getTileHeader(number) + "4", indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(number) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[6].first, nei[6].second, TileBase::getTileHeader(number) + "1", indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(number) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[0].first, nei[0].second, Tileset::getTileHeader(number) + "2", indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[1].first, nei[1].second, Tileset::getTileHeader(number) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[2].first, nei[2].second, Tileset::getTileHeader(number) + "3", indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[3].first, nei[3].second, Tileset::getTileHeader(number) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[4].first, nei[4].second, Tileset::getTileHeader(number) + "4", indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[5].first, nei[5].second, Tileset::getTileHeader(number) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[6].first, nei[6].second, Tileset::getTileHeader(number) + "1", indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[7].first, nei[7].second, Tileset::getTileHeader(number) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
                 
                 setTile(xx, yy, temp);
             }
@@ -822,43 +821,43 @@ void GMXLayer::putTile(TileType type, int x, int y)
                     std::string tail = temp.getTileTail();
                     if ( tail == "2")
                     {
-                        s.push(TileBase(nei[0].first, nei[0].second, TileBase::getTileHeader(TileType::DIRT) + "2", indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[0].first, nei[0].second, Tileset::getTileHeader(TileType::DIRT) + "2", indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[1].first, nei[1].second, Tileset::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[7].first, nei[7].second, Tileset::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "23")
                     {
-                        s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[1].first, nei[1].second, Tileset::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "3")
                     {
-                        s.push(TileBase(nei[1].first, nei[1].second, TileBase::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[2].first, nei[2].second, TileBase::getTileHeader(TileType::DIRT) + "3", indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[1].first, nei[1].second, Tileset::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[2].first, nei[2].second, Tileset::getTileHeader(TileType::DIRT) + "3", indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[3].first, nei[3].second, Tileset::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "34")
                     {
-                        s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[3].first, nei[3].second, Tileset::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "4")
                     {
-                        s.push(TileBase(nei[3].first, nei[3].second, TileBase::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[4].first, nei[4].second, TileBase::getTileHeader(TileType::DIRT) + "4", indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[3].first, nei[3].second, Tileset::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[4].first, nei[4].second, Tileset::getTileHeader(TileType::DIRT) + "4", indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[5].first, nei[5].second, Tileset::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "14")
                     {
-                        s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[5].first, nei[5].second, Tileset::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "1")
                     {
-                        s.push(TileBase(nei[5].first, nei[5].second, TileBase::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[6].first, nei[6].second, TileBase::getTileHeader(TileType::DIRT) + "1", indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
-                        s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[5].first, nei[5].second, Tileset::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[6].first, nei[6].second, Tileset::getTileHeader(TileType::DIRT) + "1", indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[7].first, nei[7].second, Tileset::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "12")
                     {
-                        s.push(TileBase(nei[7].first, nei[7].second, TileBase::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[7].first, nei[7].second, Tileset::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
                     }
                     
                     setTile(xx, yy, temp);
@@ -871,14 +870,14 @@ void GMXLayer::putTile(TileType type, int x, int y)
             if ( temp.getTileTail() == "1234" )
             {
                 auto nei = getNeighborTiles(xx, yy);
-                s.push(TileBase(nei[0].first, nei[0].second, temp.getTileHeader() + "2", indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[1].first, nei[1].second, temp.getTileHeader() + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[2].first, nei[2].second, temp.getTileHeader() + "3", indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[3].first, nei[3].second, temp.getTileHeader() + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[4].first, nei[4].second, temp.getTileHeader() + "4", indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[5].first, nei[5].second, temp.getTileHeader() + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[6].first, nei[6].second, temp.getTileHeader() + "1", indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
-                s.push(TileBase(nei[7].first, nei[7].second, temp.getTileHeader() + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[0].first, nei[0].second, temp.getTileHeader() + "2", indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[1].first, nei[1].second, temp.getTileHeader() + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[2].first, nei[2].second, temp.getTileHeader() + "3", indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[3].first, nei[3].second, temp.getTileHeader() + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[4].first, nei[4].second, temp.getTileHeader() + "4", indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[5].first, nei[5].second, temp.getTileHeader() + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[6].first, nei[6].second, temp.getTileHeader() + "1", indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
+                s.push(Tileset(nei[7].first, nei[7].second, temp.getTileHeader() + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
                 
                 setTile(xx, yy, temp);
             }
@@ -898,7 +897,7 @@ void GMXLayer::putTile(TileType type, int x, int y)
                 }
                 
                 std::string finalTile;
-                if ( originalTail.empty() ) finalTile = TileBase::getTileHeader(TileType::DIRT) + "1234";
+                if ( originalTail.empty() ) finalTile = Tileset::getTileHeader(TileType::DIRT) + "1234";
                 else finalTile = _tiles[yy][xx].getTileHeader() + originalTail;
                 
                 temp.setNumber(finalTile);

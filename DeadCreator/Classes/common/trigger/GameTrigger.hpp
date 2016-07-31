@@ -133,18 +133,34 @@ namespace realtrick
     namespace client
     {
         
-        class GameManager;
+        class Game;
         
         class GameTrigger : public cocos2d::Ref
         {
             
         public:
             
-            explicit GameTrigger(GameManager* mgr) :
-            _gameMgr(mgr)
+            explicit GameTrigger(Game* game) :
+            _game(game)
             {}
-            
             virtual ~GameTrigger() {}
+            
+            static GameTrigger* create(Game* game)
+            {
+                auto ret = new (std::nothrow) GameTrigger(game);
+                if ( ret && ret->init() )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
+            bool init()
+            {
+                return true;
+            }
             
             bool isReady()
             {
@@ -165,14 +181,14 @@ namespace realtrick
             
             void addPlayer(int player) { _players.set(player); }
             void addCondition(ConditionBase* condition) { condition->setOwner(this); _conditions.pushBack(condition); }
-            void addAction(ActionBase* action) { _actions.pushBack(action); }
+            void addAction(ActionBase* action) { action->setOwner(this); _actions.pushBack(action); }
             
-            GameManager* getGameManager() const { return _gameMgr; }
+            Game* getGameManager() const { return _game; }
             std::bitset<9> getPlayers() const { return _players; }
             
         private:
             
-            GameManager* _gameMgr;
+            Game* _game;
             
             std::bitset<9> _players;
             cocos2d::Vector<ConditionBase*> _conditions;

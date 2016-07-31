@@ -7,14 +7,14 @@
 //
 
 #include "AimingSystem.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "WeaponBase.hpp"
 
 using namespace realtrick::client;
 using namespace cocos2d;
 
-AimingSystem::AimingSystem(GameManager* mgr, EntityHuman* owner) :
-_gameMgr(mgr),
+AimingSystem::AimingSystem(Game* game, EntityHuman* owner) :
+_game(game),
 _owner(owner),
 _isEnableSystem(false),
 _isHitableEntity(false),
@@ -39,7 +39,7 @@ void AimingSystem::update()
         std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
         Segment bulletRay = Segment(worldPos, worldPos + shootAt * equipedWeapon->getRange());
 
-        const std::list<EntityBase*>& members = _gameMgr->getNeighborsOnAttack(worldPos, shootAt, equipedWeapon->getRange());
+        const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, equipedWeapon->getRange());
         for (const auto &d : members)
         {
             if ( d == _owner ) continue;
@@ -55,7 +55,7 @@ void AimingSystem::update()
         }
         
         // 벽과의 충돌처리
-        const std::vector<Polygon> walls = _gameMgr->getNeighborWalls(_owner->getWorldPosition(), bulletRay);
+        const std::vector<Polygon> walls = _game->getNeighborWalls(_owner->getWorldPosition(), bulletRay);
         float dist;
         for( const auto& wall : walls )
         {

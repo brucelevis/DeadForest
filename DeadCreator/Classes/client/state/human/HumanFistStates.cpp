@@ -12,7 +12,7 @@
 #include "MessageDispatcher.hpp"
 #include "EntityHuman.hpp"
 #include "HumanOwnedAnimations.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 

@@ -7,7 +7,7 @@
 //
 
 #include "AnimatedFiniteEntity.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "Telegram.hpp"
 #include "MessageDispatcher.hpp"
 #include "MessageTypes.hpp"
@@ -15,7 +15,7 @@ using namespace realtrick::client;
 using namespace cocos2d;
 
 
-AnimatedFiniteEntity::AnimatedFiniteEntity(GameManager* mgr) : EntityBase(mgr),
+AnimatedFiniteEntity::AnimatedFiniteEntity(Game* game) : EntityBase(game),
 _base(nullptr),
 _interval(0.05f),
 _deathTime(0.0f),
@@ -38,10 +38,10 @@ AnimatedFiniteEntity::AnimatedFiniteEntity(const AnimatedFiniteEntity& rhs) : En
 }
 
 
-AnimatedFiniteEntity* AnimatedFiniteEntity::create(GameManager* mgr, const std::vector<std::string>& frames,
+AnimatedFiniteEntity* AnimatedFiniteEntity::create(Game* game, const std::vector<std::string>& frames,
                                                    float deathTime, cocos2d::ui::Widget::TextureResType type)
 {
-    AnimatedFiniteEntity* ret = new (std::nothrow) AnimatedFiniteEntity(mgr);
+    AnimatedFiniteEntity* ret = new (std::nothrow) AnimatedFiniteEntity(game);
     if ( ret && ret->init(frames, deathTime, type) )
     {
         ret->autorelease();
@@ -86,7 +86,7 @@ bool AnimatedFiniteEntity::handleMessage(const Telegram& msg)
     }
     else if ( msg.msg == MessageType::REMOVE_SELF )
     {
-        _gameMgr->removeEntity(getTag());
+        _game->removeEntity(getTag());
         
         return true;
     }

@@ -20,7 +20,7 @@ namespace realtrick
             
         public:
             
-            explicit BulletBase(GameManager* mgr);
+            explicit BulletBase(Game* game);
             BulletBase(const BulletBase& rhs);
             virtual ~BulletBase();
             virtual ItemBase* clone() const override = 0;

@@ -12,12 +12,12 @@
 #include "ItemBase.hpp"
 #include "EntityHuman.hpp"
 #include "WeaponBase.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
-ItemExtensionButtons::ItemExtensionButtons(GameManager* mgr) :
-_gameMgr(mgr),
+ItemExtensionButtons::ItemExtensionButtons(Game* game) :
+_game(game),
 _ownSlot(nullptr)
 {}
 
@@ -28,9 +28,9 @@ ItemExtensionButtons::~ItemExtensionButtons()
 }
 
 
-ItemExtensionButtons* ItemExtensionButtons::create(GameManager* mgr, ItemSlot* slot)
+ItemExtensionButtons* ItemExtensionButtons::create(Game* game, ItemSlot* slot)
 {
-    ItemExtensionButtons* ret = new (std::nothrow) ItemExtensionButtons(mgr);
+    ItemExtensionButtons* ret = new (std::nothrow) ItemExtensionButtons(game);
     if ( ret && ret->init(slot) )
     {
         ret->autorelease();
@@ -84,7 +84,7 @@ bool ItemExtensionButtons::init(ItemSlot* slot)
             log("<ItemExtensionButtons::init> equip");
             ItemSlotData data;
             data.slot = _ownSlot;
-            _gameMgr->pushLogic(0.0, MessageType::PRESS_EQUIP_WEAPON_BUTTON, reinterpret_cast<void*>(&data));
+            _game->pushLogic(0.0, MessageType::PRESS_EQUIP_WEAPON_BUTTON, reinterpret_cast<void*>(&data));
         }
         
     });
@@ -96,7 +96,7 @@ bool ItemExtensionButtons::init(ItemSlot* slot)
             log("<ItemExtensionButtons::init> release");
             ItemSlotData data;
             data.slot = _ownSlot;
-            _gameMgr->pushLogic(0.0, MessageType::PRESS_RELEASE_WEAPON_BUTTON, reinterpret_cast<void*>(&data));
+            _game->pushLogic(0.0, MessageType::PRESS_RELEASE_WEAPON_BUTTON, reinterpret_cast<void*>(&data));
         }
         
     });

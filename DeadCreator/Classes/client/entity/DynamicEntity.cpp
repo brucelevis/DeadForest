@@ -7,13 +7,13 @@
 //
 
 #include "DynamicEntity.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
 
-DynamicEntity::DynamicEntity(GameManager* gameMgr) :
-EntityBase(gameMgr),
+DynamicEntity::DynamicEntity(Game* game) :
+EntityBase(game),
 _heading(Vec2::UNIT_X),
 _targetHeading(Vec2::UNIT_X),
 _moving(Vec2::UNIT_X),
@@ -44,7 +44,7 @@ void DynamicEntity::moveEntity()
     
     
     // 엔티티들과의 충돌처리
-    const std::list<EntityBase*> members = _gameMgr->getNeighborsOnMove(oldPos, _speed);
+    const std::list<EntityBase*> members = _game->getNeighborsOnMove(oldPos, _speed);
     for ( const auto &entity : members )
     {
         if ( entity == this ) continue;
@@ -56,7 +56,7 @@ void DynamicEntity::moveEntity()
     }
     
     // 벽과의 충돌처리
-    const std::vector<Polygon> walls = _gameMgr->getNeighborWalls(futurePosition, _speed);
+    const std::vector<Polygon> walls = _game->getNeighborWalls(futurePosition, _speed);
     for( const auto& wall : walls )
     {
         if ( isIntersectWall(futurePosition, wall) )
@@ -68,7 +68,7 @@ void DynamicEntity::moveEntity()
     if ( !intersectResult )
     {
         setWorldPosition(futurePosition);
-        _gameMgr->getCellSpace()->updateEntity(this, oldPos);
+        _game->getCellSpace()->updateEntity(this, oldPos);
     }
 }
 

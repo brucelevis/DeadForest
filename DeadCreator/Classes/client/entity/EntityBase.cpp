@@ -7,13 +7,12 @@
 //
 
 #include "EntityBase.hpp"
-#include "GameWorld.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "Camera2D.hpp"
 using namespace realtrick::client;
 
-EntityBase::EntityBase(GameManager* gameMgr) :
-_gameMgr(gameMgr),
+EntityBase::EntityBase(Game* game) :
+_game(game),
 _familyMask(0),
 _entityType(0),
 _boundingRadius(0.0f)
@@ -24,7 +23,7 @@ _boundingRadius(0.0f)
 
 EntityBase::EntityBase(const EntityBase& rhs)
 {
-    _gameMgr = rhs._gameMgr;
+    _game = rhs._game;
     _familyMask = rhs._familyMask;
     _entityType = rhs._entityType;
     _tag = rhs._tag;
@@ -33,7 +32,7 @@ EntityBase::EntityBase(const EntityBase& rhs)
 
 void EntityBase::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags)
 {
-    setPosition( getWorldPosition() - _gameMgr->getGameCamera()->getCameraPos() );
+    setPosition( getWorldPosition() - _game->getGameCamera()->getCameraPos() );
     Node::visit(renderer, transform, flags);
 }
 

@@ -10,16 +10,15 @@
 #include "HumanOwnedAnimations.hpp"
 #include "HumanOwnedStates.hpp"
 #include "ParamLoader.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "ItemGlock17.hpp"
-#include "GameWorld.hpp"
 #include "Items.hpp"
 #include "Inventory.hpp"
 #include "WeaponStatus.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
-EntityHuman::EntityHuman(GameManager* mgr) : DynamicEntity(mgr),
+EntityHuman::EntityHuman(Game* game) : DynamicEntity(game),
 _FSM(nullptr),
 _bodyAnimationPlayer(nullptr),
 _equipedWeapon(nullptr),
@@ -68,19 +67,19 @@ bool EntityHuman::init()
     
     setAlive();
     
-    _inventory = Inventory::create(_gameMgr);
+    _inventory = Inventory::create(_game);
     _inventory->retain();
     
-    _weaponStatus = WeaponStatus::create(_gameMgr);
+    _weaponStatus = WeaponStatus::create(_game);
     _weaponStatus->retain();
     
     return true;
 }
 
 
-EntityHuman* EntityHuman::create(GameManager* mgr)
+EntityHuman* EntityHuman::create(Game* game)
 {
-    EntityHuman* ret = new (std::nothrow) EntityHuman(mgr);
+    EntityHuman* ret = new (std::nothrow) EntityHuman(game);
     if (ret && ret->init())
     {
         ret->autorelease();
@@ -127,8 +126,8 @@ bool EntityHuman::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBa
             ItemAndOwner data;
             data.owner = this;
             data.item = static_cast<ItemBase*>(other);
-            _gameMgr->pushLogic(0.0, MessageType::PUSH_ITEM_TO_INVENTORY, &data);
-            _gameMgr->removeEntity(other->getTag());
+            _game->pushLogic(0.0, MessageType::PUSH_ITEM_TO_INVENTORY, &data);
+            _game->removeEntity(other->getTag());
         }
     }
     
@@ -185,7 +184,7 @@ void EntityHuman::setFootGauge(float g)
     {
         _footGauge = 0.0f;
         
-        GameMap* map = _gameMgr->getGameMap();
+        GameMap* map = _game->getGameMap();
         TileType onTile = map->getStepOnTileType(getWorldPosition());
         
         SoundSource s;

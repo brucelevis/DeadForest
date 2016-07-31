@@ -11,7 +11,7 @@
 #include "MessageTypes.hpp"
 #include "Telegram.hpp"
 #include "EntityHuman.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "HumanOwnedAnimations.hpp"
 using namespace realtrick::client;
 

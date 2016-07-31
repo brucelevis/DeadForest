@@ -21,10 +21,10 @@ namespace realtrick
             
         public:
             
-            explicit ItemAxe(GameManager* mgr);
+            explicit ItemAxe(Game* game);
             virtual ~ItemAxe();
             
-            static ItemAxe* create(GameManager* mgr);
+            static ItemAxe* create(Game* game);
             virtual ItemBase* clone() const override;
             virtual void inWeapon() override;
             virtual void outWeapon() override;

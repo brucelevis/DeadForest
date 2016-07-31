@@ -18,7 +18,7 @@ namespace realtrick
     namespace client
     {
         
-        class GameManager;
+        class Game;
         class AnimatedButton;
         class ItemExtensionButtons;
         class Inventory;
@@ -28,11 +28,11 @@ namespace realtrick
             
         public:
             
-            explicit ItemSlot(GameManager* mgr);
+            explicit ItemSlot(Game* game);
             virtual ~ItemSlot();
             
             bool init(Inventory* owner, const char* normal, const char* selected, cocos2d::ui::Widget::TextureResType texType);
-            static ItemSlot* create(GameManager* mgr, Inventory* owner, const char* normal, const char* selected, cocos2d::ui::Widget::TextureResType texType = cocos2d::ui::Widget::TextureResType::LOCAL);
+            static ItemSlot* create(Game* game, Inventory* owner, const char* normal, const char* selected, cocos2d::ui::Widget::TextureResType texType = cocos2d::ui::Widget::TextureResType::LOCAL);
             
             void setItem(ItemBase* item);
             void throwItem();
@@ -62,7 +62,7 @@ namespace realtrick
             
         private:
             
-            GameManager*                                                                    _gameMgr;
+            Game*                                                                    _game;
             Inventory*                                                                      _owner;
             ItemBase*                                                                       _item;
             cocos2d::Sprite*                                                                _itemImage;

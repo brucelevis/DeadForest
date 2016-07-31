@@ -17,14 +17,14 @@ namespace realtrick
     namespace client
     {
         
-        class GameManager;
+        class Game;
         
         class DynamicEntity : public EntityBase
         {
             
         public:
             
-            explicit DynamicEntity(GameManager* gameMgr);
+            explicit DynamicEntity(Game* game);
             virtual ~DynamicEntity() = default;
             
             cocos2d::Vec2 getHeading() const { return _heading; }

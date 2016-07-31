@@ -21,9 +21,9 @@ namespace realtrick
             
         public:
             
-            explicit ItemM1897(GameManager* mgr);
+            explicit ItemM1897(Game* game);
             virtual ~ItemM1897();
-            static ItemM1897* create(GameManager* mgr);
+            static ItemM1897* create(Game* game);
             
             void setNumOfShells(int num) { _numOfShells = num; }
             int getNumOfShells() const { return _numOfShells; }

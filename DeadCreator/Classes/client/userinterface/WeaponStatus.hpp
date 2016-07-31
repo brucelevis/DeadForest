@@ -10,7 +10,7 @@
 
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "EntityType.hpp"
 
 namespace realtrick
@@ -19,18 +19,18 @@ namespace realtrick
     {
         
         class WeaponBase;
-        class GameManager;
+        class Game;
         
         class WeaponStatus : public cocos2d::Node
         {
             
         public:
             
-            explicit WeaponStatus(GameManager* mgr);
+            explicit WeaponStatus(Game* game);
             virtual ~WeaponStatus() = default;
             
             virtual bool init() override;
-            static WeaponStatus* create(GameManager* mgr);
+            static WeaponStatus* create(Game* game);
             
             void setRemainBullet(int num)
             {
@@ -58,7 +58,7 @@ namespace realtrick
             
         private:
             
-            GameManager* _gameMgr;
+            Game* _game;
             cocos2d::ui::Button* _reloadButton;
             cocos2d::ui::Text* _remainBulletText;
             cocos2d::ui::Text* _entryBulletText;

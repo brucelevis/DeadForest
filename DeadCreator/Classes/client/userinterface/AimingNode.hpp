@@ -15,18 +15,18 @@ namespace realtrick
     namespace client
     {
         
-        class GameManager;
+        class Game;
         
         class AimingNode : public cocos2d::Node
         {
             
         public:
             
-            explicit AimingNode(GameManager* mgr);
+            explicit AimingNode(Game* game);
             virtual ~AimingNode() = default;
             
             virtual bool init() override;
-            static AimingNode* create(GameManager* mgr);
+            static AimingNode* create(Game* game);
             
             void runHitAction();
             void showOutter();
@@ -37,7 +37,7 @@ namespace realtrick
             
         private:
             
-            GameManager* _gameMgr;
+            Game* _game;
             cocos2d::Sprite* _crossHair;
             cocos2d::Sprite* _outter;
             cocos2d::Sprite* _inner;

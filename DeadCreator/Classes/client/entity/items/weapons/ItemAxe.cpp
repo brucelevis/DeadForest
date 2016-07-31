@@ -8,13 +8,12 @@
 
 #include "ItemAxe.hpp"
 #include "EntityHuman.hpp"
-#include "GameManager.hpp"
-#include "GameWorld.hpp"
+#include "Game.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
 
-ItemAxe::ItemAxe(GameManager* mgr) : WeaponBase(mgr)
+ItemAxe::ItemAxe(Game* game) : WeaponBase(game)
 {
     setEntityType(ITEM_AXE);
     
@@ -31,9 +30,9 @@ ItemAxe::~ItemAxe()
 {}
 
 
-ItemAxe* ItemAxe::create(GameManager* mgr)
+ItemAxe* ItemAxe::create(Game* game)
 {
-    ItemAxe* ret = new (std::nothrow)ItemAxe(mgr);
+    ItemAxe* ret = new (std::nothrow)ItemAxe(game);
     if( ret && ret->init("Axe.png", "Axe.png", "Axe.png", cocos2d::ui::Widget::TextureResType::PLIST))
     {
         ret->autorelease();
@@ -70,7 +69,7 @@ void ItemAxe::attack()
     // 엔티티들과의 충돌처리
     bool isHit = false;
     Vec2 shootAt = _owner->getHeading();
-    const std::list<EntityBase*>& members = _gameMgr->getNeighborsOnAttack(worldPos, shootAt, getRange());
+    const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, getRange());
     for (const auto &d : members)
     {
         if ( d == _owner ) continue;
@@ -101,7 +100,7 @@ void ItemAxe::attack()
         s.soundRange = 200.0f;
         Dispatch.pushMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
         
-        if ( _owner->getTag() == _gameMgr->getPlayerPtr()->getTag() )
+        if ( _owner->getTag() == _game->getPlayerPtr()->getTag() )
         {
             // 총쏜사람이 플레이어일 경우 크로스헤어 이벤트를 발동시킨다.
             Dispatch.pushMessage(0.0, _owner, _owner, MessageType::CROSS_HAIR_EVENT, nullptr);
@@ -120,11 +119,11 @@ void ItemAxe::attack()
 
 void ItemAxe::discard()
 {
-    ItemAxe* item = ItemAxe::create(_gameMgr);
+    ItemAxe* item = ItemAxe::create(_game);
     item->setAmount( getAmount() );
     item->setNumOfLeftRounds(getNumOfLeftRounds());
     item->setPosition(Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));
-    _gameMgr->addEntity(item, Z_ORDER_ITEMS, _gameMgr->getNextValidID());
+    _game->addEntity(item, Z_ORDER_ITEMS, _game->getNextValidID());
 }
 
 

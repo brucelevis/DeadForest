@@ -7,9 +7,9 @@
 //
 
 #include "MainMenu3.hpp"
-#include "GameWorld.hpp"
 #include "GeneratedPackets.hpp"
 #include "Server.hpp"
+#include "Game.hpp"
 #include "SizeProtocol.h"
 using namespace realtrick::client;
 using namespace cocos2d;
@@ -77,7 +77,7 @@ void MainMenu3::update(float dt)
                 _roomID = obj->roomId();
                 log("<MainMenu3::update> success serch game. room id: [%d]", _roomID);
                 
-                Director::getInstance()->replaceScene(GameWorld::createScene());
+                Director::getInstance()->replaceScene(Game::createScene());
                 
                 break;
             }
@@ -255,7 +255,7 @@ void MainMenu3::_showPlayMenu(float delay)
 
 void MainMenu3::_showSingleMenu(float delay)
 {
-    auto scene = GameWorld::createScene();
+    auto scene = Game::createScene();
     Director::getInstance()->replaceScene(scene);
 }
 
@@ -265,9 +265,9 @@ void MainMenu3::_showMultiMenu(float delay)
     _menuCenterIndex_multi = 3;
     _isButtonMoving_multi = false;
     
-    _clipRectNode_multi = ClippingRectangleNode::create(Rect(_winSize.width * 0.5f - 400.0f,
-                                                             _winSize.height * 0.5f - 125.0f,
-                                                             800, 250));
+    _clipRectNode_multi = ClippingRectangleNode::create(cocos2d::Rect(_winSize.width * 0.5f - 400.0f,
+                                                                      _winSize.height * 0.5f - 125.0f,
+                                                                      800, 250));
     addChild(_clipRectNode_multi);
     
     _chapter1 = Sprite::create("menu_sample1.png");
@@ -646,9 +646,9 @@ void MainMenu3::_showCustomMenu(float delay)
     _menuCenterIndex_custom = 3;
     _isButtonMoving_custom = false;
     
-    _clipRectNode_custom = ClippingRectangleNode::create(Rect(_winSize.width * 0.5f - 400.0f,
-                                                              _winSize.height * 0.5f - 125.0f,
-                                                              800, 250));
+    _clipRectNode_custom = ClippingRectangleNode::create(cocos2d::Rect(_winSize.width * 0.5f - 400.0f,
+                                                                       _winSize.height * 0.5f - 125.0f,
+                                                                       800, 250));
     addChild(_clipRectNode_custom);
     
     _survivalMode = Sprite::create("menu_sample1.png");

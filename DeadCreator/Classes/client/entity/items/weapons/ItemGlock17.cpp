@@ -8,12 +8,12 @@
 
 #include "ItemGlock17.hpp"
 #include "EntityHuman.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "AnimatedFiniteEntity.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
-ItemGlock17::ItemGlock17(GameManager* mgr) : WeaponBase(mgr)
+ItemGlock17::ItemGlock17(Game* game) : WeaponBase(game)
 {
     setEntityType(ITEM_GLOCK17);
     setRange(800.0f);
@@ -29,9 +29,9 @@ ItemGlock17::~ItemGlock17()
 {}
 
 
-ItemGlock17* ItemGlock17::create(GameManager* mgr)
+ItemGlock17* ItemGlock17::create(Game* game)
 {
-    ItemGlock17* ret = new (std::nothrow)ItemGlock17(mgr);
+    ItemGlock17* ret = new (std::nothrow)ItemGlock17(game);
     if( ret && ret->init("Glock17.png", "Glock17.png", "Glock17.png", cocos2d::ui::Widget::TextureResType::PLIST))
     {
         ret->autorelease();
@@ -70,10 +70,10 @@ void ItemGlock17::attack()
     std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
     Vec2 worldPos = _owner->getWorldPosition();
     
-    AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_gameMgr, {"es0.png", "es1.png", "es2.png", "es3.png", "es4.png" }, 5.0f, ui::Widget::TextureResType::PLIST);
+    AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_game, {"es0.png", "es1.png", "es2.png", "es3.png", "es4.png" }, 5.0f, ui::Widget::TextureResType::PLIST);
     es->setWorldPosition(worldPos + _owner->getHeading() * random(-30.0f, 30.0f) + _owner->getRight() * random(20.0f, 40.0f));
     es->setRotation(_owner->getBodyRot());
-    _gameMgr->addEntity(es, Z_ORDER_ITEMS, _gameMgr->getNextValidID());
+    _game->addEntity(es, Z_ORDER_ITEMS, _game->getNextValidID());
     
     // 엔티티들과의 충돌처리
     Mat3 rotMat;
@@ -81,7 +81,7 @@ void ItemGlock17::attack()
     Vec2 shootAt = rotMat.getTransformedVector(_owner->getHeading());
     Segment bulletRay = Segment(worldPos, worldPos + shootAt * getRange());
     
-    const std::list<EntityBase*>& members = _gameMgr->getNeighborsOnAttack(worldPos, shootAt, getRange());
+    const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, getRange());
     for (const auto &d : members)
     {
         if ( d == _owner ) continue;
@@ -97,7 +97,7 @@ void ItemGlock17::attack()
     }
     
     // 벽과의 충돌처리
-    const std::vector<Polygon> walls = _gameMgr->getNeighborWalls(_owner->getWorldPosition(), bulletRay);
+    const std::vector<Polygon> walls = _game->getNeighborWalls(_owner->getWorldPosition(), bulletRay);
     float dist;
     for( const auto& wall : walls )
     {
@@ -137,7 +137,7 @@ void ItemGlock17::attack()
             s.soundRange = 2000.0f;
             Dispatch.pushMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
             
-            if ( _owner->getTag() == _gameMgr->getPlayerPtr()->getTag() )
+            if ( _owner->getTag() == _game->getPlayerPtr()->getTag() )
             {
                 // 총쏜사람이 플레이어일 경우 크로스헤어 이벤트를 발동시킨다.
                 Dispatch.pushMessage(0.0, _owner, _owner, MessageType::CROSS_HAIR_EVENT, nullptr);
@@ -150,11 +150,11 @@ void ItemGlock17::attack()
 
 void ItemGlock17::discard()
 {
-    ItemGlock17* item = ItemGlock17::create(_gameMgr);
+    ItemGlock17* item = ItemGlock17::create(_game);
     item->setAmount( getAmount() );
     item->setNumOfLeftRounds( getNumOfLeftRounds() );
     item->setPosition(Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));
-    _gameMgr->addEntity(item, Z_ORDER_ITEMS, _gameMgr->getNextValidID());
+    _game->addEntity(item, Z_ORDER_ITEMS, _game->getNextValidID());
 }
 
 

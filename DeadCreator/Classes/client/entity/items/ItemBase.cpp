@@ -10,8 +10,8 @@
 using namespace cocos2d;
 using namespace realtrick::client;
 
-ItemBase::ItemBase(GameManager* mgr) :
-EntityBase(mgr),
+ItemBase::ItemBase(Game* game) :
+EntityBase(game),
 _owner(nullptr),
 _amount(0),
 _inSlotFrameName("#NO NAME"),

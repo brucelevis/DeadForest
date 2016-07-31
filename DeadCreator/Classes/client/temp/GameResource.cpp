@@ -1,0 +1,168 @@
+//
+//  GameResource.cpp
+//  DeadCreator
+//
+//  Created by mac on 2016. 7. 31..
+//
+//
+
+#include "GameResource.hpp"
+using namespace realtrick::client;
+using namespace cocos2d;
+
+#include "util.h"
+
+
+bool GameResource::initGMXFile(const std::string& path)
+{
+    // decode flatbuffers
+    std::string loadedData;
+    auto ret = flatbuffers::LoadFile(path.c_str(), true, &loadedData);
+    if ( ret )
+    {
+        const DeadCreator::GMXFile* file = DeadCreator::GetGMXFile(loadedData.c_str());
+        
+        // 1. default tile
+        _defaultTile = file->default_type();
+    
+        // 2. tile size
+        _tileWidth = file->tile_size()->width();
+        _tileHeight = file->tile_size()->height();
+        
+        // 3. number of tiles
+        _numOfTileX = file->number_of_tiles()->x() + DUMMY_TILE_SIZE * 2;
+        _numOfTileY = file->number_of_tiles()->y() * 2 + DUMMY_TILE_SIZE * 4;
+        
+        // 4. tile infos
+        _tileData.resize(_numOfTileY);
+        for(int i = 0 ; i < _numOfTileY; ++ i)
+        {
+            _tileData[i].resize(_numOfTileX);
+        }
+        
+        auto defaultTile = static_cast<TileType>(_defaultTile);
+        for(int i = 0; i < _numOfTileY; ++ i)
+        {
+            for(int j = 0; j < _numOfTileX; ++ j)
+            {
+                auto pos = indexToPosition(j, i, file->tile_size()->width(), file->tile_size()->height(), DUMMY_TILE_SIZE);
+                
+                if ( TileType::DIRT == defaultTile ) _tileData[i][j]= Tileset(j, i,"1_" + _to_string(random(1, 3)) + "_1234", pos);
+                else if ( TileType::GRASS == defaultTile ) _tileData[i][j]= Tileset(j, i,"2_" + _to_string(random(1, 3)) + "_1234", pos);
+                else if ( TileType::WATER == defaultTile ) _tileData[i][j]= Tileset(j, i,"3_" + _to_string(random(1, 3)) + "_1234", pos);
+                else if ( TileType::HILL == defaultTile ) _tileData[i][j]= Tileset(j, i,"5_" + _to_string(random(1, 3)) + "_1234", pos);
+            }
+        }
+        
+        for ( auto tile = file->tiles()->begin(); tile != file->tiles()->end() ; ++ tile )
+        {
+            _tileData[tile->indices()->y()][tile->indices()->x()].setNumber(tile->number()->str());
+        }
+        
+        // 5. collision regions
+        for ( auto poly = file->collision_regions()->begin() ; poly != file->collision_regions()->end() ; ++ poly )
+        {
+            Polygon p;
+            for( auto vert = poly->vertices()->begin(); vert != poly->vertices()->end() ; ++ vert )
+            {
+                p.pushVertex(Vec2(vert->x(), vert->y()));
+            }
+            _collisionData.push_back(p);
+        }
+        
+        // 6. entities
+        for ( auto entity = file->entities()->begin(); entity != file->entities()->end(); ++ entity )
+        {
+            EntityData data;
+            data.playerType = static_cast<PlayerType>(entity->player_type());
+            data.entityType = static_cast<EntityType>(entity->entity_type());
+            data.position.setPoint(entity->pos()->x(), entity->pos()->y());
+            
+            _entities.push_back(data);
+        }
+        
+        // 7. cell space size
+        _cellWidth = file->cell_space_size()->width();
+        _cellHeight = file->cell_space_size()->height();
+
+        // 8. locations
+        for ( auto location = file->locations()->begin(); location != file->locations()->end(); ++location)
+        {
+            Size size(location->size()->width(), location->size()->height());
+            Vec2 pos(location->pos()->x(), location->pos()->y());
+            
+            _locations.insert(
+            {
+                location->name()->str(),
+                cocos2d::Rect(pos.x, pos.y, size.width * file->tile_size()->width() / 4, size.height * file->tile_size()->height() / 4)
+            });
+        }
+        
+        
+        // 9. triggers
+        for ( auto trigger = file->triggers()->begin() ; trigger != file->triggers()->end() ; ++trigger)
+        {
+            TriggerData data;
+            
+            // set players
+            for(auto index = trigger->players()->begin(); index != trigger->players()->end(); ++index)
+                data.players.push_back(*index);
+            
+            // set conditions
+            for(auto cond = trigger->conditions()->begin() ; cond != trigger->conditions()->end(); ++cond)
+            {
+                auto condType = cond->condition_type();
+                switch (condType)
+                {
+                    case DeadCreator::ConditionBase_Bring:
+                    {
+                        auto conditionObject = static_cast<const DeadCreator::Bring*>(cond->condition());
+                        
+                        ConditionBringData* conditionBring = new ConditionBringData();
+                        conditionBring->player = static_cast<PlayerType>(conditionObject->player());
+                        conditionBring->approximation = static_cast<ApproximationType>(conditionObject->approximation());
+                        conditionBring->number = conditionObject->number();
+                        conditionBring->entity = static_cast<EntityType>(conditionObject->entity_type());
+                        conditionBring->location = _locations.at(conditionObject->location_name()->str());
+                        
+                        data.conditions.push_back(conditionBring);
+                        break;
+                    }
+                    default: { cocos2d::log("invalid condition type"); break;}
+                }
+            }
+            // set actions
+            for(auto act = trigger->actions()->begin() ; act != trigger->actions()->end(); ++act)
+            {
+                auto actType = act->action_type();
+                switch (actType)
+                {
+                    case DeadCreator::ActionBase_DisplayText:
+                    {
+                        auto actionObject = static_cast<const DeadCreator::DisplayText*>(act->action());
+                        
+                        ActionDisplayTextData* actionDisplayText = new ActionDisplayTextData();
+                        actionDisplayText->text = actionObject->text()->str();
+                        
+                        data.actions.push_back(actionDisplayText);
+                        break;
+                    }
+                    default: { cocos2d::log("invalid action type"); break;}
+                }
+            }
+            
+            _triggers.push_back(data);
+        }
+    }
+    
+    return ret;
+}
+
+
+
+
+
+
+
+
+

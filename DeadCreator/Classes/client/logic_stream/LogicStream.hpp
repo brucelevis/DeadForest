@@ -20,21 +20,21 @@ namespace realtrick
     namespace client
     {
         
-        class GameManager;
+        class Game;
         
         class LogicStream : public MessageNode
         {
             
         public:
             
-            explicit LogicStream(GameManager* mgr) : _gameMgr(mgr) {}
+            explicit LogicStream(Game* game) : _game(game) {}
             virtual ~LogicStream() = default;
             virtual bool handleMessage(const Telegram& msg) override { return false; }
             virtual void update(float dt) = 0;
             
         protected:
             
-            GameManager* _gameMgr;
+            Game* _game;
             
         };
         

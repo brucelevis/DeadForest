@@ -16,7 +16,7 @@ namespace realtrick
     namespace client
     {
         
-        class GameManager;
+        class Game;
         class OcculusionBuilder;
         class EffectSprite;
         class LightEffect;
@@ -27,11 +27,11 @@ namespace realtrick
             
         public:
             
-            explicit RenderTarget(GameManager* mgr);
+            explicit RenderTarget(Game* game);
             virtual ~RenderTarget();
             
             bool init() override;
-            static RenderTarget* create(GameManager* mgr);
+            static RenderTarget* create(Game* game);
             
             cocos2d::Texture2D* getNormalTex() const;
             cocos2d::Texture2D* getStaticTex() const;
@@ -47,7 +47,7 @@ namespace realtrick
             
         private:
             
-            GameManager*                _gameMgr;
+            Game*                _game;
             cocos2d::Size               _winSize;
             
             cocos2d::Node*              _staticTarget;

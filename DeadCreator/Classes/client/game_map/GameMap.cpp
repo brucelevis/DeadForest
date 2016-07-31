@@ -9,16 +9,16 @@
 #include <string>
 
 #include "GameMap.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "Camera2D.hpp"
-#include "TileBase.hpp"
+#include "Tileset.hpp"
 #include "TileHelperFunctions.hpp"
 using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
 
 
-GameMap::GameMap(GameManager* gameMgr) : _gameMgr(gameMgr),
+GameMap::GameMap(Game* game) : _game(game),
 _numOfTileX(0),
 _numOfTileY(0),
 _worldWidth(0),
@@ -35,9 +35,9 @@ GameMap::~GameMap()
 {}
 
 
-GameMap* GameMap::createWithGMXFile(GameManager* gameMgr, const DeadCreator::GMXFile* file)
+GameMap* GameMap::createWithGMXFile(Game* game, const DeadCreator::GMXFile* file)
 {
-    auto ret = new (std::nothrow) GameMap(gameMgr);
+    auto ret = new (std::nothrow) GameMap(game);
     if ( ret && ret->initGMXFile(file) )
     {
         ret->autorelease();
@@ -85,7 +85,7 @@ bool GameMap::initGMXFile(const DeadCreator::GMXFile *file)
             p.pushVertex(Vec2(vert->x(), vert->y()));
         }
         _collisionData.push_back(p);
-        _gameMgr->getCellSpace()->addWall(p);
+        _game->getCellSpace()->addWall(p);
     }
     
     _numOfTileX = file->number_of_tiles()->x() + DUMMY_TILE_SIZE * 2;
@@ -104,10 +104,10 @@ bool GameMap::initGMXFile(const DeadCreator::GMXFile *file)
         {
             auto pos = indexToPosition(j, i, file->tile_size()->width(), file->tile_size()->height(), DUMMY_TILE_SIZE);
             
-            if ( TileType::DIRT == defaultTile ) _tileData[i][j]= TileBase(j, i,"1_" + _to_string(random(1, 3)) + "_1234", pos);
-            else if ( TileType::GRASS == defaultTile ) _tileData[i][j]= TileBase(j, i,"2_" + _to_string(random(1, 3)) + "_1234", pos);
-            else if ( TileType::WATER == defaultTile ) _tileData[i][j]= TileBase(j, i,"3_" + _to_string(random(1, 3)) + "_1234", pos);
-            else if ( TileType::HILL == defaultTile ) _tileData[i][j]= TileBase(j, i,"5_" + _to_string(random(1, 3)) + "_1234", pos);
+            if ( TileType::DIRT == defaultTile ) _tileData[i][j]= Tileset(j, i,"1_" + _to_string(random(1, 3)) + "_1234", pos);
+            else if ( TileType::GRASS == defaultTile ) _tileData[i][j]= Tileset(j, i,"2_" + _to_string(random(1, 3)) + "_1234", pos);
+            else if ( TileType::WATER == defaultTile ) _tileData[i][j]= Tileset(j, i,"3_" + _to_string(random(1, 3)) + "_1234", pos);
+            else if ( TileType::HILL == defaultTile ) _tileData[i][j]= Tileset(j, i,"5_" + _to_string(random(1, 3)) + "_1234", pos);
         }
     }
     
@@ -145,7 +145,7 @@ void GameMap::updateChunk(const Vec2& position)
 
 void GameMap::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags)
 {
-    setPosition( getWorldPosition() - _gameMgr->getGameCamera()->getCameraPos() );
+    setPosition( getWorldPosition() - _game->getGameCamera()->getCameraPos() );
     Node::visit(renderer, transform, flags);
 }
 
@@ -153,7 +153,7 @@ void GameMap::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform,
 TileType GameMap::getStepOnTileType(const cocos2d::Vec2& pos)
 {
     std::pair<int, int> idx = getFocusedTileIndex(pos, _tileWidth, _tileHeight, DUMMY_TILE_SIZE);
-    TileBase& tile = _tileData[idx.second][idx.first];
+    Tileset& tile = _tileData[idx.second][idx.first];
     Vec2 center = indexToPosition(idx.first, idx.second, _tileWidth, _tileHeight, DUMMY_TILE_SIZE);
     
     Vec2 region1 = center + Vec2(0.0f, _tileHeight / 4.0f);

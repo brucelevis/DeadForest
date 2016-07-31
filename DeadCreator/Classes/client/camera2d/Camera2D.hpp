@@ -16,7 +16,7 @@ namespace realtrick
     namespace client
     {
         
-        class GameManager;
+        class Game;
         
         class Camera2D
         {

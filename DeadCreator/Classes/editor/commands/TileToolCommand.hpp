@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "CommandBase.hpp"
-#include "TileBase.hpp"
+#include "Tileset.hpp"
 #include "GMXLayer.hpp"
 
 namespace realtrick
@@ -60,7 +60,7 @@ namespace realtrick
             }
             
             virtual TileToolCommand* clone() const override { return new TileToolCommand(*this); }
-            void pushTile(const TileBase& prevTile, const TileBase& currTile)
+            void pushTile(const Tileset& prevTile, const Tileset& currTile)
             {
                 if ( _isBegan )
                 {
@@ -81,8 +81,8 @@ namespace realtrick
             
         private:
             
-            std::vector<TileBase> _prevTiles;
-            std::vector<TileBase> _currTiles;
+            std::vector<Tileset> _prevTiles;
+            std::vector<Tileset> _currTiles;
             
         };
         

@@ -8,10 +8,10 @@
 
 #include "BulletShell.hpp"
 #include "EntityHuman.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 using namespace realtrick::client;
 
-BulletShell::BulletShell(GameManager* mgr) : BulletBase(mgr)
+BulletShell::BulletShell(Game* game) : BulletBase(game)
 {
     setEntityType(BULLET_SHELL);
     setAmount(30);
@@ -22,9 +22,9 @@ BulletShell::~BulletShell()
 {}
 
 
-BulletShell* BulletShell::create(GameManager* mgr)
+BulletShell* BulletShell::create(Game* game)
 {
-    BulletShell* ret = new (std::nothrow)BulletShell(mgr);
+    BulletShell* ret = new (std::nothrow)BulletShell(game);
     if( ret && ret->init("Shell.png", "Shell.png", "Shell.png", cocos2d::ui::Widget::TextureResType::PLIST))
     {
         ret->autorelease();
@@ -43,10 +43,10 @@ BulletShell* BulletShell::clone() const
 
 void BulletShell::discard()
 {
-    BulletShell* item = BulletShell::create(_gameMgr);
+    BulletShell* item = BulletShell::create(_game);
     item->setAmount( getAmount() );
     item->setPosition(cocos2d::Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));
-    _gameMgr->addEntity(item, Z_ORDER_ITEMS, _gameMgr->getNextValidID());
+    _game->addEntity(item, Z_ORDER_ITEMS, _game->getNextValidID());
 }
 
 

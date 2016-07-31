@@ -1,15 +1,14 @@
 //
-//  GameManager.cpp
+//  Game.cpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2015. 11. 27..
 //
 //
 
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "EntityHuman.hpp"
 #include "Items.hpp"
-#include "GameWorld.hpp"
 #include "Camera2D.hpp"
 #include "RenderTarget.hpp"
 #include "EntityBase.hpp"
@@ -18,6 +17,7 @@
 #include "TriggerSystem.hpp"
 #include "SingleStream.hpp"
 #include "NetworkStream.hpp"
+#include "GameResource.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
@@ -26,8 +26,7 @@ using namespace realtrick::client;
 #include "util.h"
 
 
-GameManager::GameManager(GameWorld* world) :
-_gameWorld(world),
+Game::Game() :
 _winSize(Size::ZERO),
 _player(nullptr),
 _cellSpace(nullptr),
@@ -44,28 +43,31 @@ _zoomScale(1)
 }
 
 
-GameManager::~GameManager()
+Game::~Game()
 {
     this->clear();
 }
 
 
-void GameManager::clear()
+void Game::clear()
 {
     _entities.clear();
     CC_SAFE_DELETE(_cellSpace);
     CC_SAFE_DELETE(_triggerSystem);
     CC_SAFE_DELETE(_gameCamera);
     CC_SAFE_DELETE(_logicStream);
+    CC_SAFE_RELEASE_NULL(_gameResource);
     _player = nullptr;
     
     experimental::AudioEngine::stop(_bgmID);
+    
+    Dispatch.clearQueue();
 }
 
 
-GameManager* GameManager::create(GameWorld* world)
+Game* Game::create()
 {
-    auto ret = new (std::nothrow) GameManager(world);
+    auto ret = new (std::nothrow) Game();
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -76,13 +78,23 @@ GameManager* GameManager::create(GameWorld* world)
 }
 
 
-bool GameManager::init()
+Scene* Game::createScene()
+{
+    auto scene = Scene::create();
+    auto node = Game::create();
+    scene->addChild(node);
+    return scene;
+}
+
+
+bool Game::init()
 {
     if ( !Node::init() )
         return false;
     
+    this->scheduleUpdate();
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-
+    
     _triggerSystem = new TriggerSystem(this);
     _gameCamera = new Camera2D();
     
@@ -103,7 +115,7 @@ bool GameManager::init()
 }
 
 
-void GameManager::update(float dt)
+void Game::update(float dt)
 {
     // """IMPORTANT"""
     // logicStream's update() must call before checking pause.
@@ -126,10 +138,12 @@ void GameManager::update(float dt)
     _gameCamera->setCameraPos(_player->getWorldPosition());
     if ( oldIndex != getFocusedTileIndex(_gameCamera->getCameraPos(), _gameMap->getTileWidth(), _gameMap->getTileHeight(), DUMMY_TILE_SIZE) )
         _gameMap->updateChunk(_gameCamera->getCameraPos());
+    
+    Dispatch.dispatchDelayedMessages();
 }
 
 
-EntityBase* GameManager::getEntityFromID(int ID)
+EntityBase* Game::getEntityFromID(int ID)
 {
     auto iter = _entities.find(ID);
     if(iter != _entities.end())
@@ -142,12 +156,12 @@ EntityBase* GameManager::getEntityFromID(int ID)
     }
 }
 
-void GameManager::addEntity(EntityBase* entity, int zOrder, int id)
+void Game::addEntity(EntityBase* entity, int zOrder, int id)
 {
     auto iter = _entities.find(id);
     if( iter != _entities.end())
     {
-        throw std::runtime_error("<GameManager::registEntity> ID is already exist.");
+        throw std::runtime_error("<Game::registEntity> ID is already exist.");
     }
     
     entity->setTag(id);
@@ -157,12 +171,12 @@ void GameManager::addEntity(EntityBase* entity, int zOrder, int id)
 }
 
 
-void GameManager::removeEntity(int id)
+void Game::removeEntity(int id)
 {
     auto iter = _entities.find(id);
     if(iter == _entities.end())
     {
-        throw std::runtime_error("<GameManager::removeEntity> ID is not exist.");
+        throw std::runtime_error("<Game::removeEntity> ID is not exist.");
     }
     
     iter->second->removeFromParent();
@@ -171,7 +185,7 @@ void GameManager::removeEntity(int id)
 }
 
 
-void GameManager::loadUiLayer()
+void Game::loadUiLayer()
 {
     _uiLayer = UiLayer::create(this);
     _clipNode->addChild(_uiLayer);
@@ -183,7 +197,7 @@ void GameManager::loadUiLayer()
 }
 
 
-std::list<EntityBase*> GameManager::getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const
+std::list<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const
 {
     std::list<EntityBase*> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
@@ -202,7 +216,7 @@ std::list<EntityBase*> GameManager::getNeighborsOnMove(const cocos2d::Vec2& posi
 }
 
 
-std::list<EntityBase*> GameManager::getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const
+std::list<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const
 {
     std::list<EntityBase*> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCellsNotCurrent(position);
@@ -230,7 +244,7 @@ std::list<EntityBase*> GameManager::getNeighborsOnAttack(const cocos2d::Vec2& po
     return ret;
 }
 
-std::vector<Polygon> GameManager::getNeighborWalls(const cocos2d::Vec2& position, float speed) const
+std::vector<Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, float speed) const
 {
     std::vector<Polygon> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
@@ -249,7 +263,7 @@ std::vector<Polygon> GameManager::getNeighborWalls(const cocos2d::Vec2& position
 }
 
 
-std::vector<Polygon> GameManager::getNeighborWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const
+std::vector<Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const
 {
     std::vector<Polygon> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
@@ -268,7 +282,7 @@ std::vector<Polygon> GameManager::getNeighborWalls(const cocos2d::Vec2& position
 }
 
 
-std::vector<Polygon> GameManager::getNeighborWalls(const cocos2d::Vec2& position, const Segment& ray) const
+std::vector<Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const Segment& ray) const
 {
     std::vector<Polygon> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCellsNotCurrent(position);
@@ -294,27 +308,27 @@ std::vector<Polygon> GameManager::getNeighborWalls(const cocos2d::Vec2& position
 }
 
 
-cocos2d::Vec2 GameManager::worldToLocal(const cocos2d::Vec2& p) const
+cocos2d::Vec2 Game::worldToLocal(const cocos2d::Vec2& p) const
 {
     if ( !_gameCamera ) throw std::runtime_error("camera not exist.");
     return p - _gameCamera->getCameraPos();
 }
 
 
-cocos2d::Vec2 GameManager::worldToLocal(const cocos2d::Vec2& p, const cocos2d::Vec2& camera) const
+cocos2d::Vec2 Game::worldToLocal(const cocos2d::Vec2& p, const cocos2d::Vec2& camera) const
 {
     if ( !_gameCamera ) throw std::runtime_error("camera not exist.");
     return p - camera;
 }
 
 
-void GameManager::pushLogic(double delaySeconds, MessageType type, void* extraInfo)
+void Game::pushLogic(double delaySeconds, MessageType type, void* extraInfo)
 {
     Dispatch.pushMessage(delaySeconds, _logicStream, nullptr, type, extraInfo);
 }
 
 
-void GameManager::loadGMXFile(const std::string& filePath)
+void Game::loadResource(const std::string& filePath)
 {
     std::string loadedData;
     auto ret = flatbuffers::LoadFile(filePath.c_str(), true, &loadedData);
@@ -354,7 +368,6 @@ void GameManager::loadGMXFile(const std::string& filePath)
                 {
                     setPlayer(human);
                     isFirst = false;
-                    
                 }
             }
             else
@@ -487,6 +500,13 @@ void GameManager::loadGMXFile(const std::string& filePath)
             _triggerSystem->addTrigger(newTrigger);
         }
     }
+}
+
+
+void Game::loadGMXFile(const std::string& path)
+{
+    _gameResource = GameResource::createWithGMXFile(path);
+    _gameResource->retain();
 }
 
 

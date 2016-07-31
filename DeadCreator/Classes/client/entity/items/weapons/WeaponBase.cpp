@@ -8,14 +8,14 @@
 
 #include "WeaponBase.hpp"
 #include "EntityHuman.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "Inventory.hpp"
 #include "HumanOwnedAnimations.hpp"
 #include "WeaponStatus.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
-WeaponBase::WeaponBase(GameManager* mgr) : ItemBase(mgr),
+WeaponBase::WeaponBase(Game* game) : ItemBase(game),
 _numOfLeftRounds(0),
 _maxRounds(0),
 _damage(0),
@@ -103,7 +103,7 @@ void WeaponBase::reload()
             Dispatch.pushMessage(0.0, _owner, this, MessageType::RELOAD_WEAPON, nullptr);
             
             double animatedTime = _owner->getBodyAnimator()->getCurrAnimation()->getMaxFrame() * _owner->getBodyAnimator()->getCurrAnimation()->getFrameSwapTime();
-            _gameMgr->pushLogic(animatedTime, MessageType::RELOAD_COMPLETE, nullptr);
+            _game->pushLogic(animatedTime, MessageType::RELOAD_COMPLETE, nullptr);
         }
         else
         {

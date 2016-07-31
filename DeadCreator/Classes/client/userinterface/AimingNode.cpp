@@ -12,8 +12,8 @@ using namespace realtrick::client;
 using namespace cocos2d;
 
 
-AimingNode::AimingNode(GameManager* mgr):
-_gameMgr(mgr),
+AimingNode::AimingNode(Game* game):
+_game(game),
 _crossHair(nullptr),
 _outter(nullptr),
 _inner(nullptr),
@@ -23,9 +23,9 @@ _isInnerOn(false)
 }
 
 
-AimingNode* AimingNode::create(GameManager* mgr)
+AimingNode* AimingNode::create(Game* game)
 {
-    auto ret = new (std::nothrow) AimingNode(mgr);
+    auto ret = new (std::nothrow) AimingNode(game);
     if ( ret && ret->init() )
     {
         ret->autorelease();

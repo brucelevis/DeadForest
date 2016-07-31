@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "TileBase.hpp"
+#include "Tileset.hpp"
 #include "GMXlayer.hpp"
 #include "SizeProtocol.h"
 #include "TileHelperFunctions.hpp"
@@ -210,7 +210,7 @@ namespace realtrick
                 ImGui::PopStyleVar();
             }
             
-            void setTile(int x, int y, const TileBase& tile)
+            void setTile(int x, int y, const Tileset& tile)
             {
                 int numOfTileX = _gmxLayer.getFile().numOfTileX;
                 int key = indexToNumber(x, y, numOfTileX, DUMMY_TILE_SIZE);

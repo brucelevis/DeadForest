@@ -7,7 +7,7 @@
 //
 
 #include "RenderTarget.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "OcculusionBuilder.hpp"
 #include "LightEffect.hpp"
 #include "EffectSprite.hpp"
@@ -17,10 +17,10 @@ using namespace realtrick::client;
 using namespace cocos2d;
 
 
-RenderTarget::RenderTarget(GameManager* mgr):
+RenderTarget::RenderTarget(Game* game):
 _staticTarget(nullptr),
 _dynamicTarget(nullptr),
-_gameMgr(mgr),
+_game(game),
 _winSize(Size::ZERO),
 _normalTex(nullptr),
 _staticTex(nullptr),
@@ -45,9 +45,9 @@ RenderTarget::~RenderTarget()
 }
 
 
-RenderTarget* RenderTarget::create(GameManager* mgr)
+RenderTarget* RenderTarget::create(Game* game)
 {
-    RenderTarget* ret = new (std::nothrow) RenderTarget(mgr);
+    RenderTarget* ret = new (std::nothrow) RenderTarget(game);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -164,11 +164,11 @@ cocos2d::Texture2D* RenderTarget::getOcculusionTex() const
     fov.aroundCircleRadius = 40.0f;
     fov.aroundCircleSlice = 30;
     fov.entryDegree = 110.0f;
-    fov.heading = _gameMgr->getPlayerPtr()->getHeading();
+    fov.heading = _game->getPlayerPtr()->getHeading();
     fov.isEnable = Prm.getValueAsBool("isFovMode");
     
-    EntityHuman* player = _gameMgr->getPlayerPtr();
-    _occulusionBuilder->invalidateTexture(_occulusionTex, player->getWorldPosition(), _gameMgr->getNeighborWalls(player->getWorldPosition(), _winSize), _winSize, fov);
+    EntityHuman* player = _game->getPlayerPtr();
+    _occulusionBuilder->invalidateTexture(_occulusionTex, player->getWorldPosition(), _game->getNeighborWalls(player->getWorldPosition(), _winSize), _winSize, fov);
     
     return _occulusionTex->getSprite()->getTexture();
 }

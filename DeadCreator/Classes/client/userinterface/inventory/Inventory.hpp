@@ -20,7 +20,7 @@ namespace realtrick
     namespace client
     {
         class ItemBase;
-        class GameManager;
+        class Game;
         class ItemSlot;
         class AnimatedButton;
         
@@ -31,11 +31,11 @@ namespace realtrick
             
         public:
             
-            explicit Inventory(GameManager* mgr);
+            explicit Inventory(Game* game);
             virtual ~Inventory();
             
             bool init() override;
-            static Inventory* create(GameManager* mgr);
+            static Inventory* create(Game* game);
             
             void pushItem(ItemBase* item);
             bool isFull() const { return (_getClosestEmptyIndex() == INVALID_SLOT); }
@@ -63,7 +63,7 @@ namespace realtrick
             
         private:
             
-            GameManager*                            _gameMgr;
+            Game*                            _game;
             cocos2d::Sprite*                        _backgroundView;
             cocos2d::Node*                          _itemView;
             

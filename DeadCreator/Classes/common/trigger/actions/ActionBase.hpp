@@ -55,6 +55,7 @@ namespace realtrick
     namespace client
     {
         
+        class Game;
         class GameTrigger;
         
         class ActionBase : public cocos2d::Ref
@@ -62,16 +63,18 @@ namespace realtrick
            
         public:
             
-            explicit ActionBase(GameTrigger* owner) : _owner(owner)
+            explicit ActionBase(Game* game) : _game(game)
             {}
             
-            virtual ~ActionBase() = default;
+            virtual ~ActionBase() { _owner = nullptr; _game = nullptr; }
             
             virtual void doAction() = 0;
+            void setOwner(GameTrigger* owner) { _owner = owner; }
             
         protected:
             
             GameTrigger* _owner;
+            Game* _game;
             
         };
         

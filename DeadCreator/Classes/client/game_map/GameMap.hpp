@@ -15,85 +15,28 @@
 #include "cocos2d.h"
 #include "Physics.hpp"
 #include "ParamLoader.hpp"
-#include "json/document.h"
-using namespace rapidjson;
 
 #include "GMXFile_generated.h"
 #include "EntityType.hpp"
-#include "TileBase.hpp"
+#include "Tileset.hpp"
 
 namespace realtrick
 {
     namespace client
     {
         
-        class GameManager;
-        
-        struct NameCoord
-        {
-            std::string name;
-            cocos2d::Vec2 pos;
-            
-            NameCoord()
-            {
-                pos = cocos2d::Vec2::ZERO;
-            }
-            
-            NameCoord(std::string name, cocos2d::Vec2 pos) : name(name), pos(pos)
-            {}
-            
-            NameCoord(const NameCoord& rhs) : name(rhs.name), pos(rhs.pos)
-            {}
-            
-            NameCoord operator=(const NameCoord& rhs)
-            {
-                if(&rhs == this)
-                    return *this;
-                name = rhs.name;
-                pos = rhs.pos;
-                return *this;
-            }
-            
-        };
-        
-        struct NameCoordAmount
-        {
-            std::string name;
-            cocos2d::Vec2 pos;
-            int amount;
-            
-            NameCoordAmount()
-            {
-                pos = cocos2d::Vec2::ZERO;
-            }
-            
-            NameCoordAmount(std::string name, cocos2d::Vec2 pos, int amount) : name(name), pos(pos), amount(amount)
-            {}
-            
-            NameCoordAmount(const NameCoordAmount& rhs) : name(rhs.name), pos(rhs.pos), amount(rhs.amount)
-            {}
-            
-            NameCoordAmount operator=(const NameCoordAmount& rhs)
-            {
-                if(&rhs == this)
-                    return *this;
-                name = rhs.name;
-                pos = rhs.pos;
-                amount = rhs.amount;
-                return *this;
-            }
-        };
+        class Game;
         
         class GameMap : public cocos2d::Node
         {
             
         public:
             
-            explicit GameMap(GameManager* gameMgr);
+            explicit GameMap(Game* game);
             virtual ~GameMap();
             bool initGMXFile(const DeadCreator::GMXFile* file);
 
-            static GameMap* createWithGMXFile(GameManager* gameMgr, const DeadCreator::GMXFile* file);
+            static GameMap* createWithGMXFile(Game* game, const DeadCreator::GMXFile* file);
             
             virtual void visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags) override;
             
@@ -112,14 +55,14 @@ namespace realtrick
             int getNumOfViewableTileY() const { return _numOfViewableTileY; }
             
             const std::vector<Polygon>& getCollisionData() const { return _collisionData; }
-            const std::vector<std::vector<TileBase>>& getTileData() const { return _tileData; }
+            const std::vector<std::vector<Tileset>>& getTileData() const { return _tileData; }
             
             cocos2d::Vec2 getWorldPosition() const { return _worldPosition; }
             void setWorldPosition(const cocos2d::Vec2& worldPos) { _worldPosition = worldPos; }
             
         private:
             
-            GameManager* _gameMgr;
+            Game* _game;
             
             std::vector<std::vector<cocos2d::Sprite*>> _currTiles;
             
@@ -139,7 +82,7 @@ namespace realtrick
             std::pair<int, int> _pivotIndex;
             
             std::vector<Polygon> _collisionData;
-            std::vector<std::vector<TileBase>> _tileData;
+            std::vector<std::vector<Tileset>> _tileData;
             cocos2d::Vec2 _worldPosition;
             
             bool _isNormal;

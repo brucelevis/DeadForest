@@ -22,7 +22,7 @@ namespace realtrick
             
         public:
             
-            explicit WeaponBase(GameManager* mgr);
+            explicit WeaponBase(Game* game);
             WeaponBase(const WeaponBase& rhs);
             virtual ~WeaponBase();
             

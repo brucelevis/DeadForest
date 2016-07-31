@@ -16,7 +16,7 @@ namespace realtrick
     {
         
         class ItemBase;
-        class GameManager;
+        class Game;
         class AnimatedButton;
         class ItemSlot;
         
@@ -37,11 +37,11 @@ namespace realtrick
             
         public:
             
-            explicit ItemExtensionButtons(GameManager* mgr);
+            explicit ItemExtensionButtons(Game* game);
             virtual ~ItemExtensionButtons();
             
             bool init(ItemSlot* slot);
-            static ItemExtensionButtons* create(GameManager* mgr, ItemSlot* slot);
+            static ItemExtensionButtons* create(Game* game, ItemSlot* slot);
             
             void showButtons();
             void hideButtons();
@@ -49,7 +49,7 @@ namespace realtrick
             
         private:
             
-            GameManager*                    _gameMgr;
+            Game*                    _game;
             ItemSlot*                       _ownSlot;
             std::vector<AnimatedButton*>    _buttons;
             

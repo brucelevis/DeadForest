@@ -20,9 +20,9 @@ namespace realtrick
             
         public:
             
-            explicit Bullet9mm(GameManager* mgr);
+            explicit Bullet9mm(Game* game);
             virtual ~Bullet9mm();
-            static Bullet9mm* create(GameManager* mgr);
+            static Bullet9mm* create(Game* game);
             virtual Bullet9mm* clone() const override;
             virtual void discard() override;
             

@@ -1,6 +1,5 @@
 #include "AppDelegate.h"
 #include "EditScene.hpp"
-#include "GameWorld.hpp"
 #include "MainMenu3.hpp"
 #include "DummyScene.hpp"
 
@@ -66,8 +65,8 @@ bool AppDelegate::applicationDidFinishLaunching()
     auto scene = realtrick::editor::EditScene::createScene();
     director->runWithScene(scene);
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    auto scene = realtrick::client::GameWorld::createScene();
-    director->runWithScene(scene);
+//    auto scene = realtrick::client::Game::createScene();
+//    director->runWithScene(scene);
 #endif
     
     return true;

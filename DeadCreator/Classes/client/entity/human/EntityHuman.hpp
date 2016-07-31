@@ -19,7 +19,7 @@ namespace realtrick
     {
         
         class WeaponBase;
-        class GameManager;
+        class Game;
         class Inventory;
         class WeaponStatus;
         
@@ -28,11 +28,11 @@ namespace realtrick
             
         public:
             
-            explicit EntityHuman(GameManager* mgr);
+            explicit EntityHuman(Game* game);
             virtual ~EntityHuman();
             
             virtual bool init() override;
-            static EntityHuman* create(GameManager* mgr);
+            static EntityHuman* create(Game* game);
             
             void setFootGauge(float g);
             

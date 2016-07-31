@@ -76,6 +76,20 @@ namespace realtrick
         EXACTLY = 2,
     };
         
+    enum class TriggerComponentType : int
+    {
+        CONDITION_BRING,
+        ACTION_DISPLAY_TEXT,
+    };
+        
+    struct EntityData
+    {
+        PlayerType playerType;
+        EntityType entityType;
+        cocos2d::Vec2 position;
+    };
+    
+        
     inline void addMask(int& src, int mask)                         { src |= mask; }
     inline bool isMasked(int src, int mask)                         { return ((src & mask) == mask); }
     inline void removeMask(int& src, int mask)                      { if ( isMasked(src, mask) ) src ^= mask; }

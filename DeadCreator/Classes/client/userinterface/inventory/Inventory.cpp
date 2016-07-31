@@ -15,8 +15,8 @@ using namespace realtrick::client;
 using namespace cocos2d;
 
 
-Inventory::Inventory(GameManager* mgr) :
-_gameMgr(mgr),
+Inventory::Inventory(Game* game) :
+_game(game),
 _backgroundView(nullptr),
 _itemView(nullptr),
 _slotSize(Size(Prm.getValueAsFloat("slotWidth"), Prm.getValueAsFloat("slotHeight"))),
@@ -32,9 +32,9 @@ Inventory::~Inventory()
 }
 
 
-Inventory* Inventory::create(GameManager* mgr)
+Inventory* Inventory::create(Game* game)
 {
-    Inventory* ret = new (std::nothrow) Inventory(mgr);
+    Inventory* ret = new (std::nothrow) Inventory(game);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -61,7 +61,7 @@ bool Inventory::init()
         int x = i % _numOfSlotX;
         int y = i / _numOfSlotX;
         
-        ItemSlot* slot = ItemSlot::create(_gameMgr, this, "inventory_slot_n.png", "inventory_slot_s.png", ui::Widget::TextureResType::LOCAL);
+        ItemSlot* slot = ItemSlot::create(_game, this, "inventory_slot_n.png", "inventory_slot_s.png", ui::Widget::TextureResType::LOCAL);
         slot->setPosition(Vec2((INVENTORY_PAD * (x + 1)) + (x * _slotSize.width) + _slotSize.width / 2,
                                (INVENTORY_PAD * (y + 1)) + (y * _slotSize.height) + _slotSize.height / 2 + 30));
         slot->setSlotSize(_slotSize);

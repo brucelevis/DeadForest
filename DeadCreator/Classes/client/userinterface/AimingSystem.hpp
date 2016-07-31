@@ -13,7 +13,7 @@ namespace realtrick
     namespace client
     {
         
-        class GameManager;
+        class Game;
         class EntityHuman;
         class EntityBase;
         
@@ -23,7 +23,7 @@ namespace realtrick
         public:
             
             AimingSystem() = delete;
-            explicit AimingSystem(GameManager* mgr, EntityHuman* owner);
+            explicit AimingSystem(Game* game, EntityHuman* owner);
             virtual ~AimingSystem() = default;
             
             bool isEnableSystem() const { return _isEnableSystem; }
@@ -35,7 +35,7 @@ namespace realtrick
             
         private:
             
-            GameManager* _gameMgr;
+            Game* _game;
             EntityHuman* _owner;
             EntityBase* _closestHitableEntity;
             

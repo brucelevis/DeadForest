@@ -8,7 +8,7 @@
 
 #include "UiLayer.hpp"
 #include "JoystickEx.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "EntityHuman.hpp"
 #include "MessageTypes.hpp"
 #include "Inventory.hpp"
@@ -19,13 +19,12 @@
 #include "AimingNode.hpp"
 #include "HpBar.hpp"
 #include "InfoSystem.hpp"
-#include "GameWorld.hpp"
 #include "SizeProtocol.h"
 using namespace realtrick::client;
 using namespace cocos2d;
 
 
-UiLayer::UiLayer(GameManager* mgr) : _gameMgr(mgr)
+UiLayer::UiLayer(Game* game) : _game(game)
 {
     
 }
@@ -36,9 +35,9 @@ UiLayer::~UiLayer()
 }
 
 
-UiLayer* UiLayer::create(GameManager* mgr)
+UiLayer* UiLayer::create(Game* game)
 {
-    auto ret = new (std::nothrow) UiLayer(mgr);
+    auto ret = new (std::nothrow) UiLayer(game);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -67,10 +66,10 @@ bool UiLayer::init()
         data.ref = ref;
         data.dir = dir;
         data.type = type;
-        _gameMgr->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data);
+        _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data);
         
         // 이동방향과 베젤방향을 동기화 시킨다.
-        if ( _gameMgr->getPlayerPtr()->getInputMask() == HumanBehaviorType::RUN ) _bezel->setBezelDirection(data.dir);
+        if ( _game->getPlayerPtr()->getInputMask() == HumanBehaviorType::RUN ) _bezel->setBezelDirection(data.dir);
         
     });
     addChild(_moveJoystick, Z_ORDER_UI - 1);
@@ -83,7 +82,7 @@ bool UiLayer::init()
         AttJoystickData data;
         data.ref = ref;
         data.type = type;
-        _gameMgr->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
+        _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
         
     });
     addChild(_attackJoystick, Z_ORDER_UI - 1);
@@ -99,7 +98,7 @@ bool UiLayer::init()
         BezelDirectionTriggerData data;
         data.ref = ref;
         data.dir = dir;
-        _gameMgr->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
+        _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
         
     });
     _bezel->addClickedCallback([this](Ref* ref, ui::Widget::TouchEventType type){
@@ -107,17 +106,17 @@ bool UiLayer::init()
         BezelInputData data;
         data.ref = ref;
         data.type = type;
-        _gameMgr->pushLogic(0.0, MessageType::BEZEL_CLICK_INPUT, &data);
+        _game->pushLogic(0.0, MessageType::BEZEL_CLICK_INPUT, &data);
         
     });
     addChild(_bezel, Z_ORDER_UI - 1);
     
-    _weaponStatus = _gameMgr->getPlayerPtr()->getWeaponStatus();
+    _weaponStatus = _game->getPlayerPtr()->getWeaponStatus();
     _weaponStatus->setPosition(Vec2(_winSize.width * 0.9f, _winSize.height * 0.9f));
     addChild(_weaponStatus, Z_ORDER_UI - 1);
     
     
-    _inventory = _gameMgr->getPlayerPtr()->getInventory();
+    _inventory = _game->getPlayerPtr()->getInventory();
     _inventory->setPosition(Vec2(_winSize / 2));
     addChild(_inventory, Z_ORDER_UI);
     
@@ -135,18 +134,18 @@ bool UiLayer::init()
                                                _moveJoystick->disableJoystick();
                                                _weaponStatus->disableButton();
                                                
-                                               EntityHuman* player = _gameMgr->getPlayerPtr();
+                                               EntityHuman* player = _game->getPlayerPtr();
                                                
                                                MoveJoystickData data1;
                                                data1.ref = ref;
                                                data1.dir = player->getMoving();
                                                data1.type = JoystickEx::ClickEventType::ENDED;
-                                               _gameMgr->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data1);
+                                               _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data1);
                                                
                                                AttJoystickData data2;
                                                data2.ref = ref;
                                                data2.type = ui::Widget::TouchEventType::ENDED;
-                                               _gameMgr->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data2);
+                                               _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data2);
                                            }
                                            else
                                            {
@@ -177,11 +176,11 @@ bool UiLayer::init()
     _inGameUIRoot->setScale(Prm.getValueAsFloat("cameraZoom"));
     addChild(_inGameUIRoot);
     
-    _aimingNode = AimingNode::create(_gameMgr);
+    _aimingNode = AimingNode::create(_game);
     _aimingNode->setRange(100.0f);
     _inGameUIRoot->addChild(_aimingNode);
 
-    _hpBar = HpBar::create(_gameMgr);
+    _hpBar = HpBar::create(_game);
     _hpBar->setPosition(Vec2(_winSize.width * 0.03f, _winSize.height * 0.9f));
     addChild(_hpBar);
     

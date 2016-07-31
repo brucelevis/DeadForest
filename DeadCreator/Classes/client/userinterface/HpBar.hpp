@@ -15,24 +15,24 @@ namespace realtrick
     namespace client
     {
         
-        class GameManager;
+        class Game;
         
         class HpBar : public cocos2d::Node
         {
             
         public:
             
-            explicit HpBar(GameManager* mgr);
+            explicit HpBar(Game* game);
             virtual ~HpBar() = default;
             
-            static HpBar* create(GameManager* mgr);
+            static HpBar* create(Game* game);
             virtual bool init() override;
             
             void setHitPoint(float h);
             
         private:
             
-            GameManager* _gameMgr;
+            Game* _game;
             cocos2d::Sprite* _bundle;
             cocos2d::Sprite* _bar;
             

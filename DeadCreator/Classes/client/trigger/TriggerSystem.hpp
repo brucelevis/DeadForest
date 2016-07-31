@@ -20,16 +20,31 @@ namespace realtrick
     namespace client
     {
         
-        class GameManager;
+        class Game;
+        class GameResource;
         
-        class TriggerSystem
+        class TriggerSystem : public cocos2d::Ref
         {
             
         public:
             
-            explicit TriggerSystem(GameManager* mgr) : _gameMgr(mgr)
+            explicit TriggerSystem(Game* game) : _game(game)
             {}
             virtual ~TriggerSystem() = default;
+            
+            static TriggerSystem* createWithResouce(Game* game, GameResource* res)
+            {
+                auto ret = new (std::nothrow) TriggerSystem(game);
+                if ( ret && ret->initWithResource(res) )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
+            bool initWithResource(GameResource* res);
             
             void update(float dt)
             {
@@ -46,7 +61,7 @@ namespace realtrick
             
         private:
             
-            GameManager* _gameMgr;
+            Game* _game;
             cocos2d::Vector<GameTrigger*> _triggers;
             
         };

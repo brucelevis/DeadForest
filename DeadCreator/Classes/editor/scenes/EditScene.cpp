@@ -449,7 +449,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
         {
             int xx = iter->indices()->x();
             int yy = iter->indices()->y();
-            TileBase tile = TileBase(xx, yy, iter->number()->str(),
+            Tileset tile = Tileset(xx, yy, iter->number()->str(),
                                      indexToPosition(xx, yy, file->tileWidth, file->tileHeight, DUMMY_TILE_SIZE));
             _layer->setTile(xx, yy, tile, true);
         }

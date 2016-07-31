@@ -10,12 +10,12 @@
 #include "ItemBase.hpp"
 #include "AnimatedButton.hpp"
 #include "ItemExtensionButtons.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
-ItemSlot::ItemSlot(GameManager* mgr) :
-_gameMgr(mgr),
+ItemSlot::ItemSlot(Game* game) :
+_game(game),
 _item(nullptr),
 _itemImage(nullptr),
 _equippedImage(nullptr),
@@ -30,9 +30,9 @@ ItemSlot::~ItemSlot()
 }
 
 
-ItemSlot* ItemSlot::create(GameManager* mgr, Inventory* owner, const char* normal, const char* selected, cocos2d::ui::Widget::TextureResType texType)
+ItemSlot* ItemSlot::create(Game* game, Inventory* owner, const char* normal, const char* selected, cocos2d::ui::Widget::TextureResType texType)
 {
-    ItemSlot* ret = new (std::nothrow) ItemSlot(mgr);
+    ItemSlot* ret = new (std::nothrow) ItemSlot(game);
     if ( ret && ret->init(owner, normal, selected, texType) )
     {
         ret->autorelease();
@@ -65,7 +65,7 @@ bool ItemSlot::init(Inventory* owner, const char* normal, const char* selected, 
     _equippedImage->setVisible(false);
     addChild(_equippedImage, 2);
     
-    _extensionButtons = ItemExtensionButtons::create(_gameMgr, this);
+    _extensionButtons = ItemExtensionButtons::create(_game, this);
     _extensionButtons->setPosition(Vec2(getContentSize() / 2.0f));
     addChild(_extensionButtons, 3);
     

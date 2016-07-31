@@ -13,7 +13,7 @@
 #include "GMXLayer.hpp"
 #include "GameTrigger.hpp"
 
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "EntityBase.hpp"
 
 namespace realtrick
@@ -160,19 +160,33 @@ namespace realtrick
     namespace client
     {
         
+        struct ConditionBringData: public TriggerDataBase
+        {
+            PlayerType player;
+            ApproximationType approximation;
+            int number;
+            EntityType entity;
+            cocos2d::Rect location;
+            
+            ConditionBringData() { type = TriggerComponentType::CONDITION_BRING; }
+        };
+        
         class ConditionBring : public ConditionBase
         {
             
         public:
             
-            explicit ConditionBring(GameManager* mgr) : ConditionBase(mgr)
-            {}
+            explicit ConditionBring(Game* game) : ConditionBase(game)
+            {
+            }
             
             virtual ~ConditionBring() = default;
             
-            static ConditionBring* create(GameManager* mgr, PlayerType playerType, ApproximationType appType, int number, EntityType entType, const cocos2d::Rect& loc)
+            static ConditionBring* create(Game* game,
+                                          PlayerType playerType, ApproximationType appType,
+                                          int number, EntityType entType, const cocos2d::Rect& loc)
             {
-                auto ret = new (std::nothrow) ConditionBring(mgr);
+                auto ret = new (std::nothrow) ConditionBring(game);
                 if ( ret && ret->init(playerType, appType, number, entType, loc) )
                 {
                     ret->autorelease();
@@ -184,11 +198,11 @@ namespace realtrick
             
             bool init(PlayerType playerType, ApproximationType appType, int number, EntityType entType, const cocos2d::Rect& loc)
             {
-                _player = playerType;
-                _approximation = appType;
-                _number = number;
-                _entity = entType;
-                _location = loc;
+                _params.player = playerType;
+                _params.approximation = appType;
+                _params.number = number;
+                _params.entity = entType;
+                _params.location = loc;
                 
                 return true;
             }
@@ -196,10 +210,10 @@ namespace realtrick
             virtual bool isReady() override
             {
                 
-                if ( _player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
-                else _maskedPlayer.set(static_cast<int>(_player));
+                if ( _params.player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
+                else _maskedPlayer.set(static_cast<int>(_params.player));
                 
-                const auto& entities = _gameMgr->getEntities();
+                const auto& entities = _game->getEntities();
                 
                 // 플레이어 타입인지 체크. (o)
                 // 엔티티 타입 체크. (o)
@@ -212,24 +226,24 @@ namespace realtrick
                     int player = static_cast<int>(entity->getPlayerType());
                     
                     if (_maskedPlayer[player] &&
-                        _entity == entity->getEntityType() &&
-                        _location.intersectsRect(cocos2d::Rect(entity->getWorldPosition() - cocos2d::Vec2(15, 15), cocos2d::Size(30, 30))) )
+                        _params.entity == entity->getEntityType() &&
+                        _params.location.intersectsRect(cocos2d::Rect(entity->getWorldPosition() - cocos2d::Vec2(15, 15), cocos2d::Size(30, 30))) )
                     {
                         numberOfReadyEntities++;
                     }
                 }
                 
-                if ( _approximation == ApproximationType::AT_LEAST && numberOfReadyEntities >= _number )
+                if ( _params.approximation == ApproximationType::AT_LEAST && numberOfReadyEntities >= _params.number )
                 {
                     cocos2d::log("condition bring isReady() called. (at least)");
                     return true;
                 }
-                else if ( _approximation == ApproximationType::AT_MOST && numberOfReadyEntities <= _number )
+                else if ( _params.approximation == ApproximationType::AT_MOST && numberOfReadyEntities <= _params.number )
                 {
                     cocos2d::log("condition bring isReady() called. (at most)");
                     return true;
                 }
-                else if ( _approximation == ApproximationType::EXACTLY && numberOfReadyEntities == _number )
+                else if ( _params.approximation == ApproximationType::EXACTLY && numberOfReadyEntities == _params.number )
                 {
                     cocos2d::log("condition bring isReady() called. (exactly)");
                     return true;
@@ -240,12 +254,7 @@ namespace realtrick
             
         private:
             
-            PlayerType _player;
-            ApproximationType _approximation;
-            int _number;
-            EntityType _entity;
-            cocos2d::Rect _location;
-            
+            ConditionBringData _params;
             std::bitset<9> _maskedPlayer;
             
         };

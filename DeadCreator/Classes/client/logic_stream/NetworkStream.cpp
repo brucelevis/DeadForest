@@ -9,9 +9,8 @@
 #include "NetworkStream.hpp"
 #include "Server.hpp"
 #include "Generatedpackets.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "EntityHuman.hpp"
-#include "GameWorld.hpp"
 #include "UiLayer.hpp"
 #include "Inventory.hpp"
 #include "ItemSlot.hpp"
@@ -37,14 +36,13 @@ void NetworkStream::update(float dt)
                 auto obj = fpacket::GetPacketFirstPlayerInfos(packet->body());
                 
                 auto own = obj->own();
-                EntityHuman* player = EntityHuman::create(_gameMgr);
+                EntityHuman* player = EntityHuman::create(_game);
                 player->setWorldPosition(Vec2(own->pos_x(), own->pos_y()));
                 player->setUserNickName(own->name()->str());
-                _gameMgr->addEntity(player, Z_ORDER_HUMAN + 1, own->id());
-                _gameMgr->setPlayer(player);
+                _game->addEntity(player, Z_ORDER_HUMAN + 1, own->id());
+                _game->setPlayer(player);
                 
                 log("[own] id: %d, pos: (%.0f, %.0f), name: %s", own->id(), own->pos_x(), own->pos_y(), own->name()->c_str());
-                
                 
                 auto others = obj->others();
                 uint32_t len = others->Length();
@@ -58,10 +56,10 @@ void NetworkStream::update(float dt)
                     
                     log("[other] id: %d, pos: (%.0f, %.0f), name: %s", id, pos.x, pos.y, nickName.c_str());
                     
-                    EntityHuman* player = EntityHuman::create(_gameMgr);
+                    EntityHuman* player = EntityHuman::create(_game);
                     player->setWorldPosition(pos);
                     player->setUserNickName(nickName);
-                    _gameMgr->addEntity(player, Z_ORDER_HUMAN + 1, id);
+                    _game->addEntity(player, Z_ORDER_HUMAN + 1, id);
                 }
                 
                 Packet* packet = new Packet();
@@ -72,9 +70,7 @@ void NetworkStream::update(float dt)
             }
             case PacketType::GAME_START:
             {
-                
-                _gameMgr->pushLogic(0.0, MessageType::LOAD_GAME_COMPLETE, nullptr);
-                
+                _game->pushLogic(0.0, MessageType::LOAD_GAME_COMPLETE, nullptr);
                 break;
             }
             case PacketType::MOVE_JOYSTICK:
@@ -87,7 +83,7 @@ void NetworkStream::update(float dt)
                 
                 log("id: %d, isTouched: %d, dirx: %.f, diry: %.f", id, (int)isTouched, dir.x, dir.y);
                 
-                EntityHuman* player = static_cast<EntityHuman*>(_gameMgr->getEntityFromID(id));
+                EntityHuman* player = static_cast<EntityHuman*>(_game->getEntityFromID(id));
                 player->setMoving(dir);
                 if ( isTouched )
                 {
@@ -119,22 +115,22 @@ bool NetworkStream::handleMessage(const Telegram& msg)
     if ( msg.msg == MessageType::LOAD_GAME_PLAYER)
     {
         // player를 제외하고  받는다.
-        //_gameMgr->loadMultiGameMap("simple_server_map.txt");
+        //_game->loadMultiGameMap("simple_server_map.txt");
         
         return true;
     }
     else if ( msg.msg == MessageType::LOAD_GAME_COMPLETE )
     {
         
-        _gameMgr->loadUiLayer();
-        _gameMgr->resumeGame();
+        _game->loadUiLayer();
+        _game->resumeGame();
         
         return true;
     }
     else if ( msg.msg == MessageType::MOVE_JOYSTICK_INPUT )
     {
         MoveJoystickData data = *static_cast<MoveJoystickData*>(msg.extraInfo);
-        EntityHuman* player = _gameMgr->getPlayerPtr();
+        EntityHuman* player = _game->getPlayerPtr();
         player->setMoving(data.dir);
         
         switch ( data.type )
@@ -156,7 +152,7 @@ bool NetworkStream::handleMessage(const Telegram& msg)
         bool isTouched = (data.type == JoystickEx::ClickEventType::BEGAN);
         
         flatbuffers::FlatBufferBuilder builder;
-        auto obj = fpacket::CreatePacketMoveJoystick(builder, _gameMgr->getPlayerPtr()->getTag(), isTouched, data.dir.x, data.dir.y);
+        auto obj = fpacket::CreatePacketMoveJoystick(builder, _game->getPlayerPtr()->getTag(), isTouched, data.dir.x, data.dir.y);
         builder.Finish(obj);
         
         Packet* packet = new Packet();

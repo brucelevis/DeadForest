@@ -21,10 +21,10 @@ namespace realtrick
             
         public:
             
-            explicit ItemM16A2(GameManager* mgr);
+            explicit ItemM16A2(Game* game);
             virtual ~ItemM16A2();
             
-            static ItemM16A2* create(GameManager* mgr);
+            static ItemM16A2* create(Game* game);
             
             virtual ItemBase* clone() const override;
             virtual void inWeapon() override;

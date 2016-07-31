@@ -7,7 +7,7 @@
 //
 
 #include "LightEffect.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 using namespace realtrick::client;
 
 LightEffect::LightEffect() : _normalMap(nullptr)

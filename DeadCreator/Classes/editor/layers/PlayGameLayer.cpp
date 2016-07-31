@@ -11,8 +11,7 @@
 #include "EditScene.hpp"
 using namespace realtrick::editor;
 
-#include "GameWorld.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "GameMap.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
@@ -48,7 +47,7 @@ void PlayGameLayer::showLayer(bool& opened)
     {
         ImGui::SetCursorScreenPos(ImVec2(origin.x, origin.y));
         
-        auto game = _gameLayer->getGameManager();
+        auto game = _gameLayer->getGame();
         auto drawList = ImGui::GetWindowDrawList();
         
         if ( isStatusOn )
@@ -242,7 +241,7 @@ void PlayGameLayer::closeLayer()
 
 cocos2d::Vec2 PlayGameLayer::worldToLocal(const cocos2d::Vec2& p)
 {
-    auto game = _gameLayer->getGameManager();
+    auto game = _gameLayer->getGame();
     _cameraTransform.identity();
     _cameraTransform.translate(-game->getPlayerPtr()->getWorldPosition());
     return _cameraTransform.getTransformedVector(p) * game->getZoomScale();

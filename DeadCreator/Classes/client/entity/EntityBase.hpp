@@ -19,18 +19,18 @@ namespace realtrick
     {
         
         class Telegram;
-        class GameManager;
+        class Game;
         
         class EntityBase : public cocos2d::Node, public MessageNode
         {
             
         public:
             
-            explicit EntityBase(GameManager* gameMgr);
-            virtual ~EntityBase() { _gameMgr = nullptr; }
+            explicit EntityBase(Game* game);
+            virtual ~EntityBase() { _game = nullptr; }
             EntityBase(const EntityBase& rhs);
             
-            GameManager* getGameManager() const      { return _gameMgr; }
+            Game* getGameManager() const      { return _game; }
             int getFamilyMask() const       { return _familyMask; }
             
             int getEntityType() const       { return _entityType; }
@@ -52,7 +52,7 @@ namespace realtrick
             
         protected:
             
-            GameManager*            _gameMgr;
+            Game*            _game;
             int                     _familyMask;
             int                     _entityType;
             cocos2d::Vec2           _worldPosition;

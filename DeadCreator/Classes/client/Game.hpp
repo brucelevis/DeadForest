@@ -1,5 +1,5 @@
 //
-//  GameManager.hpp
+//  Game.hpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2015. 11. 27..
@@ -8,9 +8,6 @@
 
 #pragma once
 
-#include <string>
-#include <exception>
-#include <memory>
 #include <AudioEngine.h>
 
 #include "cocos2d.h"
@@ -19,6 +16,9 @@
 #include "EntityHuman.hpp"
 #include "SoundSource.hpp"
 #include "StringHelper.hpp"
+#include "SizeProtocol.h"
+#include "MessageDispatcher.hpp"
+#include "MessageNode.hpp"
 
 #define Z_ORDER_GAME_MAP    0
 #define Z_ORDER_SHADOW      1
@@ -37,23 +37,24 @@ namespace realtrick
         
         class EntityBase;
         class EntityHuman;
-        class GameWorld;
         class Camera2D;
         class RenderTarget;
         class TriggerSystem;
         class UiLayer;
         class LogicStream;
+        class GameResource;
         
-        class GameManager : public cocos2d::Node
+        class Game : public cocos2d::Node
         {
             
         public:
             
-            explicit GameManager(GameWorld* world);
-            virtual ~GameManager();
+            Game();
+            virtual ~Game();
             
             bool init() override;
-            static GameManager* create(GameWorld* world);
+            static Game* create();
+            static cocos2d::Scene* createScene();
             
             void clear();
             void update(float dt) override;
@@ -72,7 +73,7 @@ namespace realtrick
             std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const;
             std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& position, const Segment& ray) const;
             
-            void loadGMXFile(const std::string& filePath);
+            void loadResource(const std::string& filePath);
             
             Camera2D* getGameCamera() const { return _gameCamera; }
             void drawCellSpaceDebugNode();
@@ -96,26 +97,37 @@ namespace realtrick
             
             const std::map<std::string, cocos2d::Rect>& getLocationMap() const { return _locations; }
             
+            // temp
+            void loadGMXFile(const std::string& path);
+            
         private:
             
-            GameWorld*                                  _gameWorld;
             cocos2d::Size                               _winSize;
+            
+            // map data
+            GameMap*                                    _gameMap;
+            GameResource* _gameResource;
+            
+            // entitiy manager
             EntityHuman*                                _player;
             std::map<int, EntityBase*>                  _entities;
             CellSpacePartition*                         _cellSpace;
-            GameMap*                                    _gameMap;
-            Camera2D*                                   _gameCamera;
+            
+            // trigger system
             TriggerSystem*                              _triggerSystem;
             std::map<std::string, cocos2d::Rect>        _locations;
             
+            // rendering system
+            Camera2D*                                   _gameCamera;
             cocos2d::ClippingRectangleNode*             _clipNode;
             cocos2d::Node*                              _rootNode;
             UiLayer*                                    _uiLayer;
-            LogicStream*                                _logicStream;
-            
-            int                                         _bgmID;
-            bool                                        _isPaused;
             float                                       _zoomScale;
+            
+            // game
+            LogicStream*                                _logicStream;
+            bool                                        _isPaused;
+            int                                         _bgmID;
             
         };
         

@@ -17,14 +17,14 @@ namespace realtrick
     {
         
         class EntityHuman;
-        class GameManager;
+        class Game;
         
         class ItemBase : public EntityBase
         {
             
         public:
             
-            explicit ItemBase(GameManager* mgr);
+            explicit ItemBase(Game* game);
             ItemBase(const ItemBase& rhs);
             
             virtual ~ItemBase();

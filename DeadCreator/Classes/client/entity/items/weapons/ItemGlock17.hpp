@@ -21,11 +21,11 @@ namespace realtrick
             
         public:
             
-            explicit ItemGlock17(GameManager* mgr);
+            explicit ItemGlock17(Game* game);
             ItemGlock17(const ItemGlock17& rhs);
             virtual ~ItemGlock17();
             
-            static ItemGlock17* create(GameManager* mgr);
+            static ItemGlock17* create(Game* game);
             
             virtual ItemBase* clone() const override;
             

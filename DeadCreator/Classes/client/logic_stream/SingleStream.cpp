@@ -7,9 +7,8 @@
 //
 
 #include "SingleStream.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "EntityHuman.hpp"
-#include "GameWorld.hpp"
 #include "UiLayer.hpp"
 #include "Inventory.hpp"
 #include "ItemSlot.hpp"
@@ -23,15 +22,16 @@ bool SingleStream::handleMessage(const Telegram& msg)
 {
     if ( msg.msg == MessageType::LOAD_GAME_PLAYER)
     {
-        _gameMgr->loadGMXFile("temp_game_map");
-        _gameMgr->pushLogic(0.0, MessageType::LOAD_GAME_COMPLETE, nullptr);
+        _game->loadResource("temp_game_map");
+        _game->loadGMXFile("temp_game_map");
+        _game->pushLogic(0.0, MessageType::LOAD_GAME_COMPLETE, nullptr);
         
         return true;
     }
     else if ( msg.msg == MessageType::LOAD_GAME_COMPLETE )
     {
-        _gameMgr->loadUiLayer();
-        _gameMgr->resumeGame();
+        _game->loadUiLayer();
+        _game->resumeGame();
     
         return true;
     }
@@ -39,7 +39,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::MOVE_JOYSTICK_INPUT )
     {
         MoveJoystickData data = *static_cast<MoveJoystickData*>(msg.extraInfo);
-        EntityHuman* player = _gameMgr->getPlayerPtr();
+        EntityHuman* player = _game->getPlayerPtr();
         player->setMoving(data.dir);
         
         switch ( data.type )
@@ -63,7 +63,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::ATTACK_JOYSTICK_INPUT )
     {
         AttJoystickData data = *static_cast<AttJoystickData*>(msg.extraInfo);
-        EntityHuman* player = _gameMgr->getPlayerPtr();
+        EntityHuman* player = _game->getPlayerPtr();
         
         switch ( data.type )
         {
@@ -92,7 +92,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::BEZEL_DIRECTION_TRIGGERED )
     {
         BezelDirectionTriggerData data= *static_cast<BezelDirectionTriggerData*>(msg.extraInfo);
-        EntityHuman* player = _gameMgr->getPlayerPtr();
+        EntityHuman* player = _game->getPlayerPtr();
         player->setTargetHeading(data.dir);
         
         return true;
@@ -100,7 +100,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::BEZEL_CLICK_INPUT )
     {
         BezelInputData data = *static_cast<BezelInputData*>(msg.extraInfo);
-        EntityHuman* player = _gameMgr->getPlayerPtr();
+        EntityHuman* player = _game->getPlayerPtr();
         
         if ( data.type == ui::Widget::TouchEventType::BEGAN )
         {
@@ -117,9 +117,9 @@ bool SingleStream::handleMessage(const Telegram& msg)
     {
         ItemAndOwner data = *static_cast<ItemAndOwner*>(msg.extraInfo);
         data.item->setOwner(data.owner);
-        _gameMgr->getPlayerPtr()->getInventory()->pushItem(data.item);
+        _game->getPlayerPtr()->getInventory()->pushItem(data.item);
         
-        EntityHuman* player = _gameMgr->getPlayerPtr();
+        EntityHuman* player = _game->getPlayerPtr();
         
         if ( data.item->getEntityType() == EntityType::ITEM_AXE )
         {
@@ -141,14 +141,14 @@ bool SingleStream::handleMessage(const Telegram& msg)
         if ( isMasked(data.item->getFamilyMask(), FamilyMask::BULLET_BASE) )
         {
             // 내가 장착하고 있는 총알 종류를 먹었으면 무기정보를 업데이트한다.
-            WeaponBase* equipedWeapon = _gameMgr->getPlayerPtr()->getEquipedWeapon();
+            WeaponBase* equipedWeapon = _game->getPlayerPtr()->getEquipedWeapon();
             if ( equipedWeapon != nullptr )
             {
                 // 주먹이 아니고 무기에 맞는 총알을 먹었으면 업데이트한다.
                 EntityType bulletType = static_cast<EntityType>(data.item->getEntityType());
                 if ( equipedWeapon->getBulletType() == bulletType )
                 {
-                    _gameMgr->getPlayerPtr()->getWeaponStatus()->setEntryBullet(bulletType);
+                    _game->getPlayerPtr()->getWeaponStatus()->setEntryBullet(bulletType);
                 }
             }
         }
@@ -164,7 +164,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
         
         // 무기 정보 UI를 업데이트 한다.
         WeaponBase* weapon = static_cast<WeaponBase*>(data.slot->getItemPtr());
-        _gameMgr->getPlayerPtr()->getWeaponStatus()->setWeaponStatus(weapon);
+        _game->getPlayerPtr()->getWeaponStatus()->setWeaponStatus(weapon);
         
         return true;
     }
@@ -175,7 +175,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
         data.slot->releaseWeapon();
         
         // 무기 정보 UI를 업데이트 한다.
-        _gameMgr->getPlayerPtr()->getWeaponStatus()->setWeaponStatus(nullptr);
+        _game->getPlayerPtr()->getWeaponStatus()->setWeaponStatus(nullptr);
         
         return true;
     }
@@ -188,7 +188,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
          3. 재장전 중일때 재장전버튼을 못누른다.
          */
         
-        EntityHuman* player = _gameMgr->getPlayerPtr();
+        EntityHuman* player = _game->getPlayerPtr();
         WeaponBase* equipedWeapon = player->getEquipedWeapon();
         
         if ( equipedWeapon != nullptr &&
@@ -201,7 +201,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     }
     else if ( msg.msg == MessageType::RELOAD_COMPLETE )
     {
-        EntityHuman* player = _gameMgr->getPlayerPtr();
+        EntityHuman* player = _game->getPlayerPtr();
         WeaponBase* equipedWeapon = player->getEquipedWeapon();
         
         // 인벤토리에있는 총알아이템을 소모한다.
@@ -227,7 +227,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
         equipedWeapon->setReservecBullets(0);
         
         // 무기정보UI의 무기를 갱신한다.
-        WeaponStatus* weaponStatus = _gameMgr->getPlayerPtr()->getWeaponStatus();
+        WeaponStatus* weaponStatus = _game->getPlayerPtr()->getWeaponStatus();
         weaponStatus->setWeaponStatus(equipedWeapon);
         weaponStatus->enableButton();
         

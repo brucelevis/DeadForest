@@ -8,12 +8,12 @@
 
 #include "ItemM1897.hpp"
 #include "EntityHuman.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 #include "AnimatedFiniteEntity.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
-ItemM1897::ItemM1897(GameManager* mgr) : WeaponBase(mgr)
+ItemM1897::ItemM1897(Game* game) : WeaponBase(game)
 {
     setEntityType(ITEM_M1897);
     setRange(200);
@@ -30,9 +30,9 @@ ItemM1897::~ItemM1897()
 {}
 
 
-ItemM1897* ItemM1897::create(GameManager* mgr)
+ItemM1897* ItemM1897::create(Game* game)
 {
-    ItemM1897* ret = new (std::nothrow)ItemM1897(mgr);
+    ItemM1897* ret = new (std::nothrow)ItemM1897(game);
     if( ret && ret->init("M1897.png", "M1897.png", "M1897.png", cocos2d::ui::Widget::TextureResType::PLIST))
     {
         ret->autorelease();
@@ -66,12 +66,12 @@ void ItemM1897::attack()
     vector<vector<pair<float, EntityBase*>>> closestIntersectPoint(_numOfShells);
     Vec2 worldPos = _owner->getWorldPosition();
     
-    AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_gameMgr, {"ess0.png", "ess1.png", "ess2.png", "ess3.png", "ess4.png" },
+    AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_game, {"ess0.png", "ess1.png", "ess2.png", "ess3.png", "ess4.png" },
                                                             5.0f, ui::Widget::TextureResType::PLIST);
     es->setWorldPosition(worldPos + _owner->getHeading() * random(-30.0f, 30.0f) + _owner->getRight() * random(20.0f, 40.0f));
     es->setScale(0.7f);
     es->setRotation(_owner->getBodyRot());
-    _gameMgr->addEntity(es, Z_ORDER_ITEMS, _gameMgr->getNextValidID());
+    _game->addEntity(es, Z_ORDER_ITEMS, _game->getNextValidID());
     
     
     // 엔티티들과의 충돌처리
@@ -86,7 +86,7 @@ void ItemM1897::attack()
         shootAts[i].second = randomRotation.getTransformedVector(typicalHeading);
     }
     
-    const std::list<EntityBase*>& members = _gameMgr->getNeighborsOnAttack(worldPos, typicalHeading, getRange());
+    const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, typicalHeading, getRange());
     for (const auto &d : members)
     {
         if ( d == _owner ) continue;
@@ -105,7 +105,7 @@ void ItemM1897::attack()
     }
     
     // 벽과의 충돌처리
-    const std::vector<Polygon> walls = _gameMgr->getNeighborWalls(_owner->getWorldPosition(), bulletRay);
+    const std::vector<Polygon> walls = _game->getNeighborWalls(_owner->getWorldPosition(), bulletRay);
     float dist;
     for( const auto& wall : walls )
     {
@@ -152,7 +152,7 @@ void ItemM1897::attack()
     
     if ( isHit )
     {
-        if ( _owner->getTag() == _gameMgr->getPlayerPtr()->getTag() )
+        if ( _owner->getTag() == _game->getPlayerPtr()->getTag() )
         {
             // 총쏜사람이 플레이어일 경우 크로스헤어 이벤트를 발동시킨다.
             Dispatch.pushMessage(0.0, _owner, _owner, MessageType::CROSS_HAIR_EVENT, nullptr);
@@ -163,11 +163,11 @@ void ItemM1897::attack()
 
 void ItemM1897::discard()
 {
-    ItemM1897* item = ItemM1897::create(_gameMgr);
+    ItemM1897* item = ItemM1897::create(_game);
     item->setAmount( getAmount() );
     item->setNumOfLeftRounds(getNumOfLeftRounds());
     item->setPosition(Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));
-    _gameMgr->addEntity(item, Z_ORDER_ITEMS, _gameMgr->getNextValidID());
+    _game->addEntity(item, Z_ORDER_ITEMS, _game->getNextValidID());
 }
 
 

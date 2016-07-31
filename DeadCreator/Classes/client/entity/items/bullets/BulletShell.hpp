@@ -20,7 +20,7 @@ namespace realtrick
             
         public:
             
-            static BulletShell* create(GameManager* mgr);
+            static BulletShell* create(Game* game);
             
             virtual BulletShell* clone() const override;
             
@@ -28,7 +28,7 @@ namespace realtrick
             
         private:
             
-            BulletShell(GameManager* mgr);
+            BulletShell(Game* game);
             
             virtual ~BulletShell();
             

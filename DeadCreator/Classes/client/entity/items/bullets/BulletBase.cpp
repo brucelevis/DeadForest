@@ -9,7 +9,7 @@
 #include "BulletBase.hpp"
 using namespace realtrick::client;
 
-BulletBase::BulletBase(GameManager* mgr) : ItemBase(mgr)
+BulletBase::BulletBase(Game* game) : ItemBase(game)
 {
     ADD_FAMILY_MASK(_familyMask, BULLET_BASE);
 }

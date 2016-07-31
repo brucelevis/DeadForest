@@ -10,6 +10,11 @@
 
 #include <string>
 
+#include "EntityType.hpp"
+
+#include "imgui.h"
+#include "imgui_internal.h"
+
 namespace realtrick
 {
     namespace editor
@@ -50,6 +55,17 @@ namespace realtrick
             
             std::string _parameterName;
             
+        };
+        
+    }
+    
+    namespace client
+    {
+        
+        struct TriggerDataBase
+        {
+            virtual ~TriggerDataBase() = default;
+            TriggerComponentType type;
         };
         
     }

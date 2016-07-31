@@ -14,7 +14,7 @@
 #include "GMXFile.hpp"
 #include "EditorCellSpacePartition.hpp"
 #include "TileImage.hpp"
-#include "TileBase.hpp"
+#include "Tileset.hpp"
 #include "CommandQueue.hpp"
 #include "SizeProtocol.h"
 
@@ -51,8 +51,8 @@ namespace realtrick
             void updateCocosLogic();
             
             const GMXFile& getFile() const { return _file; }
-            void setTile(int x, int y, const TileBase& tile, bool isExecCommand = false);
-            const TileBase& getTile(int x, int y) const { return _tiles[y][x]; }
+            void setTile(int x, int y, const Tileset& tile, bool isExecCommand = false);
+            const Tileset& getTile(int x, int y) const { return _tiles[y][x]; }
             
             void updateChunk(const cocos2d::Vec2& pivot);
             bool isUpdateChunk(const cocos2d::Vec2& newPos, const cocos2d::Vec2& oldPos);
@@ -153,7 +153,7 @@ namespace realtrick
             
             EditorCellSpacePartition* _cellSpacePartition;
             std::map<int, EditorEntity*> _entities;
-            std::vector< std::vector<TileBase> > _tiles;
+            std::vector< std::vector<Tileset> > _tiles;
             std::vector< std::vector<TileImage*> > _tileImages;
             std::vector< EditorEntity* > _selectedEntities;
             

@@ -77,6 +77,57 @@ namespace realtrick
         };
         
     }
+    
+    namespace client
+    {
+        
+        struct ActionDisplayTextData: public TriggerDataBase
+        {
+            std::string text;
+            
+            ActionDisplayTextData() { type = TriggerComponentType::ACTION_DISPLAY_TEXT; }
+        };
+        
+        class ActionDisplayText : public ActionBase
+        {
+            
+        public:
+            
+            explicit ActionDisplayText(Game* game) : ActionBase(game)
+            {}
+            
+            virtual ~ActionDisplayText() = default;
+            
+            static ActionDisplayText* create(Game* game, const std::string& text)
+            {
+                auto ret = new (std::nothrow) ActionDisplayText(game);
+                if ( ret && ret->init(text) )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
+            bool init(const std::string& text)
+            {
+                _params.text = text;
+                return true;
+            }
+            
+            virtual void doAction() override
+            {
+            }
+            
+        private:
+            
+            ActionDisplayTextData _params;
+            std::bitset<9> _maskedPlayer;
+            
+        };
+        
+    }
 }
 
 

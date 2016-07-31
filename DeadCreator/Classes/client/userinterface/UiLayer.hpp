@@ -18,7 +18,7 @@ namespace realtrick
         
         class JoystickEx;
         class CircularBezel;
-        class GameManager;
+        class Game;
         class AimingNode;
         class Inventory;
         class WeaponStatus;
@@ -30,11 +30,11 @@ namespace realtrick
             
         public:
             
-            explicit UiLayer(GameManager* mgr);
+            explicit UiLayer(Game* game);
             virtual ~UiLayer();
             
             virtual bool init() override;
-            static UiLayer* create(GameManager* mgr);
+            static UiLayer* create(Game* game);
             
             Inventory* getInventory() const { return _inventory; }
             WeaponStatus* getWeaponStatus() const { return _weaponStatus; }
@@ -42,7 +42,7 @@ namespace realtrick
             
         private:
             
-            GameManager* _gameMgr;
+            Game* _game;
             cocos2d::Size _winSize;
             JoystickEx* _moveJoystick;
             JoystickEx* _attackJoystick;

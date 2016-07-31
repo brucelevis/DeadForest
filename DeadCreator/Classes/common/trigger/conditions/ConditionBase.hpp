@@ -55,7 +55,7 @@ namespace realtrick
     namespace client
     {
         
-        class GameManager;
+        class Game;
         class GameTrigger;
         
         class ConditionBase : public cocos2d::Ref
@@ -63,10 +63,11 @@ namespace realtrick
             
         public:
             
-            explicit ConditionBase(GameManager* mgr) : _gameMgr(mgr)
-            {}
+            explicit ConditionBase(Game* game) : _game(game)
+            {
+            }
             
-            virtual ~ConditionBase() { _owner = nullptr; _gameMgr = nullptr; }
+            virtual ~ConditionBase() { _owner = nullptr; _game = nullptr; }
             
             virtual bool isReady() = 0;
             void setOwner(GameTrigger* owner) { _owner = owner; }
@@ -74,7 +75,7 @@ namespace realtrick
         protected:
             
             GameTrigger* _owner;
-            GameManager* _gameMgr;
+            Game* _game;
             
         };
         

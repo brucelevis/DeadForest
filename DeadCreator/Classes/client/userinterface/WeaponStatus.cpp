@@ -8,25 +8,24 @@
 
 #include "WeaponStatus.hpp"
 #include "WeaponBase.hpp"
-#include "GameManager.hpp"
-#include "GameWorld.hpp"
+#include "Game.hpp"
 #include "UiLayer.hpp"
 #include "Inventory.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
 
-WeaponStatus::WeaponStatus(GameManager* mgr) :
-_gameMgr(mgr),
+WeaponStatus::WeaponStatus(Game* game) :
+_game(game),
 _numOfEntryBullet(0),
 _numOfRemainBullet(0)
 {
 }
 
 
-WeaponStatus* WeaponStatus::create(GameManager* mgr)
+WeaponStatus* WeaponStatus::create(Game* game)
 {
-    auto ret = new (std::nothrow) WeaponStatus(mgr);
+    auto ret = new (std::nothrow) WeaponStatus(game);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -47,7 +46,7 @@ bool WeaponStatus::init()
                                          {
                                              if ( type == ui::Widget::TouchEventType::ENDED )
                                              {
-                                                 _gameMgr->pushLogic(0.0, MessageType::PRESS_RELOAD_BUTTON, nullptr);
+                                                 _game->pushLogic(0.0, MessageType::PRESS_RELOAD_BUTTON, nullptr);
                                              }
                                          });
     addChild(_reloadButton);
@@ -127,14 +126,14 @@ void WeaponStatus::setWeaponStatus(WeaponBase* weapon)
 
 void WeaponStatus::setEntryBullet(WeaponBase* weapon)
 {
-    int ownedBullet = _gameMgr->getPlayerPtr()->getInventory()->getItemAmount(weapon->getBulletType());
+    int ownedBullet = _game->getPlayerPtr()->getInventory()->getItemAmount(weapon->getBulletType());
     _setEntryBulletNumber(ownedBullet);
 }
 
 
 void WeaponStatus::setEntryBullet(EntityType bulletType)
 {
-    int ownedBullet = _gameMgr->getPlayerPtr()->getInventory()->getItemAmount(bulletType);
+    int ownedBullet = _game->getPlayerPtr()->getInventory()->getItemAmount(bulletType);
     _setEntryBulletNumber(ownedBullet);
 }
 

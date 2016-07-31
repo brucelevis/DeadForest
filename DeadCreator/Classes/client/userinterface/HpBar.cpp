@@ -7,20 +7,20 @@
 //
 
 #include "HpBar.hpp"
-#include "GameManager.hpp"
+#include "Game.hpp"
 
 using namespace realtrick::client;
 using namespace cocos2d;
 
-HpBar::HpBar(GameManager* mgr) :
-_gameMgr(mgr)
+HpBar::HpBar(Game* game) :
+_game(game)
 {
 }
 
 
-HpBar* HpBar::create(GameManager* mgr)
+HpBar* HpBar::create(Game* game)
 {
-    auto ret = new (std::nothrow) HpBar(mgr);
+    auto ret = new (std::nothrow) HpBar(game);
     if ( ret && ret->init() )
     {
         ret->autorelease();

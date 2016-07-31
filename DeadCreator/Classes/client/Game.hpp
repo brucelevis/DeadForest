@@ -12,13 +12,13 @@
 
 #include "cocos2d.h"
 #include "CellSpacePartition.hpp"
-#include "GameMap.hpp"
 #include "EntityHuman.hpp"
 #include "SoundSource.hpp"
 #include "StringHelper.hpp"
 #include "SizeProtocol.h"
 #include "MessageDispatcher.hpp"
 #include "MessageNode.hpp"
+#include "ObjectManager.hpp"
 
 #define Z_ORDER_GAME_MAP    0
 #define Z_ORDER_SHADOW      1
@@ -62,6 +62,9 @@ namespace realtrick
             GameResource* getGameResource() const { return _gameResource; }
             
             // entity manager
+            ObjectManager* _objectManager;
+            
+            
             void setPlayer(EntityHuman* player) { _player = player; }
             EntityHuman* getPlayerPtr() const { return _player; }
             const std::map<int, GameObject*>& getEntities() const { return _entities; }
@@ -98,6 +101,8 @@ namespace realtrick
         private:
             
             cocos2d::Size _winSize;
+            
+            cocos2d::Vector<cocos2d::Ref*> _releasePool;
             
             // map data
             GameResource* _gameResource;

@@ -73,7 +73,8 @@ namespace realtrick
             
         protected:
             
-            bool init(const std::string& inGameImage_n, const std::string& inGameImage_s, const std::string& inSlotImage, cocos2d::ui::Widget::TextureResType texResType);
+            bool init(const std::string& inGameImage_n, const std::string& inGameImage_s,
+                      const std::string& inSlotImage, cocos2d::ui::Widget::TextureResType texResType);
             
         };
         

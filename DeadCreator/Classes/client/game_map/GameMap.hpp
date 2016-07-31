@@ -1,1 +1,0 @@
-//TileType getStepOnTileType(const cocos2d::Vec2& pos);

@@ -38,6 +38,7 @@ ItemBase::~ItemBase()
     _inGameNormal = nullptr;
 }
 
+
 ItemBase::ItemBase(const ItemBase& rhs) : GameObject(rhs)
 {
     _owner = rhs._owner;

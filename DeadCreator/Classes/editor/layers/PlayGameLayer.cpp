@@ -13,7 +13,6 @@ using namespace realtrick::editor;
 
 #include "Game.hpp"
 #include "GameResource.hpp"
-#include "GameMap.hpp"
 #include "RenderingSystem.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;

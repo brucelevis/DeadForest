@@ -89,6 +89,10 @@ namespace realtrick
         cocos2d::Vec2 position;
     };
     
+    enum class ComponentType : int
+    {
+        MAX
+    };
         
     inline void addMask(int& src, int mask)                         { src |= mask; }
     inline bool isMasked(int src, int mask)                         { return ((src & mask) == mask); }

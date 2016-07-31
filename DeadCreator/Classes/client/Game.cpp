@@ -19,6 +19,7 @@
 #include "SingleStream.hpp"
 #include "NetworkStream.hpp"
 #include "GameResource.hpp"
+#include "ObjectManager.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
@@ -396,7 +397,6 @@ void Game::loadResource(const std::string& filePath)
                     item->setPlayerType(PlayerType::NEUTRAL);
                     addEntity(item, Z_ORDER_ITEMS, getNextValidID());
                 }
-                
             }
         }
         
@@ -407,14 +407,17 @@ void Game::loadResource(const std::string& filePath)
 void Game::loadGMXFile(const std::string& path)
 {
     _gameResource = GameResource::createWithGMXFile(path);
-    _gameResource->retain();
+    _releasePool.pushBack(_gameResource);
     
     _triggerSystem = TriggerSystem::createWithResouce(this, _gameResource);
-    _triggerSystem->retain();
+    _releasePool.pushBack(_triggerSystem);
     
     _renderingSystem = RenderingSystem::create(this, _gameResource);
     _renderingSystem->setZoom(Prm.getValueAsFloat("cameraZoom"));
     addChild(_renderingSystem);
+    
+    _objectManager = ObjectManager::createWithResouce(this, _gameResource);
+    _releasePool.pushBack(_objectManager);
 }
 
 

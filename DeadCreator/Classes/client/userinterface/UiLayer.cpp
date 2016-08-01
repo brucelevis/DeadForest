@@ -56,10 +56,14 @@ bool UiLayer::init()
     
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     
+    Vec2 joystickScale(GAME_SCREEN_WIDTH / 1136, GAME_SCREEN_HEIGHT / 640);
+    Vec2 joystickPos = Vec2(150.0f * joystickScale.x, 150.0f * joystickScale.y);
+    
     _moveJoystick = JoystickEx::create("wooden_handle_n.png", "wooden_handle_n.png");
     _moveJoystick->setJoystickPad("wooden_pad.png");
     _moveJoystick->setRotationType(JoystickEx::RotationType::ROTATION_8);
-    _moveJoystick->setPosition(Vec2(150.0f, 150.0f));
+    _moveJoystick->setPosition(Vec2(joystickPos.x, joystickPos.y));
+    _moveJoystick->setScale(joystickScale.x, joystickScale.y);
     _moveJoystick->enableDoubleClick(false);
     _moveJoystick->setChangedDirectionAndStatusCallback([&](Ref* ref, const Vec2& dir, JoystickEx::ClickEventType type) {
         
@@ -77,7 +81,8 @@ bool UiLayer::init()
     
     _attackJoystick = JoystickEx::create("wooden_attack_handle_n.png", "wooden_attack_handle_n.png");
     _attackJoystick->enableDoubleClick(false);
-    _attackJoystick->setPosition(Vec2(_winSize.width - 200.0f, 150.0f));
+    _attackJoystick->setPosition(Vec2(_winSize.width - joystickPos.x, joystickPos.y));
+    _attackJoystick->setScale(joystickScale.x, joystickScale.y);
     _attackJoystick->setClickCallback([&](Ref* ref, cocos2d::ui::Widget::TouchEventType type) {
         
         AttJoystickData data;
@@ -90,8 +95,9 @@ bool UiLayer::init()
     
     
     _bezel = CircularBezel::create("wooden_attack_pad.png");
-    _bezel->setPosition(Vec2(_winSize.width - 200.0f, 150.0f));
+    _bezel->setPosition(Vec2(_winSize.width - joystickPos.x, joystickPos.y));
     _bezel->setTriggerRadius( {40.0f, 250.0f} );
+    _bezel->setScale(joystickScale.x, joystickScale.y);
     _bezel->enableBezelMode(false);
     _bezel->enableDebugNode(false);
     _bezel->addTriggerCallback([this](Ref* ref, const Vec2& dir) {

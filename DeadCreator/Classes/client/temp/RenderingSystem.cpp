@@ -23,7 +23,7 @@ RenderingSystem::RenderingSystem(Game* game) : _game(game)
 
 RenderingSystem::~RenderingSystem()
 {
-    CC_SAFE_RELEASE_NULL(_camera);
+    CC_SAFE_DELETE(_camera);
 }
 
 
@@ -45,23 +45,23 @@ bool RenderingSystem::init(GameResource* res)
     if ( !Node::init() )
         return false;
     
+    _gameScreenScale = Vec2(GAME_SCREEN_WIDTH / 1136, GAME_SCREEN_HEIGHT / 640);
+    
     _clipNode = ClippingRectangleNode::create(cocos2d::Rect(0,0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
     addChild(_clipNode);
     
-    auto temp = Node::create();
-    temp->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
-    temp->setScale(1.5);
-    _clipNode->addChild(temp);
+    _terrainNode = Node::create();
+    _terrainNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
+    _clipNode->addChild(_terrainNode);
     
     _rootNode = Node::create();
     _rootNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
     _clipNode->addChild(_rootNode);
     
-    _camera = Camera2D::create();
-    _camera->retain();
+    _camera = new Camera2D();
     
     _terrain = Terrain::create(this, res);
-    temp->addChild(_terrain, 0);
+    _terrainNode->addChild(_terrain, 0);
     
     _uiLayer = UiLayer::create(_game);
     _clipNode->addChild(_uiLayer);
@@ -96,6 +96,9 @@ void RenderingSystem::addEntity(GameObject* entity, int zOrder)
 
 void RenderingSystem::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags)
 {
+    _rootNode->setScale(_gameScreenScale.x * _zoomScale, _gameScreenScale.y * _zoomScale);
+    _terrainNode->setScale(_gameScreenScale.x * _zoomScale, _gameScreenScale.y * _zoomScale);
+    
     for( auto& entity : _rootNode->getChildren() )
     {
         auto ent = static_cast<GameObject*>(entity);

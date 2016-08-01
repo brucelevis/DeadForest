@@ -6,6 +6,8 @@
 //
 //
 
+#pragma once
+
 #include "cocos2d.h"
 
 namespace realtrick
@@ -22,12 +24,12 @@ namespace realtrick
             
         public:
         
-            explicit ObjectManager(Game* game);
+            explicit ObjectManager(Game* game) : _game(game) {}
             virtual ~ObjectManager() = default;
             static ObjectManager* createWithResouce(Game* game, GameResource* res)
             {
                 auto ret = new (std::nothrow) ObjectManager(game);
-                if ( ret && ret->init(res) )
+                if ( ret && ret->initWithResource(res) )
                 {
                     ret->autorelease();
                     return ret;
@@ -47,6 +49,7 @@ namespace realtrick
             
         private:
             
+            Game* _game;
             std::map<int, GameObject2*> _objects;
             
         };

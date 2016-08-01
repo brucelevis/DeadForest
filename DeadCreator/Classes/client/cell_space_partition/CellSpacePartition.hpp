@@ -22,6 +22,7 @@ namespace realtrick
     {
         
         class GameObject;
+        class GameResource;
         
         struct Cell
         {
@@ -35,56 +36,52 @@ namespace realtrick
         };
         
         
-        class CellSpacePartition
+        class CellSpacePartition : public cocos2d::Ref
         {
             
         public:
             
-            CellSpacePartition() = delete;
-            
-            explicit CellSpacePartition(float worldWidth, float worldHeight, int cellWidth, int cellHeight) :
-            _worldWidth(worldWidth),
-            _worldHeight(worldHeight),
-            _cellWidth(cellWidth),
-            _cellHeight(cellHeight)
+            static CellSpacePartition* createWithResource(GameResource* res)
             {
-                _numOfCellsX = (worldWidth  / cellWidth) + 2;
-                _numOfCellsY = (worldHeight / cellHeight) + 2;
-                
-                for (int y = 0; y < _numOfCellsY; ++y)
+                auto ret = new (std::nothrow) CellSpacePartition();
+                if ( ret && ret->initWithResource(res) )
                 {
-                    for (int x = 0; x <_numOfCellsX; ++x)
-                    {
-                        float left  = x * cellWidth;
-                        float bot   = y * cellHeight;
-                        _cells.push_back(Cell(cocos2d::Rect(left - _cellWidth, bot - _cellHeight, cellWidth, cellHeight)));
-                    }
+                    ret->autorelease();
+                    return ret;
                 }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
             }
             
-            inline void                     addEntity(GameObject* ent);
-            inline void                     addWall(const Polygon& wall);
+            bool initWithResource(GameResource* res);
             
-            inline bool                     updateEntity(GameObject* ent, cocos2d::Vec2 oldPos);
-            inline void                     calculateNeighbors(cocos2d::Vec2 targetPos, float queryRadius);
+            void                     addEntity(GameObject* ent);
+            void                     addWall(const Polygon& wall);
             
-            inline void                     removeEntityFromCell(GameObject* ent);
-            inline int                      positionToIndex(const cocos2d::Vec2& pos) const;
+            bool                     updateEntity(GameObject* ent, cocos2d::Vec2 oldPos);
+            void                     calculateNeighbors(cocos2d::Vec2 targetPos, float queryRadius);
             
-            inline const Cell&              getCell(const cocos2d::Vec2& pos) const;
-            inline const Cell&              getCell(int index)  { return _cells[index]; }
-            inline const std::vector<Cell>& getCells() const { return _cells; }
-            inline void                     clearCells();
+            void                     removeEntityFromCell(GameObject* ent);
+            int                      positionToIndex(const cocos2d::Vec2& pos) const;
             
-            inline float                    getWorldWidth() const { return _worldWidth; }
-            inline float                    getWorldHeight() const { return _worldHeight; }
-            inline int                      getNumOfCellX() const { return _numOfCellsX; }
-            inline int                      getNumOfCellY() const { return _numOfCellsY; }
-            inline float                    getCellWidth() const { return _cellWidth; }
-            inline float                    getCellHeight() const { return _cellHeight; }
+            const Cell&              getCell(const cocos2d::Vec2& pos) const;
+            const Cell&              getCell(int index)  { return _cells[index]; }
+            const std::vector<Cell>& getCells() const { return _cells; }
+            void                     clearCells();
             
-            inline std::vector<int>         getNeighborCells(const cocos2d::Vec2& pos) const;
-            inline std::vector<int>         getNeighborCellsNotCurrent(const cocos2d::Vec2& pos) const;
+            float                    getWorldWidth() const { return _worldWidth; }
+            float                    getWorldHeight() const { return _worldHeight; }
+            int                      getNumOfCellX() const { return _numOfCellsX; }
+            int                      getNumOfCellY() const { return _numOfCellsY; }
+            float                    getCellWidth() const { return _cellWidth; }
+            float                    getCellHeight() const { return _cellHeight; }
+            
+            std::vector<int>         getNeighborCells(const cocos2d::Vec2& pos) const;
+            std::vector<int>         getNeighborCellsNotCurrent(const cocos2d::Vec2& pos) const;
+            
+        private:
+            
+            CellSpacePartition() = default;
             
         private:
             
@@ -100,8 +97,6 @@ namespace realtrick
         
     }
 }
-
-#include "CellSpacePartition.inl"
 
 
 

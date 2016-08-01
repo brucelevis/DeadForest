@@ -20,7 +20,7 @@ namespace realtrick
      
         class Telegram;
         
-        class ComponentBase : public cocos2d::Ref, public MessageNode
+        class ComponentBase : public MessageNode
         {
             
         public:
@@ -30,7 +30,9 @@ namespace realtrick
             ComponentType getType() const { return _type; }
             
             virtual bool handleMessage(const Telegram& msg) override { return false; }
+            
             virtual void update(float dt) = 0;
+            virtual void clear() = 0;
             
         protected:
             

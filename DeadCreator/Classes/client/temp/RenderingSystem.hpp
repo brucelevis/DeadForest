@@ -40,8 +40,13 @@ namespace realtrick
             void setCameraPosition(const cocos2d::Vec2& pos);
             
             void updateChunk();
-            void setZoom(float r) { _zoomScale = r; _rootNode->setScale(r); }
-            float getZoomScale() const { return _zoomScale; }
+            void setZoom(float r) { _zoomScale = r; }
+            cocos2d::Vec2 getZoomScale() const
+            {
+                return cocos2d::Vec2(_zoomScale * _gameScreenScale.x, _zoomScale * _gameScreenScale.y);
+            }
+            
+            cocos2d::Vec2 getGameScreenScale() const { return _gameScreenScale; }
             
             void addEntity(GameObject* entity, int zOrder);
             
@@ -52,8 +57,10 @@ namespace realtrick
             
             cocos2d::ClippingRectangleNode* _clipNode;
             cocos2d::Node* _rootNode;
+            cocos2d::Node* _terrainNode;
             
             float _zoomScale;
+            cocos2d::Vec2 _gameScreenScale;
             
             Camera2D* _camera;
             Terrain* _terrain;

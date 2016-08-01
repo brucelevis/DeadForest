@@ -70,9 +70,9 @@ bool Terrain::init(GameResource* res)
 
 void Terrain::updateChunk(const cocos2d::Vec2& position)
 {
-    static int tileWidth = _gameResource->getTileWidth();
-    static int tileHeight = _gameResource->getTileHeight();
-    static const auto& tileData = _gameResource->getTileData();
+    int tileWidth = _gameResource->getTileWidth();
+    int tileHeight = _gameResource->getTileHeight();
+    const auto& tileData = _gameResource->getTileData();
     
     std::pair<int, int> originIndex = getFocusedTileIndex(position, tileWidth, tileHeight, DUMMY_TILE_SIZE);
     int xIdx = 0;
@@ -81,7 +81,7 @@ void Terrain::updateChunk(const cocos2d::Vec2& position)
     {
         for(int x = originIndex.first - _numOfViewableTileX / 2; x < originIndex.first + _numOfViewableTileX / 2 ; ++ x)
         {
-            if ( x < 0 || y < 0 || y >= _gameResource->getNumofTileY() || x >= _gameResource->getNumofTileX() ) continue;
+            if ( x < 0 || y < 0 || y >= _gameResource->getNumOfTileY() || x >= _gameResource->getNumOfTileX() ) continue;
             if( xIdx == _numOfViewableTileX) xIdx = 0, yIdx ++;
             
             _currTiles[yIdx][xIdx]->setSpriteFrame(tileData[y][x].getNumber() + ".png");

@@ -19,6 +19,7 @@
 #include "MessageDispatcher.hpp"
 #include "MessageNode.hpp"
 #include "ObjectManager.hpp"
+#include "SimpleReleasePool.hpp"
 
 #define Z_ORDER_GAME_MAP    0
 #define Z_ORDER_SHADOW      1
@@ -64,7 +65,6 @@ namespace realtrick
             // entity manager
             ObjectManager* _objectManager;
             
-            
             void setPlayer(EntityHuman* player) { _player = player; }
             EntityHuman* getPlayerPtr() const { return _player; }
             const std::map<int, GameObject*>& getEntities() const { return _entities; }
@@ -101,8 +101,7 @@ namespace realtrick
         private:
             
             cocos2d::Size _winSize;
-            
-            cocos2d::Vector<cocos2d::Ref*> _releasePool;
+            SimpleReleasePool _releasePool;
             
             // map data
             GameResource* _gameResource;

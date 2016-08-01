@@ -91,6 +91,7 @@ namespace realtrick
     
     enum class ComponentType : int
     {
+        RENDERABLE,
         MAX
     };
         

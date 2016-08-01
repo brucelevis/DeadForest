@@ -48,15 +48,11 @@ Game::~Game()
 void Game::clear()
 {
     _entities.clear();
-    CC_SAFE_DELETE(_cellSpace);
     CC_SAFE_DELETE(_logicStream);
-    CC_SAFE_RELEASE_NULL(_gameResource);
-    CC_SAFE_RELEASE_NULL(_triggerSystem);
     _player = nullptr;
     
-    experimental::AudioEngine::stop(_bgmID);
-    
     CC_SAFE_DELETE(_messenger);
+    experimental::AudioEngine::stop(_bgmID);
 }
 
 
@@ -311,15 +307,6 @@ void Game::loadResource(const std::string& filePath)
     {
         const DeadCreator::GMXFile* file = DeadCreator::GetGMXFile(loadedData.c_str());
         
-        // load cell space partition
-        Size worldSize = Size(file->tile_size()->width() * file->number_of_tiles()->x(),
-                              file->tile_size()->height() * file->number_of_tiles()->y());
-        
-        _cellSpace = new CellSpacePartition(worldSize.width, worldSize.height,
-                                            file->cell_space_size()->width(),
-                                            file->cell_space_size()->height());
-        
-        
         // load entities
         bool isFirst = true;
         for ( auto entity = file->entities()->begin(); entity != file->entities()->end(); ++ entity )
@@ -407,17 +394,26 @@ void Game::loadResource(const std::string& filePath)
 void Game::loadGMXFile(const std::string& path)
 {
     _gameResource = GameResource::createWithGMXFile(path);
-    _releasePool.pushBack(_gameResource);
-    
-    _triggerSystem = TriggerSystem::createWithResouce(this, _gameResource);
-    _releasePool.pushBack(_triggerSystem);
+    _releasePool.addObject(_gameResource);
     
     _renderingSystem = RenderingSystem::create(this, _gameResource);
     _renderingSystem->setZoom(Prm.getValueAsFloat("cameraZoom"));
     addChild(_renderingSystem);
     
+    _triggerSystem = TriggerSystem::createWithResouce(this, _gameResource);
+    _releasePool.addObject(_triggerSystem);
+    
+    _cellSpace = CellSpacePartition::createWithResource(_gameResource);
+    _releasePool.addObject(_cellSpace);
+    
+    const auto& walls = _gameResource->getCollisionData();
+    for (const auto& wall : walls)
+    {
+        _cellSpace->addWall(wall);
+    }
+    
     _objectManager = ObjectManager::createWithResouce(this, _gameResource);
-    _releasePool.pushBack(_objectManager);
+    _releasePool.addObject(_objectManager);
 }
 
 
@@ -429,9 +425,9 @@ void Game::sendMessage(double delaySeconds, MessageNode* receiver, MessageNode* 
 
 TileType Game::getStepOnTileType(const cocos2d::Vec2& pos)
 {
-    static const auto& tileData = _gameResource->getTileData();
-    static const auto tileWidth = _gameResource->getTileWidth();
-    static const auto tileHeight = _gameResource->getTileHeight();
+    const auto& tileData = _gameResource->getTileData();
+    const auto tileWidth = _gameResource->getTileWidth();
+    const auto tileHeight = _gameResource->getTileHeight();
     
     std::pair<int, int> idx = getFocusedTileIndex(pos, tileWidth, tileHeight, DUMMY_TILE_SIZE);
     const auto& tile = tileData[idx.second][idx.first];

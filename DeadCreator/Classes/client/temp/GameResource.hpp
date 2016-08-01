@@ -36,6 +36,7 @@ namespace realtrick
         {
             
             friend class TriggerSystem;
+            friend class ObjectManager;
             
         public:
         
@@ -62,8 +63,8 @@ namespace realtrick
             int getWorldHeight() const { return _worldHeight; }
             int getCellWidth() const { return _cellWidth; }
             int getCellHeight() const { return _cellHeight; }
-            int getNumofTileX() const { return _numOfTileX; }
-            int getNumofTileY() const { return _numOfTileY; }
+            int getNumOfTileX() const { return _numOfTileX; }
+            int getNumOfTileY() const { return _numOfTileY; }
             
             const std::vector<Polygon>& getCollisionData() const { return _collisionData; }
             const std::vector<std::vector<Tileset>>& getTileData() const { return _tileData; }

@@ -33,6 +33,9 @@ bool GameResource::initGMXFile(const std::string& path)
         _numOfTileX = file->number_of_tiles()->x() + DUMMY_TILE_SIZE * 2;
         _numOfTileY = file->number_of_tiles()->y() * 2 + DUMMY_TILE_SIZE * 4;
         
+        _worldWidth = _tileWidth * _numOfTileX;
+        _worldHeight = _tileHeight * _numOfTileY;
+        
         // 4. tile infos
         _tileData.resize(_numOfTileY);
         for(int i = 0 ; i < _numOfTileY; ++ i)

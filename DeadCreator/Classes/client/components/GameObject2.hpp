@@ -19,6 +19,7 @@ namespace realtrick
     namespace client
     {
         
+        class Game;
         class ComponentBase;
     
         class GameObject2
@@ -38,6 +39,10 @@ namespace realtrick
             virtual ~GameObject2()
             {
                 CC_SAFE_DELETE(_messenger);
+                
+                for (auto iter = std::begin(_components) ; iter != std::end(_components); ++iter)
+                    (*iter)->clear();
+                _components.clear();
             }
             
             virtual bool init()
@@ -78,7 +83,7 @@ namespace realtrick
             
             virtual void update(float dt) final
             {
-                // update derived class's implemented update()
+                // update derived class's implemented update() if needed.
                 updateImpl(dt);
                 
                 for( auto& component : _components )

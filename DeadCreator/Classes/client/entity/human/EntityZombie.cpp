@@ -25,6 +25,7 @@ bool EntityZombie::init()
     if ( !HumanBase::init() )
         return false;
     
+    
     return true;
 }
 
@@ -44,7 +45,9 @@ EntityZombie* EntityZombie::create(Game* game)
 
 void EntityZombie::update(float dt)
 {
+    HumanBase::update(dt);
     
+    if ( _FSM ) _FSM->update(dt);
 }
 
 

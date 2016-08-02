@@ -69,9 +69,9 @@ EntityPlayer* EntityPlayer::create(Game* game)
 
 void EntityPlayer::update(float dt)
 {
-    if ( _FSM ) _FSM->update(dt);
-    
     HumanBase::update(dt);
+    
+    if ( _FSM ) _FSM->update(dt);
 }
 
 

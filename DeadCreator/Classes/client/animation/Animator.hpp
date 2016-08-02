@@ -20,7 +20,6 @@ namespace realtrick
     {
         
         class AnimationBase;
-        class HumanBase;
         
         class Animator
         {

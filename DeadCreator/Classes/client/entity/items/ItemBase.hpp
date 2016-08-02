@@ -16,7 +16,7 @@ namespace realtrick
     namespace client
     {
         
-        class EntityHuman;
+        class EntityPlayer;
         class Game;
         
         class ItemBase : public EntityBase
@@ -29,8 +29,8 @@ namespace realtrick
             
             virtual ~ItemBase();
             
-            void setOwner(EntityHuman* owner) { _owner=  owner; }
-            EntityHuman* getOwner() const { return _owner; }
+            void setOwner(EntityPlayer* owner) { _owner=  owner; }
+            EntityPlayer* getOwner() const { return _owner; }
             
             void setAmount(int amount) { _amount = amount; }
             int getAmount() const { return _amount; }
@@ -56,7 +56,7 @@ namespace realtrick
             
         protected:
             
-            EntityHuman*                            _owner;
+            EntityPlayer*                           _owner;
             int                                     _amount;
             
             std::string                             _inSlotFrameName;

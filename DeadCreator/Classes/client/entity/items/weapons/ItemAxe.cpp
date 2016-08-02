@@ -7,7 +7,7 @@
 //
 
 #include "ItemAxe.hpp"
-#include "EntityHuman.hpp"
+#include "HumanBase.hpp"
 #include "Game.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
@@ -74,9 +74,9 @@ void ItemAxe::attack()
     {
         if ( d == _owner ) continue;
         
-        if ( d->getEntityType() == ENTITY_HUMAN)
+        if ( d->getEntityType() == ENTITY_PLAYER)
         {
-            EntityHuman* human = static_cast<EntityHuman*>(d);
+            HumanBase* human = static_cast<HumanBase*>(d);
             if( human->isAlive() && physics::intersect(Segment(worldPos, worldPos + _owner->getHeading() * getRange()), Circle(d->getWorldPosition(), human->getBoundingRadius())) )
             {
                 log("<WeaponBase::attack> hit at (%.0f, %.0f), id: %d.", human->getWorldPosition().x, human->getWorldPosition().y, human->getTag());

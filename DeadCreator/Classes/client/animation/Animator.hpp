@@ -1,5 +1,5 @@
 //
-//  AnimationPlayer.hpp
+//  Animator.hpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2015. 11. 14..
@@ -20,17 +20,16 @@ namespace realtrick
     {
         
         class AnimationBase;
-        class EntityHuman;
+        class HumanBase;
         
-        class AnimationPlayer
+        class Animator
         {
             
         public:
             
-            AnimationPlayer(EntityHuman* owner, AnimationBase* animation, int zOrder);
+            Animator(cocos2d::Node* owner, AnimationBase* animation, int zOrder);
             
             void pushAnimationFrames(AnimationBase* animation);
-            void pushOneFrame(const std::pair<std::string, int>& pair_string_int);
             void pushOneFrameUnique(AnimationBase* anim, int index);
             void pushFramesAtoB(AnimationBase* anim,int startIndex, int endIndex);
             
@@ -46,13 +45,10 @@ namespace realtrick
             int getQueueSize() const { return static_cast<int>(_frameQueue.size()); }
             void setVisible(bool enable);
             
-            void enableShadow(bool enable);
-            void enableNormal(bool enable);
-            
             void enableForceStop(bool enable) { _isForceStopped = enable; }
             bool isForceStopped() const { return _isForceStopped; }
             
-            std::string getCurrFrameName() const { return _currFrameName; }
+            void setRotation(float rotation);
             
         private:
             
@@ -60,7 +56,7 @@ namespace realtrick
             
         private:
             
-            EntityHuman*                                            _owner;
+            cocos2d::Node*                                          _owner;
             AnimationBase*                                          _currAnimation;
             
             std::deque<std::pair<std::string, int>>                 _frameQueue;
@@ -68,7 +64,6 @@ namespace realtrick
             
             cocos2d::Sprite*                                        _baseSprite;
             cocos2d::Sprite*                                        _shadowSprite;
-            cocos2d::Sprite*                                        _normalSprite;
             
             std::string                                             _currFrameName;
             int                                                     _currFrame;

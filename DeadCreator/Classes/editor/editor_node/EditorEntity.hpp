@@ -93,7 +93,7 @@ namespace realtrick
                 static bool isFirstCall = true;
                 if ( isFirstCall )
                 {
-                    table[EntityType::ENTITY_HUMAN] = EntityData(EntityType::ENTITY_HUMAN, PaletteType::HUMAN, "Sheriff", "sheriff.png");
+                    table[EntityType::ENTITY_PLAYER] = EntityData(EntityType::ENTITY_PLAYER, PaletteType::HUMAN, "Sheriff", "sheriff.png");
                     table[EntityType::ENTITY_ZOMBIE] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::HUMAN, "Zombie", "zombie.png");
                     table[EntityType::ITEM_M16A2] = EntityData(EntityType::ITEM_M16A2, PaletteType::ITEM, "M16A2", "M16A2.png");
                     table[EntityType::ITEM_M1897] = EntityData(EntityType::ITEM_M1897, PaletteType::ITEM,"M1897", "M1897.png");
@@ -114,7 +114,7 @@ namespace realtrick
                 static bool isFirstCall = true;
                 if ( isFirstCall )
                 {
-                    table["Sheriff"] = EntityData(EntityType::ENTITY_HUMAN, PaletteType::HUMAN, "Sheriff", "sheriff.png");
+                    table["Sheriff"] = EntityData(EntityType::ENTITY_PLAYER, PaletteType::HUMAN, "Sheriff", "sheriff.png");
                     table["Zombie"] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::HUMAN, "Zombie", "zombie2.png");
                     table["M16A2"] = EntityData(EntityType::ITEM_M16A2, PaletteType::ITEM,"M16A2", "M16A2.png");
                     table["M1897"] = EntityData(EntityType::ITEM_M1897, PaletteType::ITEM,"M1897", "M1897.png");

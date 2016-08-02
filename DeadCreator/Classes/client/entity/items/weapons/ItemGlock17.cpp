@@ -7,7 +7,7 @@
 //
 
 #include "ItemGlock17.hpp"
-#include "EntityHuman.hpp"
+#include "HumanBase.hpp"
 #include "Game.hpp"
 #include "AnimatedFiniteEntity.hpp"
 using namespace cocos2d;
@@ -72,7 +72,7 @@ void ItemGlock17::attack()
     
     AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_game, {"es0.png", "es1.png", "es2.png", "es3.png", "es4.png" }, 5.0f, ui::Widget::TextureResType::PLIST);
     es->setWorldPosition(worldPos + _owner->getHeading() * random(-30.0f, 30.0f) + _owner->getRight() * random(20.0f, 40.0f));
-    es->setRotation(_owner->getBodyRot());
+    es->setRotation(_owner->getRotationZ());
     _game->addEntity(es);
     
     // 엔티티들과의 충돌처리
@@ -86,9 +86,9 @@ void ItemGlock17::attack()
     {
         if ( d == _owner ) continue;
         
-        if ( d->getEntityType() == ENTITY_HUMAN)
+        if ( d->getEntityType() == ENTITY_PLAYER)
         {
-            EntityHuman* human = static_cast<EntityHuman*>(d);
+            HumanBase* human = static_cast<HumanBase*>(d);
             if( human->isAlive() && physics::intersect(Segment(worldPos, worldPos + _owner->getHeading() * getRange()), Circle(d->getWorldPosition(), 20.0f)) )
             {
                 closestIntersectPoint.push_back(std::make_pair(worldPos.distance(d->getWorldPosition()), d));

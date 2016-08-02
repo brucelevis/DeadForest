@@ -20,7 +20,7 @@ namespace realtrick
     namespace client
     {
         
-        class EntityHuman;
+        class EntityPlayer;
         class ItemBase;
         class WeaponBase;
         class ItemSlot;
@@ -83,7 +83,7 @@ namespace realtrick
         
         struct ItemAndOwner
         {
-            EntityHuman* owner;
+            EntityPlayer* owner;
             ItemBase* item;
         };
         

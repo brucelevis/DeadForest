@@ -7,7 +7,7 @@
 //
 
 #include "ItemM1897.hpp"
-#include "EntityHuman.hpp"
+#include "HumanBase.hpp"
 #include "Game.hpp"
 #include "AnimatedFiniteEntity.hpp"
 using namespace cocos2d;
@@ -70,7 +70,7 @@ void ItemM1897::attack()
                                                             5.0f, ui::Widget::TextureResType::PLIST);
     es->setWorldPosition(worldPos + _owner->getHeading() * random(-30.0f, 30.0f) + _owner->getRight() * random(20.0f, 40.0f));
     es->setScale(0.7f);
-    es->setRotation(_owner->getBodyRot());
+    es->setRotation(_owner->getRotationZ());
     _game->addEntity(es);
     
     
@@ -91,11 +91,11 @@ void ItemM1897::attack()
     {
         if ( d == _owner ) continue;
         
-        if ( d->getEntityType() == ENTITY_HUMAN)
+        if ( d->getEntityType() == ENTITY_PLAYER)
         {
             for(int s = 0 ; s < shootAts.size() ; ++ s)
             {
-                EntityHuman* human = static_cast<EntityHuman*>(d);
+                HumanBase* human = static_cast<HumanBase*>(d);
                 if( human->isAlive() && physics::intersect(Segment(worldPos, worldPos + shootAts[s].second * shootAts[s].first), Circle(d->getWorldPosition(), human->getBoundingRadius())) )
                 {
                     closestIntersectPoint[s].push_back(std::make_pair(worldPos.distance(d->getWorldPosition()), d));

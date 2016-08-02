@@ -22,9 +22,9 @@ bool EntityManager::initWithResource(GameResource* res)
         PlayerType playerType = static_cast<PlayerType>(entity->playerType);
         Vec2 position(entity->position);
         
-        if ( entityType == EntityType::ENTITY_HUMAN )
+        if ( entityType == EntityType::ENTITY_PLAYER )
         {
-            EntityHuman* human = EntityHuman::create(_game);
+            EntityPlayer* human = EntityPlayer::create(_game);
             human->setWorldPosition(position);
             human->setPlayerType(playerType);
             addEntity(human);

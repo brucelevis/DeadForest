@@ -15,7 +15,7 @@ namespace realtrick
     namespace client
     {
         
-        class EntityHuman;
+        class HumanBase;
         
         class WeaponBase : public ItemBase
         {

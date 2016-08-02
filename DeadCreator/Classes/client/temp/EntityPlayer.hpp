@@ -6,9 +6,67 @@
 //
 //
 
-#ifndef EntityPlayer_hpp
-#define EntityPlayer_hpp
+#pragma once
 
-#include <stdio.h>
+#include "HumanBase.hpp"
 
-#endif /* EntityPlayer_hpp */
+namespace realtrick
+{
+    namespace client
+    {
+        
+        class WeaponBase;
+        class Inventory;
+        class WeaponStatus;
+        
+        class EntityPlayer : public HumanBase
+        {
+            
+        public:
+            
+            explicit EntityPlayer(Game* game);
+            virtual ~EntityPlayer();
+            
+            virtual bool init() override;
+            static EntityPlayer* create(Game* game);
+
+            virtual bool handleMessage(const Telegram& msg) override { return _FSM->handleMessage(msg); }
+            virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other) override;
+            
+            StateMachine<EntityPlayer>* getFSM() const { return _FSM; }
+            
+            WeaponBase* getEquipedWeapon() const { return _equipedWeapon; }
+            void setEquipedWeapon(WeaponBase* newWeapon) { _equipedWeapon = newWeapon; }
+            
+            Inventory* getInventory() const { return _inventory; }
+            WeaponStatus* getWeaponStatus() const { return _weaponStatus; }
+            
+            void setUserNickName(const std::string& name) { _userNickName = name; }
+            std::string getUserNickName() const { return _userNickName; }
+            
+            virtual void update(float dt) override;
+            
+        protected:
+            
+            StateMachine<EntityPlayer>*     _FSM;
+            
+            WeaponBase*                     _equipedWeapon;
+            
+            Inventory*                      _inventory;
+            WeaponStatus*                   _weaponStatus;
+            
+            std::string                     _userNickName;
+            
+        };
+        
+    }
+}
+
+
+
+
+
+
+
+
+

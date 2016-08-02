@@ -10,7 +10,7 @@
 #include "MessageDispatcher.hpp"
 #include "MessageTypes.hpp"
 #include "Telegram.hpp"
-#include "EntityHuman.hpp"
+#include "EntityPlayer.hpp"
 #include "ui/CocosGUI.h"
 #include "Game.hpp"
 #include "UiLayer.hpp"
@@ -20,25 +20,25 @@
 using namespace cocos2d;
 using namespace realtrick::client;
 
-void HumanGlobalState::enter(EntityHuman* human)
+void HumanGlobalState::enter(EntityPlayer* human)
 {
     
 }
 
 
-void HumanGlobalState::execute(EntityHuman* human)
+void HumanGlobalState::execute(EntityPlayer* human)
 {
     
 }
 
 
-void HumanGlobalState::exit(EntityHuman* human)
+void HumanGlobalState::exit(EntityPlayer* human)
 {
     
 }
 
 
-bool HumanGlobalState::onMessage(EntityHuman* human, const Telegram& msg)
+bool HumanGlobalState::onMessage(EntityPlayer* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::WEAPON_READY )
     {

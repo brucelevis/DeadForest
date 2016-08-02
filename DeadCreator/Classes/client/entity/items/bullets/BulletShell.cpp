@@ -7,7 +7,7 @@
 //
 
 #include "BulletShell.hpp"
-#include "EntityHuman.hpp"
+#include "HumanBase.hpp"
 #include "Game.hpp"
 using namespace realtrick::client;
 

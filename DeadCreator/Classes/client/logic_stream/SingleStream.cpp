@@ -8,7 +8,7 @@
 
 #include "SingleStream.hpp"
 #include "Game.hpp"
-#include "EntityHuman.hpp"
+#include "EntityPlayer.hpp"
 #include "UiLayer.hpp"
 #include "Inventory.hpp"
 #include "ItemSlot.hpp"
@@ -38,7 +38,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::MOVE_JOYSTICK_INPUT )
     {
         MoveJoystickData data = *static_cast<MoveJoystickData*>(msg.extraInfo);
-        EntityHuman* player = _game->getPlayerPtr();
+        EntityPlayer* player = _game->getPlayerPtr();
         player->setMoving(data.dir);
         
         switch ( data.type )
@@ -62,7 +62,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::ATTACK_JOYSTICK_INPUT )
     {
         AttJoystickData data = *static_cast<AttJoystickData*>(msg.extraInfo);
-        EntityHuman* player = _game->getPlayerPtr();
+        EntityPlayer* player = _game->getPlayerPtr();
         
         switch ( data.type )
         {
@@ -91,7 +91,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::BEZEL_DIRECTION_TRIGGERED )
     {
         BezelDirectionTriggerData data= *static_cast<BezelDirectionTriggerData*>(msg.extraInfo);
-        EntityHuman* player = _game->getPlayerPtr();
+        EntityPlayer* player = _game->getPlayerPtr();
         player->setTargetHeading(data.dir);
         
         return true;
@@ -99,7 +99,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::BEZEL_CLICK_INPUT )
     {
         BezelInputData data = *static_cast<BezelInputData*>(msg.extraInfo);
-        EntityHuman* player = _game->getPlayerPtr();
+        EntityPlayer* player = _game->getPlayerPtr();
         
         if ( data.type == ui::Widget::TouchEventType::BEGAN )
         {
@@ -118,7 +118,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
         data.item->setOwner(data.owner);
         _game->getPlayerPtr()->getInventory()->pushItem(data.item);
         
-        EntityHuman* player = _game->getPlayerPtr();
+        EntityPlayer* player = _game->getPlayerPtr();
         
         if ( data.item->getEntityType() == EntityType::ITEM_AXE )
         {
@@ -187,7 +187,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
          3. 재장전 중일때 재장전버튼을 못누른다.
          */
         
-        EntityHuman* player = _game->getPlayerPtr();
+        EntityPlayer* player = _game->getPlayerPtr();
         WeaponBase* equipedWeapon = player->getEquipedWeapon();
         
         if ( equipedWeapon != nullptr &&
@@ -200,7 +200,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     }
     else if ( msg.msg == MessageType::RELOAD_COMPLETE )
     {
-        EntityHuman* player = _game->getPlayerPtr();
+        EntityPlayer* player = _game->getPlayerPtr();
         WeaponBase* equipedWeapon = player->getEquipedWeapon();
         
         // 인벤토리에있는 총알아이템을 소모한다.

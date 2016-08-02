@@ -10,7 +10,7 @@
 #include "Telegram.hpp"
 #include "MessageTypes.hpp"
 #include "MessageDispatcher.hpp"
-#include "EntityHuman.hpp"
+#include "EntityPlayer.hpp"
 #include "HumanOwnedAnimations.hpp"
 #include "Game.hpp"
 #include "WeaponBase.hpp"
@@ -24,21 +24,21 @@ using namespace realtrick::client;
 //
 // HumanGlock17IdleLoop
 //
-void HumanGlock17IdleLoop::enter(EntityHuman* human)
+void HumanGlock17IdleLoop::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanGlock17IdleLoop::getInstance());
+    human->getAnimator()->pushAnimationFrames(&AnimHumanGlock17IdleLoop::getInstance());
     human->setVelocity( Vec2::ZERO );
     human->setStateName("idle");
 }
 
-void HumanGlock17IdleLoop::execute(EntityHuman* human)
+void HumanGlock17IdleLoop::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
     
-    if(human->getBodyAnimator()->isQueueEmpty())
+    if(human->getAnimator()->isQueueEmpty())
     {
-        human->getBodyAnimator()->pushAnimationFrames(&AnimHumanGlock17IdleLoop::getInstance());
+        human->getAnimator()->pushAnimationFrames(&AnimHumanGlock17IdleLoop::getInstance());
     }
     
     if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
@@ -92,12 +92,12 @@ void HumanGlock17IdleLoop::execute(EntityHuman* human)
     }
 }
 
-void HumanGlock17IdleLoop::exit(EntityHuman* human)
+void HumanGlock17IdleLoop::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanGlock17IdleLoop::onMessage(EntityHuman* human, const Telegram& msg)
+bool HumanGlock17IdleLoop::onMessage(EntityPlayer* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::RELOAD_WEAPON )
     {
@@ -113,20 +113,20 @@ bool HumanGlock17IdleLoop::onMessage(EntityHuman* human, const Telegram& msg)
 //
 // HumanGlock17MoveLoop
 //
-void HumanGlock17MoveLoop::enter(EntityHuman* human)
+void HumanGlock17MoveLoop::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushFramesAtoB(&AnimHumanGlock17MoveLoop::getInstance(), 0, 5);
+    human->getAnimator()->pushFramesAtoB(&AnimHumanGlock17MoveLoop::getInstance(), 0, 5);
     human->setRunStats(true);
     human->setStateName("run");
 }
 
-void HumanGlock17MoveLoop::execute(EntityHuman* human)
+void HumanGlock17MoveLoop::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
-    int currFrame = human->getBodyAnimator()->getFrameIndex();
+    int currFrame = human->getAnimator()->getFrameIndex();
     
-    if( human->getBodyAnimator()->isQueueEmpty() )
+    if( human->getAnimator()->isQueueEmpty() )
     {
         human->getFSM()->changeState(&HumanGlock17IdleLoop::getInstance());
     }
@@ -151,21 +151,21 @@ void HumanGlock17MoveLoop::execute(EntityHuman* human)
         
         if ( currFrame == 5 )
         {
-            human->getBodyAnimator()->pushFramesAtoB(&AnimHumanGlock17MoveLoop::getInstance(), 6, 11);
+            human->getAnimator()->pushFramesAtoB(&AnimHumanGlock17MoveLoop::getInstance(), 6, 11);
         }
         else if( currFrame == 11 )
         {
-            human->getBodyAnimator()->pushFramesAtoB(&AnimHumanGlock17MoveLoop::getInstance(), 0, 5);
+            human->getAnimator()->pushFramesAtoB(&AnimHumanGlock17MoveLoop::getInstance(), 0, 5);
         }
     }
 }
 
-void HumanGlock17MoveLoop::exit(EntityHuman* human)
+void HumanGlock17MoveLoop::exit(EntityPlayer* human)
 {
     human->setRunStats(false);
-    human->getBodyAnimator()->clearFrameQueue();    }
+    human->getAnimator()->clearFrameQueue();    }
 
-bool HumanGlock17MoveLoop::onMessage(EntityHuman* human, const Telegram& msg)
+bool HumanGlock17MoveLoop::onMessage(EntityPlayer* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::RELOAD_WEAPON )
     {
@@ -181,9 +181,9 @@ bool HumanGlock17MoveLoop::onMessage(EntityHuman* human, const Telegram& msg)
 //
 // HumanGlock17Attack
 //
-void HumanGlock17Attack::enter(EntityHuman* human)
+void HumanGlock17Attack::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanGlock17Attack::getInstance());
+    human->getAnimator()->pushAnimationFrames(&AnimHumanGlock17Attack::getInstance());
     
     SoundSource s;
     s.fileName = "Glock17Fire" + _to_string(random(0, 2)) + ".mp3";
@@ -198,7 +198,7 @@ void HumanGlock17Attack::enter(EntityHuman* human)
     human->setStateName("attack");
 }
 
-void HumanGlock17Attack::execute(EntityHuman* human)
+void HumanGlock17Attack::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -217,26 +217,26 @@ void HumanGlock17Attack::execute(EntityHuman* human)
         human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
     }
     
-    if ( human->getBodyAnimator()->isQueueEmpty() )
+    if ( human->getAnimator()->isQueueEmpty() )
     {
         human->getFSM()->changeState(&HumanGlock17IdleLoop::getInstance());
     }
 }
 
-void HumanGlock17Attack::exit(EntityHuman* human)
+void HumanGlock17Attack::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanGlock17Attack::onMessage(EntityHuman* human, const Telegram& msg) { return false; }
+bool HumanGlock17Attack::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 //
 // HumanGlock17Reload
 //
-void HumanGlock17Reload::enter(EntityHuman* human)
+void HumanGlock17Reload::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanGlock17Reload::getInstance());
+    human->getAnimator()->pushAnimationFrames(&AnimHumanGlock17Reload::getInstance());
     
     SoundSource s;
     s.fileName = "Glock17Reload.mp3";
@@ -247,7 +247,7 @@ void HumanGlock17Reload::enter(EntityHuman* human)
     human->setStateName("reload");
 }
 
-void HumanGlock17Reload::execute(EntityHuman* human)
+void HumanGlock17Reload::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -261,27 +261,27 @@ void HumanGlock17Reload::execute(EntityHuman* human)
         human->setVelocity( Vec2::ZERO );
     }
     
-    if ( human->getBodyAnimator()->isQueueEmpty() )
+    if ( human->getAnimator()->isQueueEmpty() )
     {
         human->getFSM()->changeState(&HumanGlock17IdleLoop::getInstance());
     }
 }
 
-void HumanGlock17Reload::exit(EntityHuman* human)
+void HumanGlock17Reload::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanGlock17Reload::onMessage(EntityHuman* human, const Telegram& msg) { return false; }
+bool HumanGlock17Reload::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 
 //
 // HumanGlock17Out
 //
-void HumanGlock17Out::enter(EntityHuman* human)
+void HumanGlock17Out::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanGlock17Out::getInstance());
+    human->getAnimator()->pushAnimationFrames(&AnimHumanGlock17Out::getInstance());
     
     SoundSource s;
     s.fileName = "GunEnter.mp3";
@@ -292,7 +292,7 @@ void HumanGlock17Out::enter(EntityHuman* human)
     human->setStateName("equip weapon");
 }
 
-void HumanGlock17Out::execute(EntityHuman* human)
+void HumanGlock17Out::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -306,27 +306,27 @@ void HumanGlock17Out::execute(EntityHuman* human)
         human->setVelocity( Vec2::ZERO );
     }
     
-    if(human->getBodyAnimator()->isQueueEmpty())
+    if(human->getAnimator()->isQueueEmpty())
     {
         human->getFSM()->changeState(&HumanGlock17IdleLoop::getInstance());
     }
 }
 
-void HumanGlock17Out::exit(EntityHuman* human)
+void HumanGlock17Out::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanGlock17Out::onMessage(EntityHuman* human, const Telegram& msg) { return false; }
+bool HumanGlock17Out::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 
 //
 // HumanGlock17In
 //
-void HumanGlock17In::enter(EntityHuman* human)
+void HumanGlock17In::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanGlock17In::getInstance());
+    human->getAnimator()->pushAnimationFrames(&AnimHumanGlock17In::getInstance());
     
     SoundSource s;
     s.fileName = "M16A2Enter.mp3";
@@ -337,7 +337,7 @@ void HumanGlock17In::enter(EntityHuman* human)
     human->setStateName("release weapon");
 }
 
-void HumanGlock17In::execute(EntityHuman* human)
+void HumanGlock17In::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -351,7 +351,7 @@ void HumanGlock17In::execute(EntityHuman* human)
         human->setVelocity( Vec2::ZERO );
     }
     
-    if(human->getBodyAnimator()->isQueueEmpty())
+    if(human->getAnimator()->isQueueEmpty())
     {
         if ( human->getEquipedWeapon() == nullptr )
         {
@@ -366,12 +366,12 @@ void HumanGlock17In::execute(EntityHuman* human)
     }
 }
 
-void HumanGlock17In::exit(EntityHuman* human)
+void HumanGlock17In::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanGlock17In::onMessage(EntityHuman* human, const Telegram& msg) { return false; }
+bool HumanGlock17In::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 

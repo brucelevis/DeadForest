@@ -10,7 +10,7 @@
 #include "AnimatedButton.hpp"
 #include "ItemSlot.hpp"
 #include "ItemBase.hpp"
-#include "EntityHuman.hpp"
+#include "EntityPlayer.hpp"
 #include "WeaponBase.hpp"
 #include "Game.hpp"
 using namespace realtrick::client;

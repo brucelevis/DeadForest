@@ -10,34 +10,34 @@
 #include "MessageDispatcher.hpp"
 #include "MessageTypes.hpp"
 #include "Telegram.hpp"
-#include "EntityHuman.hpp"
+#include "EntityPlayer.hpp"
 #include "Game.hpp"
 #include "HumanOwnedAnimations.hpp"
 using namespace realtrick::client;
 
-void HumanBackDeadState::enter(EntityHuman* human)
+void HumanBackDeadState::enter(EntityPlayer* human)
 {
     human->getGame()->sendMessage(5.0f, human, human, MessageType::DIE, nullptr);
     human->setDead();
-    human->getBodyAnimator()->enableShadow(false);
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanBackDead::getInstance());
+    
+    human->getAnimator()->pushAnimationFrames(&AnimHumanBackDead::getInstance());
     human->setVelocity( cocos2d::Vec2::ZERO );
     human->setStateName("dead");
 }
 
 
-void HumanBackDeadState::execute(EntityHuman* human)
+void HumanBackDeadState::execute(EntityPlayer* human)
 {
 }
 
 
-void HumanBackDeadState::exit(EntityHuman* human)
+void HumanBackDeadState::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
 
-bool HumanBackDeadState::onMessage(EntityHuman* human, const Telegram& msg)
+bool HumanBackDeadState::onMessage(EntityPlayer* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::DIE )
     {

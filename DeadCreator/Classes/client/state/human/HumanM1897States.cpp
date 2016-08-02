@@ -10,7 +10,7 @@
 #include "Telegram.hpp"
 #include "MessageTypes.hpp"
 #include "MessageDispatcher.hpp"
-#include "EntityHuman.hpp"
+#include "EntityPlayer.hpp"
 #include "HumanOwnedAnimations.hpp"
 #include "Game.hpp"
 #include "WeaponBase.hpp"
@@ -25,21 +25,21 @@ using namespace realtrick::client;
 //
 // HumanM1897IdleLoop
 //
-void HumanM1897IdleLoop::enter(EntityHuman* human)
+void HumanM1897IdleLoop::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanM1897IdleLoop::getInstance());
+    human->getAnimator()->pushAnimationFrames(&AnimHumanM1897IdleLoop::getInstance());
     human->setVelocity( Vec2::ZERO );
     human->setStateName("idle");
 }
 
-void HumanM1897IdleLoop::execute(EntityHuman* human)
+void HumanM1897IdleLoop::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
     
-    if(human->getBodyAnimator()->isQueueEmpty())
+    if(human->getAnimator()->isQueueEmpty())
     {
-        human->getBodyAnimator()->pushAnimationFrames(&AnimHumanM1897IdleLoop::getInstance());
+        human->getAnimator()->pushAnimationFrames(&AnimHumanM1897IdleLoop::getInstance());
     }
     
     if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
@@ -93,12 +93,12 @@ void HumanM1897IdleLoop::execute(EntityHuman* human)
     }
 }
 
-void HumanM1897IdleLoop::exit(EntityHuman* human)
+void HumanM1897IdleLoop::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanM1897IdleLoop::onMessage(EntityHuman* human, const Telegram& msg)
+bool HumanM1897IdleLoop::onMessage(EntityPlayer* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::RELOAD_WEAPON )
     {
@@ -114,21 +114,21 @@ bool HumanM1897IdleLoop::onMessage(EntityHuman* human, const Telegram& msg)
 //
 // HumanM1897MoveLoop
 //
-void HumanM1897MoveLoop::enter(EntityHuman* human)
+void HumanM1897MoveLoop::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushFramesAtoB(&AnimHumanM1897MoveLoop::getInstance(), 0, 7);
+    human->getAnimator()->pushFramesAtoB(&AnimHumanM1897MoveLoop::getInstance(), 0, 7);
     human->setRunStats(true);
     
     human->setStateName("run");
 }
 
-void HumanM1897MoveLoop::execute(EntityHuman* human)
+void HumanM1897MoveLoop::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
-    int currFrame = human->getBodyAnimator()->getFrameIndex();
+    int currFrame = human->getAnimator()->getFrameIndex();
     
-    if( human->getBodyAnimator()->isQueueEmpty() )
+    if( human->getAnimator()->isQueueEmpty() )
     {
         human->getFSM()->changeState(&HumanM1897IdleLoop::getInstance());
     }
@@ -153,23 +153,23 @@ void HumanM1897MoveLoop::execute(EntityHuman* human)
         
         if ( currFrame == 7 )
         {
-            human->getBodyAnimator()->pushFramesAtoB(&AnimHumanM1897MoveLoop::getInstance(), 8, 15);
+            human->getAnimator()->pushFramesAtoB(&AnimHumanM1897MoveLoop::getInstance(), 8, 15);
         }
         else if( currFrame == 15 )
         {
-            human->getBodyAnimator()->pushFramesAtoB(&AnimHumanM1897MoveLoop::getInstance(), 0, 7);
+            human->getAnimator()->pushFramesAtoB(&AnimHumanM1897MoveLoop::getInstance(), 0, 7);
         }
     }
     
 }
 
-void HumanM1897MoveLoop::exit(EntityHuman* human)
+void HumanM1897MoveLoop::exit(EntityPlayer* human)
 {
     human->setRunStats(false);
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanM1897MoveLoop::onMessage(EntityHuman* human, const Telegram& msg)
+bool HumanM1897MoveLoop::onMessage(EntityPlayer* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::RELOAD_WEAPON )
     {
@@ -185,19 +185,19 @@ bool HumanM1897MoveLoop::onMessage(EntityHuman* human, const Telegram& msg)
 //
 // HumanM1897Attack
 //
-void HumanM1897Attack::enter(EntityHuman* human)
+void HumanM1897Attack::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushFramesAtoB(&AnimHumanM1897Attack::getInstance(), 0, 3);
+    human->getAnimator()->pushFramesAtoB(&AnimHumanM1897Attack::getInstance(), 0, 3);
     human->setStateName("attack");
 }
 
-void HumanM1897Attack::execute(EntityHuman* human)
+void HumanM1897Attack::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
-    int currFrame = human->getBodyAnimator()->getFrameIndex();
+    int currFrame = human->getAnimator()->getFrameIndex();
     
-    if ( human->getBodyAnimator()->isQueueEmpty() )
+    if ( human->getAnimator()->isQueueEmpty() )
     {
         human->getFSM()->changeState(&HumanM1897IdleLoop::getInstance());
     }
@@ -215,20 +215,20 @@ void HumanM1897Attack::execute(EntityHuman* human)
         if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_ENDED) )
         {
             human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-            human->getBodyAnimator()->pushFramesAtoB(&AnimHumanM1897Attack::getInstance(), currFrame, 0);
+            human->getAnimator()->pushFramesAtoB(&AnimHumanM1897Attack::getInstance(), currFrame, 0);
         }
     }
     else if ( currFrame == 3 )
     {
         if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_BEGAN) )
         {
-            human->getBodyAnimator()->enableForceStop(true);
+            human->getAnimator()->enableForceStop(true);
         }
         else if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_ENDED) )
         {
             human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-            human->getBodyAnimator()->enableForceStop(false);
-            human->getBodyAnimator()->pushFramesAtoB(&AnimHumanM1897Attack::getInstance(), 4, 16);
+            human->getAnimator()->enableForceStop(false);
+            human->getAnimator()->pushFramesAtoB(&AnimHumanM1897Attack::getInstance(), 4, 16);
             
             SoundSource s;
             s.fileName = "shotgun.mp3";
@@ -244,20 +244,20 @@ void HumanM1897Attack::execute(EntityHuman* human)
     
 }
 
-void HumanM1897Attack::exit(EntityHuman* human)
+void HumanM1897Attack::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanM1897Attack::onMessage(EntityHuman* human, const Telegram& msg) { return false; }
+bool HumanM1897Attack::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 //
 // HumanM1897Reload
 //
-void HumanM1897Reload::enter(EntityHuman* human)
+void HumanM1897Reload::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanM1897Reload::getInstance());
+    human->getAnimator()->pushAnimationFrames(&AnimHumanM1897Reload::getInstance());
     
     SoundSource s;
     s.fileName = "shotgun_reload.mp3";
@@ -268,7 +268,7 @@ void HumanM1897Reload::enter(EntityHuman* human)
     human->setStateName("reload");
 }
 
-void HumanM1897Reload::execute(EntityHuman* human)
+void HumanM1897Reload::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -282,27 +282,27 @@ void HumanM1897Reload::execute(EntityHuman* human)
         human->setVelocity( Vec2::ZERO );
     }
     
-    if ( human->getBodyAnimator()->isQueueEmpty() )
+    if ( human->getAnimator()->isQueueEmpty() )
     {
         human->getFSM()->changeState(&HumanM1897IdleLoop::getInstance());
     }
 }
 
-void HumanM1897Reload::exit(EntityHuman* human)
+void HumanM1897Reload::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanM1897Reload::onMessage(EntityHuman* human, const Telegram& msg) { return false; }
+bool HumanM1897Reload::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 
 //
 // HumanM1897Out
 //
-void HumanM1897Out::enter(EntityHuman* human)
+void HumanM1897Out::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanM1897Out::getInstance());
+    human->getAnimator()->pushAnimationFrames(&AnimHumanM1897Out::getInstance());
     
     SoundSource s;
     s.fileName = "GunEnter.mp3";
@@ -313,7 +313,7 @@ void HumanM1897Out::enter(EntityHuman* human)
     human->setStateName("equip weapon");
 }
 
-void HumanM1897Out::execute(EntityHuman* human)
+void HumanM1897Out::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -327,27 +327,27 @@ void HumanM1897Out::execute(EntityHuman* human)
         human->setVelocity( Vec2::ZERO );
     }
     
-    if(human->getBodyAnimator()->isQueueEmpty())
+    if(human->getAnimator()->isQueueEmpty())
     {
         human->getFSM()->changeState(&HumanM1897IdleLoop::getInstance());
     }
 }
 
-void HumanM1897Out::exit(EntityHuman* human)
+void HumanM1897Out::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanM1897Out::onMessage(EntityHuman* human, const Telegram& msg) { return false; }
+bool HumanM1897Out::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 
 //
 // HumanM1897In
 //
-void HumanM1897In::enter(EntityHuman* human)
+void HumanM1897In::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanM1897In::getInstance());
+    human->getAnimator()->pushAnimationFrames(&AnimHumanM1897In::getInstance());
     
     SoundSource s;
     s.fileName = "M16A2Enter.mp3";
@@ -358,7 +358,7 @@ void HumanM1897In::enter(EntityHuman* human)
     human->setStateName("release weapon");
 }
 
-void HumanM1897In::execute(EntityHuman* human)
+void HumanM1897In::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -372,7 +372,7 @@ void HumanM1897In::execute(EntityHuman* human)
         human->setVelocity( Vec2::ZERO );
     }
     
-    if(human->getBodyAnimator()->isQueueEmpty())
+    if(human->getAnimator()->isQueueEmpty())
     {
         if ( human->getEquipedWeapon() == nullptr )
         {
@@ -387,12 +387,12 @@ void HumanM1897In::execute(EntityHuman* human)
     }
 }
 
-void HumanM1897In::exit(EntityHuman* human)
+void HumanM1897In::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanM1897In::onMessage(EntityHuman* human, const Telegram& msg) { return false; }
+bool HumanM1897In::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 

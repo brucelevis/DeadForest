@@ -9,7 +9,7 @@
 #include "UiLayer.hpp"
 #include "JoystickEx.hpp"
 #include "Game.hpp"
-#include "EntityHuman.hpp"
+#include "EntityPlayer.hpp"
 #include "MessageTypes.hpp"
 #include "Inventory.hpp"
 #include "Items.hpp"
@@ -140,7 +140,7 @@ bool UiLayer::init()
                                                _moveJoystick->disableJoystick();
                                                _weaponStatus->disableButton();
                                                
-                                               EntityHuman* player = _game->getPlayerPtr();
+                                               EntityPlayer* player = _game->getPlayerPtr();
                                                
                                                MoveJoystickData data1;
                                                data1.ref = ref;

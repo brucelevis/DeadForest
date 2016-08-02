@@ -17,12 +17,10 @@ namespace realtrick
     enum FamilyMask
     {
         ENTITY_BASE         = 0x00000000000001,
-        DYNAMIC_ENTITY      = 0x00000000000002,
+        HUMAN_BASE          = 0x00000000000002,
         ITEM_BASE           = 0x00000000000004,
         WEAPON_BASE         = 0x00000000000008,
-        CONSUMPTION         = 0x00000000000010,
-        STUFF               = 0x00000000000020,
-        BULLET_BASE         = 0x00000000000040,
+        BULLET_BASE         = 0x00000000000010,
     };
     
     enum EntityType : int
@@ -39,7 +37,7 @@ namespace realtrick
         BULLET_9MM,
         BULLET_SHELL,
         BULLET_AXE,
-        ENTITY_HUMAN,
+        ENTITY_PLAYER,
         ENTITY_ZOMBIE,
         ENTITY_FINITE,
     };

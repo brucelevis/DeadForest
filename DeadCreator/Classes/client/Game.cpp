@@ -7,7 +7,7 @@
 //
 
 #include "Game.hpp"
-#include "EntityHuman.hpp"
+#include "EntityPlayer.hpp"
 #include "Items.hpp"
 #include "Camera2D.hpp"
 #include "EntityBase.hpp"
@@ -345,7 +345,7 @@ TileType Game::getStepOnTileType(const cocos2d::Vec2& pos)
 }
 
 
-EntityHuman* Game::getPlayerPtr() const
+EntityPlayer* Game::getPlayerPtr() const
 {
     return _entityManager->getPlayerPtr();
 }

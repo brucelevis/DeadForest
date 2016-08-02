@@ -8,21 +8,21 @@ namespace realtrick
     namespace client
     {
         
-        class EntityHuman;
+        class EntityPlayer;
         class Telegram;
         
         //
         // HumanAxeIdleLoop
         //
-        class HumanAxeIdleLoop : public State<EntityHuman>, public Singleton<HumanAxeIdleLoop>
+        class HumanAxeIdleLoop : public State<EntityPlayer>, public Singleton<HumanAxeIdleLoop>
         {
             
         public:
             
-            virtual void enter(EntityHuman* human) override;
-            virtual void execute(EntityHuman* human) override;
-            virtual void exit(EntityHuman* human) override;
-            virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
             
         };
         
@@ -31,15 +31,15 @@ namespace realtrick
         //
         // HumanAxeOut
         //
-        class HumanAxeOut : public State<EntityHuman>, public Singleton<HumanAxeOut>
+        class HumanAxeOut : public State<EntityPlayer>, public Singleton<HumanAxeOut>
         {
             
         public:
             
-            virtual void enter(EntityHuman* human) override;
-            virtual void execute(EntityHuman* human) override;
-            virtual void exit(EntityHuman* human) override;
-            virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
             
         private:
             
@@ -54,15 +54,15 @@ namespace realtrick
         //
         // HumanAxeIn
         //
-        class HumanAxeIn : public State<EntityHuman>, public Singleton<HumanAxeIn>
+        class HumanAxeIn : public State<EntityPlayer>, public Singleton<HumanAxeIn>
         {
             
         public:
             
-            virtual void enter(EntityHuman* human) override;
-            virtual void execute(EntityHuman* human) override;
-            virtual void exit(EntityHuman* human) override;
-            virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
             
         private:
             
@@ -77,15 +77,15 @@ namespace realtrick
         //
         // HumanAxeMoveLoop
         //
-        class HumanAxeMoveLoop : public State<EntityHuman>, public Singleton<HumanAxeMoveLoop>
+        class HumanAxeMoveLoop : public State<EntityPlayer>, public Singleton<HumanAxeMoveLoop>
         {
             
         public:
             
-            virtual void enter(EntityHuman* human) override;
-            virtual void execute(EntityHuman* human) override;
-            virtual void exit(EntityHuman* human) override;
-            virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
             
         private:
             
@@ -101,15 +101,15 @@ namespace realtrick
         //
         // HumanAxeAttack
         //
-        class HumanAxeAttack : public State<EntityHuman>, public Singleton<HumanAxeAttack>
+        class HumanAxeAttack : public State<EntityPlayer>, public Singleton<HumanAxeAttack>
         {
             
         public:
             
-            virtual void enter(EntityHuman* human) override;
-            virtual void execute(EntityHuman* human) override;
-            virtual void exit(EntityHuman* human) override;
-            virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
           
         private:
             

@@ -7,7 +7,7 @@
 //
 
 #include "WeaponBase.hpp"
-#include "EntityHuman.hpp"
+#include "HumanBase.hpp"
 #include "Game.hpp"
 #include "Inventory.hpp"
 #include "HumanOwnedAnimations.hpp"
@@ -102,7 +102,7 @@ void WeaponBase::reload()
             _owner->getWeaponStatus()->disableButton();
             _game->sendMessage(0.0, _owner, this, MessageType::RELOAD_WEAPON, nullptr);
             
-            double animatedTime = _owner->getBodyAnimator()->getCurrAnimation()->getMaxFrame() * _owner->getBodyAnimator()->getCurrAnimation()->getFrameSwapTime();
+            double animatedTime = _owner->getAnimator()->getCurrAnimation()->getMaxFrame() * _owner->getAnimator()->getCurrAnimation()->getFrameSwapTime();
             _game->pushLogic(animatedTime, MessageType::RELOAD_COMPLETE, nullptr);
         }
         else

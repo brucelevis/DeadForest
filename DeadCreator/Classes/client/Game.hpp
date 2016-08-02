@@ -12,7 +12,7 @@
 
 #include "cocos2d.h"
 #include "CellSpacePartition.hpp"
-#include "EntityHuman.hpp"
+#include "EntityPlayer.hpp"
 #include "SoundSource.hpp"
 #include "StringHelper.hpp"
 #include "SizeProtocol.h"
@@ -36,7 +36,7 @@ namespace realtrick
     {
         
         class EntityBase;
-        class EntityHuman;
+        class EntityPlayer;
         class TriggerSystem;
         class RenderingSystem;
         class LogicStream;
@@ -66,7 +66,7 @@ namespace realtrick
             // helper
             void addEntity(EntityBase* ent, int zOrder = 0);
             void removeEntity(EntityBase* ent);
-            EntityHuman* getPlayerPtr() const;
+            EntityPlayer* getPlayerPtr() const;
             
             void loadGMXFile(const std::string& path);
             void loadUiLayer();

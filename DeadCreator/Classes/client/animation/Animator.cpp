@@ -1,5 +1,5 @@
 //
-//  AnimationPlayer.cpp
+//  Animator.cpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2015. 11. 14..
@@ -8,16 +8,16 @@
 
 #include <algorithm>
 
-#include "AnimationPlayer.hpp"
+#include "Animator.hpp"
 #include "AnimationBase.hpp"
-#include "EntityHuman.hpp"
+#include "HumanBase.hpp"
 #include "HumanOwnedStates.hpp"
 #include "Game.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
 
-AnimationPlayer::AnimationPlayer(EntityHuman* owner, AnimationBase* animation, int zOrder) :
+Animator::Animator(Node* owner, AnimationBase* animation, int zOrder) :
 _owner(owner),
 _accumulatedTime(0.0f),
 _currFrame(0),
@@ -32,17 +32,12 @@ _isForceStopped(false)
     _shadowSprite->setPosition(10.0f, -7.0f);
     _owner->addChild(_shadowSprite);
     
-    _normalSprite = Sprite::create();
-    _normalSprite->setVisible(false);
-    _owner->addChild(_normalSprite);
-    
     _baseSprite->setLocalZOrder(zOrder);
     _shadowSprite->setLocalZOrder(zOrder - 1);
-    _normalSprite->setLocalZOrder(zOrder + 1);
 }
 
 
-void AnimationPlayer::pushAnimationFrames(AnimationBase* animation)
+void Animator::pushAnimationFrames(AnimationBase* animation)
 {
     if(_currAnimation->getPriority() <= animation->getPriority())
     {
@@ -75,7 +70,7 @@ void AnimationPlayer::pushAnimationFrames(AnimationBase* animation)
 }
 
 
-void AnimationPlayer::pushFramesAtoB(AnimationBase* anim, int startIndex, int endIndex)
+void Animator::pushFramesAtoB(AnimationBase* anim, int startIndex, int endIndex)
 {
     if(_currAnimation->getPriority() <= anim->getPriority())
     {
@@ -108,7 +103,7 @@ void AnimationPlayer::pushFramesAtoB(AnimationBase* anim, int startIndex, int en
 }
 
 
-void AnimationPlayer::pushOneFrameUnique(AnimationBase* anim, int index)
+void Animator::pushOneFrameUnique(AnimationBase* anim, int index)
 {
     // 인덱스와 프레임이름이 하나라도 틀리면 푸시한다.
     if ( _frameQueue.empty() )
@@ -124,12 +119,8 @@ void AnimationPlayer::pushOneFrameUnique(AnimationBase* anim, int index)
 }
 
 
-void AnimationPlayer::processAnimation(float dt)
+void Animator::processAnimation(float dt)
 {
-    _baseSprite->setRotation(_owner->getBodyRot());
-    _shadowSprite->setRotation(_owner->getBodyRot());
-    _normalSprite->setRotation(_owner->getBodyRot());
-    
     if( _frameQueue.empty() == true )
         return ;
     
@@ -145,44 +136,32 @@ void AnimationPlayer::processAnimation(float dt)
         _baseSprite->setSpriteFrame(_currFrameName + ".png");
         _shadowSprite->setSpriteFrame(_currFrameName + ".png");
         _shadowSprite->setColor(Color3B::BLACK);
-        _normalSprite->setSpriteFrame(_currFrameName + "_n.png");
     }
 }
 
 
-std::string AnimationPlayer::_getFrameName() const
+void Animator::setRotation(float rotation)
+{
+    _baseSprite->setRotation(rotation);
+    _shadowSprite->setRotation(rotation);
+}
+
+
+std::string Animator::_getFrameName() const
 {
     return (_frameQueue.empty() ? "no animation frame" : _frameQueue.front().first);
 }
 
 
-int AnimationPlayer::getFrameIndex() const
+int Animator::getFrameIndex() const
 {
     return (_frameQueue.empty() ? -1 : _frameQueue.front().second);
 }
 
 
-void AnimationPlayer::pushOneFrame(const std::pair<std::string, int>& pair_string_int)
-{
-    _frameQueue.push_back(pair_string_int);
-}
-
-
-void AnimationPlayer::setVisible(bool enable)
+void Animator::setVisible(bool enable)
 {
     _baseSprite->setVisible(enable);
-}
-
-
-void AnimationPlayer::enableShadow(bool enable)
-{
-    _shadowSprite->setVisible(enable);
-}
-
-
-void AnimationPlayer::enableNormal(bool enable)
-{
-    _normalSprite->setVisible(enable);
 }
 
 

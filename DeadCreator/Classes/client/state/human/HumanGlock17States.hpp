@@ -16,21 +16,21 @@ namespace realtrick
     namespace client
     {
         
-        class EntityHuman;
+        class EntityPlayer;
         class Telegram;
         
         //
         // HumanGlock17IdleLoop
         //
-        class HumanGlock17IdleLoop : public State<EntityHuman>, public Singleton<HumanGlock17IdleLoop>
+        class HumanGlock17IdleLoop : public State<EntityPlayer>, public Singleton<HumanGlock17IdleLoop>
         {
             
         public:
             
-            virtual void enter(EntityHuman* human) override;
-            virtual void execute(EntityHuman* human) override;
-            virtual void exit(EntityHuman* human) override;
-            virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
             
         private:
             
@@ -44,15 +44,15 @@ namespace realtrick
         //
         // HumanGlock17Out
         //
-        class HumanGlock17Out : public State<EntityHuman>, public Singleton<HumanGlock17Out>
+        class HumanGlock17Out : public State<EntityPlayer>, public Singleton<HumanGlock17Out>
         {
             
         public:
             
-            virtual void enter(EntityHuman* human) override;
-            virtual void execute(EntityHuman* human) override;
-            virtual void exit(EntityHuman* human) override;
-            virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
             
         private:
             
@@ -66,15 +66,15 @@ namespace realtrick
         //
         // HumanGlock17In
         //
-        class HumanGlock17In : public State<EntityHuman>, public Singleton<HumanGlock17In>
+        class HumanGlock17In : public State<EntityPlayer>, public Singleton<HumanGlock17In>
         {
             
         public:
             
-            virtual void enter(EntityHuman* human) override;
-            virtual void execute(EntityHuman* human) override;
-            virtual void exit(EntityHuman* human) override;
-            virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
             
         private:
             
@@ -88,15 +88,15 @@ namespace realtrick
         //
         // HumanGlock17MoveLoop
         //
-        class HumanGlock17MoveLoop : public State<EntityHuman>, public Singleton<HumanGlock17MoveLoop>
+        class HumanGlock17MoveLoop : public State<EntityPlayer>, public Singleton<HumanGlock17MoveLoop>
         {
             
         public:
             
-            virtual void enter(EntityHuman* human) override;
-            virtual void execute(EntityHuman* human) override;
-            virtual void exit(EntityHuman* human) override;
-            virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
             
         private:
             
@@ -111,15 +111,15 @@ namespace realtrick
         //
         // HumanGlock17Attack
         //
-        class HumanGlock17Attack : public State<EntityHuman>, public Singleton<HumanGlock17Attack>
+        class HumanGlock17Attack : public State<EntityPlayer>, public Singleton<HumanGlock17Attack>
         {
             
         public:
             
-            virtual void enter(EntityHuman* human) override;
-            virtual void execute(EntityHuman* human) override;
-            virtual void exit(EntityHuman* human) override;
-            virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
             
         private:
             
@@ -133,15 +133,15 @@ namespace realtrick
         //
         // HumanGlock17Reload
         //
-        class HumanGlock17Reload : public State<EntityHuman>, public Singleton<HumanGlock17Reload>
+        class HumanGlock17Reload : public State<EntityPlayer>, public Singleton<HumanGlock17Reload>
         {
             
         public:
             
-            virtual void enter(EntityHuman* human) override;
-            virtual void execute(EntityHuman* human) override;
-            virtual void exit(EntityHuman* human) override;
-            virtual bool onMessage(EntityHuman* human, const Telegram& msg) override;
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
             
         private:
             

@@ -10,7 +10,7 @@
 #include "Telegram.hpp"
 #include "MessageTypes.hpp"
 #include "MessageDispatcher.hpp"
-#include "EntityHuman.hpp"
+#include "EntityPlayer.hpp"
 #include "HumanOwnedAnimations.hpp"
 #include "Game.hpp"
 using namespace cocos2d;
@@ -19,21 +19,21 @@ using namespace realtrick::client;
 //
 // HumanFistIdleLoop
 //
-void HumanFistIdleLoop::enter(EntityHuman* human)
+void HumanFistIdleLoop::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanFistIdleLoop::getInstance());
+    human->getAnimator()->pushAnimationFrames(&AnimHumanFistIdleLoop::getInstance());
     human->setVelocity( Vec2::ZERO );
     human->setStateName("idle");
 }
 
-void HumanFistIdleLoop::execute(EntityHuman* human)
+void HumanFistIdleLoop::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
     
-    if(human->getBodyAnimator()->isQueueEmpty())
+    if(human->getAnimator()->isQueueEmpty())
     {
-        human->getBodyAnimator()->pushAnimationFrames(&AnimHumanFistIdleLoop::getInstance());
+        human->getAnimator()->pushAnimationFrames(&AnimHumanFistIdleLoop::getInstance());
     }
     
     if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
@@ -62,12 +62,12 @@ void HumanFistIdleLoop::execute(EntityHuman* human)
     }
 }
 
-void HumanFistIdleLoop::exit(EntityHuman* human)
+void HumanFistIdleLoop::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanFistIdleLoop::onMessage(EntityHuman* human, const Telegram& msg)
+bool HumanFistIdleLoop::onMessage(EntityPlayer* human, const Telegram& msg)
 {
     return false;
 }
@@ -76,20 +76,20 @@ bool HumanFistIdleLoop::onMessage(EntityHuman* human, const Telegram& msg)
 //
 // HumanFistMoveLoop
 //
-void HumanFistMoveLoop::enter(EntityHuman* human)
+void HumanFistMoveLoop::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushFramesAtoB(&AnimHumanFistMoveLoop::getInstance(), 0, 5);
+    human->getAnimator()->pushFramesAtoB(&AnimHumanFistMoveLoop::getInstance(), 0, 5);
     human->setRunStats(true);
     human->setStateName("run");
 }
 
-void HumanFistMoveLoop::execute(EntityHuman* human)
+void HumanFistMoveLoop::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
-    int currFrame = human->getBodyAnimator()->getFrameIndex();
+    int currFrame = human->getAnimator()->getFrameIndex();
     
-    if( human->getBodyAnimator()->isQueueEmpty() )
+    if( human->getAnimator()->isQueueEmpty() )
     {
         human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
     }
@@ -114,41 +114,41 @@ void HumanFistMoveLoop::execute(EntityHuman* human)
         
         if ( currFrame == 5 )
         {
-            human->getBodyAnimator()->pushFramesAtoB(&AnimHumanFistMoveLoop::getInstance(), 6, 11);
+            human->getAnimator()->pushFramesAtoB(&AnimHumanFistMoveLoop::getInstance(), 6, 11);
         }
         else if( currFrame == 11 )
         {
-            human->getBodyAnimator()->pushFramesAtoB(&AnimHumanFistMoveLoop::getInstance(), 0, 5);
+            human->getAnimator()->pushFramesAtoB(&AnimHumanFistMoveLoop::getInstance(), 0, 5);
         }
     }
 }
 
-void HumanFistMoveLoop::exit(EntityHuman* human)
+void HumanFistMoveLoop::exit(EntityPlayer* human)
 {
     human->setRunStats(false);
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanFistMoveLoop::onMessage(EntityHuman* human, const Telegram& msg) { return false; }
+bool HumanFistMoveLoop::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 
 //
 // HumanFistAttack
 //
-void HumanFistAttack::enter(EntityHuman* human)
+void HumanFistAttack::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushOneFrameUnique(&AnimHumanFistAttack::getInstance(), 0);
+    human->getAnimator()->pushOneFrameUnique(&AnimHumanFistAttack::getInstance(), 0);
     human->setStateName("attack");
 }
 
-void HumanFistAttack::execute(EntityHuman* human)
+void HumanFistAttack::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
-    int currFrame = human->getBodyAnimator()->getFrameIndex();
+    int currFrame = human->getAnimator()->getFrameIndex();
     
-    if ( human->getBodyAnimator()->isQueueEmpty() )
+    if ( human->getAnimator()->isQueueEmpty() )
     {
         human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
     }
@@ -167,43 +167,43 @@ void HumanFistAttack::execute(EntityHuman* human)
         if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_BEGAN) )
         {
             int nextFrame = currFrame + 1;
-            human->getBodyAnimator()->pushOneFrameUnique(&AnimHumanFistAttack::getInstance(), nextFrame);
+            human->getAnimator()->pushOneFrameUnique(&AnimHumanFistAttack::getInstance(), nextFrame);
         }
     }
     else if ( currFrame == 4 )
     {
         if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_BEGAN) )
         {
-            human->getBodyAnimator()->enableForceStop(true);
+            human->getAnimator()->enableForceStop(true);
         }
         else if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_ENDED) )
         {
             human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-            human->getBodyAnimator()->enableForceStop(false);
-            human->getBodyAnimator()->pushFramesAtoB(&AnimHumanFistAttack::getInstance(), 5, 9);
+            human->getAnimator()->enableForceStop(false);
+            human->getAnimator()->pushFramesAtoB(&AnimHumanFistAttack::getInstance(), 5, 9);
         }
     }
 }
 
-void HumanFistAttack::exit(EntityHuman* human)
+void HumanFistAttack::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanFistAttack::onMessage(EntityHuman* human, const Telegram& msg) { return false; }
+bool HumanFistAttack::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 
 //
 // HumanFistOut
 //
-void HumanFistOut::enter(EntityHuman* human)
+void HumanFistOut::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanFistOut::getInstance());
+    human->getAnimator()->pushAnimationFrames(&AnimHumanFistOut::getInstance());
     human->setStateName("release completed");
 }
 
-void HumanFistOut::execute(EntityHuman* human)
+void HumanFistOut::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -217,27 +217,27 @@ void HumanFistOut::execute(EntityHuman* human)
         human->setVelocity( Vec2::ZERO );
     }
     
-    if(human->getBodyAnimator()->isQueueEmpty())
+    if(human->getAnimator()->isQueueEmpty())
     {
         human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
     }
 }
 
-void HumanFistOut::exit(EntityHuman* human)
+void HumanFistOut::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanFistOut::onMessage(EntityHuman* human, const Telegram& msg) { return false; }
+bool HumanFistOut::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 
 //
 // HumanFistIn
 //
-void HumanFistIn::enter(EntityHuman* human)
+void HumanFistIn::enter(EntityPlayer* human)
 {
-    human->getBodyAnimator()->pushAnimationFrames(&AnimHumanFistIn::getInstance());
+    human->getAnimator()->pushAnimationFrames(&AnimHumanFistIn::getInstance());
     
     SoundSource s;
     s.fileName = "M16A2Enter.mp3";
@@ -248,7 +248,7 @@ void HumanFistIn::enter(EntityHuman* human)
     human->setStateName("pick weapon");
 }
 
-void HumanFistIn::execute(EntityHuman* human)
+void HumanFistIn::execute(EntityPlayer* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -262,18 +262,18 @@ void HumanFistIn::execute(EntityHuman* human)
         human->setVelocity( Vec2::ZERO );
     }
     
-    if(human->getBodyAnimator()->isQueueEmpty())
+    if(human->getAnimator()->isQueueEmpty())
     {
         human->getEquipedWeapon()->outWeapon();
     }
 }
 
-void HumanFistIn::exit(EntityHuman* human)
+void HumanFistIn::exit(EntityPlayer* human)
 {
-    human->getBodyAnimator()->clearFrameQueue();
+    human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanFistIn::onMessage(EntityHuman* human, const Telegram& msg) { return false; }
+bool HumanFistIn::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 

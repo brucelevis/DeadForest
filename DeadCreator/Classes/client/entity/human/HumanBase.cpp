@@ -1,27 +1,29 @@
 //
-//  EntityHuman.cpp
+//  HumanBase.cpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2015. 11. 15..
 //
 //
 
-#include "EntityHuman.hpp"
-#include "HumanOwnedAnimations.hpp"
-#include "HumanOwnedStates.hpp"
+#include "HumanBase.hpp"
 #include "ParamLoader.hpp"
 #include "Game.hpp"
-#include "ItemGlock17.hpp"
-#include "Items.hpp"
-#include "Inventory.hpp"
-#include "WeaponStatus.hpp"
+
 using namespace cocos2d;
 using namespace realtrick::client;
 
-EntityHuman::EntityHuman(Game* game) : DynamicEntity(game),
-_FSM(nullptr),
-_bodyAnimationPlayer(nullptr),
-_equipedWeapon(nullptr),
+HumanBase::HumanBase(Game* game) : EntityBase(game),
+_heading(Vec2::UNIT_X),
+_targetHeading(Vec2::UNIT_X),
+_moving(Vec2::UNIT_X),
+_left(Vec2::ZERO),
+_right(Vec2::ZERO),
+_velocity(Vec2::ZERO),
+_maxSpeed(0.0f),
+_turnSpeed(0.0f),
+_speed(0.0f),
+_animator(nullptr),
 _inputMask(0),
 _blood(0),
 _maxBlood(0),
@@ -31,55 +33,38 @@ _isFovOn(false),
 _walkSpeed(Prm.getValueAsFloat("walkSpeed")),
 _runSpeed(Prm.getValueAsFloat("runSpeed")),
 _footGauge(0.0f),
-_bodyRot(0.0f),
-_inventory(nullptr),
-_weaponStatus(nullptr),
-_userNickName(""),
+_rotation(0.0f),
 _stateName("idle")
 {
-    setEntityType(ENTITY_HUMAN);
+    setEntityType(ENTITY_PLAYER);
     setBoundingRadius(Prm.getValueAsFloat("boundingRadius"));
     setTurnSpeed(Prm.getValueAsFloat("turnSpeed"));
     setMaxSpeed(Prm.getValueAsFloat("maxSpeed"));
 }
 
 
-EntityHuman::~EntityHuman()
+HumanBase::~HumanBase()
 {
-    CC_SAFE_DELETE(_bodyAnimationPlayer);
-    CC_SAFE_DELETE(_FSM);
-    CC_SAFE_RELEASE(_inventory);
-    CC_SAFE_RELEASE(_weaponStatus);
 }
 
 
-bool EntityHuman::init()
+bool HumanBase::init()
 {
-    _bodyAnimationPlayer = new AnimationPlayer(this, &AnimHumanFistIdleLoop::getInstance(), 4);
-    
-    _FSM = new StateMachine<EntityHuman>(this);
-    _FSM->setGlobalState(&HumanGlobalState::getInstance());
-    _FSM->setCurrState(&HumanFistIdleLoop::getInstance());
-    _FSM->changeState(&HumanFistIdleLoop::getInstance());
+    if ( !Node::init() )
+        return false;
     
     _maxBlood = Prm.getValueAsInt("maxBlood");
     _blood = _maxBlood;
     
     setAlive();
     
-    _inventory = Inventory::create(_game);
-    _inventory->retain();
-    
-    _weaponStatus = WeaponStatus::create(_game);
-    _weaponStatus->retain();
-    
     return true;
 }
 
 
-EntityHuman* EntityHuman::create(Game* game)
+HumanBase* HumanBase::create(Game* game)
 {
-    EntityHuman* ret = new (std::nothrow) EntityHuman(game);
+    HumanBase* ret = new (std::nothrow) HumanBase(game);
     if (ret && ret->init())
     {
         ret->autorelease();
@@ -90,7 +75,7 @@ EntityHuman* EntityHuman::create(Game* game)
 }
 
 
-void EntityHuman::update(float dt)
+void HumanBase::update(float dt)
 {
     // move and rotate
     this->moveEntity();
@@ -99,43 +84,31 @@ void EntityHuman::update(float dt)
     // calculate foot guage to foot step sound.
     this->setFootGauge( _footGauge + _speed * dt );
     
-    // 1. update finite state machine
-    if ( _FSM ) _FSM->update(dt);
-    
-    // 2. update animation
-    if ( _bodyAnimationPlayer ) _bodyAnimationPlayer->processAnimation(dt);
+    // update animation
+    if ( _animator )
+    {
+        _animator->setRotation(_rotation);
+        _animator->processAnimation(dt);
+    }
 }
 
 
-bool EntityHuman::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other)
+bool HumanBase::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other)
 {
-    if ( other->getEntityType() == ENTITY_HUMAN )
+    if ( other->getEntityType() == ENTITY_PLAYER )
     {
-        EntityHuman* human = static_cast<EntityHuman*>(other);
+        HumanBase* human = static_cast<HumanBase*>(other);
         if( human->isAlive() && physics::intersect(Circle(futurePosition, getBoundingRadius()),
                                                    Circle(human->getWorldPosition(), other->getBoundingRadius())) )
         {
             return true;
         }
     }
-    else if ( isMasked(other->getFamilyMask(), ITEM_BASE) )
-    {
-        if ( physics::intersect(Circle(futurePosition, getBoundingRadius()),
-                                Circle(other->getWorldPosition(), other->getBoundingRadius())))
-        {
-            ItemAndOwner data;
-            data.owner = this;
-            data.item = static_cast<ItemBase*>(other);
-            _game->pushLogic(0.0, MessageType::PUSH_ITEM_TO_INVENTORY, &data);
-            _game->removeEntity(other);
-        }
-    }
-    
     return false;
 }
 
 
-bool EntityHuman::isIntersectWall(const cocos2d::Vec2& futurePosition, const Polygon& wall)
+bool HumanBase::isIntersectWall(const cocos2d::Vec2& futurePosition, const Polygon& wall)
 {
     for( int i = 0 ; i < wall.vertices.size() - 1 ; ++ i)
     {
@@ -153,7 +126,52 @@ bool EntityHuman::isIntersectWall(const cocos2d::Vec2& futurePosition, const Pol
 }
 
 
-void EntityHuman::rotateEntity()
+void HumanBase::moveEntity()
+{
+    if ( getVelocity() == Vec2::ZERO )
+    {
+        _speed = 0.0f;
+        return ;
+    }
+    
+    float dt = Director::getInstance()->getDeltaTime();
+    cocos2d::Vec2 oldPos = getWorldPosition();
+    cocos2d::Vec2 futurePosition = getWorldPosition() + getVelocity() * dt;
+    _speed = getVelocity().getLength();
+    bool intersectResult = false;
+    
+    
+    // 엔티티들과의 충돌처리
+    const std::list<EntityBase*> members = _game->getNeighborsOnMove(oldPos, _speed);
+    for ( const auto &entity : members )
+    {
+        if ( entity == this ) continue;
+        
+        if ( isIntersectOther(futurePosition, entity) )
+        {
+            intersectResult = true;
+        }
+    }
+    
+    // 벽과의 충돌처리
+    const std::vector<Polygon> walls = _game->getNeighborWalls(futurePosition, _speed);
+    for( const auto& wall : walls )
+    {
+        if ( isIntersectWall(futurePosition, wall) )
+        {
+            intersectResult = true;
+        }
+    }
+    
+    if ( !intersectResult )
+    {
+        setWorldPosition(futurePosition);
+        _game->getCellSpace()->updateEntity(this, oldPos);
+    }
+}
+
+
+void HumanBase::rotateEntity()
 {
     if ( _heading.dot(_targetHeading) < 0.995f )
     {
@@ -174,11 +192,11 @@ void EntityHuman::rotateEntity()
         }
     }
     
-    setBodyRot(-physics::getAngleFromZero(getHeading()));
+    setRotationZ(-physics::getAngleFromZero(getHeading()));
 }
 
 
-void EntityHuman::setFootGauge(float g)
+void HumanBase::setFootGauge(float g)
 {
     if ( g > 50.0f )
     {

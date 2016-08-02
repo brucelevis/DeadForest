@@ -18,15 +18,15 @@ using namespace realtrick::client;
 EntityPlayer::EntityPlayer(Game* game) : HumanBase(game),
 _FSM(nullptr),
 _equipedWeapon(nullptr),
-_inventory(nullptr),
-_weaponStatus(nullptr)
+_weaponStatus(nullptr),
+_inventory(nullptr)
 {
+    setEntityType(EntityType::ENTITY_PLAYER);
 }
 
 
 EntityPlayer::~EntityPlayer()
 {
-    CC_SAFE_DELETE(_animator);
     CC_SAFE_DELETE(_FSM);
     
     CC_SAFE_RELEASE_NULL(_weaponStatus);
@@ -38,8 +38,6 @@ bool EntityPlayer::init()
 {
     if ( !HumanBase::init() )
         return false;
-    
-    _animator = new Animator(this, &AnimHumanFistIdleLoop::getInstance(), 4);
     
     _FSM = new StateMachine<EntityPlayer>(this);
     _FSM->setGlobalState(&HumanGlobalState::getInstance());
@@ -79,7 +77,7 @@ void EntityPlayer::update(float dt)
 
 bool EntityPlayer::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other)
 {
-    bool ret = false;
+    bool ret = HumanBase::isIntersectOther(futurePosition, other);;
     
     if ( isMasked(other->getFamilyMask(), ITEM_BASE) )
     {
@@ -92,10 +90,6 @@ bool EntityPlayer::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityB
             _game->pushLogic(0.0, MessageType::PUSH_ITEM_TO_INVENTORY, &data);
             _game->removeEntity(other);
         }
-    }
-    else if ( other->getEntityType() == ENTITY_PLAYER )
-    {
-        ret = HumanBase::isIntersectOther(futurePosition, other);
     }
     
     return ret;

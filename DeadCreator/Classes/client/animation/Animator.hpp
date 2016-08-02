@@ -27,7 +27,7 @@ namespace realtrick
             
         public:
             
-            Animator(cocos2d::Node* owner, AnimationBase* animation, int zOrder);
+            explicit Animator(cocos2d::Node* owner);
             
             void pushAnimationFrames(AnimationBase* animation);
             void pushOneFrameUnique(AnimationBase* anim, int index);
@@ -52,7 +52,7 @@ namespace realtrick
             
         private:
             
-            std::string _getFrameName() const;
+            std::string getFrameName() const;
             
         private:
             

@@ -36,15 +36,13 @@ namespace realtrick
             virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other);
             virtual bool isIntersectWall(const cocos2d::Vec2& futurePosition, const Polygon& wall);
             virtual void rotateEntity();
-            
-            void moveEntity();
+            virtual void moveEntity();
 
             virtual bool handleMessage(const Telegram& msg) override { return false; }
         
             Animator* getAnimator() const { return _animator; }
             
             cocos2d::Vec2 getHeading() const { return _heading; }
-            void setHeading(const cocos2d::Vec2 heading) { _heading = heading; _heading.normalize(); }
             
             cocos2d::Vec2 getTargetHeading() const { return _targetHeading; }
             void setTargetHeading(const cocos2d::Vec2& target) { _targetHeading = target; }
@@ -91,6 +89,10 @@ namespace realtrick
             
             void setStateName(const std::string& name) { _stateName = name; }
             std::string getStateName() const { return _stateName; }
+            
+        private:
+        
+            void setHeading(const cocos2d::Vec2 heading) { _heading = heading; _heading.normalize(); }
             
         protected:
             

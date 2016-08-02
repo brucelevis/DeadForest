@@ -51,9 +51,8 @@ namespace realtrick
             StateMachine<EntityPlayer>*     _FSM;
             
             WeaponBase*                     _equipedWeapon;
-            
-            Inventory*                      _inventory;
             WeaponStatus*                   _weaponStatus;
+            Inventory*                      _inventory;
             
             std::string                     _userNickName;
             

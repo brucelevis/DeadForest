@@ -29,12 +29,7 @@ bool EntityManager::initWithResource(GameResource* res)
             human->setPlayerType(playerType);
             addEntity(human);
             
-            static bool isFirst = true;
-            if ( isFirst )
-            {
-                _player = human;
-                isFirst = false;
-            }
+            if ( !_player ) _player = human;
         }
         
         else if ( entityType == EntityType::BULLET_556MM )

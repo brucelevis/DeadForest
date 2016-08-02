@@ -36,7 +36,7 @@ _footGauge(0.0f),
 _rotation(0.0f),
 _stateName("idle")
 {
-    setEntityType(ENTITY_PLAYER);
+    ADD_FAMILY_MASK(_familyMask, HUMAN_BASE);
     setBoundingRadius(Prm.getValueAsFloat("boundingRadius"));
     setTurnSpeed(Prm.getValueAsFloat("turnSpeed"));
     setMaxSpeed(Prm.getValueAsFloat("maxSpeed"));
@@ -45,6 +45,7 @@ _stateName("idle")
 
 HumanBase::~HumanBase()
 {
+    CC_SAFE_DELETE(_animator);
 }
 
 
@@ -52,6 +53,8 @@ bool HumanBase::init()
 {
     if ( !Node::init() )
         return false;
+    
+    _animator = new Animator(this);
     
     _maxBlood = Prm.getValueAsInt("maxBlood");
     _blood = _maxBlood;
@@ -95,7 +98,7 @@ void HumanBase::update(float dt)
 
 bool HumanBase::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other)
 {
-    if ( other->getEntityType() == ENTITY_PLAYER )
+    if ( isMasked(other->getFamilyMask(), HUMAN_BASE) )
     {
         HumanBase* human = static_cast<HumanBase*>(other);
         if( human->isAlive() && physics::intersect(Circle(futurePosition, getBoundingRadius()),
@@ -148,9 +151,7 @@ void HumanBase::moveEntity()
         if ( entity == this ) continue;
         
         if ( isIntersectOther(futurePosition, entity) )
-        {
             intersectResult = true;
-        }
     }
     
     // 벽과의 충돌처리
@@ -158,9 +159,7 @@ void HumanBase::moveEntity()
     for( const auto& wall : walls )
     {
         if ( isIntersectWall(futurePosition, wall) )
-        {
             intersectResult = true;
-        }
     }
     
     if ( !intersectResult )

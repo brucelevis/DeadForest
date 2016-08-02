@@ -100,7 +100,7 @@ bool UiLayer::init()
     _bezel->enableBezelMode(false);
     _bezel->enableDebugNode(false);
     _bezel->addTriggerCallback([this](Ref* ref, const Vec2& dir) {
-       
+        
         BezelDirectionTriggerData data;
         data.ref = ref;
         data.dir = dir;
@@ -117,15 +117,18 @@ bool UiLayer::init()
     });
     addChild(_bezel, Z_ORDER_UI - 1);
     
-    _weaponStatus = _game->getPlayerPtr()->getWeaponStatus();
-    _weaponStatus->setPosition(Vec2(_winSize.width * 0.9f, _winSize.height * 0.9f));
-    addChild(_weaponStatus, Z_ORDER_UI - 1);
-    
-    
-    _inventory = _game->getPlayerPtr()->getInventory();
-    _inventory->setPosition(Vec2(_winSize / 2));
-    addChild(_inventory, Z_ORDER_UI);
-    
+    auto player = _game->getPlayerPtr();
+    if ( player )
+    {
+        _weaponStatus = player->getWeaponStatus();
+        _weaponStatus->setPosition(Vec2(_winSize.width * 0.9f, _winSize.height * 0.9f));
+        addChild(_weaponStatus, Z_ORDER_UI - 1);
+        
+        
+        _inventory = player->getInventory();
+        _inventory->setPosition(Vec2(_winSize / 2));
+        addChild(_inventory, Z_ORDER_UI);
+    }
     
     _inventorySwitch = ui::CheckBox::create("inventory_n.png", "inventory_s.png");
     _inventorySwitch->setPosition(Vec2(_winSize.width / 2.0f, 50.0f));
@@ -176,7 +179,7 @@ bool UiLayer::init()
         addChild(rain, Z_ORDER_UI - 2);
     }
     
-  
+    
     _hpBar = HpBar::create(_game);
     _hpBar->setPosition(Vec2(_winSize.width * 0.03f, _winSize.height * 0.9f));
     addChild(_hpBar);

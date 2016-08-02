@@ -25,7 +25,11 @@ namespace realtrick
             
         public:
         
-            explicit EntityManager(Game* game) : _game(game) {}
+            explicit EntityManager(Game* game) :
+            _game(game),
+            _player(nullptr)
+            {}
+            
             virtual ~EntityManager() = default;
             static EntityManager* createWithResouce(Game* game, GameResource* res)
             {
@@ -48,7 +52,7 @@ namespace realtrick
             const std::map<int, EntityBase*>& getEntities() const { return _entities; }
             int getNextValidID() { static int nextValidID = 0; return nextValidID++; }
             
-            EntityPlayer* getPlayerPtr() const { return  _player; }
+            EntityPlayer* getPlayerPtr() const { return _player; }
             
             void update(float dt);
             

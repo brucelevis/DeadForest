@@ -17,14 +17,16 @@ using namespace cocos2d;
 using namespace realtrick::client;
 
 
-Animator::Animator(Node* owner, AnimationBase* animation, int zOrder) :
+Animator::Animator(Node* owner) :
 _owner(owner),
+_currAnimation(nullptr),
 _accumulatedTime(0.0f),
+_baseSprite(nullptr),
+_shadowSprite(nullptr),
+_currFrameName("##invalid"),
 _currFrame(0),
 _isForceStopped(false)
 {
-    _currAnimation = animation;
-    
     _baseSprite = Sprite::create();
     _owner->addChild(_baseSprite);
     
@@ -32,14 +34,14 @@ _isForceStopped(false)
     _shadowSprite->setPosition(10.0f, -7.0f);
     _owner->addChild(_shadowSprite);
     
-    _baseSprite->setLocalZOrder(zOrder);
-    _shadowSprite->setLocalZOrder(zOrder - 1);
+    _baseSprite->setLocalZOrder(1);
+    _shadowSprite->setLocalZOrder(0);
 }
 
 
 void Animator::pushAnimationFrames(AnimationBase* animation)
 {
-    if(_currAnimation->getPriority() <= animation->getPriority())
+    if( _currAnimation && _currAnimation->getPriority() <= animation->getPriority())
     {
         _frameQueue.clear();
     }
@@ -72,7 +74,7 @@ void Animator::pushAnimationFrames(AnimationBase* animation)
 
 void Animator::pushFramesAtoB(AnimationBase* anim, int startIndex, int endIndex)
 {
-    if(_currAnimation->getPriority() <= anim->getPriority())
+    if( _currAnimation && _currAnimation->getPriority() <= anim->getPriority())
     {
         _frameQueue.clear();
     }
@@ -121,7 +123,7 @@ void Animator::pushOneFrameUnique(AnimationBase* anim, int index)
 
 void Animator::processAnimation(float dt)
 {
-    if( _frameQueue.empty() == true )
+    if( _frameQueue.empty() )
         return ;
     
     _accumulatedTime += dt;
@@ -129,7 +131,7 @@ void Animator::processAnimation(float dt)
     {
         _accumulatedTime = 0.0f;
         
-        _currFrameName = _getFrameName();
+        _currFrameName = getFrameName();
         _currFrame = getFrameIndex();
         _frameQueue.pop_front();
         
@@ -147,7 +149,7 @@ void Animator::setRotation(float rotation)
 }
 
 
-std::string Animator::_getFrameName() const
+std::string Animator::getFrameName() const
 {
     return (_frameQueue.empty() ? "no animation frame" : _frameQueue.front().first);
 }

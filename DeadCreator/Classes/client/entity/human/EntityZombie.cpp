@@ -7,6 +7,7 @@
 //
 
 #include "EntityZombie.hpp"
+#include "ZombieStates.hpp"
 using namespace realtrick::client;
 
 EntityZombie::EntityZombie(Game* game) : HumanBase(game),
@@ -17,6 +18,7 @@ _FSM(nullptr)
 
 EntityZombie::~EntityZombie()
 {
+    CC_SAFE_DELETE(_FSM);
 }
 
 
@@ -25,6 +27,9 @@ bool EntityZombie::init()
     if ( !HumanBase::init() )
         return false;
     
+    _FSM = new StateMachine<EntityZombie>(this);
+    _FSM->setCurrState(&ZombieIdleLoop::getInstance());
+    _FSM->changeState(&ZombieIdleLoop::getInstance());
     
     return true;
 }

@@ -8,6 +8,8 @@
 
 #include "EntityManager.hpp"
 #include "GameResource.hpp"
+#include "EntityZombie.hpp"
+#include "EntityPlayer.hpp"
 #include "Items.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
@@ -30,6 +32,14 @@ bool EntityManager::initWithResource(GameResource* res)
             addEntity(human);
             
             if ( !_player ) _player = human;
+        }
+        
+        else if ( entityType == EntityType::ENTITY_ZOMBIE )
+        {
+            EntityZombie* zombie = EntityZombie::create(_game);
+            zombie->setWorldPosition(position);
+            zombie->setPlayerType(playerType);
+            addEntity(zombie);
         }
         
         else if ( entityType == EntityType::BULLET_556MM )

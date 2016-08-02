@@ -84,6 +84,7 @@ namespace realtrick
             
             int _tileWidth;
             int _tileHeight;
+            
             int _worldWidth;
             int _worldHeight;
             
@@ -91,6 +92,7 @@ namespace realtrick
             int _cellWidth;
             int _cellHeight;
             
+            // collision, tile
             std::vector<Polygon> _collisionData;
             std::vector<std::vector<Tileset>> _tileData;
             

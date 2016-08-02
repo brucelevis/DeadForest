@@ -93,7 +93,6 @@ namespace realtrick
             HumanAxeMoveLoop() = default;
             virtual ~HumanAxeMoveLoop() = default;
 
-            
         };
         
         

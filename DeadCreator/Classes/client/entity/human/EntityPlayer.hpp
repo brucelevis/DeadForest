@@ -30,7 +30,7 @@ namespace realtrick
             virtual bool init() override;
             static EntityPlayer* create(Game* game);
 
-            virtual bool handleMessage(const Telegram& msg) override { return _FSM->handleMessage(msg); }
+            virtual bool handleMessage(const Telegram& msg) override;
             virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other) override;
             
             StateMachine<EntityPlayer>* getFSM() const { return _FSM; }

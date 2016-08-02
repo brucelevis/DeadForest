@@ -86,6 +86,7 @@ void RenderingSystem::addEntity(EntityBase* entity, int zOrder)
     _renderingNode->addChild(entity, zOrder);
 }
 
+
 void RenderingSystem::removeEntity(EntityBase* entity)
 {
     entity->removeFromParentAndCleanup(true);

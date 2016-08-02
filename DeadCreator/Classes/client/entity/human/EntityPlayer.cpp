@@ -12,6 +12,9 @@
 #include "Game.hpp"
 #include "Inventory.hpp"
 #include "WeaponStatus.hpp"
+#include "AnimatedFiniteEntity.hpp"
+#include "RenderingSystem.hpp"
+using namespace cocos2d;
 using namespace realtrick::client;
 
 
@@ -40,10 +43,9 @@ bool EntityPlayer::init()
         return false;
     
     _FSM = new StateMachine<EntityPlayer>(this);
-    _FSM->setGlobalState(&HumanGlobalState::getInstance());
     _FSM->setCurrState(&HumanFistIdleLoop::getInstance());
     _FSM->changeState(&HumanFistIdleLoop::getInstance());
-
+    
     _weaponStatus = WeaponStatus::create(_game);
     _weaponStatus->retain();
     
@@ -95,6 +97,71 @@ bool EntityPlayer::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityB
     return ret;
 }
 
+
+bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
+{
+    bool ret = _FSM->handleMessage(msg);
+    
+    if ( msg.msg == MessageType::WEAPON_READY )
+    {
+        WeaponBase* weapon = static_cast<WeaponBase*>(msg.extraInfo);
+        weapon->enableReadyToAttack(true);
+        
+        ret = true;
+    }
+    else if ( msg.msg  == MessageType::HITTED_BY_GUN )
+    {
+        ReceiverSenderDamage s = *static_cast<ReceiverSenderDamage*>(msg.extraInfo);
+        int dam = s.damage;
+        this->setBlood( getBlood() - dam );
+        if ( this->getBlood() <= 0 )
+        {
+            this->getFSM()->changeState(&HumanBackDeadState::getInstance());
+        }
+        
+        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1,4)) + ".png"},
+                                                                   random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
+        blood->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
+                                     getWorldPosition().y + random(-30, 30)));
+        blood->setScale(0.2f);
+        _game->addEntity(blood);
+        
+        ret = true;
+    }
+    else if (msg.msg == MessageType::HITTED_BY_AXE )
+    {
+        ReceiverSenderDamage s = *static_cast<ReceiverSenderDamage*>(msg.extraInfo);
+        int dam = s.damage;
+        this->setBlood( this->getBlood() - dam );
+        
+        if ( this->getBlood() <= 0 )
+        {
+            this->getFSM()->changeState(&HumanBackDeadState::getInstance());
+        }
+        
+        for(int i = 0 ; i < 5 ; ++ i)
+        {
+            AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood1.png"},
+                                                                       random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
+            blood->setWorldPosition(Vec2(getWorldPosition().x + random(-20, 20),
+                                         getWorldPosition().y + random(-20, 20)));
+            blood->setScale(0.3f);
+            _game->addEntity(blood);
+        }
+        
+        ret = true;
+    }
+    else if ( msg.msg == MessageType::PLAY_SOUND )
+    {
+        SoundSource s =  *static_cast<SoundSource*>(msg.extraInfo);
+        float t = (1.0f - (s.position - _game->getRenderingSysetm()->getCameraPosition()).getLength() / s.soundRange) * s.volume;
+        experimental::AudioEngine::setVolume( experimental::AudioEngine::play2d(s.fileName), t);
+        
+        ret = true;
+    }
+    
+    return ret;
+}
 
 
 

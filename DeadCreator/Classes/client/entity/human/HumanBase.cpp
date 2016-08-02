@@ -221,6 +221,12 @@ void HumanBase::setFootGauge(float g)
 }
 
 
+bool HumanBase::handleMessage(const Telegram& msg)
+{
+    return false;
+}
+
+
 
 
 

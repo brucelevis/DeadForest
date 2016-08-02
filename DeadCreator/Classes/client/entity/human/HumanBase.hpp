@@ -38,7 +38,7 @@ namespace realtrick
             virtual void rotateEntity();
             virtual void moveEntity();
 
-            virtual bool handleMessage(const Telegram& msg) override { return false; }
+            virtual bool handleMessage(const Telegram& msg) override;
         
             Animator* getAnimator() const { return _animator; }
             

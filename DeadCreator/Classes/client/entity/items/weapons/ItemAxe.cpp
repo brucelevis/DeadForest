@@ -69,7 +69,7 @@ void ItemAxe::attack()
     // 엔티티들과의 충돌처리
     bool isHit = false;
     Vec2 shootAt = _owner->getHeading();
-    const std::list<GameObject*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, getRange());
+    const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, getRange());
     for (const auto &d : members)
     {
         if ( d == _owner ) continue;
@@ -119,11 +119,6 @@ void ItemAxe::attack()
 
 void ItemAxe::discard()
 {
-    ItemAxe* item = ItemAxe::create(_game);
-    item->setAmount( getAmount() );
-    item->setNumOfLeftRounds(getNumOfLeftRounds());
-    item->setPosition(Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));
-    _game->addEntity(item, Z_ORDER_ITEMS, _game->getNextValidID());
 }
 
 

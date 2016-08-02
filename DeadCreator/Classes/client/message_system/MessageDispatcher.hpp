@@ -20,13 +20,28 @@ namespace realtrick
     namespace client
     {
         
-        class MessageDispatcher
+        class MessageDispatcher : public cocos2d::Ref
         {
             
         public:
             
             MessageDispatcher() = default;
             virtual ~MessageDispatcher() { clearQueue(); }
+            
+            static MessageDispatcher* create()
+            {
+                auto ret = new (std::nothrow) MessageDispatcher();
+                if ( ret && ret->init() )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
+            bool init() { return true; }
+            
             
             void pushMessage(double delaySeconds, MessageNode* receiver, MessageNode* sender, MessageType type, void* extraInfo);
             void dispatchDelayedMessages();

@@ -36,7 +36,7 @@ namespace realtrick
         {
             
             friend class TriggerSystem;
-            friend class ObjectManager;
+            friend class EntityManager;
             
         public:
         

@@ -43,10 +43,6 @@ Bullet556mm* Bullet556mm::clone() const
 
 void Bullet556mm::discard()
 {
-    Bullet556mm* item = Bullet556mm::create(_game);
-    item->setAmount( getAmount() );
-    item->setPosition(cocos2d::Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));
-    _game->addEntity(item, Z_ORDER_ITEMS, _game->getNextValidID());
 }
 
 

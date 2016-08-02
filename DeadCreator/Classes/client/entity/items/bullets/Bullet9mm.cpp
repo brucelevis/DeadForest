@@ -43,10 +43,6 @@ Bullet9mm* Bullet9mm::clone() const
 
 void Bullet9mm::discard()
 {
-    Bullet9mm* item = Bullet9mm::create(_game);
-    item->setAmount( getAmount() );
-    item->setPosition(cocos2d::Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));
-    _game->addEntity(item, Z_ORDER_ITEMS, _game->getNextValidID());
 }
 
 

@@ -7,7 +7,7 @@
 //
 
 #include "CellSpacePartition.hpp"
-#include "GameObject.hpp"
+#include "EntityBase.hpp"
 #include "ClipperWrapper.hpp"
 #include "GameResource.hpp"
 using namespace realtrick::client;
@@ -39,7 +39,7 @@ bool CellSpacePartition::initWithResource(GameResource* res)
 }
 
 
-void CellSpacePartition::addEntity(GameObject* ent)
+void CellSpacePartition::addEntity(EntityBase* ent)
 {
     int idx = positionToIndex(ent->getWorldPosition());
     _cells[idx].members.push_back(ent);
@@ -102,7 +102,7 @@ void CellSpacePartition::addWall(const Polygon& wall)
 }
 
 
-bool CellSpacePartition::updateEntity(GameObject* ent, cocos2d::Vec2 oldPos)
+bool CellSpacePartition::updateEntity(EntityBase* ent, cocos2d::Vec2 oldPos)
 {
     int oldIdx = positionToIndex(oldPos);
     int newIdx = positionToIndex(ent->getWorldPosition());
@@ -116,7 +116,7 @@ bool CellSpacePartition::updateEntity(GameObject* ent, cocos2d::Vec2 oldPos)
 }
 
 
-void CellSpacePartition::removeEntityFromCell(GameObject* ent)
+void CellSpacePartition::removeEntityFromCell(EntityBase* ent)
 {
     int index = positionToIndex(ent->getWorldPosition());
     auto iter = std::find(std::begin(_cells[index].members), std::end(_cells[index].members), ent);

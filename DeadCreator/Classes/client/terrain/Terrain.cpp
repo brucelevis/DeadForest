@@ -14,9 +14,9 @@
 using namespace realtrick::client;
 
 
-Terrain::Terrain(RenderingSystem* renderSys) :
-_renderSys(renderSys),
-_worldPosition(cocos2d::Vec2::ZERO),
+Terrain::Terrain(Game* game):
+EntityBase(game),
+_game(game),
 _numOfViewableTileX(0),
 _numOfViewableTileY(0)
 {}
@@ -26,10 +26,10 @@ Terrain::~Terrain()
 {}
 
 
-Terrain* Terrain::create(RenderingSystem* renderSys, GameResource* res)
+Terrain* Terrain::create(Game* game)
 {
-    auto ret = new (std::nothrow) Terrain(renderSys);
-    if ( ret && ret->init(res) )
+    auto ret = new (std::nothrow) Terrain(game);
+    if ( ret && ret->init() )
     {
         ret->autorelease();
         return ret;
@@ -39,12 +39,10 @@ Terrain* Terrain::create(RenderingSystem* renderSys, GameResource* res)
 }
 
 
-bool Terrain::init(GameResource* res)
+bool Terrain::init()
 {
     if ( !Node::init() )
         return false;
-    
-    _gameResource = res;
     
     _numOfViewableTileX = Prm.getValueAsInt("numOfViewableTileX");
     _numOfViewableTileY = Prm.getValueAsInt("numOfViewableTileY");
@@ -70,9 +68,11 @@ bool Terrain::init(GameResource* res)
 
 void Terrain::updateChunk(const cocos2d::Vec2& position)
 {
-    int tileWidth = _gameResource->getTileWidth();
-    int tileHeight = _gameResource->getTileHeight();
-    const auto& tileData = _gameResource->getTileData();
+    int tileWidth = _game->getGameResource()->getTileWidth();
+    int tileHeight = _game->getGameResource()->getTileHeight();
+    int numOfTileX = _game->getGameResource()->getNumOfTileX();
+    int numOfTileY = _game->getGameResource()->getNumOfTileY();
+    const auto& tileData = _game->getGameResource()->getTileData();
     
     std::pair<int, int> originIndex = getFocusedTileIndex(position, tileWidth, tileHeight, DUMMY_TILE_SIZE);
     int xIdx = 0;
@@ -81,7 +81,7 @@ void Terrain::updateChunk(const cocos2d::Vec2& position)
     {
         for(int x = originIndex.first - _numOfViewableTileX / 2; x < originIndex.first + _numOfViewableTileX / 2 ; ++ x)
         {
-            if ( x < 0 || y < 0 || y >= _gameResource->getNumOfTileY() || x >= _gameResource->getNumOfTileX() ) continue;
+            if ( x < 0 || y < 0 || y >= numOfTileY || x >= numOfTileX ) continue;
             if( xIdx == _numOfViewableTileX) xIdx = 0, yIdx ++;
             
             _currTiles[yIdx][xIdx]->setSpriteFrame(tileData[y][x].getNumber() + ".png");
@@ -90,13 +90,6 @@ void Terrain::updateChunk(const cocos2d::Vec2& position)
             xIdx++;
         }
     }
-}
-
-
-void Terrain::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags)
-{
-    setPosition( _worldPosition - _renderSys->getCameraPosition() );
-    Node::visit(renderer, transform, flags);
 }
 
 

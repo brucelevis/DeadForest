@@ -11,7 +11,7 @@ using namespace cocos2d;
 using namespace realtrick::client;
 
 ItemBase::ItemBase(Game* game) :
-GameObject(game),
+EntityBase(game),
 _owner(nullptr),
 _amount(0),
 _inSlotFrameName("#NO NAME"),
@@ -39,7 +39,7 @@ ItemBase::~ItemBase()
 }
 
 
-ItemBase::ItemBase(const ItemBase& rhs) : GameObject(rhs)
+ItemBase::ItemBase(const ItemBase& rhs) : EntityBase(rhs)
 {
     _owner = rhs._owner;
     _amount = rhs._amount;

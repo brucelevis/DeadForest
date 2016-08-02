@@ -12,9 +12,10 @@
 #include "EditorEntity.hpp"
 #include "GMXLayer.hpp"
 #include "GameTrigger.hpp"
+#include "EntityManager.hpp"
 
 #include "Game.hpp"
-#include "GameObject.hpp"
+#include "EntityBase.hpp"
 
 namespace realtrick
 {
@@ -213,7 +214,7 @@ namespace realtrick
                 if ( _params.player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
                 else _maskedPlayer.set(static_cast<int>(_params.player));
                 
-                const auto& entities = _game->getEntities();
+                const auto& entities = _game->getEntityManager()->getEntities();
                 
                 // 플레이어 타입인지 체크. (o)
                 // 엔티티 타입 체크. (o)

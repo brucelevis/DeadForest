@@ -20,7 +20,7 @@ namespace realtrick
         class Camera2D;
         class TileImage;
         class Terrain;
-        class GameObject;
+        class EntityBase;
         class UiLayer;
         
         class RenderingSystem : public cocos2d::Node
@@ -48,7 +48,9 @@ namespace realtrick
             
             cocos2d::Vec2 getGameScreenScale() const { return _gameScreenScale; }
             
-            void addEntity(GameObject* entity, int zOrder);
+            void addEntity(EntityBase* entity, int zOrder = 0);
+            void removeEntity(EntityBase* entity);
+            void addUINode(cocos2d::Node* node);
             
         private:
             
@@ -56,15 +58,13 @@ namespace realtrick
             GameResource* _gameResource;
             
             cocos2d::ClippingRectangleNode* _clipNode;
-            cocos2d::Node* _rootNode;
-            cocos2d::Node* _terrainNode;
+            cocos2d::Node* _renderingNode;
             
             float _zoomScale;
             cocos2d::Vec2 _gameScreenScale;
             
             Camera2D* _camera;
             Terrain* _terrain;
-            UiLayer* _uiLayer;
             
         };
         

@@ -1,5 +1,5 @@
 //
-//  GameObject.hpp
+//  EntityBase.hpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2015. 11. 12..
@@ -21,14 +21,14 @@ namespace realtrick
         class Telegram;
         class Game;
         
-        class GameObject : public cocos2d::Node, public MessageNode
+        class EntityBase : public cocos2d::Node, public MessageNode
         {
             
         public:
             
-            explicit GameObject(Game* game);
-            virtual ~GameObject() { _game = nullptr; }
-            GameObject(const GameObject& rhs);
+            explicit EntityBase(Game* game);
+            virtual ~EntityBase() { _game = nullptr; }
+            EntityBase(const EntityBase& rhs);
             
             Game* getGame() const           { return _game; }
             int getFamilyMask() const       { return _familyMask; }

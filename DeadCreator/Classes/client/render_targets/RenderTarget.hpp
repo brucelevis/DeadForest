@@ -20,7 +20,7 @@ namespace realtrick
         class OcculusionBuilder;
         class EffectSprite;
         class LightEffect;
-        class GameObject;
+        class EntityBase;
         
         class RenderTarget : public cocos2d::Node
         {
@@ -42,7 +42,7 @@ namespace realtrick
             void pauseGame() { _isPaused = true; }
             void resumeGame() { _isPaused = false; }
             
-            void addDynamicEntity(GameObject* entity, int zOrder);
+            void addDynamicEntity(EntityBase* entity, int zOrder);
             void addStaticEntity(cocos2d::Node* entity, int zOrder);
             
         private:

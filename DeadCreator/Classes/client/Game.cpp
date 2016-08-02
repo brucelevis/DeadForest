@@ -11,15 +11,15 @@
 #include "Items.hpp"
 #include "Camera2D.hpp"
 #include "RenderTarget.hpp"
-#include "GameObject.hpp"
+#include "EntityBase.hpp"
 #include "LogicStream.hpp"
 #include "UiLayer.hpp"
+#include "Terrain.hpp"
 #include "TriggerSystem.hpp"
 #include "RenderingSystem.hpp"
 #include "SingleStream.hpp"
-#include "NetworkStream.hpp"
 #include "GameResource.hpp"
-#include "ObjectManager.hpp"
+#include "EntityManager.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
@@ -30,7 +30,6 @@ using namespace realtrick::client;
 
 Game::Game() :
 _winSize(Size::ZERO),
-_player(nullptr),
 _cellSpace(nullptr),
 _triggerSystem(nullptr),
 _bgmID(0),
@@ -47,11 +46,7 @@ Game::~Game()
 
 void Game::clear()
 {
-    _entities.clear();
     CC_SAFE_DELETE(_logicStream);
-    _player = nullptr;
-    
-    CC_SAFE_DELETE(_messenger);
     experimental::AudioEngine::stop(_bgmID);
 }
 
@@ -85,12 +80,8 @@ bool Game::init()
     
     this->scheduleUpdate();
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-    
-    _messenger = new MessageDispatcher();
-    
-    // single or network (?)
-    if( Prm.getValueAsBool("useNetwork") ) { _logicStream = new NetworkStream(this); }
-    else { _logicStream = new SingleStream(this); }
+
+    _logicStream = new SingleStream(this);
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
@@ -113,14 +104,13 @@ void Game::update(float dt)
                                                   _gameResource->getTileHeight(), DUMMY_TILE_SIZE);
     
     // 1. update entities
-    for( const auto& entity : _entities )
-        entity.second->update(dt);
+    _entityManager->update(dt);
     
     // 2. trigger update and execute
     _triggerSystem->update(dt);
     
     // 3. set game camera position and chunk update (if cell space is changed)
-    _renderingSystem->setCameraPosition(_player->getWorldPosition());
+    _renderingSystem->setCameraPosition(_entityManager->getPlayerPtr()->getWorldPosition());
     
     if ( oldIndex != getFocusedTileIndex(_renderingSystem->getCameraPosition(),
                                          _gameResource->getTileWidth(),
@@ -133,48 +123,6 @@ void Game::update(float dt)
 }
 
 
-GameObject* Game::getEntityFromID(int ID)
-{
-    auto iter = _entities.find(ID);
-    if(iter != _entities.end())
-    {
-        return iter->second;
-    }
-    else
-    {
-        return nullptr;
-    }
-}
-
-void Game::addEntity(GameObject* entity, int zOrder, int id)
-{
-    auto iter = _entities.find(id);
-    if( iter != _entities.end())
-    {
-        throw std::runtime_error("<Game::registEntity> ID is already exist.");
-    }
-    
-    entity->setTag(id);
-    _entities.insert( {id, entity} );
-    _cellSpace->addEntity(entity);
-    _renderingSystem->addEntity(entity, zOrder);
-}
-
-
-void Game::removeEntity(int id)
-{
-    auto iter = _entities.find(id);
-    if(iter == _entities.end())
-    {
-        throw std::runtime_error("<Game::removeEntity> ID is not exist.");
-    }
-    
-    iter->second->removeFromParentAndCleanup(true);
-    _entities.erase(iter);
-    _cellSpace->removeEntityFromCell(iter->second);
-}
-
-
 void Game::loadUiLayer()
 {
     _bgmID = experimental::AudioEngine::play2d("rainfall.mp3", true);
@@ -182,9 +130,9 @@ void Game::loadUiLayer()
 }
 
 
-std::list<GameObject*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const
+std::list<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const
 {
-    std::list<GameObject*> ret;
+    std::list<EntityBase*> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
     for ( const int idx : cellIndices )
     {
@@ -201,9 +149,9 @@ std::list<GameObject*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, f
 }
 
 
-std::list<GameObject*> Game::getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const
+std::list<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const
 {
-    std::list<GameObject*> ret;
+    std::list<EntityBase*> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCellsNotCurrent(position);
     for ( const int idx : cellIndices )
     {
@@ -299,127 +247,64 @@ void Game::pushLogic(double delaySeconds, MessageType type, void* extraInfo)
 }
 
 
-void Game::loadResource(const std::string& filePath)
-{
-    std::string loadedData;
-    auto ret = flatbuffers::LoadFile(filePath.c_str(), true, &loadedData);
-    if ( ret )
-    {
-        const DeadCreator::GMXFile* file = DeadCreator::GetGMXFile(loadedData.c_str());
-        
-        // load entities
-        bool isFirst = true;
-        for ( auto entity = file->entities()->begin(); entity != file->entities()->end(); ++ entity )
-        {
-            EntityType entityType = static_cast<EntityType>(entity->entity_type());
-            PlayerType playerType = static_cast<PlayerType>(entity->player_type());
-            Vec2 position(entity->pos()->x(), entity->pos()->y());
-            if ( entityType == EntityType::ENTITY_HUMAN )
-            {
-                EntityHuman* human = EntityHuman::create(this);
-                human->setPlayerType(playerType);
-                human->setWorldPosition(position);
-                addEntity(human, Z_ORDER_HUMAN + 1, getNextValidID());
-                
-                if ( isFirst )
-                {
-                    setPlayer(human);
-                    isFirst = false;
-                }
-            }
-            else
-            {
-                if ( entityType == EntityType::BULLET_556MM )
-                {
-                    Bullet556mm* item = Bullet556mm::create(this);
-                    item->setWorldPosition(position);
-                    item->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(item, Z_ORDER_ITEMS, getNextValidID());
-                }
-                
-                else if ( entityType == EntityType::BULLET_9MM )
-                {
-                    Bullet9mm* item = Bullet9mm::create(this);
-                    item->setWorldPosition(position);
-                    item->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(item, Z_ORDER_ITEMS, getNextValidID());
-                }
-                
-                else if ( entityType == EntityType::BULLET_SHELL )
-                {
-                    BulletShell* item = BulletShell::create(this);
-                    item->setWorldPosition(position);
-                    item->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(item, Z_ORDER_ITEMS, getNextValidID());
-                }
-                
-                else if ( entityType == EntityType::ITEM_AXE )
-                {
-                    ItemAxe* item = ItemAxe::create(this);
-                    item->setWorldPosition(position);
-                    item->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(item, Z_ORDER_ITEMS, getNextValidID());
-                }
-                
-                else if ( entityType == EntityType::ITEM_GLOCK17 )
-                {
-                    ItemGlock17* item = ItemGlock17::create(this);
-                    item->setWorldPosition(position);
-                    item->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(item, Z_ORDER_ITEMS, getNextValidID());
-                }
-                
-                else if ( entityType == EntityType::ITEM_M16A2 )
-                {
-                    ItemM16A2* item = ItemM16A2::create(this);
-                    item->setWorldPosition(position);
-                    item->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(item, Z_ORDER_ITEMS, getNextValidID());
-                }
-                
-                else if ( entityType == EntityType::ITEM_M1897 )
-                {
-                    ItemM1897* item = ItemM1897::create(this);
-                    item->setWorldPosition(position);
-                    item->setPlayerType(PlayerType::NEUTRAL);
-                    addEntity(item, Z_ORDER_ITEMS, getNextValidID());
-                }
-            }
-        }
-        
-    }
-}
-
-
 void Game::loadGMXFile(const std::string& path)
 {
     _gameResource = GameResource::createWithGMXFile(path);
     _releasePool.addObject(_gameResource);
     
+    _messenger = MessageDispatcher::create();
+    _releasePool.addObject(_messenger);
+    
     _renderingSystem = RenderingSystem::create(this, _gameResource);
     _renderingSystem->setZoom(Prm.getValueAsFloat("cameraZoom"));
     addChild(_renderingSystem);
     
-    _triggerSystem = TriggerSystem::createWithResouce(this, _gameResource);
-    _releasePool.addObject(_triggerSystem);
-    
     _cellSpace = CellSpacePartition::createWithResource(_gameResource);
     _releasePool.addObject(_cellSpace);
     
+    _entityManager = EntityManager::createWithResouce(this, _gameResource);
+    _releasePool.addObject(_entityManager);
+    
+    _triggerSystem = TriggerSystem::createWithResouce(this, _gameResource);
+    _releasePool.addObject(_triggerSystem);
+    
     const auto& walls = _gameResource->getCollisionData();
-    for (const auto& wall : walls)
+    for (const auto& wall : walls )
     {
         _cellSpace->addWall(wall);
     }
     
-    _objectManager = ObjectManager::createWithResouce(this, _gameResource);
-    _releasePool.addObject(_objectManager);
+    const auto& entities = _entityManager->getEntities();
+    for ( const auto& entity : entities )
+    {
+        _cellSpace->addEntity(entity.second);
+        _renderingSystem->addEntity(entity.second, 1);
+    }
+    
+    auto uiLayer = UiLayer::create(this);
+    _renderingSystem->addUINode(uiLayer);
 }
 
 
 void Game::sendMessage(double delaySeconds, MessageNode* receiver, MessageNode* sender, MessageType type, void* extraInfo)
 {
     _messenger->pushMessage(delaySeconds, receiver, sender, type, extraInfo);
+}
+
+
+void Game::addEntity(EntityBase* ent, int zOrder)
+{
+    _cellSpace->addEntity(ent);
+    _entityManager->addEntity(ent);
+    _renderingSystem->addEntity(ent, zOrder);
+}
+
+
+void Game::removeEntity(EntityBase* ent)
+{
+    _cellSpace->removeEntityFromCell(ent);
+    _entityManager->removeEntity(ent);
+    _renderingSystem->removeEntity(ent);
 }
 
 
@@ -461,6 +346,10 @@ TileType Game::getStepOnTileType(const cocos2d::Vec2& pos)
 }
 
 
+EntityHuman* Game::getPlayerPtr() const
+{
+    return _entityManager->getPlayerPtr();
+}
 
 
 

@@ -41,7 +41,7 @@ bool HumanBackDeadState::onMessage(EntityHuman* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::DIE )
     {
-        human->getGame()->removeEntity(human->getTag());
+        human->getGame()->removeEntity(human);
         
         return true;
     }

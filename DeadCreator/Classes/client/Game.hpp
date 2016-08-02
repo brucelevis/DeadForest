@@ -18,7 +18,6 @@
 #include "SizeProtocol.h"
 #include "MessageDispatcher.hpp"
 #include "MessageNode.hpp"
-#include "ObjectManager.hpp"
 #include "SimpleReleasePool.hpp"
 
 #define Z_ORDER_GAME_MAP    0
@@ -36,12 +35,13 @@ namespace realtrick
     namespace client
     {
         
-        class GameObject;
+        class EntityBase;
         class EntityHuman;
         class TriggerSystem;
         class RenderingSystem;
         class LogicStream;
         class GameResource;
+        class EntityManager;
         
         class Game : public cocos2d::Node
         {
@@ -58,36 +58,25 @@ namespace realtrick
             void clear();
             void update(float dt) override;
             
-            // game resource
-            void loadGMXFile(const std::string& path);
             GameResource* getGameResource() const { return _gameResource; }
-            
-            // entity manager
-            ObjectManager* _objectManager;
-            
-            void setPlayer(EntityHuman* player) { _player = player; }
-            EntityHuman* getPlayerPtr() const { return _player; }
-            const std::map<int, GameObject*>& getEntities() const { return _entities; }
-            CellSpacePartition* getCellSpace() const { return _cellSpace; }
-            void addEntity(GameObject* entity, int zOrder, int id);
-            void removeEntity(int id);
-            GameObject* getEntityFromID(int ID);
-            int getNextValidID() { static int nextValidID = 0; return nextValidID++; }
-            
-            // rendering system
+            EntityManager* getEntityManager() const { return _entityManager; }
             RenderingSystem* getRenderingSysetm() const { return _renderingSystem; }
+            CellSpacePartition* getCellSpace() const { return _cellSpace; }
             
+            // helper
+            void addEntity(EntityBase* ent, int zOrder = 0);
+            void removeEntity(EntityBase* ent);
+            EntityHuman* getPlayerPtr() const;
             
-            std::list<GameObject*> getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const;
-            std::list<GameObject*> getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const;
-            std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& position, float speed) const;
-            std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const;
-            std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& position, const Segment& ray) const;
-            
-            
-            // load operation
-            void loadResource(const std::string& filePath);
+            void loadGMXFile(const std::string& path);
             void loadUiLayer();
+            
+            std::list<EntityBase*> getNeighborsOnMove(const cocos2d::Vec2& pos, float speed) const;
+            std::list<EntityBase*> getNeighborsOnAttack(const cocos2d::Vec2& pos, const cocos2d::Vec2& dir, float range) const;
+            std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& pos, float speed) const;
+            std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
+            std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const Segment& ray) const;
+            
             
             TileType getStepOnTileType(const cocos2d::Vec2& pos);
             
@@ -107,8 +96,9 @@ namespace realtrick
             GameResource* _gameResource;
             
             // entitiy manager
-            EntityHuman* _player;
-            std::map<int, GameObject*> _entities;
+            EntityManager* _entityManager;
+            
+            // cell space
             CellSpacePartition* _cellSpace;
             
             // trigger system
@@ -117,11 +107,13 @@ namespace realtrick
             // rendering system
             RenderingSystem* _renderingSystem;
             
-            // game
+            // message system
+            MessageDispatcher* _messenger;
+            
             LogicStream* _logicStream;
+            
             bool _isPaused;
             int _bgmID;
-            MessageDispatcher* _messenger;
             
         };
         

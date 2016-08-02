@@ -48,6 +48,7 @@ namespace realtrick
             M16A2_SHOOT,
             CROSS_HAIR_EVENT,
             SHOW_NEXT_FRAME,
+            ADD_OBJECT_TO_RENDER,
         };
         
         enum HumanBehaviorType

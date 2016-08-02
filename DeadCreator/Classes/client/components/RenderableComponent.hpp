@@ -23,7 +23,7 @@ namespace realtrick
         class Telegram;
         class AnimationBase;
         
-        class RenderableComponent : public ComponentBase, public cocos2d::Node
+        class RenderableComponent : public ComponentBase
         {
             
         public:
@@ -62,16 +62,17 @@ namespace realtrick
             
         private:
             
-            GameObject2* _owner = nullptr;
+            GameObject2* _owner;
             
-            cocos2d::ui::Widget::TextureResType _texResType = cocos2d::ui::Widget::TextureResType::LOCAL;
+            cocos2d::ui::Widget::TextureResType _texResType;
             
-            cocos2d::Sprite* _image = nullptr;
-            cocos2d::Sprite* _shadow = nullptr;
+            cocos2d::Node* _root;
+            cocos2d::Sprite* _image;
+            cocos2d::Sprite* _shadow;
             
             std::deque<std::string> _frameQueue;
-            AnimationBase* _currentAnimation = nullptr;
-            float _accumulatedTime = 0.0f;
+            AnimationBase* _currentAnimation;
+            float _accumulatedTime;
             
         };
         

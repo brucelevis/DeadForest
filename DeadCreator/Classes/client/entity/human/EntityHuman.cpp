@@ -107,7 +107,7 @@ void EntityHuman::update(float dt)
 }
 
 
-bool EntityHuman::isIntersectOther(const cocos2d::Vec2& futurePosition, GameObject* other)
+bool EntityHuman::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other)
 {
     if ( other->getEntityType() == ENTITY_HUMAN )
     {
@@ -127,7 +127,7 @@ bool EntityHuman::isIntersectOther(const cocos2d::Vec2& futurePosition, GameObje
             data.owner = this;
             data.item = static_cast<ItemBase*>(other);
             _game->pushLogic(0.0, MessageType::PUSH_ITEM_TO_INVENTORY, &data);
-            _game->removeEntity(other->getTag());
+            _game->removeEntity(other);
         }
     }
     

@@ -16,6 +16,7 @@ using namespace realtrick::client;
 RenderableComponent::RenderableComponent(GameObject2* owner) :
 _owner(owner),
 _texResType(cocos2d::ui::Widget::TextureResType::LOCAL),
+_root(nullptr),
 _image(nullptr),
 _shadow(nullptr),
 _currentAnimation(nullptr),
@@ -26,17 +27,16 @@ _accumulatedTime(0.0f)
 
 bool RenderableComponent::initWithFile(const std::string& fileName, cocos2d::ui::Widget::TextureResType resType)
 {
-    if ( !Node::init() )
-        return false;
-    
     _texResType = resType;
+    
+    _root = Node::create();
     
     _shadow = Sprite::create();
     _shadow->setPosition(10, -5);
-    addChild(_image);
+    _root->addChild(_image);
     
     _image = Sprite::create();
-    addChild(_image);
+    _root->addChild(_image);
     
     setImageFrame(fileName);
     
@@ -64,7 +64,7 @@ void RenderableComponent::setImageFrame(const std::string& fileName)
 void RenderableComponent::clear()
 {
     _owner = nullptr;
-    this->removeFromParentAndCleanup(true);
+    _root->removeFromParentAndCleanup(true);
     _frameQueue.clear();
     _currentAnimation = nullptr;
 }

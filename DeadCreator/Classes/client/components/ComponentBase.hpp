@@ -20,7 +20,7 @@ namespace realtrick
      
         class Telegram;
         
-        class ComponentBase : public MessageNode
+        class ComponentBase : public cocos2d::Ref, public MessageNode
         {
             
         public:

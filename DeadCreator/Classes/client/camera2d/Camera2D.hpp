@@ -9,7 +9,7 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "GameObject.hpp"
+#include "EntityBase.hpp"
 
 namespace realtrick
 {

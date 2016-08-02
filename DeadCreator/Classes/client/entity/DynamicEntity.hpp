@@ -9,7 +9,7 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "GameObject.hpp"
+#include "EntityBase.hpp"
 #include "Physics.hpp"
 
 namespace realtrick
@@ -19,7 +19,7 @@ namespace realtrick
         
         class Game;
         
-        class DynamicEntity : public GameObject
+        class DynamicEntity : public EntityBase
         {
             
         public:
@@ -54,7 +54,7 @@ namespace realtrick
             virtual void moveEntity() final;
             virtual void rotateEntity() {}
             
-            virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, GameObject* other) { return true; }
+            virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other) { return true; }
             virtual bool isIntersectWall(const cocos2d::Vec2& futurePosition, const Polygon& wall) { return true; }
             
         protected:

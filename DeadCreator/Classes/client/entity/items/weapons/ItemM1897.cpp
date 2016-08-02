@@ -63,7 +63,7 @@ void ItemM1897::outWeapon()
 void ItemM1897::attack()
 {
     log("<ItemM1897:attack> attack!");
-    vector<vector<pair<float, GameObject*>>> closestIntersectPoint(_numOfShells);
+    vector<vector<pair<float, EntityBase*>>> closestIntersectPoint(_numOfShells);
     Vec2 worldPos = _owner->getWorldPosition();
     
     AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_game, {"ess0.png", "ess1.png", "ess2.png", "ess3.png", "ess4.png" },
@@ -71,7 +71,7 @@ void ItemM1897::attack()
     es->setWorldPosition(worldPos + _owner->getHeading() * random(-30.0f, 30.0f) + _owner->getRight() * random(20.0f, 40.0f));
     es->setScale(0.7f);
     es->setRotation(_owner->getBodyRot());
-    _game->addEntity(es, Z_ORDER_ITEMS, _game->getNextValidID());
+    _game->addEntity(es);
     
     
     // 엔티티들과의 충돌처리
@@ -86,7 +86,7 @@ void ItemM1897::attack()
         shootAts[i].second = randomRotation.getTransformedVector(typicalHeading);
     }
     
-    const std::list<GameObject*>& members = _game->getNeighborsOnAttack(worldPos, typicalHeading, getRange());
+    const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, typicalHeading, getRange());
     for (const auto &d : members)
     {
         if ( d == _owner ) continue;
@@ -130,7 +130,7 @@ void ItemM1897::attack()
     {
         if ( closestIntersectPoint[s].empty() == false )
         {
-            auto collider = *(min_element(std::begin(closestIntersectPoint[s]), std::end(closestIntersectPoint[s]), [](const std::pair<float, GameObject*>& p1, const std::pair<float, GameObject*>& p2) {
+            auto collider = *(min_element(std::begin(closestIntersectPoint[s]), std::end(closestIntersectPoint[s]), [](const std::pair<float, EntityBase*>& p1, const std::pair<float, EntityBase*>& p2) {
                 return p1.first < p2.first;
             }));
             
@@ -163,11 +163,6 @@ void ItemM1897::attack()
 
 void ItemM1897::discard()
 {
-    ItemM1897* item = ItemM1897::create(_game);
-    item->setAmount( getAmount() );
-    item->setNumOfLeftRounds(getNumOfLeftRounds());
-    item->setPosition(Vec2(_owner->getPosition().x + 50.0f, _owner->getPosition().y));
-    _game->addEntity(item, Z_ORDER_ITEMS, _game->getNextValidID());
 }
 
 

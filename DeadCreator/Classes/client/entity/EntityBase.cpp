@@ -1,17 +1,17 @@
 //
-//  GameObject.cpp
+//  EntityBase.cpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2016. 1. 3..
 //
 //
 
-#include "GameObject.hpp"
+#include "EntityBase.hpp"
 #include "Game.hpp"
 #include "Camera2D.hpp"
 using namespace realtrick::client;
 
-GameObject::GameObject(Game* game) :
+EntityBase::EntityBase(Game* game) :
 _game(game),
 _familyMask(0),
 _entityType(0),
@@ -21,7 +21,7 @@ _boundingRadius(0.0f)
 }
 
 
-GameObject::GameObject(const GameObject& rhs)
+EntityBase::EntityBase(const EntityBase& rhs)
 {
     _game = rhs._game;
     _familyMask = rhs._familyMask;

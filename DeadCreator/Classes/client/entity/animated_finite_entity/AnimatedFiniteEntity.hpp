@@ -10,7 +10,7 @@
 
 #include "cocos2d.h"
 #include "CocosGUI.h"
-#include "GameObject.hpp"
+#include "EntityBase.hpp"
 
 namespace realtrick
 {
@@ -19,7 +19,7 @@ namespace realtrick
     
         class Game;
         
-        class AnimatedFiniteEntity : public GameObject
+        class AnimatedFiniteEntity : public EntityBase
         {
             
         public:

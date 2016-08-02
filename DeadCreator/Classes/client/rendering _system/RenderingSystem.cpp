@@ -10,7 +10,7 @@
 #include "SizeProtocol.h"
 #include "Terrain.hpp"
 #include "Camera2D.hpp"
-#include "GameObject.hpp"
+#include "EntityBase.hpp"
 #include "UiLayer.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
@@ -47,24 +47,17 @@ bool RenderingSystem::init(GameResource* res)
     
     _gameScreenScale = Vec2(GAME_SCREEN_WIDTH / 1136, GAME_SCREEN_HEIGHT / 640);
     
-    _clipNode = ClippingRectangleNode::create(cocos2d::Rect(0,0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
+    _clipNode = ClippingRectangleNode::create(cocos2d::Rect(0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
     addChild(_clipNode);
     
-    _terrainNode = Node::create();
-    _terrainNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
-    _clipNode->addChild(_terrainNode);
+    _renderingNode = Node::create();
+    _renderingNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
+    _clipNode->addChild(_renderingNode);
     
-    _rootNode = Node::create();
-    _rootNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
-    _clipNode->addChild(_rootNode);
+    _terrain = Terrain::create(_game);
+    _renderingNode->addChild(_terrain);
     
     _camera = new Camera2D();
-    
-    _terrain = Terrain::create(this, res);
-    _terrainNode->addChild(_terrain, 0);
-    
-    _uiLayer = UiLayer::create(_game);
-    _clipNode->addChild(_uiLayer);
     
     return true;
 }
@@ -88,20 +81,30 @@ void RenderingSystem::updateChunk()
 }
 
 
-void RenderingSystem::addEntity(GameObject* entity, int zOrder)
+void RenderingSystem::addEntity(EntityBase* entity, int zOrder)
 {
-    _rootNode->addChild(entity, zOrder);
+    _renderingNode->addChild(entity, zOrder);
+}
+
+void RenderingSystem::removeEntity(EntityBase* entity)
+{
+    entity->removeFromParentAndCleanup(true);
+}
+
+
+void RenderingSystem::addUINode(cocos2d::Node* node)
+{
+    _clipNode->addChild(node, 100);
 }
 
 
 void RenderingSystem::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags)
 {
-    _rootNode->setScale(_gameScreenScale.x * _zoomScale, _gameScreenScale.y * _zoomScale);
-    _terrainNode->setScale(_gameScreenScale.x * _zoomScale, _gameScreenScale.y * _zoomScale);
+    _renderingNode->setScale(_gameScreenScale.x * _zoomScale, _gameScreenScale.y * _zoomScale);
     
-    for( auto& entity : _rootNode->getChildren() )
+    for( auto& entity : _renderingNode->getChildren() )
     {
-        auto ent = static_cast<GameObject*>(entity);
+        auto ent = static_cast<EntityBase*>(entity);
         ent->setPosition( ent->getWorldPosition() - getCameraPosition() );
     }
     Node::visit(renderer, transform, flags);

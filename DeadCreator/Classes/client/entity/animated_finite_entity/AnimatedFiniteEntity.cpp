@@ -15,7 +15,7 @@ using namespace realtrick::client;
 using namespace cocos2d;
 
 
-AnimatedFiniteEntity::AnimatedFiniteEntity(Game* game) : GameObject(game),
+AnimatedFiniteEntity::AnimatedFiniteEntity(Game* game) : EntityBase(game),
 _base(nullptr),
 _interval(0.05f),
 _deathTime(0.0f),
@@ -30,7 +30,7 @@ AnimatedFiniteEntity::~AnimatedFiniteEntity()
 }
 
 
-AnimatedFiniteEntity::AnimatedFiniteEntity(const AnimatedFiniteEntity& rhs) : GameObject(rhs)
+AnimatedFiniteEntity::AnimatedFiniteEntity(const AnimatedFiniteEntity& rhs) : EntityBase(rhs)
 {
     _base = nullptr;
     _frames = rhs._frames;
@@ -86,7 +86,7 @@ bool AnimatedFiniteEntity::handleMessage(const Telegram& msg)
     }
     else if ( msg.msg == MessageType::REMOVE_SELF )
     {
-        _game->removeEntity(getTag());
+        _game->removeEntity(this);
         
         return true;
     }

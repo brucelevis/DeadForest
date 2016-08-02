@@ -19,7 +19,6 @@ namespace realtrick
         class JoystickEx;
         class CircularBezel;
         class Game;
-        class AimingNode;
         class Inventory;
         class WeaponStatus;
         class HpBar;
@@ -38,7 +37,6 @@ namespace realtrick
             
             Inventory* getInventory() const { return _inventory; }
             WeaponStatus* getWeaponStatus() const { return _weaponStatus; }
-            AimingNode* getAimingNode() const { return _aimingNode; }
             
         private:
             
@@ -49,9 +47,7 @@ namespace realtrick
             CircularBezel* _bezel;
             Inventory* _inventory;
             cocos2d::ui::CheckBox* _inventorySwitch;
-            cocos2d::Node* _inGameUIRoot;
             WeaponStatus* _weaponStatus;
-            AimingNode* _aimingNode;
             HpBar* _hpBar;
             
         };

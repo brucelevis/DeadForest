@@ -42,12 +42,9 @@ namespace realtrick
             virtual void rotateEntity() override;
 
             virtual bool handleMessage(const Telegram& msg) override { return _FSM->handleMessage(msg); }
-            virtual void enableNormal(bool enable) override { getBodyAnimator()->enableNormal(enable); }
             
             StateMachine<EntityHuman>* getFSM() const { return _FSM; }
             AnimationPlayer* getBodyAnimator() const { return _bodyAnimationPlayer; }
-            
-            bool isFovOn() const { return _isFovOn; }
             
             bool isAlive() const { return _isAlive; }
             void setDead() { _isAlive = false; }

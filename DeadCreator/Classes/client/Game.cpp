@@ -10,7 +10,6 @@
 #include "EntityHuman.hpp"
 #include "Items.hpp"
 #include "Camera2D.hpp"
-#include "RenderTarget.hpp"
 #include "EntityBase.hpp"
 #include "LogicStream.hpp"
 #include "UiLayer.hpp"

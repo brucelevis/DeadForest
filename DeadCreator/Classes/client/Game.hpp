@@ -63,7 +63,7 @@ namespace realtrick
             RenderingSystem* getRenderingSysetm() const { return _renderingSystem; }
             CellSpacePartition* getCellSpace() const { return _cellSpace; }
             
-            // helper
+            // entity helper
             void addEntity(EntityBase* ent, int zOrder = 0);
             void removeEntity(EntityBase* ent);
             EntityPlayer* getPlayerPtr() const;
@@ -77,7 +77,6 @@ namespace realtrick
             std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
             std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const Segment& ray) const;
             
-            
             TileType getStepOnTileType(const cocos2d::Vec2& pos);
             
             void sendMessage(double delaySeconds, MessageNode* receiver, MessageNode* sender, MessageType type, void* extraInfo);
@@ -86,6 +85,11 @@ namespace realtrick
             bool isPaused() const { return _isPaused; }
             void pauseGame() { _isPaused = true; }
             void resumeGame() { _isPaused = false; }
+            
+            void addLog(const std::string& log);
+            void clearLogs();
+            const std::string& getLogString() const { return _logString; }
+            bool& isLogAdded() { return _isLogAdded; }
             
         private:
             
@@ -114,6 +118,11 @@ namespace realtrick
             
             bool _isPaused;
             int _bgmID;
+            
+            // stored logs
+            std::vector<std::pair<std::string, int>> _logs;
+            std::string _logString;
+            bool _isLogAdded = false;
             
         };
         

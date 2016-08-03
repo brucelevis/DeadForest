@@ -226,6 +226,32 @@ void PlayGameLayer::showLayer(bool& opened)
         
         ImGui::End();
     }
+    
+    // logger
+    if ( _isGameStarted )
+    {
+        auto game = _gameLayer->getGame();
+        
+        ImGui::SetNextWindowSize(ImVec2(1000, 200), ImGuiSetCond_Once);
+        ImGui::SetNextWindowPos(ImVec2(30, ImGui::GetIO().DisplaySize.y - 220), ImGuiSetCond_Once);
+        ImGui::Begin("Console Log", NULL, ImGuiWindowFlags_ShowBorders);
+        
+        if (ImGui::Button("Clear")) game->clearLogs();
+        ImGui::SameLine(); bool copy = ImGui::Button("Copy");
+        ImGui::Separator();
+        
+        ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+        
+        if (copy)  ImGui::LogToClipboard();
+        ImGui::TextUnformatted(game->getLogString().c_str());
+        if ( game->isLogAdded() ) ImGui::SetScrollHere(1.0f);
+        game->isLogAdded() = false;
+        
+        ImGui::EndChild();
+        ImGui::End();
+    }
+    
+    
 }
 
 void PlayGameLayer::playGame()

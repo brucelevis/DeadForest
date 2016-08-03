@@ -10,6 +10,7 @@
 #include "ItemSlot.hpp"
 #include "ParamLoader.hpp"
 #include "AnimatedButton.hpp"
+#include "Game.hpp"
 #include "ItemBase.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
@@ -235,12 +236,12 @@ void Inventory::setItemAmount(ItemBase* item, int amount)
         }
         else
         {
-            log("<Inventory::setItemAmount> invalid slot index");
+            _game->addLog("<Inventory::setItemAmount> invalid slot index");
         }
     }
     else
     {
-        log("<Inventory::setItemAmount> item is weapon.");
+        _game->addLog("<Inventory::setItemAmount> item is weapon.");
     }
 }
 

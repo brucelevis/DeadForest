@@ -50,7 +50,7 @@ WeaponBase::WeaponBase(const WeaponBase& rhs) : ItemBase(rhs)
 
 void WeaponBase::use()
 {
-    log("<WeaponBase::use> Weapon(%d) Equiped.", _entityType);
+    _game->addLog(StringUtils::format("<WeaponBase::use> Weapon(%d) Equiped.", _entityType));
     if( _owner->getEquipedWeapon() == nullptr )
     {
         // 주먹일 때, 주먹을 집어넣고 무기를 세팅한다.
@@ -68,7 +68,7 @@ void WeaponBase::use()
 
 void WeaponBase::releaseWeapon()
 {
-    log("<WeaponBase::releaseWeapon> Weapon(%d) Released.", _entityType);
+    _game->addLog(StringUtils::format("<WeaponBase::releaseWeapon> Weapon(%d) Released.", _entityType));
     
     // 장착 무기를 nullptr(맨손)으로 만든다.
     _owner->setEquipedWeapon(nullptr);
@@ -84,7 +84,7 @@ void WeaponBase::reload()
     if ( leftRounds != maxRounds )
     {
         int ownedRound = _owner->getInventory()->getItemAmount(getBulletType());
-        log("ownedRound: %d", ownedRound);
+        _game->addLog(StringUtils::format("ownedRound: %d", ownedRound));
         if ( ownedRound != 0 )
         {
             int offset = getReloadedBulletOnce(); // 재장전할 수 있는 총알의 수
@@ -107,13 +107,13 @@ void WeaponBase::reload()
         }
         else
         {
-            log("<WeaponBase::reload> has not bullets.");
+            _game->addLog(StringUtils::format("<WeaponBase::reload> has not bullets."));
             experimental::AudioEngine::play2d("reload_fail.mp3");
         }
     }
     else
     {
-        log("<WeaponBase::reload> bullet is already full.");
+        _game->addLog(StringUtils::format("<WeaponBase::reload> bullet is already full."));
         experimental::AudioEngine::play2d("reload_fail.mp3");
     }
 }

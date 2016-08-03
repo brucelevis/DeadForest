@@ -81,7 +81,7 @@ bool ItemExtensionButtons::init(ItemSlot* slot)
         
         if ( type == ui::Widget::TouchEventType::ENDED )
         {
-            log("<ItemExtensionButtons::init> equip");
+            _game->addLog("<ItemExtensionButtons::init> equip");
             ItemSlotData data;
             data.slot = _ownSlot;
             _game->pushLogic(0.0, MessageType::PRESS_EQUIP_WEAPON_BUTTON, reinterpret_cast<void*>(&data));
@@ -93,7 +93,7 @@ bool ItemExtensionButtons::init(ItemSlot* slot)
         
         if ( type == ui::Widget::TouchEventType::ENDED )
         {
-            log("<ItemExtensionButtons::init> release");
+            _game->addLog("<ItemExtensionButtons::init> release");
             ItemSlotData data;
             data.slot = _ownSlot;
             _game->pushLogic(0.0, MessageType::PRESS_RELEASE_WEAPON_BUTTON, reinterpret_cast<void*>(&data));
@@ -105,7 +105,7 @@ bool ItemExtensionButtons::init(ItemSlot* slot)
         
         if ( type == ui::Widget::TouchEventType::ENDED )
         {
-            log("<ItemExtensionButtons::init> use");
+            _game->addLog("<ItemExtensionButtons::init> use");
         }
         
     });
@@ -114,7 +114,7 @@ bool ItemExtensionButtons::init(ItemSlot* slot)
         
         if ( type == ui::Widget::TouchEventType::ENDED )
         {
-            log("<ItemExtensionButtons::init> discard");
+            _game->addLog("<ItemExtensionButtons::init> discard");
         }
         
     });
@@ -123,7 +123,7 @@ bool ItemExtensionButtons::init(ItemSlot* slot)
         
         if ( type == ui::Widget::TouchEventType::ENDED )
         {
-            log("<ItemExtensionButtons::init> examine");
+            _game->addLog("<ItemExtensionButtons::init> examine");
         }
         
     });

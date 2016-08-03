@@ -251,7 +251,7 @@ void Game::loadGMXFile(const std::string& path)
     _gameResource = GameResource::createWithGMXFile(path);
     _releasePool.addObject(_gameResource);
     
-    _messenger = MessageDispatcher::create();
+    _messenger = MessageDispatcher::create(this);
     _releasePool.addObject(_messenger);
     
     _renderingSystem = RenderingSystem::create(this, _gameResource);
@@ -349,6 +349,43 @@ EntityPlayer* Game::getPlayerPtr() const
 {
     return _entityManager->getPlayerPtr();
 }
+
+
+void Game::addLog(const std::string& log)
+{
+    std::string newLog = log;
+    int numOfOverlap = 1;
+    if ( !_logs.empty() && _logs.back().first == log )
+    {
+        numOfOverlap = _logs.back().second + 1;
+        newLog = log + " (" + _to_string(numOfOverlap) + ")";
+        
+        _logs.pop_back();
+        
+        std::string recentString;
+        if ( numOfOverlap != 2) recentString = std::string(log + " (" + _to_string(numOfOverlap - 1) + ")");
+        else recentString = log;
+        
+        _logString.pop_back(); // 'n'
+        auto recentStringSize = recentString.size();
+        while ( recentStringSize-- ) _logString.pop_back();
+
+    }
+    
+    _logs.push_back( {log, numOfOverlap} );
+    _logString += (newLog + '\n');
+    _isLogAdded = true;
+}
+
+
+void Game::clearLogs()
+{
+    _logs.clear();
+    _logString.clear();
+    _isLogAdded = false;
+}
+
+
 
 
 

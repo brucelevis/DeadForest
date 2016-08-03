@@ -63,7 +63,7 @@ void ItemAxe::outWeapon()
 
 void ItemAxe::attack()
 {
-    log("<ItemAxe:attack> attack!");
+    _game->addLog("<ItemAxe:attack> attack!");
     Vec2 worldPos = _owner->getWorldPosition();
     
     // 엔티티들과의 충돌처리
@@ -80,10 +80,10 @@ void ItemAxe::attack()
             if( human->isAlive() && physics::intersect(Segment(worldPos, worldPos + _owner->getHeading() * getRange()),
                                                        Circle(d->getWorldPosition(), human->getBoundingRadius())) )
             {
-                log("<WeaponBase::attack> hit at (%.0f, %.0f), id: %d.",
+                _game->addLog(StringUtils::format("<WeaponBase::attack> hit at (%.0f, %.0f), id: %d.",
                     human->getWorldPosition().x,
                     human->getWorldPosition().y,
-                    human->getTag());
+                    human->getTag()));
                 
                 ReceiverSenderDamage s;
                 s.damage = getDamage();

@@ -183,7 +183,7 @@ void ItemSlot::setItemAmount(int amount)
     }
     else
     {
-        log("<ItemSlot::setItemAmount> not exist item [OR] item is weapon");
+        _game->addLog("<ItemSlot::setItemAmount> not exist item [OR] item is weapon");
     }
 }
 
@@ -192,7 +192,7 @@ void ItemSlot::consumeItem()
     // 무기종류는 소모할 수없다.
     if ( isMasked(_item->getFamilyMask(), FamilyMask::WEAPON_BASE ) )
     {
-        log("<ItemSlot::consumeItem> Can not consume kind of weapon.");
+        _game->addLog("<ItemSlot::consumeItem> Can not consume kind of weapon.");
         return ;
     }
     

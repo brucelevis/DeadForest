@@ -236,17 +236,17 @@ namespace realtrick
                 
                 if ( _params.approximation == ApproximationType::AT_LEAST && numberOfReadyEntities >= _params.number )
                 {
-                    cocos2d::log("condition bring isReady() called. (at least)");
+                    _game->addLog("condition bring isReady() called. (at least)");
                     return true;
                 }
                 else if ( _params.approximation == ApproximationType::AT_MOST && numberOfReadyEntities <= _params.number )
                 {
-                    cocos2d::log("condition bring isReady() called. (at most)");
+                    _game->addLog("condition bring isReady() called. (at most)");
                     return true;
                 }
                 else if ( _params.approximation == ApproximationType::EXACTLY && numberOfReadyEntities == _params.number )
                 {
-                    cocos2d::log("condition bring isReady() called. (exactly)");
+                    _game->addLog("condition bring isReady() called. (exactly)");
                     return true;
                 }
                 

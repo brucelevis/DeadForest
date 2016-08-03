@@ -66,7 +66,7 @@ void ItemGlock17::outWeapon()
 
 void ItemGlock17::attack()
 {
-    log("<ItemGlock17:attack> attack!");
+    _game->addLog("<ItemGlock17:attack> attack!");
     std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
     Vec2 worldPos = _owner->getWorldPosition();
     
@@ -123,7 +123,8 @@ void ItemGlock17::attack()
         // 최소거리에 충돌된 충돌체가 사람이면 처리. (벽일수도있음)
         if ( collider.second != nullptr )
         {
-            log("<WeaponBase::attack> hit at (%.0f, %.0f), id: %d.", collider.second->getWorldPosition().x, collider.second->getWorldPosition().y, collider.second->getTag());
+            _game->addLog(StringUtils::format("<WeaponBase::attack> hit at (%.0f, %.0f), id: %d.",
+                          collider.second->getWorldPosition().x, collider.second->getWorldPosition().y, collider.second->getTag()));
             
             ReceiverSenderDamage d;
             d.receiverID = collider.second->getTag();

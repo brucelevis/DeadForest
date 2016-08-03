@@ -11,6 +11,8 @@
 #include "cocos2d.h"
 
 #include "MessageDispatcher.hpp"
+#include "Game.hpp"
+using namespace cocos2d;
 using namespace realtrick::client;
 
 
@@ -24,7 +26,8 @@ void MessageDispatcher::discharge(const Telegram& msg)
     
     if( ret == false)
     {
-        cocos2d::log("<MessageDispatcher:_discharge> Message is not handled. MessageType: [%d]", static_cast<int>(msg.msg));
+        _game->addLog(StringUtils::format("<MessageDispatcher:_discharge> Message is not handled. MessageType: [%d]",
+                                          static_cast<int>(msg.msg)));
     }
 }
 

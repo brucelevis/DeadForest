@@ -20,17 +20,20 @@ namespace realtrick
     namespace client
     {
         
+        class Game;
+        
         class MessageDispatcher : public cocos2d::Ref
         {
             
         public:
             
-            MessageDispatcher() = default;
+            explicit MessageDispatcher(Game* game) : _game(game)
+            {}
             virtual ~MessageDispatcher() { clearQueue(); }
             
-            static MessageDispatcher* create()
+            static MessageDispatcher* create(Game* game)
             {
-                auto ret = new (std::nothrow) MessageDispatcher();
+                auto ret = new (std::nothrow) MessageDispatcher(game);
                 if ( ret && ret->init() )
                 {
                     ret->autorelease();
@@ -53,6 +56,7 @@ namespace realtrick
             
         private:
             
+            Game* _game;
             std::set<Telegram> _priorityQ;
             
         };

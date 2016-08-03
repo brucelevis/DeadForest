@@ -91,7 +91,7 @@ void ItemM1897::attack()
     {
         if ( d == _owner ) continue;
         
-        if ( d->getEntityType() == ENTITY_PLAYER)
+        if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
         {
             for(int s = 0 ; s < shootAts.size() ; ++ s)
             {

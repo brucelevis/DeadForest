@@ -20,6 +20,8 @@ void HumanBackDeadState::enter(EntityPlayer* human)
     human->getGame()->sendMessage(5.0f, human, human, MessageType::DIE, nullptr);
     human->setDead();
     
+    human->getAnimator()->setShadowVisible(false);
+    
     human->getAnimator()->pushAnimationFrames(&AnimHumanBackDead::getInstance());
     human->setVelocity( cocos2d::Vec2::ZERO );
     human->setStateName("dead");

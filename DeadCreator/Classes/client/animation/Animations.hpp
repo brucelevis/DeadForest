@@ -16,3 +16,6 @@
 #include "HumanM16A2Animations.hpp"
 #include "HumanM1897Animations.hpp"
 #include "HumanDeadAnimations.hpp"
+
+// zombie
+#include "ZombieAnimations.hpp"

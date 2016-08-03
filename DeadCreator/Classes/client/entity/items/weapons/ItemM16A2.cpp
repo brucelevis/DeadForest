@@ -84,7 +84,7 @@ void ItemM16A2::attack()
     {
         if ( d == _owner ) continue;
         
-        if ( d->getEntityType() == ENTITY_PLAYER)
+        if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
         {
             HumanBase* human = static_cast<HumanBase*>(d);
             if( human->isAlive() && physics::intersect(Segment(worldPos, worldPos + _owner->getHeading() * getRange()), Circle(d->getWorldPosition(), 20.0f)) )

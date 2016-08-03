@@ -47,25 +47,19 @@ void Animator::pushAnimationFrames(AnimationBase* animation)
     }
     _currAnimation = animation;
     
-    int startIndex, endIndex;
     if(animation->isReversePlay() == true)
     {
-        startIndex = animation->getMaxFrame() - 1;
-        endIndex = animation->getStartFrame();
-        for(int i = startIndex ; i >= endIndex; -- i)
+        for(int i = animation->getMaxFrame() - 1 ; i >= animation->getStartFrame(); -- i)
         {
-            std::string frameName = animation->getFileName() + _to_string(i);
-            _frameQueue.push_back(std::make_pair(frameName, i));
+            _frameQueue.push_back({animation->getFileName() + _to_string(i), i});
         }
     }
     else
     {
-        startIndex = animation->getStartFrame();
-        endIndex = animation->getMaxFrame();
-        for(int i = startIndex ; i < endIndex; ++ i)
+        for(int i = animation->getStartFrame() ; i < animation->getMaxFrame(); ++ i)
         {
             std::string frameName = animation->getFileName() + _to_string(i);
-            _frameQueue.push_back(std::make_pair(frameName, i));
+            _frameQueue.push_back({animation->getFileName() + _to_string(i), i});
         }
     }
     

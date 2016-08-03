@@ -38,16 +38,15 @@ namespace realtrick
             void clearFrameQueue() { _frameQueue.clear(); }
             
             AnimationBase* getCurrAnimation() const { return _currAnimation; }
-            void setCurrAnimation(AnimationBase* animation) { _currAnimation = animation; }
             
             int getFrameIndex() const;
-            int getQueueSize() const { return static_cast<int>(_frameQueue.size()); }
             void setVisible(bool enable);
             
             void enableForceStop(bool enable) { _isForceStopped = enable; }
             bool isForceStopped() const { return _isForceStopped; }
             
             void setRotation(float rotation);
+            void setShadowVisible(bool visible) { _shadowSprite->setVisible(visible); }
             
         private:
             

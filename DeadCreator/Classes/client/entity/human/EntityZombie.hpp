@@ -26,7 +26,7 @@ namespace realtrick
             virtual bool init() override;
             static EntityZombie* create(Game* game);
             
-            virtual bool handleMessage(const Telegram& msg) override { return _FSM->handleMessage(msg); }
+            virtual bool handleMessage(const Telegram& msg) override;
             
             StateMachine<EntityZombie>* getFSM() const { return _FSM; }
             

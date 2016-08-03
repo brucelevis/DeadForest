@@ -9,7 +9,8 @@
 #include "ZombieStates.hpp"
 #include "EntityZombie.hpp"
 #include "Animator.hpp"
-#include "ZombieAnimations.hpp"
+#include "Animations.hpp"
+#include "Game.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -108,6 +109,11 @@ bool ZombieAttack::onMessage(EntityZombie* zombie, const Telegram& msg)
 //
 void ZombieDead::enter(EntityZombie* zombie)
 {
+    zombie->getGame()->sendMessage(5.0f, zombie, zombie, MessageType::DIE, nullptr);
+    zombie->setDead();
+    
+    zombie->getAnimator()->setShadowVisible(false);
+    
     zombie->getAnimator()->pushAnimationFrames(&AnimZombieDead::getInstance());
     zombie->setStateName("dead");
 }
@@ -127,6 +133,13 @@ void ZombieDead::exit(EntityZombie* zombie)
 
 bool ZombieDead::onMessage(EntityZombie* zombie, const Telegram& msg)
 {
+    if ( msg.msg == MessageType::DIE )
+    {
+        zombie->getGame()->removeEntity(zombie);
+        
+        return true;
+    }
+    
     return false;
 }
 

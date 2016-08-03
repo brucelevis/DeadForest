@@ -72,7 +72,7 @@ namespace realtrick
                 _maxFrame       = 26;
                 _fileName       = "ZombieDeath";
                 _priority       = 4;
-                _frameSwapTime  = 0.1f;
+                _frameSwapTime  = 0.05f;
                 _isReversePlay  = false;
             }
             

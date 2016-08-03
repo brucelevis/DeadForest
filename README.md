@@ -24,6 +24,10 @@ Architecture of a game is largely has three configurations. **Editor**, **Client
 
 ![Editor3](http://i.imgur.com/8SU7Xjb.png)
 
+![Editor3](http://i.imgur.com/C7c2Nct.png)
+
+You can test and play with real-time.
+
 **Client** run real-time rendering to the actual game data using the built in editor. [cocos2d-x](http://cocos2d-x.org) game engine is helps this works. Since the game is a large game world we were using various optimization techniques(such as cell space partition, deferred rendering)
 
 ![CellSpacePartition](http://i.imgur.com/tCV8nCm.jpg)

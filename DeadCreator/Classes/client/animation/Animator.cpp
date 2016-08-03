@@ -24,8 +24,7 @@ _accumulatedTime(0.0f),
 _baseSprite(nullptr),
 _shadowSprite(nullptr),
 _currFrameName("##invalid"),
-_currFrame(0),
-_isForceStopped(false)
+_currFrame(0)
 {
     _baseSprite = Sprite::create();
     _owner->addChild(_baseSprite);
@@ -99,29 +98,13 @@ void Animator::pushFramesAtoB(AnimationBase* anim, int startIndex, int endIndex)
 }
 
 
-void Animator::pushOneFrameUnique(AnimationBase* anim, int index)
-{
-    // 인덱스와 프레임이름이 하나라도 틀리면 푸시한다.
-    if ( _frameQueue.empty() )
-    {
-        _frameQueue.push_back({ anim->getFileName() + _to_string(index), index });
-        _currAnimation = anim;
-    }
-    else if ( _frameQueue.back().second != index || _frameQueue.back().first != anim->getFileName() + _to_string(index) )
-    {
-        _frameQueue.push_back({ anim->getFileName() + _to_string(index), index });
-        _currAnimation = anim;
-    }
-}
-
-
 void Animator::processAnimation(float dt)
 {
     if( _frameQueue.empty() )
         return ;
     
     _accumulatedTime += dt;
-    if( _currAnimation->getFrameSwapTime() <= _accumulatedTime && !_isForceStopped )
+    if( _currAnimation->getFrameSwapTime() <= _accumulatedTime )
     {
         _accumulatedTime = 0.0f;
         

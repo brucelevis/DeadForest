@@ -41,12 +41,8 @@ void HumanGlock17IdleLoop::execute(EntityPlayer* human)
         human->getAnimator()->pushAnimationFrames(&AnimHumanGlock17IdleLoop::getInstance());
     }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
-    {
-        human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-    }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_BEGAN) )
+    if ( isMasked(inputMask, HumanBehaviorType::ATTACK) )
     {
         human->setVelocity( moving * human->getWalkSpeed() );
         
@@ -131,12 +127,7 @@ void HumanGlock17MoveLoop::execute(EntityPlayer* human)
         human->getFSM()->changeState(&HumanGlock17IdleLoop::getInstance());
     }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
-    {
-        human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-    }
-    
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_BEGAN) || isMasked(inputMask, HumanBehaviorType::TURN) )
+    if ( isMasked(inputMask, HumanBehaviorType::ATTACK) || isMasked(inputMask, HumanBehaviorType::TURN) )
     {
         if ( currFrame == 5 || currFrame == 11 )
         {
@@ -210,11 +201,6 @@ void HumanGlock17Attack::execute(EntityPlayer* human)
     else
     {
         human->setVelocity( Vec2::ZERO );
-    }
-    
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
-    {
-        human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
     }
     
     if ( human->getAnimator()->isQueueEmpty() )

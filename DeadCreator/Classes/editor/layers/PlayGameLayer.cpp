@@ -250,8 +250,6 @@ void PlayGameLayer::showLayer(bool& opened)
         ImGui::EndChild();
         ImGui::End();
     }
-    
-    
 }
 
 void PlayGameLayer::playGame()

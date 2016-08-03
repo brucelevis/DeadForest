@@ -101,19 +101,83 @@ namespace realtrick
         };
         
         
-        class AnimHumanAxeAttack : public AnimationBase, public Singleton<AnimHumanAxeAttack>
+        class AnimHumanAxeAttackReady : public AnimationBase, public Singleton<AnimHumanAxeAttackReady>
         {
             
         private:
             
-            friend class Singleton<AnimHumanAxeAttack>;
-            virtual ~AnimHumanAxeAttack() = default;
+            friend class Singleton<AnimHumanAxeAttackReady>;
+            virtual ~AnimHumanAxeAttackReady() = default;
             
-            AnimHumanAxeAttack()
+            AnimHumanAxeAttackReady()
             {
                 _startFrame     = 0;
-                _maxFrame       = 18;
-                _fileName       = "HumanAxeAttack";
+                _maxFrame       = 7;
+                _fileName       = "HumanAxeAttackReady";
+                _priority       = 3;
+                _frameSwapTime  = 0.07f;
+                _isReversePlay  = false;
+            }
+            
+        };
+        
+        
+        class AnimHumanAxeAttackRelease : public AnimationBase, public Singleton<AnimHumanAxeAttackRelease>
+        {
+            
+        private:
+            
+            friend class Singleton<AnimHumanAxeAttackRelease>;
+            virtual ~AnimHumanAxeAttackRelease() = default;
+            
+            AnimHumanAxeAttackRelease()
+            {
+                _startFrame     = 0;
+                _maxFrame       = 7;
+                _fileName       = "HumanAxeAttackReady";
+                _priority       = 3;
+                _frameSwapTime  = 0.07f;
+                _isReversePlay  = true;
+            }
+            
+        };
+
+        
+        
+        class AnimHumanAxeAttackHover : public AnimationBase, public Singleton<AnimHumanAxeAttackHover>
+        {
+            
+        private:
+            
+            friend class Singleton<AnimHumanAxeAttackHover>;
+            virtual ~AnimHumanAxeAttackHover() = default;
+            
+            AnimHumanAxeAttackHover()
+            {
+                _startFrame     = 0;
+                _maxFrame       = 3;
+                _fileName       = "HumanAxeAttackHover";
+                _priority       = 3;
+                _frameSwapTime  = 0.07f;
+                _isReversePlay  = false;
+            }
+            
+        };
+      
+        
+        class AnimHumanAxeAttackAction : public AnimationBase, public Singleton<AnimHumanAxeAttackAction>
+        {
+            
+        private:
+            
+            friend class Singleton<AnimHumanAxeAttackAction>;
+            virtual ~AnimHumanAxeAttackAction() = default;
+            
+            AnimHumanAxeAttackAction()
+            {
+                _startFrame     = 0;
+                _maxFrame       = 7;
+                _fileName       = "HumanAxeAttackAction";
                 _priority       = 3;
                 _frameSwapTime  = 0.07f;
                 _isReversePlay  = false;

@@ -15,6 +15,7 @@
 #include "WeaponStatus.hpp"
 #include "HumanOwnedAnimations.hpp"
 #include "Items.hpp"
+#include "InputCommands.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -38,23 +39,19 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::MOVE_JOYSTICK_INPUT )
     {
         MoveJoystickData data = *static_cast<MoveJoystickData*>(msg.extraInfo);
-        EntityPlayer* player = _game->getPlayerPtr();
-        player->setMoving(data.dir);
         
-        switch ( data.type )
+        HumanBase* human = _game->getPlayerPtr();
+        human->setMoving(data.dir);
+        
+        if ( data.type == JoystickEx::ClickEventType::BEGAN || data.type == JoystickEx::ClickEventType::MOVED )
         {
-            case JoystickEx::ClickEventType::BEGAN:
-            {
-                player->addInputMask(HumanBehaviorType::RUN);
-                break;
-            }
-            case JoystickEx::ClickEventType::ENDED:
-            {
-                player->removeInputMask(HumanBehaviorType::RUN);
-                break;
-            }
-                
-            default: break;
+            InputMoveBegin inputCommand(human, data.dir);
+            inputCommand.execute();
+        }
+        else if ( data.type == JoystickEx::ClickEventType::ENDED )
+        {
+            InputMoveEnd inputCommand(human);
+            inputCommand.execute();
         }
         
         return true;
@@ -62,28 +59,18 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::ATTACK_JOYSTICK_INPUT )
     {
         AttJoystickData data = *static_cast<AttJoystickData*>(msg.extraInfo);
-        EntityPlayer* player = _game->getPlayerPtr();
+        HumanBase* human = _game->getPlayerPtr();
         
-        switch ( data.type )
+        if ( data.type == ui::Widget::TouchEventType::BEGAN )
         {
-            case ui::Widget::TouchEventType::BEGAN:
-            {
-                player->addInputMask(HumanBehaviorType::ATTACK_BEGAN);
-                break;
-            }
-            case ui::Widget::TouchEventType::ENDED:
-            {
-                player->removeInputMask(HumanBehaviorType::ATTACK_BEGAN);
-                player->addInputMask(HumanBehaviorType::ATTACK_ENDED);
-                break;
-            }
-            case ui::Widget::TouchEventType::CANCELED:
-            {
-                player->removeInputMask(HumanBehaviorType::ATTACK_BEGAN);
-                break;
-            }
-                
-            default: break;
+            InputAttackBegin inputCommand(human);
+            inputCommand.execute();
+        }
+        
+        else if ( data.type == ui::Widget::TouchEventType::ENDED || data.type == ui::Widget::TouchEventType::CANCELED )
+        {
+            InputAttackEnd inputCommand(human);
+            inputCommand.execute();
         }
         
         return true;
@@ -91,23 +78,23 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::BEZEL_DIRECTION_TRIGGERED )
     {
         BezelDirectionTriggerData data= *static_cast<BezelDirectionTriggerData*>(msg.extraInfo);
-        EntityPlayer* player = _game->getPlayerPtr();
-        player->setTargetHeading(data.dir);
+        HumanBase* human = _game->getPlayerPtr();
+        human->setTargetHeading(data.dir);
         
         return true;
     }
     else if ( msg.msg == MessageType::BEZEL_CLICK_INPUT )
     {
         BezelInputData data = *static_cast<BezelInputData*>(msg.extraInfo);
-        EntityPlayer* player = _game->getPlayerPtr();
+        HumanBase* human = _game->getPlayerPtr();
         
         if ( data.type == ui::Widget::TouchEventType::BEGAN )
         {
-            player->addInputMask(HumanBehaviorType::TURN);
+            human->addInputMask(HumanBehaviorType::TURN);
         }
         else if ( data.type == ui::Widget::TouchEventType::ENDED )
         {
-            player->removeInputMask(HumanBehaviorType::TURN);
+            human->removeInputMask(HumanBehaviorType::TURN);
         }
         
         return true;
@@ -154,7 +141,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
         
         return true;
     }
-    else if ( msg.msg == MessageType::PRESS_EQUIP_WEAPON_BUTTON)
+    else if ( msg.msg == MessageType::PRESS_EQUIP_WEAPON_BUTTON )
     {
         // 아이템을 장착한다.
         ItemSlotData data = *static_cast<ItemSlotData*>(msg.extraInfo);
@@ -167,7 +154,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
         
         return true;
     }
-    else if ( msg.msg == MessageType::PRESS_RELEASE_WEAPON_BUTTON)
+    else if ( msg.msg == MessageType::PRESS_RELEASE_WEAPON_BUTTON )
     {
         ItemSlotData data = *static_cast<ItemSlotData*>(msg.extraInfo);
         data.slot->disableEquippedItem();

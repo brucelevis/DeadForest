@@ -41,12 +41,8 @@ void HumanM16A2IdleLoop::execute(EntityPlayer* human)
         human->getAnimator()->pushAnimationFrames(&AnimHumanM16A2IdleLoop::getInstance());
     }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
-    {
-        human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-    }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_BEGAN) )
+    if ( isMasked(inputMask, HumanBehaviorType::ATTACK) )
     {
         human->setVelocity( moving * human->getWalkSpeed() );
         
@@ -131,12 +127,8 @@ void HumanM16A2MoveLoop::execute(EntityPlayer* human)
         human->getFSM()->changeState(&HumanM16A2IdleLoop::getInstance());
     }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
-    {
-        human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-    }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_BEGAN) || isMasked(inputMask, HumanBehaviorType::TURN) )
+    if ( isMasked(inputMask, HumanBehaviorType::ATTACK) || isMasked(inputMask, HumanBehaviorType::TURN) )
     {
         if ( currFrame == 5 || currFrame == 11 )
         {
@@ -217,12 +209,6 @@ void HumanM16A2Attack::execute(EntityPlayer* human)
     {
         human->setVelocity( Vec2::ZERO );
     }
-    
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
-    {
-        human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-    }
-    
 }
 
 void HumanM16A2Attack::exit(EntityPlayer* human)

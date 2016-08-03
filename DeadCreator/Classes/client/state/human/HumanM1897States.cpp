@@ -42,12 +42,7 @@ void HumanM1897IdleLoop::execute(EntityPlayer* human)
         human->getAnimator()->pushAnimationFrames(&AnimHumanM1897IdleLoop::getInstance());
     }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
-    {
-        human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-    }
-    
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_BEGAN) )
+    if ( isMasked(inputMask, HumanBehaviorType::ATTACK) )
     {
         human->setVelocity( moving * human->getWalkSpeed() );
         
@@ -58,7 +53,7 @@ void HumanM1897IdleLoop::execute(EntityPlayer* human)
             if ( human->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
             {
                 // 공격 상태로 전환
-                human->getFSM()->changeState(&HumanM1897Attack::getInstance());
+                human->getFSM()->changeState(&HumanM1897AttackReady::getInstance());
             }
             // 2. 남아있는 총알이 없음.
             else
@@ -133,12 +128,8 @@ void HumanM1897MoveLoop::execute(EntityPlayer* human)
         human->getFSM()->changeState(&HumanM1897IdleLoop::getInstance());
     }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
-    {
-        human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-    }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_BEGAN) || isMasked(inputMask, HumanBehaviorType::TURN) )
+    if ( isMasked(inputMask, HumanBehaviorType::ATTACK) || isMasked(inputMask, HumanBehaviorType::TURN) )
     {
         if ( currFrame == 7 || currFrame == 15 )
         {
@@ -179,77 +170,6 @@ bool HumanM1897MoveLoop::onMessage(EntityPlayer* human, const Telegram& msg)
     }
     return false;
 }
-
-
-
-//
-// HumanM1897Attack
-//
-void HumanM1897Attack::enter(EntityPlayer* human)
-{
-    human->getAnimator()->pushFramesAtoB(&AnimHumanM1897Attack::getInstance(), 0, 3);
-    human->setStateName("attack");
-}
-
-void HumanM1897Attack::execute(EntityPlayer* human)
-{
-    int inputMask = human->getInputMask();
-    Vec2 moving = human->getMoving();
-    int currFrame = human->getAnimator()->getFrameIndex();
-    
-    if ( human->getAnimator()->isQueueEmpty() )
-    {
-        human->getFSM()->changeState(&HumanM1897IdleLoop::getInstance());
-    }
-    
-    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) )
-    {
-        human->setVelocity( moving * human->getWalkSpeed() );
-    }
-    else
-    {
-        human->setVelocity( Vec2::ZERO );
-    }
-    if ( currFrame < 3 )
-    {
-        if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_ENDED) )
-        {
-            human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-            human->getAnimator()->pushFramesAtoB(&AnimHumanM1897Attack::getInstance(), currFrame, 0);
-        }
-    }
-    else if ( currFrame == 3 )
-    {
-        if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_BEGAN) )
-        {
-            human->getAnimator()->enableForceStop(true);
-        }
-        else if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_ENDED) )
-        {
-            human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-            human->getAnimator()->enableForceStop(false);
-            human->getAnimator()->pushFramesAtoB(&AnimHumanM1897Attack::getInstance(), 4, 16);
-            
-            SoundSource s;
-            s.fileName = "shotgun.mp3";
-            s.position = human->getWorldPosition();
-            s.soundRange = 2000.0f;
-            human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
-            
-            human->getEquipedWeapon()->attack();
-            human->getEquipedWeapon()->setNumOfLeftRounds( human->getEquipedWeapon()->getNumOfLeftRounds() - 1);
-            human->getWeaponStatus()->setWeaponStatus(human->getEquipedWeapon());
-        }
-    }
-    
-}
-
-void HumanM1897Attack::exit(EntityPlayer* human)
-{
-    human->getAnimator()->clearFrameQueue();
-}
-
-bool HumanM1897Attack::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 //
@@ -377,7 +297,7 @@ void HumanM1897In::execute(EntityPlayer* human)
         if ( human->getEquipedWeapon() == nullptr )
         {
             // 무기가 없으면 주먹 상태로
-            human->getFSM()->changeState(&HumanFistOut::getInstance());
+            human->getFSM()->changeState(&HumanM1897Out::getInstance());
         }
         else
         {
@@ -393,6 +313,148 @@ void HumanM1897In::exit(EntityPlayer* human)
 }
 
 bool HumanM1897In::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
+
+
+//
+// HumanM1897AttackReady
+//
+void HumanM1897AttackReady::enter(EntityPlayer* human)
+{
+    human->getAnimator()->pushAnimationFrames(&AnimHumanM1897AttackReady::getInstance());
+    human->setStateName("lifting M1897");
+}
+
+void HumanM1897AttackReady::execute(EntityPlayer* human)
+{
+    int inputMask = human->getInputMask();
+    Vec2 moving = human->getMoving();
+    
+    if ( human->getAnimator()->isQueueEmpty() )
+    {
+        if ( isMasked(inputMask, HumanBehaviorType::ATTACK ) )
+        {
+            human->getFSM()->changeState(&HumanM1897AttackHover::getInstance());
+        }
+        else
+        {
+            human->getFSM()->changeState(&HumanM1897AttackRelease::getInstance());
+        }
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    else human->setVelocity( Vec2::ZERO );
+}
+
+void HumanM1897AttackReady::exit(EntityPlayer* human)
+{
+    human->getAnimator()->clearFrameQueue();
+}
+
+
+//
+// HumanM1897AttackRelease
+//
+void HumanM1897AttackRelease::enter(EntityPlayer* human)
+{
+    human->getAnimator()->pushAnimationFrames(&AnimHumanM1897AttackRelease::getInstance());
+    human->setStateName("take down m1897");
+}
+
+void HumanM1897AttackRelease::execute(EntityPlayer* human)
+{
+    int inputMask = human->getInputMask();
+    Vec2 moving = human->getMoving();
+    
+    if ( human->getAnimator()->isQueueEmpty() )
+    {
+        human->getFSM()->changeState(&HumanM1897IdleLoop::getInstance());
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    else human->setVelocity( Vec2::ZERO );
+}
+
+void HumanM1897AttackRelease::exit(EntityPlayer* human)
+{
+    human->getAnimator()->clearFrameQueue();
+}
+
+
+//
+// HumanM1897AttackHover
+//
+void HumanM1897AttackHover::enter(EntityPlayer* human)
+{
+    human->getAnimator()->pushAnimationFrames(&AnimHumanM1897AttackHover::getInstance());
+    human->setStateName("aimming...");
+}
+
+void HumanM1897AttackHover::execute(EntityPlayer* human)
+{
+    int inputMask = human->getInputMask();
+    Vec2 moving = human->getMoving();
+    
+    if ( human->getAnimator()->isQueueEmpty() )
+    {
+        if ( isMasked(inputMask, HumanBehaviorType::ATTACK ) )
+        {
+            human->getFSM()->changeState(&HumanM1897AttackHover::getInstance());
+        }
+    }
+    
+    if ( !isMasked(inputMask, HumanBehaviorType::ATTACK ) )
+    {
+        human->getFSM()->changeState(&HumanM1897AttackAction::getInstance());
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    else human->setVelocity( Vec2::ZERO );
+}
+
+void HumanM1897AttackHover::exit(EntityPlayer* human)
+{
+    human->getAnimator()->clearFrameQueue();
+}
+
+
+//
+// HumanM1897AttackAction
+//
+void HumanM1897AttackAction::enter(EntityPlayer* human)
+{
+    human->getAnimator()->pushAnimationFrames(&AnimHumanM1897AttackAction::getInstance());
+    human->setStateName("attack");
+    
+    SoundSource s;
+    s.fileName = "shotgun.mp3";
+    s.position = human->getWorldPosition();
+    s.soundRange = 2000.0f;
+    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    
+    human->getEquipedWeapon()->attack();
+    human->getEquipedWeapon()->setNumOfLeftRounds( human->getEquipedWeapon()->getNumOfLeftRounds() - 1);
+    human->getWeaponStatus()->setWeaponStatus(human->getEquipedWeapon());
+}
+
+void HumanM1897AttackAction::execute(EntityPlayer* human)
+{
+    int inputMask = human->getInputMask();
+    Vec2 moving = human->getMoving();
+    
+    if ( human->getAnimator()->isQueueEmpty() )
+    {
+        human->getFSM()->changeState(&HumanM1897IdleLoop::getInstance());
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    else human->setVelocity( Vec2::ZERO );
+    
+}
+
+void HumanM1897AttackAction::exit(EntityPlayer* human)
+{
+    human->getAnimator()->clearFrameQueue();
+}
 
 
 

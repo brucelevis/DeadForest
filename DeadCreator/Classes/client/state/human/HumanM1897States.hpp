@@ -109,28 +109,6 @@ namespace realtrick
         
         
         //
-        // HumanM1897Attack
-        //
-        class HumanM1897Attack : public State<EntityPlayer>, public Singleton<HumanM1897Attack>
-        {
-            
-        public:
-            
-            virtual void enter(EntityPlayer* human) override;
-            virtual void execute(EntityPlayer* human) override;
-            virtual void exit(EntityPlayer* human) override;
-            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
-            
-        private:
-            
-            friend Singleton<HumanM1897Attack>;
-            HumanM1897Attack() = default;
-            virtual ~HumanM1897Attack() = default;
-            
-        };
-        
-        
-        //
         // HumanM1897Reload
         //
         class HumanM1897Reload : public State<EntityPlayer>, public Singleton<HumanM1897Reload>
@@ -148,6 +126,66 @@ namespace realtrick
             friend Singleton<HumanM1897Reload>;
             HumanM1897Reload() = default;
             virtual ~HumanM1897Reload() = default;
+            
+        };
+     
+        
+        //
+        // HumanM1897AttackReady
+        //
+        class HumanM1897AttackReady : public State<EntityPlayer>, public Singleton<HumanM1897AttackReady>
+        {
+            
+        public:
+            
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            
+        };
+        
+        
+        //
+        // HumanM1897AttackRelease
+        //
+        class HumanM1897AttackRelease : public State<EntityPlayer>, public Singleton<HumanM1897AttackRelease>
+        {
+            
+        public:
+            
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            
+        };
+        
+        
+        //
+        // HumanM1897AttackHover
+        //
+        class HumanM1897AttackHover : public State<EntityPlayer>, public Singleton<HumanM1897AttackHover>
+        {
+            
+        public:
+            
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            
+        };
+        
+        
+        //
+        // HumanM1897AttackAction
+        //
+        class HumanM1897AttackAction : public State<EntityPlayer>, public Singleton<HumanM1897AttackAction>
+        {
+            
+        public:
+            
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
             
         };
         

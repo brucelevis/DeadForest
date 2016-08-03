@@ -16,6 +16,7 @@
 using namespace cocos2d;
 using namespace realtrick::client;
 
+
 //
 // HumanAxeIdleLoop
 //
@@ -31,19 +32,14 @@ void HumanAxeIdleLoop::execute(EntityPlayer* human)
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
     
-    if(human->getAnimator()->isQueueEmpty())
+    if ( human->getAnimator()->isQueueEmpty() )
     {
         human->getAnimator()->pushAnimationFrames(&AnimHumanAxeIdleLoop::getInstance());
     }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
+    if ( isMasked(inputMask, HumanBehaviorType::ATTACK) )
     {
-        human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-    }
-    
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_BEGAN) )
-    {
-        human->getFSM()->changeState(&HumanAxeAttack::getInstance());
+        human->getFSM()->changeState(&HumanAxeAttackReady::getInstance());
     }
     
     if ( isMasked(inputMask, HumanBehaviorType::TURN) )
@@ -67,10 +63,6 @@ void HumanAxeIdleLoop::exit(EntityPlayer* human)
     human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanAxeIdleLoop::onMessage(EntityPlayer* human, const Telegram& msg)
-{
-    return false;
-}
 
 
 //
@@ -94,12 +86,7 @@ void HumanAxeMoveLoop::execute(EntityPlayer* human)
         human->getFSM()->changeState(&HumanAxeIdleLoop::getInstance());
     }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
-    {
-        human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-    }
-    
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_BEGAN) || isMasked(inputMask, HumanBehaviorType::TURN) )
+    if ( isMasked(inputMask, HumanBehaviorType::ATTACK) || isMasked(inputMask, HumanBehaviorType::TURN) )
     {
         if ( currFrame == 5 || currFrame == 11 )
         {
@@ -128,70 +115,6 @@ void HumanAxeMoveLoop::exit(EntityPlayer* human)
     human->setRunStats(false);
     human->getAnimator()->clearFrameQueue();
 }
-
-bool HumanAxeMoveLoop::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
-
-
-
-//
-// HumanAxeAttack
-//
-void HumanAxeAttack::enter(EntityPlayer* human)
-{
-    human->getAnimator()->pushOneFrameUnique(&AnimHumanAxeAttack::getInstance(), 0);
-    human->setStateName("attack");
-}
-
-void HumanAxeAttack::execute(EntityPlayer* human)
-{
-    int inputMask = human->getInputMask();
-    Vec2 moving = human->getMoving();
-    int currFrame = human->getAnimator()->getFrameIndex();
-    
-    if ( human->getAnimator()->isQueueEmpty() )
-    {
-        human->getFSM()->changeState(&HumanAxeIdleLoop::getInstance());
-    }
-    
-    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) )
-    {
-        human->setVelocity( moving * human->getWalkSpeed() );
-    }
-    else
-    {
-        human->setVelocity( Vec2::ZERO );
-    }
-    
-    if ( currFrame < 10 )
-    {
-        if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_BEGAN) )
-        {
-            int nextFrame = currFrame + 1;
-            human->getAnimator()->pushOneFrameUnique(&AnimHumanAxeAttack::getInstance(), nextFrame);
-        }
-    }
-    else if ( currFrame == 10 )
-    {
-        if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_BEGAN) )
-        {
-            human->getAnimator()->enableForceStop(true);
-        }
-        else if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_ENDED) )
-        {
-            human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-            human->getAnimator()->enableForceStop(false);
-            human->getAnimator()->pushFramesAtoB(&AnimHumanAxeAttack::getInstance(), 11, 17);
-            human->getEquipedWeapon()->attack();
-        }
-    }
-}
-
-void HumanAxeAttack::exit(EntityPlayer* human)
-{
-    human->getAnimator()->clearFrameQueue();
-}
-
-bool HumanAxeAttack::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 
@@ -235,8 +158,6 @@ void HumanAxeOut::exit(EntityPlayer* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
-
-bool HumanAxeOut::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
 
 
 
@@ -290,7 +211,141 @@ void HumanAxeIn::exit(EntityPlayer* human)
     human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanAxeIn::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
+
+
+
+//
+// HumanAxeAttackReady
+//
+void HumanAxeAttackReady::enter(EntityPlayer* human)
+{
+    human->getAnimator()->pushAnimationFrames(&AnimHumanAxeAttackReady::getInstance());
+    human->setStateName("lifting axe");
+}
+
+void HumanAxeAttackReady::execute(EntityPlayer* human)
+{
+    int inputMask = human->getInputMask();
+    Vec2 moving = human->getMoving();
+    
+    if ( human->getAnimator()->isQueueEmpty() )
+    {
+        if ( isMasked(inputMask, HumanBehaviorType::ATTACK ) )
+        {
+            human->getFSM()->changeState(&HumanAxeAttackHover::getInstance());
+        }
+        else
+        {
+            human->getFSM()->changeState(&HumanAxeAttackRelease::getInstance());
+        }
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    else human->setVelocity( Vec2::ZERO );
+}
+
+void HumanAxeAttackReady::exit(EntityPlayer* human)
+{
+    human->getAnimator()->clearFrameQueue();
+}
+
+
+//
+// HumanAxeAttackRelease
+//
+void HumanAxeAttackRelease::enter(EntityPlayer* human)
+{
+    human->getAnimator()->pushAnimationFrames(&AnimHumanAxeAttackRelease::getInstance());
+    human->setStateName("take down axe");
+}
+
+void HumanAxeAttackRelease::execute(EntityPlayer* human)
+{
+    int inputMask = human->getInputMask();
+    Vec2 moving = human->getMoving();
+    
+    if ( human->getAnimator()->isQueueEmpty() )
+    {
+        human->getFSM()->changeState(&HumanAxeIdleLoop::getInstance());
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    else human->setVelocity( Vec2::ZERO );
+}
+
+void HumanAxeAttackRelease::exit(EntityPlayer* human)
+{
+    human->getAnimator()->clearFrameQueue();
+}
+
+
+
+//
+// HumanAxeAttackHover
+//
+void HumanAxeAttackHover::enter(EntityPlayer* human)
+{
+    human->getAnimator()->pushAnimationFrames(&AnimHumanAxeAttackHover::getInstance());
+    human->setStateName("attack ready");
+}
+
+void HumanAxeAttackHover::execute(EntityPlayer* human)
+{
+    int inputMask = human->getInputMask();
+    Vec2 moving = human->getMoving();
+    
+    if ( human->getAnimator()->isQueueEmpty() )
+    {
+        if ( isMasked(inputMask, HumanBehaviorType::ATTACK ) )
+        {
+            human->getFSM()->changeState(&HumanAxeAttackHover::getInstance());
+        }
+    }
+    
+    if ( !isMasked(inputMask, HumanBehaviorType::ATTACK ) )
+    {
+        human->getFSM()->changeState(&HumanAxeAttackAction::getInstance());
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    else human->setVelocity( Vec2::ZERO );
+}
+
+void HumanAxeAttackHover::exit(EntityPlayer* human)
+{
+    human->getAnimator()->clearFrameQueue();
+}
+
+
+
+//
+// HumanAxeAttackAction
+//
+void HumanAxeAttackAction::enter(EntityPlayer* human)
+{
+    human->getAnimator()->pushAnimationFrames(&AnimHumanAxeAttackAction::getInstance());
+    human->setStateName("attack");
+    human->getEquipedWeapon()->attack();
+}
+
+void HumanAxeAttackAction::execute(EntityPlayer* human)
+{
+    int inputMask = human->getInputMask();
+    Vec2 moving = human->getMoving();
+    
+    if ( human->getAnimator()->isQueueEmpty() )
+    {
+        human->getFSM()->changeState(&HumanAxeIdleLoop::getInstance());
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    else human->setVelocity( Vec2::ZERO );
+}
+
+void HumanAxeAttackAction::exit(EntityPlayer* human)
+{
+    human->getAnimator()->clearFrameQueue();
+}
 
 
 

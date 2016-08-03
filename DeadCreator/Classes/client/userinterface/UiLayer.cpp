@@ -20,6 +20,7 @@
 #include "InfoSystem.hpp"
 #include "SizeProtocol.h"
 #include "ParamLoader.hpp"
+#include "InputCommands.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 

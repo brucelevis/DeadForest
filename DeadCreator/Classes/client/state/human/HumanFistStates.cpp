@@ -36,14 +36,9 @@ void HumanFistIdleLoop::execute(EntityPlayer* human)
         human->getAnimator()->pushAnimationFrames(&AnimHumanFistIdleLoop::getInstance());
     }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
+    if ( isMasked(inputMask, HumanBehaviorType::ATTACK) )
     {
-        human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-    }
-    
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_BEGAN) )
-    {
-        human->getFSM()->changeState(&HumanFistAttack::getInstance());
+        human->getFSM()->changeState(&HumanFistAttackReady::getInstance());
     }
     
     if ( isMasked(inputMask, HumanBehaviorType::TURN) )
@@ -65,11 +60,6 @@ void HumanFistIdleLoop::execute(EntityPlayer* human)
 void HumanFistIdleLoop::exit(EntityPlayer* human)
 {
     human->getAnimator()->clearFrameQueue();
-}
-
-bool HumanFistIdleLoop::onMessage(EntityPlayer* human, const Telegram& msg)
-{
-    return false;
 }
 
 
@@ -94,12 +84,7 @@ void HumanFistMoveLoop::execute(EntityPlayer* human)
         human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
     }
     
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_ENDED) )
-    {
-        human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-    }
-    
-    if ( isMasked(inputMask, HumanBehaviorType::ATTACK_BEGAN) || isMasked(inputMask, HumanBehaviorType::TURN) )
+    if ( isMasked(inputMask, HumanBehaviorType::ATTACK) || isMasked(inputMask, HumanBehaviorType::TURN) )
     {
         if ( currFrame == 5 || currFrame == 11 )
         {
@@ -128,70 +113,6 @@ void HumanFistMoveLoop::exit(EntityPlayer* human)
     human->setRunStats(false);
     human->getAnimator()->clearFrameQueue();
 }
-
-bool HumanFistMoveLoop::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
-
-
-
-//
-// HumanFistAttack
-//
-void HumanFistAttack::enter(EntityPlayer* human)
-{
-    human->getAnimator()->pushOneFrameUnique(&AnimHumanFistAttack::getInstance(), 0);
-    human->setStateName("attack");
-}
-
-void HumanFistAttack::execute(EntityPlayer* human)
-{
-    int inputMask = human->getInputMask();
-    Vec2 moving = human->getMoving();
-    int currFrame = human->getAnimator()->getFrameIndex();
-    
-    if ( human->getAnimator()->isQueueEmpty() )
-    {
-        human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
-    }
-    
-    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) )
-    {
-        human->setVelocity( moving * human->getWalkSpeed() );
-    }
-    else
-    {
-        human->setVelocity( Vec2::ZERO );
-    }
-    
-    if ( currFrame < 4 )
-    {
-        if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_BEGAN) )
-        {
-            int nextFrame = currFrame + 1;
-            human->getAnimator()->pushOneFrameUnique(&AnimHumanFistAttack::getInstance(), nextFrame);
-        }
-    }
-    else if ( currFrame == 4 )
-    {
-        if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_BEGAN) )
-        {
-            human->getAnimator()->enableForceStop(true);
-        }
-        else if ( isMasked(inputMask, (int)HumanBehaviorType::ATTACK_ENDED) )
-        {
-            human->removeInputMask(HumanBehaviorType::ATTACK_ENDED);
-            human->getAnimator()->enableForceStop(false);
-            human->getAnimator()->pushFramesAtoB(&AnimHumanFistAttack::getInstance(), 5, 9);
-        }
-    }
-}
-
-void HumanFistAttack::exit(EntityPlayer* human)
-{
-    human->getAnimator()->clearFrameQueue();
-}
-
-bool HumanFistAttack::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
-
 
 
 //
@@ -227,9 +148,6 @@ void HumanFistOut::exit(EntityPlayer* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
-
-bool HumanFistOut::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
-
 
 
 //
@@ -273,7 +191,137 @@ void HumanFistIn::exit(EntityPlayer* human)
     human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanFistIn::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
+
+//
+// HumanFistAttackReady
+//
+void HumanFistAttackReady::enter(EntityPlayer* human)
+{
+    human->getAnimator()->pushAnimationFrames(&AnimHumanFistAttackReady::getInstance());
+    human->setStateName("raise right hand");
+}
+
+void HumanFistAttackReady::execute(EntityPlayer* human)
+{
+    int inputMask = human->getInputMask();
+    Vec2 moving = human->getMoving();
+    
+    if ( human->getAnimator()->isQueueEmpty() )
+    {
+        if ( isMasked(inputMask, HumanBehaviorType::ATTACK ) )
+        {
+            human->getFSM()->changeState(&HumanFistAttackHover::getInstance());
+        }
+        else
+        {
+            human->getFSM()->changeState(&HumanFistAttackRelease::getInstance());
+        }
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    else human->setVelocity( Vec2::ZERO );
+}
+
+void HumanFistAttackReady::exit(EntityPlayer* human)
+{
+    human->getAnimator()->clearFrameQueue();
+}
+
+
+//
+// HumanFistAttackRelease
+//
+void HumanFistAttackRelease::enter(EntityPlayer* human)
+{
+    human->getAnimator()->pushAnimationFrames(&AnimHumanFistAttackRelease::getInstance());
+    human->setStateName("take down right hand");
+}
+
+void HumanFistAttackRelease::execute(EntityPlayer* human)
+{
+    int inputMask = human->getInputMask();
+    Vec2 moving = human->getMoving();
+    
+    if ( human->getAnimator()->isQueueEmpty() )
+    {
+        human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    else human->setVelocity( Vec2::ZERO );
+}
+
+void HumanFistAttackRelease::exit(EntityPlayer* human)
+{
+    human->getAnimator()->clearFrameQueue();
+}
+
+
+//
+// HumanFistAttackHover
+//
+void HumanFistAttackHover::enter(EntityPlayer* human)
+{
+    human->getAnimator()->pushAnimationFrames(&AnimHumanFistAttackHover::getInstance());
+    human->setStateName("attack ready");
+}
+
+void HumanFistAttackHover::execute(EntityPlayer* human)
+{
+    int inputMask = human->getInputMask();
+    Vec2 moving = human->getMoving();
+    
+    if ( human->getAnimator()->isQueueEmpty() )
+    {
+        if ( isMasked(inputMask, HumanBehaviorType::ATTACK ) )
+        {
+            human->getFSM()->changeState(&HumanFistAttackHover::getInstance());
+        }
+    }
+    
+    if ( !isMasked(inputMask, HumanBehaviorType::ATTACK ) )
+    {
+        human->getFSM()->changeState(&HumanFistAttackAction::getInstance());
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    else human->setVelocity( Vec2::ZERO );
+}
+
+void HumanFistAttackHover::exit(EntityPlayer* human)
+{
+    human->getAnimator()->clearFrameQueue();
+}
+
+
+//
+// HumanFistAttackAction
+//
+void HumanFistAttackAction::enter(EntityPlayer* human)
+{
+    human->getAnimator()->pushAnimationFrames(&AnimHumanFistAttackAction::getInstance());
+    human->setStateName("attack");
+}
+
+void HumanFistAttackAction::execute(EntityPlayer* human)
+{
+    int inputMask = human->getInputMask();
+    Vec2 moving = human->getMoving();
+    
+    if ( human->getAnimator()->isQueueEmpty() )
+    {
+        human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    else human->setVelocity( Vec2::ZERO );
+
+}
+
+void HumanFistAttackAction::exit(EntityPlayer* human)
+{
+    human->getAnimator()->clearFrameQueue();
+}
 
 
 

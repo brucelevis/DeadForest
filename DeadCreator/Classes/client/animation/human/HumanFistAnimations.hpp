@@ -101,20 +101,83 @@ namespace realtrick
         };
         
         
-        class AnimHumanFistAttack : public AnimationBase, public Singleton<AnimHumanFistAttack>
+        class AnimHumanFistAttackReady : public AnimationBase, public Singleton<AnimHumanFistAttackReady>
         {
             
         private:
             
-            friend class Singleton<AnimHumanFistAttack>;
-            virtual ~AnimHumanFistAttack() = default;
+            friend class Singleton<AnimHumanFistAttackReady>;
+            virtual ~AnimHumanFistAttackReady() = default;
             
-            AnimHumanFistAttack()
+            AnimHumanFistAttackReady()
             {
                 _startFrame     = 0;
-                _maxFrame       = 10;
-                _fileName       = "HumanFistAttack";
+                _maxFrame       = 5;
+                _fileName       = "HumanFistAttackReady";
                 _priority       = 3;
+                _frameSwapTime  = 0.07f;
+                _isReversePlay  = false;
+            }
+            
+        };
+        
+        
+        class AnimHumanFistAttackRelease : public AnimationBase, public Singleton<AnimHumanFistAttackRelease>
+        {
+            
+        private:
+            
+            friend class Singleton<AnimHumanFistAttackRelease>;
+            virtual ~AnimHumanFistAttackRelease() = default;
+            
+            AnimHumanFistAttackRelease()
+            {
+                _startFrame     = 0;
+                _maxFrame       = 5;
+                _fileName       = "HumanFistAttackReady";
+                _priority       = 3;
+                _frameSwapTime  = 0.07f;
+                _isReversePlay  = true;
+            }
+            
+        };
+        
+        
+        class AnimHumanFistAttackHover : public AnimationBase, public Singleton<AnimHumanFistAttackHover>
+        {
+            
+        private:
+            
+            friend class Singleton<AnimHumanFistAttackHover>;
+            virtual ~AnimHumanFistAttackHover() = default;
+            
+            AnimHumanFistAttackHover()
+            {
+                _startFrame     = 0;
+                _maxFrame       = 2;
+                _fileName       = "HumanFistAttackHover";
+                _priority       = 3;
+                _frameSwapTime  = 0.07f;
+                _isReversePlay  = false;
+            }
+            
+        };
+        
+        
+        class AnimHumanFistAttackAction : public AnimationBase, public Singleton<AnimHumanFistAttackAction>
+        {
+            
+        private:
+            
+            friend class Singleton<AnimHumanFistAttackAction>;
+            virtual ~AnimHumanFistAttackAction() = default;
+            
+            AnimHumanFistAttackAction()
+            {
+                _startFrame     = 0;
+                _maxFrame       = 2;
+                _fileName       = "HumanFistAttackAction";
+                _priority       = 5;
                 _frameSwapTime  = 0.07f;
                 _isReversePlay  = false;
             }

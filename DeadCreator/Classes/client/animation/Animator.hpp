@@ -29,7 +29,6 @@ namespace realtrick
             explicit Animator(cocos2d::Node* owner);
             
             void pushAnimationFrames(AnimationBase* animation);
-            void pushOneFrameUnique(AnimationBase* anim, int index);
             void pushFramesAtoB(AnimationBase* anim,int startIndex, int endIndex);
             
             void processAnimation(float dt);
@@ -41,9 +40,6 @@ namespace realtrick
             
             int getFrameIndex() const;
             void setVisible(bool enable);
-            
-            void enableForceStop(bool enable) { _isForceStopped = enable; }
-            bool isForceStopped() const { return _isForceStopped; }
             
             void setRotation(float rotation);
             void setShadowVisible(bool visible) { _shadowSprite->setVisible(visible); }
@@ -65,8 +61,6 @@ namespace realtrick
             
             std::string                                             _currFrameName;
             int                                                     _currFrame;
-            
-            bool                                                    _isForceStopped;
             
         };
         

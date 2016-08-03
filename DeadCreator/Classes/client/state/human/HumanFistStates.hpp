@@ -22,16 +22,8 @@ namespace realtrick
             virtual void enter(EntityPlayer* human) override;
             virtual void execute(EntityPlayer* human) override;
             virtual void exit(EntityPlayer* human) override;
-            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
-            
-        private:
-            
-            friend Singleton<HumanFistIdleLoop>;
-            HumanFistIdleLoop() = default;
-            virtual ~HumanFistIdleLoop() = default;
             
         };
-        
         
         
         //
@@ -45,16 +37,8 @@ namespace realtrick
             virtual void enter(EntityPlayer* human) override;
             virtual void execute(EntityPlayer* human) override;
             virtual void exit(EntityPlayer* human) override;
-            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
-            
-        private:
-            
-            friend Singleton<HumanFistOut>;
-            HumanFistOut() = default;
-            virtual ~HumanFistOut() = default;
             
         };
-        
         
         
         //
@@ -68,16 +52,8 @@ namespace realtrick
             virtual void enter(EntityPlayer* human) override;
             virtual void execute(EntityPlayer* human) override;
             virtual void exit(EntityPlayer* human) override;
-            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
-            
-        private:
-            
-            friend Singleton<HumanFistIn>;
-            HumanFistIn() = default;
-            virtual ~HumanFistIn() = default;
             
         };
-        
         
         
         //
@@ -91,22 +67,14 @@ namespace realtrick
             virtual void enter(EntityPlayer* human) override;
             virtual void execute(EntityPlayer* human) override;
             virtual void exit(EntityPlayer* human) override;
-            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
-            
-        private:
-            
-            friend Singleton<HumanFistMoveLoop>;
-            HumanFistMoveLoop() = default;
-            virtual ~HumanFistMoveLoop() = default;
             
         };
         
         
-        
         //
-        // HumanFistAttack
+        // HumanFistAttackReady
         //
-        class HumanFistAttack : public State<EntityPlayer>, public Singleton<HumanFistAttack>
+        class HumanFistAttackReady : public State<EntityPlayer>, public Singleton<HumanFistAttackReady>
         {
             
         public:
@@ -114,13 +82,51 @@ namespace realtrick
             virtual void enter(EntityPlayer* human) override;
             virtual void execute(EntityPlayer* human) override;
             virtual void exit(EntityPlayer* human) override;
-            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
             
-        private:
+        };
+        
+        
+        //
+        // HumanFistAttackRelease
+        //
+        class HumanFistAttackRelease : public State<EntityPlayer>, public Singleton<HumanFistAttackRelease>
+        {
             
-            friend Singleton<HumanFistAttack>;
-            HumanFistAttack() = default;
-            virtual ~HumanFistAttack() = default;
+        public:
+            
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            
+        };
+        
+        
+        //
+        // HumanFistAttackHover
+        //
+        class HumanFistAttackHover : public State<EntityPlayer>, public Singleton<HumanFistAttackHover>
+        {
+            
+        public:
+            
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
+            
+        };
+        
+        
+        //
+        // HumanFistAttackAction
+        //
+        class HumanFistAttackAction : public State<EntityPlayer>, public Singleton<HumanFistAttackAction>
+        {
+            
+        public:
+            
+            virtual void enter(EntityPlayer* human) override;
+            virtual void execute(EntityPlayer* human) override;
+            virtual void exit(EntityPlayer* human) override;
             
         };
         

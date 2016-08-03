@@ -99,19 +99,83 @@ namespace realtrick
             
         };
         
-        class AnimHumanM1897Attack : public AnimationBase, public Singleton<AnimHumanM1897Attack>
+        
+        class AnimHumanM1897AttackReady : public AnimationBase, public Singleton<AnimHumanM1897AttackReady>
         {
             
         private:
             
-            friend class Singleton<AnimHumanM1897Attack>;
-            virtual ~AnimHumanM1897Attack() = default;
+            friend class Singleton<AnimHumanM1897AttackReady>;
+            virtual ~AnimHumanM1897AttackReady() = default;
             
-            AnimHumanM1897Attack()
+            AnimHumanM1897AttackReady()
             {
                 _startFrame     = 0;
-                _maxFrame       = 17;
-                _fileName       = "HumanM1897Attack";
+                _maxFrame       = 4;
+                _fileName       = "HumanM1897AttackReady";
+                _priority       = 3;
+                _frameSwapTime  = 0.06f;
+                _isReversePlay  = false;
+            }
+            
+        };
+        
+        
+        class AnimHumanM1897AttackRelease : public AnimationBase, public Singleton<AnimHumanM1897AttackRelease>
+        {
+            
+        private:
+            
+            friend class Singleton<AnimHumanM1897AttackRelease>;
+            virtual ~AnimHumanM1897AttackRelease() = default;
+            
+            AnimHumanM1897AttackRelease()
+            {
+                _startFrame     = 0;
+                _maxFrame       = 4;
+                _fileName       = "HumanM1897AttackReady";
+                _priority       = 3;
+                _frameSwapTime  = 0.06f;
+                _isReversePlay  = true;
+            }
+            
+        };
+        
+        
+        class AnimHumanM1897AttackHover : public AnimationBase, public Singleton<AnimHumanM1897AttackHover>
+        {
+            
+        private:
+            
+            friend class Singleton<AnimHumanM1897AttackHover>;
+            virtual ~AnimHumanM1897AttackHover() = default;
+            
+            AnimHumanM1897AttackHover()
+            {
+                _startFrame     = 0;
+                _maxFrame       = 2;
+                _fileName       = "HumanM1897AttackHover";
+                _priority       = 3;
+                _frameSwapTime  = 0.06f;
+                _isReversePlay  = false;
+            }
+            
+        };
+        
+        
+        class AnimHumanM1897AttackAction : public AnimationBase, public Singleton<AnimHumanM1897AttackAction>
+        {
+            
+        private:
+            
+            friend class Singleton<AnimHumanM1897AttackAction>;
+            virtual ~AnimHumanM1897AttackAction() = default;
+            
+            AnimHumanM1897AttackAction()
+            {
+                _startFrame     = 0;
+                _maxFrame       = 13;
+                _fileName       = "HumanM1897AttackAction";
                 _priority       = 3;
                 _frameSwapTime  = 0.06f;
                 _isReversePlay  = false;

@@ -54,11 +54,9 @@ namespace realtrick
         enum HumanBehaviorType
         {
             NONE                            = 1 << 0,
-            MOVE                            = 1 << 1,
+            ATTACK                          = 1 << 1,
             RUN                             = 1 << 2,
-            ATTACK_BEGAN                    = 1 << 3,
-            ATTACK_ENDED                    = 1 << 4,
-            TURN                            = 1 << 5
+            TURN                            = 1 << 3,
         };
         
         struct ReceiverSenderDamage

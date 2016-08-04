@@ -44,7 +44,6 @@ namespace realtrick
             virtual std::string getSummaryString() const override { return ""; }
             virtual void reset() override {}
             virtual ActionBase* clone() const override { return nullptr; }
-            virtual void deepCopy(TriggerComponentProtocol* copy) override { TriggerComponentProtocol::deepCopy(copy); }
             
             virtual flatbuffers::Offset<DeadCreator::Action> getActionObject(flatbuffers::FlatBufferBuilder& builder) = 0;
             

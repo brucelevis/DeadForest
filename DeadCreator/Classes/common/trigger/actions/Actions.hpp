@@ -10,3 +10,4 @@
 
 #include "ActionDisplayText.hpp"
 #include "ActionPreserveTrigger.hpp"
+#include "ActionKillEntityAtLocation.hpp"

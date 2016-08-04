@@ -115,18 +115,6 @@ namespace realtrick
                 return new ConditionBring(*this);
             }
             
-            virtual void deepCopy(TriggerComponentProtocol* copy) override
-            {
-                ConditionBase::deepCopy(copy);
-                
-                auto p = static_cast<ConditionBring*>(copy);
-                _playerType = p->_playerType;
-                _approximation = p->_approximation;
-                _number = p->_number;
-                _entity = p->_entity;
-                _location = p->_location;
-            }
-            
             virtual flatbuffers::Offset<DeadCreator::Condition> getConditionObject(flatbuffers::FlatBufferBuilder& builder) override
             {
                 auto locationPtr = _location.getLocation();

@@ -63,11 +63,6 @@ namespace realtrick
                 return new ConditionNever(*this);
             }
             
-            virtual void deepCopy(TriggerComponentProtocol* copy) override
-            {
-                ConditionBase::deepCopy(copy);
-            }
-            
             virtual flatbuffers::Offset<DeadCreator::Condition> getConditionObject(flatbuffers::FlatBufferBuilder& builder) override
             {
                 auto obj = DeadCreator::CreateNever(builder);

@@ -416,8 +416,23 @@ namespace DeadCreator {
     }
     
     struct KillEntityAtLocation FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_NUMBERALL = 4,
+            VT_ENTITY_TYPE = 6,
+            VT_PLAYER = 8,
+            VT_LOCATION_NAME = 10
+        };
+        int32_t numberAll() const { return GetField<int32_t>(VT_NUMBERALL, 0); }
+        int32_t entity_type() const { return GetField<int32_t>(VT_ENTITY_TYPE, 0); }
+        int32_t player() const { return GetField<int32_t>(VT_PLAYER, 0); }
+        const flatbuffers::String *location_name() const { return GetPointer<const flatbuffers::String *>(VT_LOCATION_NAME); }
         bool Verify(flatbuffers::Verifier &verifier) const {
             return VerifyTableStart(verifier) &&
+            VerifyField<int32_t>(verifier, VT_NUMBERALL) &&
+            VerifyField<int32_t>(verifier, VT_ENTITY_TYPE) &&
+            VerifyField<int32_t>(verifier, VT_PLAYER) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_LOCATION_NAME) &&
+            verifier.Verify(location_name()) &&
             verifier.EndTable();
         }
     };
@@ -425,16 +440,28 @@ namespace DeadCreator {
     struct KillEntityAtLocationBuilder {
         flatbuffers::FlatBufferBuilder &fbb_;
         flatbuffers::uoffset_t start_;
+        void add_numberAll(int32_t numberAll) { fbb_.AddElement<int32_t>(KillEntityAtLocation::VT_NUMBERALL, numberAll, 0); }
+        void add_entity_type(int32_t entity_type) { fbb_.AddElement<int32_t>(KillEntityAtLocation::VT_ENTITY_TYPE, entity_type, 0); }
+        void add_player(int32_t player) { fbb_.AddElement<int32_t>(KillEntityAtLocation::VT_PLAYER, player, 0); }
+        void add_location_name(flatbuffers::Offset<flatbuffers::String> location_name) { fbb_.AddOffset(KillEntityAtLocation::VT_LOCATION_NAME, location_name); }
         KillEntityAtLocationBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
         KillEntityAtLocationBuilder &operator=(const KillEntityAtLocationBuilder &);
         flatbuffers::Offset<KillEntityAtLocation> Finish() {
-            auto o = flatbuffers::Offset<KillEntityAtLocation>(fbb_.EndTable(start_, 0));
+            auto o = flatbuffers::Offset<KillEntityAtLocation>(fbb_.EndTable(start_, 4));
             return o;
         }
     };
     
-    inline flatbuffers::Offset<KillEntityAtLocation> CreateKillEntityAtLocation(flatbuffers::FlatBufferBuilder &_fbb) {
+    inline flatbuffers::Offset<KillEntityAtLocation> CreateKillEntityAtLocation(flatbuffers::FlatBufferBuilder &_fbb,
+                                                                                int32_t numberAll = 0,
+                                                                                int32_t entity_type = 0,
+                                                                                int32_t player = 0,
+                                                                                flatbuffers::Offset<flatbuffers::String> location_name = 0) {
         KillEntityAtLocationBuilder builder_(_fbb);
+        builder_.add_location_name(location_name);
+        builder_.add_player(player);
+        builder_.add_entity_type(entity_type);
+        builder_.add_numberAll(numberAll);
         return builder_.Finish();
     }
     

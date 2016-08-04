@@ -62,7 +62,6 @@ namespace realtrick
             virtual void drawImGui(void* opt = nullptr) override
             {
                 ImGui::PushStyleColor(ImGuiCol_FrameBg, ImColor(ImVec4(0.85, 0.85, 0.85, 1.00)));
-                ImGui::Text("Display for current player.");
                 if (ImGui::InputText("", _buf.data(), MAX_TEXT_LENGTH))
                 {
                     setParameterName(_buf.data());

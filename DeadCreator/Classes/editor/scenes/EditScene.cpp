@@ -509,15 +509,8 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         condition->setNumber(conditionObject->number());
                         
                         LocationNode* locationPtr = _layer->findLocation(conditionObject->location_name()->str());
-                        if ( locationPtr )
-                        {
-                            condition->setLocation(locationPtr);
-                            newTrigger->addCondition(condition);
-                        }
-                        else
-                        {
-                            CC_SAFE_DELETE(condition);
-                        }
+                        condition->setLocation(locationPtr);
+                        newTrigger->addCondition(condition);
                         
                         break;
                     }
@@ -555,6 +548,25 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     {
                         auto action = new ActionPreserveTrigger();
                         newTrigger->addAction(action);
+                        break;
+                    }
+                    case DeadCreator::ActionBase_KillEntityAtLocation:
+                    {
+                        auto actionObject = static_cast<const DeadCreator::KillEntityAtLocation*>(act->action());
+                        auto action = new ActionKillEntityAtLocation();
+                        
+                        auto numberAll = actionObject->numberAll();
+                        if ( numberAll  == -1 /* all */) action->setNumberAll( { true, 0 } );
+                        else action->setNumberAll( { false, numberAll } );
+                        
+                        action->setEntity(static_cast<EntityType>(actionObject->entity_type()));
+                        action->setPlayerType(static_cast<PlayerType>(actionObject->player()));
+    
+                        LocationNode* locationPtr = _layer->findLocation(actionObject->location_name()->str());
+                        action->setLocation(locationPtr);
+                        
+                        newTrigger->addAction(action);
+                        
                         break;
                     }
                     default: { cocos2d::log("invalid action type"); break;}

@@ -51,7 +51,13 @@ table DisplayText
    text : string;
 }
 table PreserveTrigger{}
-table KillEntityAtLocation{}
+table KillEntityAtLocation
+{
+   numberAll : int;
+   entity_type : int;
+   player : int;
+   location_name : string;
+}
 
 union ConditionBase 
 {

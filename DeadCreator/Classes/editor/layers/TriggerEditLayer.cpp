@@ -71,6 +71,7 @@ bool TriggerEditLayer::init()
     _conditionList.push_back(new ConditionNever());
     
     _actionList.push_back(new ActionDisplayText());
+    _actionList.push_back(new ActionKillEntityAtLocation());
     _actionList.push_back(new ActionPreserveTrigger());
     
     return true;

@@ -80,6 +80,7 @@ namespace realtrick
         CONDITION_ALWAYS,
         CONDITION_NEVER,
         ACTION_DISPLAY_TEXT,
+        ACTION_KILL_ENTITY_AT_LOCATION,
         ACTION_PRESERVE_TRIGGER,
     };
         

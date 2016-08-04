@@ -66,6 +66,17 @@ bool TriggerSystem::initWithResource(GameResource* res)
                 newTrigger->addAction(action);
             }
             
+            else if ( (*act)->type == TriggerComponentType::ACTION_KILL_ENTITY_AT_LOCATION )
+            {
+                auto data = static_cast<ActionKillEntityAtLocationData*>(*act);
+                auto action = ActionKillEntityAtLocation::create(_game,
+                                                                 data->number,
+                                                                 data->entity,
+                                                                 data->player,
+                                                                 data->location);
+                newTrigger->addAction(action);
+            }
+            
         }
         
         int triggerID = getNextValidTriggerID();

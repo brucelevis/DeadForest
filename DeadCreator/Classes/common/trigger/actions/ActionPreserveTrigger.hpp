@@ -52,10 +52,6 @@ namespace realtrick
             
             virtual void reset() override { }
             virtual ActionPreserveTrigger* clone() const override { return new ActionPreserveTrigger(*this); }
-            virtual void deepCopy(TriggerComponentProtocol* copy) override
-            {
-                ActionBase::deepCopy(copy);
-            }
             
             virtual flatbuffers::Offset<DeadCreator::Action> getActionObject(flatbuffers::FlatBufferBuilder& builder) override
             {

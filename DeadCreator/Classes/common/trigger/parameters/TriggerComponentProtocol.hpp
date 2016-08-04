@@ -38,12 +38,6 @@ namespace realtrick
                 _name = rhs._name;
             }
             
-            virtual void deepCopy(TriggerComponentProtocol* copy)
-            {
-                _isSelected = copy->_isSelected;
-                _name = copy->_name;
-            }
-            
             bool& isSelected() { return _isSelected; }
             std::string& name() { return _name; }
             

@@ -39,6 +39,7 @@ namespace realtrick
             virtual bool drawEditMode(void* opt) override
             {
                 ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
+                ImGui::Text("Display for current player.");
                 _text.drawImGui();
                 ImGui::EndChild();
                 
@@ -55,12 +56,6 @@ namespace realtrick
             
             virtual void reset() override { _text.reset(); }
             virtual ActionDisplayText* clone() const override { return new ActionDisplayText(*this); }
-            virtual void deepCopy(TriggerComponentProtocol* copy) override
-            {
-                ActionBase::deepCopy(copy);
-                ActionDisplayText* p = static_cast<ActionDisplayText*>(copy);
-                _text = p->_text;
-            }
             
             virtual flatbuffers::Offset<DeadCreator::Action> getActionObject(flatbuffers::FlatBufferBuilder& builder) override
             {

@@ -123,7 +123,7 @@ bool GameResource::initGMXFile(const std::string& path)
                     {
                         auto conditionObject = static_cast<const DeadCreator::Bring*>(cond->condition());
                         
-                        ConditionBringData* condition = new ConditionBringData();
+                        auto condition = new ConditionBringData();
                         condition->player = static_cast<PlayerType>(conditionObject->player());
                         condition->approximation = static_cast<ApproximationType>(conditionObject->approximation());
                         condition->number = conditionObject->number();
@@ -134,13 +134,13 @@ bool GameResource::initGMXFile(const std::string& path)
                     }
                     case DeadCreator::ConditionBase_Always:
                     {
-                        ConditionAlwaysData* condition = new ConditionAlwaysData();
+                        auto condition = new ConditionAlwaysData();
                         data.conditions.push_back(condition);
                         break;
                     }
                     case DeadCreator::ConditionBase_Never:
                     {
-                        ConditionNeverData* condition = new ConditionNeverData();
+                        auto condition = new ConditionNeverData();
                         data.conditions.push_back(condition);
                         break;
                     }
@@ -157,16 +157,29 @@ bool GameResource::initGMXFile(const std::string& path)
                     case DeadCreator::ActionBase_DisplayText:
                     {
                         auto actionObject = static_cast<const DeadCreator::DisplayText*>(act->action());
-                        
-                        auto* action = new ActionDisplayTextData();
+                        auto action = new ActionDisplayTextData();
                         action->text = actionObject->text()->str();
                         data.actions.push_back(action);
+                        
                         break;
                     }
                     case DeadCreator::ActionBase_PreserveTrigger:
                     {
                         auto action = new ActionPreserveTriggerData();
                         data.actions.push_back(action);
+                        
+                        break;
+                    }
+                    case DeadCreator::ActionBase_KillEntityAtLocation:
+                    {
+                        auto actionObject = static_cast<const DeadCreator::KillEntityAtLocation*>(act->action());
+                        auto action = new ActionKillEntityAtLocationData();
+                        action->number = actionObject->numberAll();
+                        action->entity = static_cast<EntityType>(actionObject->entity_type());
+                        action->player = static_cast<PlayerType>(actionObject->player());
+                        action->location = _locations.at(actionObject->location_name()->str());
+                        data.actions.push_back(action);
+                        
                         break;
                     }
                     default: { cocos2d::log("invalid action type"); break;}

@@ -9,3 +9,4 @@
 #pragma once
 
 #include "ActionDisplayText.hpp"
+#include "ActionPreserveTrigger.hpp"

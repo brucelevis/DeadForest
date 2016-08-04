@@ -20,8 +20,6 @@ struct Size
 
 enum Approximation : int { AtLeast = 0, AtMost, Exactly }
 enum TileType : int { Dirt = 0, Grass, Water, Hill }
-union ConditionBase { Bring }
-union ActionBase { DisplayText }
  
 table TileInfo
 {
@@ -36,6 +34,9 @@ table Location
    pos : Vector2;
 }
 
+table Always{}
+table Never{}
+table Command{}
 table Bring
 {
    player : int;
@@ -48,6 +49,23 @@ table Bring
 table DisplayText
 {
    text : string;
+}
+table PreserveTrigger{}
+table KillEntityAtLocation{}
+
+union ConditionBase 
+{
+   Always,
+   Never,
+   Command,
+   Bring
+}
+
+union ActionBase 
+{ 
+   DisplayText,
+   PreserveTrigger,
+   KillEntityAtLocation
 }
 
 table Condition 

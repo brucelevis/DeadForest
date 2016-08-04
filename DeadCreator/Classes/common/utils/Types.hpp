@@ -77,7 +77,10 @@ namespace realtrick
     enum class TriggerComponentType : int
     {
         CONDITION_BRING,
+        CONDITION_ALWAYS,
+        CONDITION_NEVER,
         ACTION_DISPLAY_TEXT,
+        ACTION_PRESERVE_TRIGGER,
     };
         
     struct EntityData

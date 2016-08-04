@@ -123,16 +123,28 @@ bool GameResource::initGMXFile(const std::string& path)
                     {
                         auto conditionObject = static_cast<const DeadCreator::Bring*>(cond->condition());
                         
-                        ConditionBringData* conditionBring = new ConditionBringData();
-                        conditionBring->player = static_cast<PlayerType>(conditionObject->player());
-                        conditionBring->approximation = static_cast<ApproximationType>(conditionObject->approximation());
-                        conditionBring->number = conditionObject->number();
-                        conditionBring->entity = static_cast<EntityType>(conditionObject->entity_type());
-                        conditionBring->location = _locations.at(conditionObject->location_name()->str());
-                        
-                        data.conditions.push_back(conditionBring);
+                        ConditionBringData* condition = new ConditionBringData();
+                        condition->player = static_cast<PlayerType>(conditionObject->player());
+                        condition->approximation = static_cast<ApproximationType>(conditionObject->approximation());
+                        condition->number = conditionObject->number();
+                        condition->entity = static_cast<EntityType>(conditionObject->entity_type());
+                        condition->location = _locations.at(conditionObject->location_name()->str());
+                        data.conditions.push_back(condition);
                         break;
                     }
+                    case DeadCreator::ConditionBase_Always:
+                    {
+                        ConditionAlwaysData* condition = new ConditionAlwaysData();
+                        data.conditions.push_back(condition);
+                        break;
+                    }
+                    case DeadCreator::ConditionBase_Never:
+                    {
+                        ConditionNeverData* condition = new ConditionNeverData();
+                        data.conditions.push_back(condition);
+                        break;
+                    }
+                        
                     default: { cocos2d::log("invalid condition type"); break;}
                 }
             }
@@ -146,10 +158,15 @@ bool GameResource::initGMXFile(const std::string& path)
                     {
                         auto actionObject = static_cast<const DeadCreator::DisplayText*>(act->action());
                         
-                        ActionDisplayTextData* actionDisplayText = new ActionDisplayTextData();
-                        actionDisplayText->text = actionObject->text()->str();
-                        
-                        data.actions.push_back(actionDisplayText);
+                        auto* action = new ActionDisplayTextData();
+                        action->text = actionObject->text()->str();
+                        data.actions.push_back(action);
+                        break;
+                    }
+                    case DeadCreator::ActionBase_PreserveTrigger:
+                    {
+                        auto action = new ActionPreserveTriggerData();
+                        data.actions.push_back(action);
                         break;
                     }
                     default: { cocos2d::log("invalid action type"); break;}

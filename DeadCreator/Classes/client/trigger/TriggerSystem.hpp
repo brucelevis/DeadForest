@@ -28,7 +28,7 @@ namespace realtrick
             
         public:
             
-            explicit TriggerSystem(Game* game) : _game(game)
+            explicit TriggerSystem(Game* game) : _game(game), _isRemoveListDirty(false)
             {}
             virtual ~TriggerSystem() = default;
             
@@ -55,6 +55,7 @@ namespace realtrick
             Game* _game;
             cocos2d::Map<int, GameTrigger*> _triggers;
             std::vector<int> _removeIDList;
+            bool _isRemoveListDirty;
             
         };
         

@@ -66,8 +66,12 @@ bool TriggerEditLayer::init()
     _isSelectedPlayer[0] = true;
     _selectedPlayer = 0;
     
+    _conditionList.push_back(new ConditionAlways());
     _conditionList.push_back(new ConditionBring());
+    _conditionList.push_back(new ConditionNever());
+    
     _actionList.push_back(new ActionDisplayText());
+    _actionList.push_back(new ActionPreserveTrigger());
     
     return true;
 }

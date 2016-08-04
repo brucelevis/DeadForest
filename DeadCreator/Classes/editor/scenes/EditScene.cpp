@@ -502,23 +502,35 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     case DeadCreator::ConditionBase_Bring:
                     {
                         auto conditionObject = static_cast<const DeadCreator::Bring*>(cond->condition());
-                        auto conditionBring = new ConditionBring();
-                        conditionBring->setPlayerType(static_cast<PlayerType>(conditionObject->player()));
-                        conditionBring->setApproximation(static_cast<ApproximationType>(conditionObject->approximation()));
-                        conditionBring->setEntity(static_cast<EntityType>(conditionObject->entity_type()));
-                        conditionBring->setNumber(conditionObject->number());
+                        auto condition = new ConditionBring();
+                        condition->setPlayerType(static_cast<PlayerType>(conditionObject->player()));
+                        condition->setApproximation(static_cast<ApproximationType>(conditionObject->approximation()));
+                        condition->setEntity(static_cast<EntityType>(conditionObject->entity_type()));
+                        condition->setNumber(conditionObject->number());
                         
                         LocationNode* locationPtr = _layer->findLocation(conditionObject->location_name()->str());
                         if ( locationPtr )
                         {
-                            conditionBring->setLocation(locationPtr);
-                            newTrigger->addCondition(conditionBring);
+                            condition->setLocation(locationPtr);
+                            newTrigger->addCondition(condition);
                         }
                         else
                         {
-                            CC_SAFE_DELETE(conditionBring);
+                            CC_SAFE_DELETE(condition);
                         }
                         
+                        break;
+                    }
+                    case DeadCreator::ConditionBase_Always:
+                    {
+                        auto condition = new ConditionAlways();
+                        newTrigger->addCondition(condition);
+                        break;
+                    }
+                    case DeadCreator::ConditionBase_Never:
+                    {
+                        auto condition = new ConditionNever();
+                        newTrigger->addCondition(condition);
                         break;
                     }
                     default: { cocos2d::log("invalid condition type"); break;}
@@ -534,9 +546,15 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     case DeadCreator::ActionBase_DisplayText:
                     {
                         auto actionObject = static_cast<const DeadCreator::DisplayText*>(act->action());
-                        auto actionDisplayText = new ActionDisplayText();
-                        actionDisplayText->setText(actionObject->text()->str());
-                        newTrigger->addAction(actionDisplayText);
+                        auto action = new ActionDisplayText();
+                        action->setText(actionObject->text()->str());
+                        newTrigger->addAction(action);
+                        break;
+                    }
+                    case DeadCreator::ActionBase_PreserveTrigger:
+                    {
+                        auto action = new ActionPreserveTrigger();
+                        newTrigger->addAction(action);
                         break;
                     }
                     default: { cocos2d::log("invalid action type"); break;}

@@ -17,9 +17,19 @@ namespace DeadCreator {
     
     struct Location;
     
+    struct Always;
+    
+    struct Never;
+    
+    struct Command;
+    
     struct Bring;
     
     struct DisplayText;
+    
+    struct PreserveTrigger;
+    
+    struct KillEntityAtLocation;
     
     struct Condition;
     
@@ -66,13 +76,16 @@ namespace DeadCreator {
     
     enum ConditionBase {
         ConditionBase_NONE = 0,
-        ConditionBase_Bring = 1,
+        ConditionBase_Always = 1,
+        ConditionBase_Never = 2,
+        ConditionBase_Command = 3,
+        ConditionBase_Bring = 4,
         ConditionBase_MIN = ConditionBase_NONE,
         ConditionBase_MAX = ConditionBase_Bring
     };
     
     inline const char **EnumNamesConditionBase() {
-        static const char *names[] = { "NONE", "Bring", nullptr };
+        static const char *names[] = { "NONE", "Always", "Never", "Command", "Bring", nullptr };
         return names;
     }
     
@@ -83,12 +96,14 @@ namespace DeadCreator {
     enum ActionBase {
         ActionBase_NONE = 0,
         ActionBase_DisplayText = 1,
+        ActionBase_PreserveTrigger = 2,
+        ActionBase_KillEntityAtLocation = 3,
         ActionBase_MIN = ActionBase_NONE,
-        ActionBase_MAX = ActionBase_DisplayText
+        ActionBase_MAX = ActionBase_KillEntityAtLocation
     };
     
     inline const char **EnumNamesActionBase() {
-        static const char *names[] = { "NONE", "DisplayText", nullptr };
+        static const char *names[] = { "NONE", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", nullptr };
         return names;
     }
     
@@ -220,6 +235,75 @@ namespace DeadCreator {
         return builder_.Finish();
     }
     
+    struct Always FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct AlwaysBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        AlwaysBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        AlwaysBuilder &operator=(const AlwaysBuilder &);
+        flatbuffers::Offset<Always> Finish() {
+            auto o = flatbuffers::Offset<Always>(fbb_.EndTable(start_, 0));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<Always> CreateAlways(flatbuffers::FlatBufferBuilder &_fbb) {
+        AlwaysBuilder builder_(_fbb);
+        return builder_.Finish();
+    }
+    
+    struct Never FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct NeverBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        NeverBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        NeverBuilder &operator=(const NeverBuilder &);
+        flatbuffers::Offset<Never> Finish() {
+            auto o = flatbuffers::Offset<Never>(fbb_.EndTable(start_, 0));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<Never> CreateNever(flatbuffers::FlatBufferBuilder &_fbb) {
+        NeverBuilder builder_(_fbb);
+        return builder_.Finish();
+    }
+    
+    struct Command FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct CommandBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        CommandBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        CommandBuilder &operator=(const CommandBuilder &);
+        flatbuffers::Offset<Command> Finish() {
+            auto o = flatbuffers::Offset<Command>(fbb_.EndTable(start_, 0));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<Command> CreateCommand(flatbuffers::FlatBufferBuilder &_fbb) {
+        CommandBuilder builder_(_fbb);
+        return builder_.Finish();
+    }
+    
     struct Bring FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
         enum {
             VT_PLAYER = 4,
@@ -305,6 +389,52 @@ namespace DeadCreator {
                                                               flatbuffers::Offset<flatbuffers::String> text = 0) {
         DisplayTextBuilder builder_(_fbb);
         builder_.add_text(text);
+        return builder_.Finish();
+    }
+    
+    struct PreserveTrigger FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct PreserveTriggerBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        PreserveTriggerBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        PreserveTriggerBuilder &operator=(const PreserveTriggerBuilder &);
+        flatbuffers::Offset<PreserveTrigger> Finish() {
+            auto o = flatbuffers::Offset<PreserveTrigger>(fbb_.EndTable(start_, 0));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<PreserveTrigger> CreatePreserveTrigger(flatbuffers::FlatBufferBuilder &_fbb) {
+        PreserveTriggerBuilder builder_(_fbb);
+        return builder_.Finish();
+    }
+    
+    struct KillEntityAtLocation FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct KillEntityAtLocationBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        KillEntityAtLocationBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        KillEntityAtLocationBuilder &operator=(const KillEntityAtLocationBuilder &);
+        flatbuffers::Offset<KillEntityAtLocation> Finish() {
+            auto o = flatbuffers::Offset<KillEntityAtLocation>(fbb_.EndTable(start_, 0));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<KillEntityAtLocation> CreateKillEntityAtLocation(flatbuffers::FlatBufferBuilder &_fbb) {
+        KillEntityAtLocationBuilder builder_(_fbb);
         return builder_.Finish();
     }
     
@@ -599,6 +729,9 @@ namespace DeadCreator {
     inline bool VerifyConditionBase(flatbuffers::Verifier &verifier, const void *union_obj, ConditionBase type) {
         switch (type) {
             case ConditionBase_NONE: return true;
+            case ConditionBase_Always: return verifier.VerifyTable(reinterpret_cast<const Always *>(union_obj));
+            case ConditionBase_Never: return verifier.VerifyTable(reinterpret_cast<const Never *>(union_obj));
+            case ConditionBase_Command: return verifier.VerifyTable(reinterpret_cast<const Command *>(union_obj));
             case ConditionBase_Bring: return verifier.VerifyTable(reinterpret_cast<const Bring *>(union_obj));
             default: return false;
         }
@@ -608,6 +741,8 @@ namespace DeadCreator {
         switch (type) {
             case ActionBase_NONE: return true;
             case ActionBase_DisplayText: return verifier.VerifyTable(reinterpret_cast<const DisplayText *>(union_obj));
+            case ActionBase_PreserveTrigger: return verifier.VerifyTable(reinterpret_cast<const PreserveTrigger *>(union_obj));
+            case ActionBase_KillEntityAtLocation: return verifier.VerifyTable(reinterpret_cast<const KillEntityAtLocation *>(union_obj));
             default: return false;
         }
     }

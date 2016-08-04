@@ -177,6 +177,8 @@ namespace realtrick
             void setTriggerID(int id) { _id = id; }
             int getTriggerID() const { return _id; }
             
+            void setPreserveTrigger(bool enable) { _isPreserveTrigger = enable; }
+            
         private:
             
             Game* _game;

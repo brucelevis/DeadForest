@@ -27,13 +27,26 @@ bool TriggerSystem::initWithResource(GameResource* res)
         {
             if ( (*cond)->type == TriggerComponentType::CONDITION_BRING)
             {
-                auto bringData = static_cast<ConditionBringData*>(*cond);
-                auto conditionBring = ConditionBring::create(_game, bringData->player,
-                                                             bringData->approximation,
-                                                             bringData->number,
-                                                             bringData->entity,
-                                                             bringData->location);
-                newTrigger->addCondition(conditionBring);
+                auto data = static_cast<ConditionBringData*>(*cond);
+                auto condition = ConditionBring::create(_game,
+                                                        data->player,
+                                                        data->approximation,
+                                                        data->number,
+                                                        data->entity,
+                                                        data->location);
+                newTrigger->addCondition(condition);
+            }
+            
+            else if ( (*cond)->type == TriggerComponentType::CONDITION_ALWAYS)
+            {
+                auto condition = ConditionAlways::create(_game);
+                newTrigger->addCondition(condition);
+            }
+            
+            else if ( (*cond)->type == TriggerComponentType::CONDITION_NEVER)
+            {
+                auto condition = ConditionNever::create(_game);
+                newTrigger->addCondition(condition);
             }
         }
         
@@ -42,10 +55,17 @@ bool TriggerSystem::initWithResource(GameResource* res)
         {
             if ( (*act)->type == TriggerComponentType::ACTION_DISPLAY_TEXT)
             {
-                auto displayData = static_cast<ActionDisplayTextData*>(*act);
-                auto displayObj = ActionDisplayText::create(_game, displayData->text);
-                newTrigger->addAction(displayObj);
+                auto data = static_cast<ActionDisplayTextData*>(*act);
+                auto action = ActionDisplayText::create(_game, data->text);
+                newTrigger->addAction(action);
             }
+            
+            else if ( (*act)->type == TriggerComponentType::ACTION_PRESERVE_TRIGGER)
+            {
+                auto action = ActionPreserveTrigger::create(_game);
+                newTrigger->addAction(action);
+            }
+            
         }
         
         int triggerID = getNextValidTriggerID();
@@ -67,9 +87,14 @@ void TriggerSystem::update(float dt)
         }
     }
     
-    for( auto& removeID : _removeIDList )
+    if ( _isRemoveListDirty )
     {
-        _triggers.erase(removeID);
+        for( auto& removeID : _removeIDList )
+        {
+            _triggers.erase(removeID);
+        }
+        _removeIDList.clear();
+        _isRemoveListDirty = false;
     }
 }
 
@@ -77,6 +102,7 @@ void TriggerSystem::update(float dt)
 void TriggerSystem::removeTrigger(GameTrigger* trigger)
 {
     _removeIDList.push_back(trigger->getTriggerID());
+    _isRemoveListDirty = true;
 }
 
 

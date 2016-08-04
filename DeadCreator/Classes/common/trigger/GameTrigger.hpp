@@ -120,7 +120,7 @@ namespace realtrick
             std::vector<int> getSelectedPlayers() const
             {
                 std::vector<int> ret;
-                for(int i = 0 ; i < 8 ; ++i) if ( isPlayerSelected[i] ) ret.push_back(i);
+                for(int i = 0 ; i < 8 ; ++i) if ( isPlayerSelected[i] ) ret.push_back(i + 1);
                 return ret;
             }
             
@@ -141,7 +141,9 @@ namespace realtrick
         public:
             
             explicit GameTrigger(Game* game) :
-            _game(game)
+            _game(game),
+            _id(-1),
+            _isPreserveTrigger(false)
             {}
             virtual ~GameTrigger() {}
             
@@ -162,22 +164,8 @@ namespace realtrick
                 return true;
             }
             
-            bool isReady()
-            {
-                for (auto& cond : _conditions)
-                {
-                    if ( !cond->isReady() ) return false;
-                }
-                return true;
-            }
-            
-            void doAction()
-            {
-                for(auto& act : _actions)
-                {
-                    act->doAction();
-                }
-            }
+            bool isReady();
+            void doAction();
             
             void addPlayer(int player) { _players.set(player); }
             void addCondition(ConditionBase* condition) { condition->setOwner(this); _conditions.pushBack(condition); }
@@ -186,13 +174,19 @@ namespace realtrick
             Game* getGame() const { return _game; }
             std::bitset<9> getPlayers() const { return _players; }
             
+            void setTriggerID(int id) { _id = id; }
+            int getTriggerID() const { return _id; }
+            
         private:
             
             Game* _game;
+            int _id;
+            bool _isPreserveTrigger;
             
             std::bitset<9> _players;
             cocos2d::Vector<ConditionBase*> _conditions;
             cocos2d::Vector<ActionBase*> _actions;
+            
             
         };
         

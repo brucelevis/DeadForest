@@ -46,23 +46,15 @@ namespace realtrick
             
             bool initWithResource(GameResource* res);
             
-            void update(float dt)
-            {
-                for (auto& trigger : _triggers)
-                {
-                    if ( trigger->isReady() )
-                    {
-                        trigger->doAction();
-                    }
-                }
-            }
-            
-            void addTrigger(GameTrigger* trigger) { _triggers.pushBack(trigger); }
+            void removeTrigger(GameTrigger* trigger);
+            void update(float dt);
+            int getNextValidTriggerID() { static int nextValidID = 0; return nextValidID++; }
             
         private:
             
             Game* _game;
-            cocos2d::Vector<GameTrigger*> _triggers;
+            cocos2d::Map<int, GameTrigger*> _triggers;
+            std::vector<int> _removeIDList;
             
         };
         

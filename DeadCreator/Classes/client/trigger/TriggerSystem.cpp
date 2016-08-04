@@ -48,10 +48,35 @@ bool TriggerSystem::initWithResource(GameResource* res)
             }
         }
         
-        _triggers.pushBack(newTrigger);
+        int triggerID = getNextValidTriggerID();
+        newTrigger->setTriggerID(triggerID);
+        _triggers.insert(triggerID, newTrigger);
     }
     
     return true;
+}
+
+
+void TriggerSystem::update(float dt)
+{
+    for (auto& trigger : _triggers)
+    {
+        if ( trigger.second->isReady() )
+        {
+            trigger.second->doAction();
+        }
+    }
+    
+    for( auto& removeID : _removeIDList )
+    {
+        _triggers.erase(removeID);
+    }
+}
+
+
+void TriggerSystem::removeTrigger(GameTrigger* trigger)
+{
+    _removeIDList.push_back(trigger->getTriggerID());
 }
 
 

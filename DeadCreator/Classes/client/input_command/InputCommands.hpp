@@ -12,4 +12,6 @@
 #include "InputMoveEnd.hpp"
 #include "InputAttackBegin.hpp"
 #include "InputAttackEnd.hpp"
-#include "InputRotated.hpp"
+#include "InputBezelBegin.hpp"
+#include "InputBezelEnd.hpp"
+#include "InputReload.hpp"

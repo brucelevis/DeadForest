@@ -490,7 +490,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
             // set players
             for(auto index = trigger->players()->begin(); index != trigger->players()->end(); ++index)
             {
-                newTrigger->isPlayerSelected[*index] = true;
+                newTrigger->isPlayerSelected[*index - 1] = true;
             }
             
             // set conditions

@@ -1,0 +1,62 @@
+//
+//  InputReload.hpp
+//  DeadCreator
+//
+//  Created by mac on 2016. 8. 4..
+//
+//
+
+#pragma once
+
+#include "cocos2d.h"
+
+#include "InputCommandBase.hpp"
+#include "EntityPlayer.hpp"
+#include "WeaponBase.hpp"
+
+namespace realtrick
+{
+    namespace client
+    {
+    
+        class InputReload : public InputCommandBase
+        {
+            
+        public:
+            
+            InputReload(EntityPlayer* player) :
+            _player(player)
+            {
+                
+            }
+            virtual ~InputReload() = default;
+            
+            virtual void execute() override
+            {
+                WeaponBase* equipedWeapon = _player->getEquipedWeapon();
+                
+                if ( equipedWeapon != nullptr &&
+                    equipedWeapon->getEntityType() != EntityType::ITEM_AXE )
+                {
+                    equipedWeapon->reload();
+                }
+
+            }
+            
+        private:
+            
+            EntityPlayer* _player;
+            
+        };
+        
+    }
+}
+
+
+
+
+
+
+
+
+

@@ -47,7 +47,7 @@ namespace realtrick
             
         private:
             
-            void _discharge(const std::string& msg);
+            void discharge(const std::string& msg);
             void update(float dt) override;
             
         private:

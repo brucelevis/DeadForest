@@ -79,11 +79,7 @@ namespace realtrick
             
             void setPlayerType(PlayerType type) { _playerType = type; }
             PlayerType getPlayerType() const { return _playerType; }
-            
-            void setSelected(bool enable)
-            {
-                if ( _selectedCircle ) _selectedCircle->setVisible(enable);
-            }
+            void setSelected(bool enable) { if ( _selectedCircle ) _selectedCircle->setVisible(enable); }
             
             EntityType getEntityType() const { return _type; }
             
@@ -94,7 +90,7 @@ namespace realtrick
                 if ( isFirstCall )
                 {
                     table[EntityType::ENTITY_PLAYER] = EntityData(EntityType::ENTITY_PLAYER, PaletteType::HUMAN, "Sheriff", "sheriff.png");
-                    table[EntityType::ENTITY_ZOMBIE] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::HUMAN, "Zombie", "zombie.png");
+                    table[EntityType::ENTITY_ZOMBIE] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::HUMAN, "Zombie", "zombie2.png");
                     table[EntityType::ITEM_M16A2] = EntityData(EntityType::ITEM_M16A2, PaletteType::ITEM, "M16A2", "M16A2.png");
                     table[EntityType::ITEM_M1897] = EntityData(EntityType::ITEM_M1897, PaletteType::ITEM,"M1897", "M1897.png");
                     table[EntityType::ITEM_GLOCK17] = EntityData(EntityType::ITEM_GLOCK17, PaletteType::ITEM,"Glock17", "Glock17.png");

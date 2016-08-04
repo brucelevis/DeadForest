@@ -1,5 +1,5 @@
 //
-//  InputAttackEnd.hpp
+//  InputBezelEnd.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 8. 4..
@@ -17,21 +17,21 @@ namespace realtrick
     namespace client
     {
         
-        class InputAttackEnd : public InputCommandBase
+        class InputBezelEnd : public InputCommandBase
         {
             
         public:
             
-            explicit InputAttackEnd(HumanBase* human) :
+            explicit InputBezelEnd(HumanBase* human) :
             _human(human)
             {
                 
             }
-            virtual ~InputAttackEnd() = default;
+            virtual ~InputBezelEnd() = default;
             
             virtual void execute() override
             {
-                _human->removeInputMask(HumanBehaviorType::ATTACK);
+                _human->removeInputMask(HumanBehaviorType::TURN);
             }
             
         private:
@@ -42,3 +42,12 @@ namespace realtrick
         
     }
 }
+
+
+
+
+
+
+
+
+

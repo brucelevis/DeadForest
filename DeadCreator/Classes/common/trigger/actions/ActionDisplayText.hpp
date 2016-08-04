@@ -116,8 +116,9 @@ namespace realtrick
                 return true;
             }
             
-            virtual void doAction() override
+            virtual void doAction()
             {
+                _game->addLog(cocos2d::StringUtils::format("display text: \"%s\"", _params.text.c_str()));
             }
             
         private:

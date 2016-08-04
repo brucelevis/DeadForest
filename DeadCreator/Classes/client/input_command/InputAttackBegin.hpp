@@ -1,5 +1,5 @@
 //
-//  InputMoveBegin.hpp
+//  InputAttackBegin.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 8. 4..
@@ -17,31 +17,37 @@ namespace realtrick
     namespace client
     {
         
-        class InputMoveBegin : public InputCommandBase
+        class InputAttackBegin : public InputCommandBase
         {
-          
+            
         public:
             
-            InputMoveBegin(HumanBase* human, const cocos2d::Vec2& dir) :
-            _human(human),
-            _moveDir(dir)
+            explicit InputAttackBegin(HumanBase* human) :
+            _human(human)
             {
                 
             }
-            virtual ~InputMoveBegin() = default;
+            virtual ~InputAttackBegin() = default;
             
             virtual void execute() override
             {
-                _human->addInputMask(HumanBehaviorType::RUN);
-                _human->setMoving(_moveDir);
+                _human->addInputMask(HumanBehaviorType::ATTACK);
             }
             
         private:
             
             HumanBase* _human;
-            cocos2d::Vec2 _moveDir;
             
         };
         
     }
 }
+
+
+
+
+
+
+
+
+

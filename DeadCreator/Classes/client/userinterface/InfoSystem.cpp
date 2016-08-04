@@ -65,7 +65,7 @@ void InfoSystem::pushMessage(const std::string& msg)
     std::chrono::duration<double> curr = std::chrono::system_clock::now().time_since_epoch();
     if ( curr  > _lastTime )
     {
-        _discharge(msg);
+        discharge(msg);
         _lastTime = curr;
     }
     else
@@ -80,7 +80,7 @@ void InfoSystem::pushMessage(const std::string& msg)
 }
 
 
-void InfoSystem::_discharge(const std::string& msg)
+void InfoSystem::discharge(const std::string& msg)
 {
     ui::Text* newLine = ui::Text::create(msg, _fontFilePath, _fontSize);
     newLine->setColor(_fontColor);
@@ -121,7 +121,7 @@ void InfoSystem::update(float dt)
            (_pq.top().dispatchTime >= std::chrono::duration<double>::zero()) )
     {
         const InfoWithTime& info = _pq.top();
-        _discharge(info.msg);
+        discharge(info.msg);
         _pq.pop();
     }
 }

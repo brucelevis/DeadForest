@@ -109,7 +109,9 @@ bool GameResource::initGMXFile(const std::string& path)
             
             // set players
             for(auto index = trigger->players()->begin(); index != trigger->players()->end(); ++index)
+            {
                 data.players.push_back(*index);
+            }
             
             // set conditions
             for(auto cond = trigger->conditions()->begin() ; cond != trigger->conditions()->end(); ++cond)

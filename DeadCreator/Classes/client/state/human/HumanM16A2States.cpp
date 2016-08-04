@@ -77,12 +77,12 @@ void HumanM16A2IdleLoop::execute(EntityPlayer* human)
         human->setVelocity( moving * human->getWalkSpeed() );
     }
     
-    if ( inputMask == HumanBehaviorType::RUN )
+    if ( inputMask == HumanBehaviorType::MOVE )
     {
         human->getFSM()->changeState(&HumanM16A2MoveLoop::getInstance());
     }
     
-    if ( !isMasked(inputMask, HumanBehaviorType::RUN) )
+    if ( !isMasked(inputMask, HumanBehaviorType::MOVE) )
     {
         human->setVelocity( Vec2::ZERO );
     }
@@ -136,7 +136,7 @@ void HumanM16A2MoveLoop::execute(EntityPlayer* human)
         }
     }
     
-    if ( inputMask == HumanBehaviorType::RUN )
+    if ( inputMask == HumanBehaviorType::MOVE )
     {
         human->setVelocity( moving * human->getRunSpeed() );
         if( moving != Vec2::ZERO ) human->setTargetHeading(moving);
@@ -201,7 +201,7 @@ void HumanM16A2Attack::execute(EntityPlayer* human)
         human->getFSM()->changeState(&HumanM16A2IdleLoop::getInstance());
     }
     
-    if( isMasked(inputMask, HumanBehaviorType::RUN) )
+    if( isMasked(inputMask, HumanBehaviorType::MOVE) )
     {
         human->setVelocity( moving * human->getWalkSpeed() );
     }
@@ -255,7 +255,7 @@ void HumanM16A2Reload::execute(EntityPlayer* human)
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
     
-    if( isMasked(inputMask, HumanBehaviorType::RUN) )
+    if( isMasked(inputMask, HumanBehaviorType::MOVE) )
     {
         human->setVelocity( moving * human->getWalkSpeed() );
     }
@@ -300,7 +300,7 @@ void HumanM16A2Out::execute(EntityPlayer* human)
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
     
-    if( isMasked(inputMask, HumanBehaviorType::RUN) )
+    if( isMasked(inputMask, HumanBehaviorType::MOVE) )
     {
         human->setVelocity( moving * human->getWalkSpeed() );
     }
@@ -345,7 +345,7 @@ void HumanM16A2In::execute(EntityPlayer* human)
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
     
-    if( isMasked(inputMask, HumanBehaviorType::RUN) )
+    if( isMasked(inputMask, HumanBehaviorType::MOVE) )
     {
         human->setVelocity( moving * human->getWalkSpeed() );
     }

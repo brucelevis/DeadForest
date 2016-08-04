@@ -1,5 +1,5 @@
 //
-//  InputMoveEnd.hpp
+//  InputRotated.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 8. 4..
@@ -17,28 +17,40 @@ namespace realtrick
     namespace client
     {
         
-        class InputMoveEnd : public InputCommandBase
+        class InputBezelBegin : public InputCommandBase
         {
             
         public:
             
-            explicit InputMoveEnd(HumanBase* human) :
+            InputBezelBegin(HumanBase* human, const cocos2d::Vec2& dir) :
+            _rotateDir(dir),
             _human(human)
             {
                 
             }
-            virtual ~InputMoveEnd() = default;
+            virtual ~InputBezelBegin() = default;
             
             virtual void execute() override
             {
-                _human->removeInputMask(HumanBehaviorType::RUN);
+                _human->setTargetHeading(_rotateDir);
+                _human->addInputMask(HumanBehaviorType::TURN);
             }
             
         private:
             
             HumanBase* _human;
+            cocos2d::Vec2 _rotateDir;
             
         };
         
     }
 }
+
+
+
+
+
+
+
+
+

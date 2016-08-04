@@ -23,8 +23,7 @@ namespace realtrick
             
         public:
             
-            typedef std::function<void(cocos2d::Ref*, const cocos2d::Vec2&)> ccTriggerCallback;
-            typedef std::function<void(cocos2d::Ref*, cocos2d::ui::Widget::TouchEventType)> ccClickedCallback;
+            typedef std::function<void(cocos2d::Ref*, const cocos2d::Vec2&, cocos2d::ui::Widget::TouchEventType)> ccTriggerCallback;
             
         public:
             
@@ -35,7 +34,6 @@ namespace realtrick
             static CircularBezel* create(const char* bezelImagePath, cocos2d::ui::Widget::TextureResType type = cocos2d::ui::Widget::TextureResType::LOCAL);
             
             void addTriggerCallback(const ccTriggerCallback& callback) { _triggerCallback = callback; }
-            void addClickedCallback(const ccClickedCallback& callback) { _clickedCallback = callback; }
             void setTriggerDegree(const std::pair<float, float>& min_max ) { _minTriggerDeg = min_max.first; _maxTriggerDeg = min_max.second; }
             
             std::pair<float,float> getTriggerDegree() const { return std::make_pair(_minTriggerDeg, _maxTriggerDeg); }
@@ -108,7 +106,6 @@ namespace realtrick
             float                                   _maximumTriggerRadius;
             
             ccTriggerCallback                       _triggerCallback;
-            ccClickedCallback                       _clickedCallback;
             
             int                                     _precision;
             bool                                    _isBezelMode;

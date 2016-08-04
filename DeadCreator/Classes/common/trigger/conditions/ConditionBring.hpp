@@ -210,10 +210,9 @@ namespace realtrick
             
             virtual bool isReady() override
             {
-                
                 if ( _params.player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
                 else _maskedPlayer.set(static_cast<int>(_params.player));
-                
+                    
                 const auto& entities = _game->getEntityManager()->getEntities();
                 
                 // 플레이어 타입인지 체크. (o)
@@ -226,30 +225,18 @@ namespace realtrick
                     auto entity = ent.second;
                     int player = static_cast<int>(entity->getPlayerType());
                     
-                    if (_maskedPlayer[player] &&
+                    if ( _maskedPlayer.test(player) &&
                         _params.entity == entity->getEntityType() &&
-                        _params.location.intersectsRect(cocos2d::Rect(entity->getWorldPosition() - cocos2d::Vec2(15, 15), cocos2d::Size(30, 30))) )
+                        _params.location.intersectsCircle(entity->getWorldPosition(), entity->getBoundingRadius()) )
                     {
                         numberOfReadyEntities++;
                     }
                 }
                 
-                if ( _params.approximation == ApproximationType::AT_LEAST && numberOfReadyEntities >= _params.number )
-                {
-                    _game->addLog("condition bring isReady() called. (at least)");
-                    return true;
-                }
-                else if ( _params.approximation == ApproximationType::AT_MOST && numberOfReadyEntities <= _params.number )
-                {
-                    _game->addLog("condition bring isReady() called. (at most)");
-                    return true;
-                }
-                else if ( _params.approximation == ApproximationType::EXACTLY && numberOfReadyEntities == _params.number )
-                {
-                    _game->addLog("condition bring isReady() called. (exactly)");
-                    return true;
-                }
-                
+                if ( _params.approximation == ApproximationType::AT_LEAST && numberOfReadyEntities >= _params.number ) return true;
+                else if ( _params.approximation == ApproximationType::AT_MOST && numberOfReadyEntities <= _params.number ) return true;
+                else if ( _params.approximation == ApproximationType::EXACTLY && numberOfReadyEntities == _params.number ) return true;
+        
                 return false;
             }
             

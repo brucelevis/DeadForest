@@ -205,7 +205,7 @@ void PlayGameLayer::showLayer(bool& opened)
     // setting layer
     if ( _isGameStarted )
     {
-        ImGui::SetNextWindowSize(ImVec2(300, 400), ImGuiSetCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
         ImGui::Begin("setting", NULL, ImGuiWindowFlags_ShowBorders);
         
         if (ImGui::TreeNode("debug"))
@@ -232,8 +232,8 @@ void PlayGameLayer::showLayer(bool& opened)
     {
         auto game = _gameLayer->getGame();
         
-        ImGui::SetNextWindowSize(ImVec2(1000, 200), ImGuiSetCond_Once);
-        ImGui::SetNextWindowPos(ImVec2(30, ImGui::GetIO().DisplaySize.y - 220), ImGuiSetCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(1000, 150), ImGuiSetCond_Once);
+        ImGui::SetNextWindowPos(ImVec2(100, ImGui::GetIO().DisplaySize.y - 200), ImGuiSetCond_Once);
         ImGui::Begin("Console Log", NULL, ImGuiWindowFlags_ShowBorders);
         
         if (ImGui::Button("Clear")) game->clearLogs();

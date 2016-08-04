@@ -102,20 +102,10 @@ bool CircularBezel::init(const char* bezelImagePath, cocos2d::ui::Widget::Textur
                 {
                     _debugNode->drawDot(_oldDirection * kDebugRad, 5.0f, Color4F::RED);
                 }
-                else
-                {
-                    if ( _triggerCallback )
-                    {
-                        _triggerCallback(this, currDirection);
-                    }
-                    
-                    setBezelDirection(_currDirection);
-                }
                 
-                if ( _clickedCallback )
-                {
-                    _clickedCallback(this, ui::Widget::TouchEventType::BEGAN);
-                }
+                if ( _triggerCallback ) _triggerCallback(this, _currDirection, Widget::TouchEventType::BEGAN);
+                
+                setBezelDirection(_currDirection);
                 
                 break;
             }
@@ -144,7 +134,6 @@ bool CircularBezel::init(const char* bezelImagePath, cocos2d::ui::Widget::Textur
                     _debugNode->drawDot(currDirection * kDebugRad, 5.0f, Color4F::GREEN);
                     _debugNode->drawSegment(_oldDirection * kDebugRad, currDirection * kDebugRad, 2.0f, Color4F::WHITE);
                     
-                    
                     float dot = _oldDirection.dot(currDirection);
                     float offsetDeg = MATH_RAD_TO_DEG(acosf(dot));
                     
@@ -159,7 +148,7 @@ bool CircularBezel::init(const char* bezelImagePath, cocos2d::ui::Widget::Textur
                     int multiplier = ((int)distanceFromOrigin / slice);
                     
                     float multiplier2 = (float)multiplier / (_precision - 1);
-                    if ( _precision == 1) multiplier2 = 0;
+                    if ( _precision == 1 ) multiplier2 = 0;
                     
                     _interpolatedTriggerDeg = _maxTriggerDeg - (_maxTriggerDeg - _minTriggerDeg) * multiplier2;
                     
@@ -174,49 +163,35 @@ bool CircularBezel::init(const char* bezelImagePath, cocos2d::ui::Widget::Textur
                         _oldDirection = rotMat.getTransformedVector(_oldDirection);
                         _image->setRotation( _image->getRotation() + _interpolatedTriggerDeg * -multiplier );
                         
-                        if (_triggerCallback )
+                        if ( _triggerCallback )
                         {
                             float rot = -( _image->getRotation() );
-                            _triggerCallback(this, Vec2(cosf(MATH_DEG_TO_RAD(rot)), sinf(MATH_DEG_TO_RAD(rot))));
+                            _triggerCallback(this, Vec2(cosf(MATH_DEG_TO_RAD(rot)), sinf(MATH_DEG_TO_RAD(rot))), Widget::TouchEventType::MOVED);
                         }
                     }
                 }
                 else
                 {
-                    if( _triggerCallback )
-                    {
-                        _triggerCallback(this, currDirection);
-                    }
+                    if ( _triggerCallback ) _triggerCallback(this, _currDirection, Widget::TouchEventType::MOVED);
                     
                     setBezelDirection(_currDirection);
-                }
-                
-                if ( _clickedCallback )
-                {
-                    _clickedCallback(this, ui::Widget::TouchEventType::MOVED);
                 }
                 
                 break;
             }
             case ui::Widget::TouchEventType::ENDED:
             {
-                if ( _clickedCallback )
-                {
-                    _clickedCallback(this, ui::Widget::TouchEventType::ENDED);
-                }
-                
                 _currDirection = Vec2::ZERO;
+                if ( _triggerCallback ) _triggerCallback(this, _currDirection, Widget::TouchEventType::ENDED);
                 
                 break;
             }
             case ui::Widget::TouchEventType::CANCELED:
             {
-                if ( _clickedCallback )
-                {
-                    _clickedCallback(this, ui::Widget::TouchEventType::CANCELED);
-                }
-                
                 _currDirection = Vec2::ZERO;
+                if ( _triggerCallback ) _triggerCallback(this, _currDirection, Widget::TouchEventType::CANCELED);
+                
+                break;
             }
                 
             default: break;
@@ -226,6 +201,7 @@ bool CircularBezel::init(const char* bezelImagePath, cocos2d::ui::Widget::Textur
     
     return true;
 }
+
 
 void CircularBezel::setTriggerRadius(const std::pair<float ,float>& min_max)
 {

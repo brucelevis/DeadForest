@@ -74,7 +74,7 @@ bool UiLayer::init()
         _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data);
         
         // 이동방향과 베젤방향을 동기화 시킨다.
-        if ( _game->getPlayerPtr()->getInputMask() == HumanBehaviorType::RUN ) _bezel->setBezelDirection(data.dir);
+        if ( _game->getPlayerPtr()->getInputMask() == HumanBehaviorType::MOVE ) _bezel->setBezelDirection(data.dir);
         
     });
     addChild(_moveJoystick, Z_ORDER_UI - 1);
@@ -93,27 +93,18 @@ bool UiLayer::init()
     });
     addChild(_attackJoystick, Z_ORDER_UI - 1);
     
-    
     _bezel = CircularBezel::create("wooden_attack_pad.png");
     _bezel->setPosition(Vec2(_winSize.width - joystickPos.x, joystickPos.y));
     _bezel->setTriggerRadius( {40.0f, 250.0f} );
     _bezel->setScale(joystickScale.x, joystickScale.y);
     _bezel->enableBezelMode(false);
-    _bezel->enableDebugNode(false);
-    _bezel->addTriggerCallback([this](Ref* ref, const Vec2& dir) {
+    _bezel->addTriggerCallback([this](Ref* ref, const Vec2& dir, cocos2d::ui::Widget::TouchEventType type) {
         
         BezelDirectionTriggerData data;
         data.ref = ref;
         data.dir = dir;
-        _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
-        
-    });
-    _bezel->addClickedCallback([this](Ref* ref, ui::Widget::TouchEventType type){
-        
-        BezelInputData data;
-        data.ref = ref;
         data.type = type;
-        _game->pushLogic(0.0, MessageType::BEZEL_CLICK_INPUT, &data);
+        _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
         
     });
     addChild(_bezel, Z_ORDER_UI - 1);

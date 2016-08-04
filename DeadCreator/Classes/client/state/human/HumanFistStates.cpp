@@ -46,12 +46,12 @@ void HumanFistIdleLoop::execute(EntityPlayer* human)
         human->setVelocity( moving * human->getWalkSpeed() );
     }
     
-    if ( inputMask == HumanBehaviorType::RUN )
+    if ( inputMask == HumanBehaviorType::MOVE )
     {
         human->getFSM()->changeState(&HumanFistMoveLoop::getInstance());
     }
     
-    if ( !isMasked(inputMask, HumanBehaviorType::RUN) )
+    if ( !isMasked(inputMask, HumanBehaviorType::MOVE) )
     {
         human->setVelocity( Vec2::ZERO );
     }
@@ -92,7 +92,7 @@ void HumanFistMoveLoop::execute(EntityPlayer* human)
         }
     }
     
-    if ( inputMask == HumanBehaviorType::RUN )
+    if ( inputMask == HumanBehaviorType::MOVE )
     {
         human->setVelocity( moving * human->getRunSpeed() );
         if( moving != Vec2::ZERO ) human->setTargetHeading(moving);
@@ -129,7 +129,7 @@ void HumanFistOut::execute(EntityPlayer* human)
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
     
-    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) )
+    if( isMasked(inputMask, (int)HumanBehaviorType::MOVE) )
     {
         human->setVelocity( moving * human->getWalkSpeed() );
     }
@@ -171,7 +171,7 @@ void HumanFistIn::execute(EntityPlayer* human)
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
     
-    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) )
+    if( isMasked(inputMask, (int)HumanBehaviorType::MOVE) )
     {
         human->setVelocity( moving * human->getWalkSpeed() );
     }
@@ -218,7 +218,7 @@ void HumanFistAttackReady::execute(EntityPlayer* human)
         }
     }
     
-    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    if( isMasked(inputMask, (int)HumanBehaviorType::MOVE) ) human->setVelocity( moving * human->getWalkSpeed() );
     else human->setVelocity( Vec2::ZERO );
 }
 
@@ -247,7 +247,7 @@ void HumanFistAttackRelease::execute(EntityPlayer* human)
         human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
     }
     
-    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    if( isMasked(inputMask, (int)HumanBehaviorType::MOVE) ) human->setVelocity( moving * human->getWalkSpeed() );
     else human->setVelocity( Vec2::ZERO );
 }
 
@@ -284,7 +284,7 @@ void HumanFistAttackHover::execute(EntityPlayer* human)
         human->getFSM()->changeState(&HumanFistAttackAction::getInstance());
     }
     
-    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    if( isMasked(inputMask, (int)HumanBehaviorType::MOVE) ) human->setVelocity( moving * human->getWalkSpeed() );
     else human->setVelocity( Vec2::ZERO );
 }
 
@@ -313,7 +313,7 @@ void HumanFistAttackAction::execute(EntityPlayer* human)
         human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
     }
     
-    if( isMasked(inputMask, (int)HumanBehaviorType::RUN) ) human->setVelocity( moving * human->getWalkSpeed() );
+    if( isMasked(inputMask, (int)HumanBehaviorType::MOVE) ) human->setVelocity( moving * human->getWalkSpeed() );
     else human->setVelocity( Vec2::ZERO );
 
 }

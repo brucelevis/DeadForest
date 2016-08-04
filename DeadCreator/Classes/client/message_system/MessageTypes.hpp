@@ -44,7 +44,6 @@ namespace realtrick
             PRESS_RELOAD_BUTTON,
             RELOAD_COMPLETE,
             BEZEL_DIRECTION_TRIGGERED,
-            BEZEL_CLICK_INPUT,
             M16A2_SHOOT,
             CROSS_HAIR_EVENT,
             SHOW_NEXT_FRAME,
@@ -55,7 +54,7 @@ namespace realtrick
         {
             NONE                            = 1 << 0,
             ATTACK                          = 1 << 1,
-            RUN                             = 1 << 2,
+            MOVE                            = 1 << 2,
             TURN                            = 1 << 3,
         };
         
@@ -99,11 +98,6 @@ namespace realtrick
         {
             cocos2d::Ref* ref;
             cocos2d::Vec2 dir;
-        };
-        
-        struct BezelInputData
-        {
-            cocos2d::Ref* ref;
             cocos2d::ui::Widget::TouchEventType type;
         };
         

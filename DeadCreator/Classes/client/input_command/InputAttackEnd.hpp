@@ -1,5 +1,5 @@
 //
-//  InputAttackBegin.hpp
+//  InputAttackEnd.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 8. 4..
@@ -17,21 +17,21 @@ namespace realtrick
     namespace client
     {
         
-        class InputAttackBegin : public InputCommandBase
+        class InputAttackEnd : public InputCommandBase
         {
             
         public:
             
-            explicit InputAttackBegin(HumanBase* human) :
+            explicit InputAttackEnd(HumanBase* human) :
             _human(human)
             {
                 
             }
-            virtual ~InputAttackBegin() = default;
+            virtual ~InputAttackEnd() = default;
             
             virtual void execute() override
             {
-                _human->addInputMask(HumanBehaviorType::ATTACK);
+                _human->removeInputMask(HumanBehaviorType::ATTACK);
             }
             
         private:
@@ -42,3 +42,12 @@ namespace realtrick
         
     }
 }
+
+
+
+
+
+
+
+
+

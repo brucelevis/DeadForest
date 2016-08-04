@@ -62,6 +62,7 @@ namespace realtrick
             EntityManager* getEntityManager() const { return _entityManager; }
             RenderingSystem* getRenderingSysetm() const { return _renderingSystem; }
             CellSpacePartition* getCellSpace() const { return _cellSpace; }
+            TriggerSystem* getTriggerSystem() const { return _triggerSystem; }
             
             // entity helper
             void addEntity(EntityBase* ent, int zOrder = 0);

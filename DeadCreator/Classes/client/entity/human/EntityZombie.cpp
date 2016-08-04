@@ -18,6 +18,7 @@ using namespace cocos2d;
 EntityZombie::EntityZombie(Game* game) : HumanBase(game),
 _FSM(nullptr)
 {
+    setEntityType(EntityType::ENTITY_ZOMBIE);
 }
 
 
@@ -111,6 +112,11 @@ bool EntityZombie::handleMessage(const Telegram& msg)
     return ret;
 }
 
+
+void EntityZombie::suicide()
+{
+    _FSM->changeState(&ZombieDead::getInstance());
+}
 
 
 

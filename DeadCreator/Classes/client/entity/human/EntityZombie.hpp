@@ -31,6 +31,7 @@ namespace realtrick
             StateMachine<EntityZombie>* getFSM() const { return _FSM; }
             
             virtual void update(float dt) override;
+            virtual void suicide() override;
             
         protected:
             

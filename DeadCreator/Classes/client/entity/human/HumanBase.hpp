@@ -37,6 +37,7 @@ namespace realtrick
             virtual bool isIntersectWall(const cocos2d::Vec2& futurePosition, const Polygon& wall);
             virtual void rotateEntity();
             virtual void moveEntity();
+            virtual void suicide() {}
 
             virtual bool handleMessage(const Telegram& msg) override;
         

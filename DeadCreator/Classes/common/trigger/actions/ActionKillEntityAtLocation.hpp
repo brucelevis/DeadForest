@@ -174,7 +174,37 @@ namespace realtrick
             
             virtual void doAction()
             {
-                _game->addLog("kill at location");
+                if ( _params.player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
+                else _maskedPlayer.set(static_cast<int>(_params.player));
+                
+                const auto& entities = _game->getEntityManager()->getEntities();
+                std::vector<EntityBase*> removeList;
+                int numberOfRemoveEntity = 10000; /* all */
+                if ( _params.number != -1 ) numberOfRemoveEntity = _params.number;
+                
+                for( auto& ent : entities)
+                {
+                    auto entity = ent.second;
+                    int player = static_cast<int>(entity->getPlayerType());
+                    
+                    _game->addLog(cocos2d::StringUtils::format("player : %d", player));
+                    _game->addLog(cocos2d::StringUtils::format("entity : %d", static_cast<int>(_params.entity)));
+                    
+                    if ( _maskedPlayer.test(player) &&
+                        _params.entity == entity->getEntityType() &&
+                        numberOfRemoveEntity > 0 &&
+                        _params.location.intersectsCircle(entity->getWorldPosition(), entity->getBoundingRadius()) )
+                    {
+                        removeList.push_back(entity);
+                        --numberOfRemoveEntity;
+                    }
+                }
+                
+                // kill entities
+                for ( auto& ent : removeList )
+                    _game->killEntity(ent);
+                
+                _game->addLog("kill entity at location");
             }
             
         private:

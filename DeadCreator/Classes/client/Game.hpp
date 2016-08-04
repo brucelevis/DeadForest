@@ -69,6 +69,9 @@ namespace realtrick
             void removeEntity(EntityBase* ent);
             EntityPlayer* getPlayerPtr() const;
             
+            void killEntity(EntityBase* ent);
+            
+            
             void loadGMXFile(const std::string& path);
             void loadUiLayer();
             

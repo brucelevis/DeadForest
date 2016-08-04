@@ -164,6 +164,12 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
 }
 
 
+void EntityPlayer::suicide()
+{
+    _FSM->changeState(&HumanBackDeadState::getInstance());
+}
+
+
 
 
 

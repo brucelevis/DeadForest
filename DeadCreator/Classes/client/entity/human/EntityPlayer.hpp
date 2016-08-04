@@ -45,6 +45,7 @@ namespace realtrick
             std::string getUserNickName() const { return _userNickName; }
             
             virtual void update(float dt) override;
+            virtual void suicide() override;
             
         protected:
             

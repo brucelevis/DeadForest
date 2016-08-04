@@ -17,7 +17,7 @@ using namespace realtrick::client;
 
 void HumanBackDeadState::enter(EntityPlayer* human)
 {
-    human->getGame()->sendMessage(5.0f, human, human, MessageType::DIE, nullptr);
+    human->getGame()->sendMessage(cocos2d::random(3.0, 7.0), human, human, MessageType::DIE, nullptr);
     human->setDead();
     
     human->getAnimator()->setShadowVisible(false);

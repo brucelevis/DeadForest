@@ -109,7 +109,7 @@ bool ZombieAttack::onMessage(EntityZombie* zombie, const Telegram& msg)
 //
 void ZombieDead::enter(EntityZombie* zombie)
 {
-    zombie->getGame()->sendMessage(5.0f, zombie, zombie, MessageType::DIE, nullptr);
+    zombie->getGame()->sendMessage(cocos2d::random(3.0, 7.0), zombie, zombie, MessageType::DIE, nullptr);
     zombie->setDead();
     
     zombie->getAnimator()->setShadowVisible(false);

@@ -307,6 +307,20 @@ void Game::removeEntity(EntityBase* ent)
 }
 
 
+void Game::killEntity(EntityBase* ent)
+{
+    if ( isMasked(ent->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+    {
+        auto human = static_cast<HumanBase*>(ent);
+        if ( human->isAlive() ) human->suicide();
+    }
+    else
+    {
+        removeEntity(ent);
+    }
+}
+
+
 TileType Game::getStepOnTileType(const cocos2d::Vec2& pos)
 {
     const auto& tileData = _gameResource->getTileData();

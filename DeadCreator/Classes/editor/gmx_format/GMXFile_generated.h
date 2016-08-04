@@ -13,6 +13,8 @@ namespace DeadCreator {
     
     struct Size;
     
+    struct TileInfo;
+    
     struct Location;
     
     struct Bring;
@@ -24,8 +26,6 @@ namespace DeadCreator {
     struct Action;
     
     struct Trigger;
-    
-    struct TileInfo;
     
     struct Entity;
     
@@ -47,6 +47,22 @@ namespace DeadCreator {
     }
     
     inline const char *EnumNameApproximation(Approximation e) { return EnumNamesApproximation()[static_cast<int>(e)]; }
+    
+    enum TileType {
+        TileType_Dirt = 0,
+        TileType_Grass = 1,
+        TileType_Water = 2,
+        TileType_Hill = 3,
+        TileType_MIN = TileType_Dirt,
+        TileType_MAX = TileType_Hill
+    };
+    
+    inline const char **EnumNamesTileType() {
+        static const char *names[] = { "Dirt", "Grass", "Water", "Hill", nullptr };
+        return names;
+    }
+    
+    inline const char *EnumNameTileType(TileType e) { return EnumNamesTileType()[static_cast<int>(e)]; }
     
     enum ConditionBase {
         ConditionBase_NONE = 0,
@@ -79,22 +95,6 @@ namespace DeadCreator {
     inline const char *EnumNameActionBase(ActionBase e) { return EnumNamesActionBase()[static_cast<int>(e)]; }
     
     inline bool VerifyActionBase(flatbuffers::Verifier &verifier, const void *union_obj, ActionBase type);
-    
-    enum TileType {
-        TileType_Dirt = 0,
-        TileType_Grass = 1,
-        TileType_Water = 2,
-        TileType_Hill = 3,
-        TileType_MIN = TileType_Dirt,
-        TileType_MAX = TileType_Hill
-    };
-    
-    inline const char **EnumNamesTileType() {
-        static const char *names[] = { "Dirt", "Grass", "Water", "Hill", nullptr };
-        return names;
-    }
-    
-    inline const char *EnumNameTileType(TileType e) { return EnumNamesTileType()[static_cast<int>(e)]; }
     
     MANUALLY_ALIGNED_STRUCT(4) Vector2 FLATBUFFERS_FINAL_CLASS {
     private:
@@ -137,6 +137,44 @@ namespace DeadCreator {
         int32_t height() const { return flatbuffers::EndianScalar(height_); }
     };
     STRUCT_END(Size, 8);
+    
+    struct TileInfo FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_NUMBER = 4,
+            VT_INDICES = 6
+        };
+        const flatbuffers::String *number() const { return GetPointer<const flatbuffers::String *>(VT_NUMBER); }
+        const Coord *indices() const { return GetStruct<const Coord *>(VT_INDICES); }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_NUMBER) &&
+            verifier.Verify(number()) &&
+            VerifyField<Coord>(verifier, VT_INDICES) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct TileInfoBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_number(flatbuffers::Offset<flatbuffers::String> number) { fbb_.AddOffset(TileInfo::VT_NUMBER, number); }
+        void add_indices(const Coord *indices) { fbb_.AddStruct(TileInfo::VT_INDICES, indices); }
+        TileInfoBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        TileInfoBuilder &operator=(const TileInfoBuilder &);
+        flatbuffers::Offset<TileInfo> Finish() {
+            auto o = flatbuffers::Offset<TileInfo>(fbb_.EndTable(start_, 2));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<TileInfo> CreateTileInfo(flatbuffers::FlatBufferBuilder &_fbb,
+                                                        flatbuffers::Offset<flatbuffers::String> number = 0,
+                                                        const Coord *indices = 0) {
+        TileInfoBuilder builder_(_fbb);
+        builder_.add_indices(indices);
+        builder_.add_number(number);
+        return builder_.Finish();
+    }
     
     struct Location FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
         enum {
@@ -391,44 +429,6 @@ namespace DeadCreator {
         builder_.add_actions(actions);
         builder_.add_conditions(conditions);
         builder_.add_players(players);
-        return builder_.Finish();
-    }
-    
-    struct TileInfo FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-        enum {
-            VT_NUMBER = 4,
-            VT_INDICES = 6
-        };
-        const flatbuffers::String *number() const { return GetPointer<const flatbuffers::String *>(VT_NUMBER); }
-        const Coord *indices() const { return GetStruct<const Coord *>(VT_INDICES); }
-        bool Verify(flatbuffers::Verifier &verifier) const {
-            return VerifyTableStart(verifier) &&
-            VerifyField<flatbuffers::uoffset_t>(verifier, VT_NUMBER) &&
-            verifier.Verify(number()) &&
-            VerifyField<Coord>(verifier, VT_INDICES) &&
-            verifier.EndTable();
-        }
-    };
-    
-    struct TileInfoBuilder {
-        flatbuffers::FlatBufferBuilder &fbb_;
-        flatbuffers::uoffset_t start_;
-        void add_number(flatbuffers::Offset<flatbuffers::String> number) { fbb_.AddOffset(TileInfo::VT_NUMBER, number); }
-        void add_indices(const Coord *indices) { fbb_.AddStruct(TileInfo::VT_INDICES, indices); }
-        TileInfoBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
-        TileInfoBuilder &operator=(const TileInfoBuilder &);
-        flatbuffers::Offset<TileInfo> Finish() {
-            auto o = flatbuffers::Offset<TileInfo>(fbb_.EndTable(start_, 2));
-            return o;
-        }
-    };
-    
-    inline flatbuffers::Offset<TileInfo> CreateTileInfo(flatbuffers::FlatBufferBuilder &_fbb,
-                                                        flatbuffers::Offset<flatbuffers::String> number = 0,
-                                                        const Coord *indices = 0) {
-        TileInfoBuilder builder_(_fbb);
-        builder_.add_indices(indices);
-        builder_.add_number(number);
         return builder_.Finish();
     }
     

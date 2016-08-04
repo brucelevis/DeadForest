@@ -1,0 +1,99 @@
+namespace DeadCreator;
+
+struct Vector2
+{
+   x : float;
+   y : float;
+}
+
+struct Coord
+{
+   x : int;
+   y : int;
+}
+
+struct Size
+{
+   width : int;
+   height : int;
+}
+
+enum Approximation : int { AtLeast = 0, AtMost, Exactly }
+enum TileType : int { Dirt = 0, Grass, Water, Hill }
+union ConditionBase { Bring }
+union ActionBase { DisplayText }
+ 
+table TileInfo
+{
+   number : string;
+   indices : Coord;
+}
+
+table Location
+{
+   name : string;
+   size : Size;
+   pos : Vector2;
+}
+
+table Bring
+{
+   player : int;
+   approximation : Approximation;
+   number : int;
+   entity_type : int;
+   location_name : string;
+}
+
+table DisplayText
+{
+   text : string;
+}
+
+table Condition 
+{
+   condition : ConditionBase;
+}
+
+table Action
+{
+  action : ActionBase;
+}
+
+table Trigger
+{
+   players : [int];
+   conditions : [Condition];
+   actions: [Action];
+}
+
+table Entity
+{
+   player_type : int;
+   entity_type : int;
+   pos : Vector2;
+}
+
+table Polygon
+{
+   vertices : [Vector2];
+}
+
+table GMXFile
+{
+   default_type : TileType;
+   tiles : [TileInfo];
+   number_of_tiles : Coord;
+   tile_size : Size;
+   collision_regions : [Polygon];
+   entities : [Entity];
+   cell_space_size : Size;
+   locations : [Location];
+   triggers : [Trigger];
+}
+
+root_type GMXFile;
+
+
+
+

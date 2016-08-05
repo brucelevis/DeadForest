@@ -16,7 +16,6 @@ BulletBase::BulletBase(Game* game) : ItemBase(game)
 
 BulletBase::BulletBase(const BulletBase& rhs) : ItemBase(rhs)
 {
-    
 }
 
 BulletBase::~BulletBase()

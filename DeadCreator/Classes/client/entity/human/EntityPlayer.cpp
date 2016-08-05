@@ -112,15 +112,11 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
     else if ( msg.msg  == MessageType::HITTED_BY_GUN )
     {
         ReceiverSenderDamage s = *static_cast<ReceiverSenderDamage*>(msg.extraInfo);
-        int dam = s.damage;
-        this->setBlood( getBlood() - dam );
-        if ( this->getBlood() <= 0 )
-        {
-            this->getFSM()->changeState(&HumanBackDeadState::getInstance());
-        }
+        if ( _blood > 0 ) _blood -= s.damage;
+        if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&HumanBackDeadState::getInstance());
         
-        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1,4)) + ".png"},
-                                                                   random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
+        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1, 5)) + ".png"},
+                                                                   random(5.0f, 10.0f), cocos2d::ui::Widget::TextureResType::PLIST);
         blood->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
                                      getWorldPosition().y + random(-30, 30)));
         blood->setScale(0.2f);
@@ -131,18 +127,13 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
     else if (msg.msg == MessageType::HITTED_BY_AXE )
     {
         ReceiverSenderDamage s = *static_cast<ReceiverSenderDamage*>(msg.extraInfo);
-        int dam = s.damage;
-        this->setBlood( this->getBlood() - dam );
-        
-        if ( this->getBlood() <= 0 )
-        {
-            this->getFSM()->changeState(&HumanBackDeadState::getInstance());
-        }
+        if ( _blood > 0 ) _blood -= s.damage;
+        if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&HumanBackDeadState::getInstance());
         
         for(int i = 0 ; i < 5 ; ++ i)
         {
             AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood1.png"},
-                                                                       random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
+                                                                       random(5.0f, 10.0f), cocos2d::ui::Widget::TextureResType::PLIST);
             blood->setWorldPosition(Vec2(getWorldPosition().x + random(-20, 20),
                                          getWorldPosition().y + random(-20, 20)));
             blood->setScale(0.3f);

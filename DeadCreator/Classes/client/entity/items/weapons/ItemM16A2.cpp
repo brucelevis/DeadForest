@@ -136,12 +136,6 @@ void ItemM16A2::attack()
             s.position = worldPos + shootAt * collider.first;
             s.soundRange = 2000.0f;
             _game->sendMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
-            
-            if ( _owner->getTag() == _game->getPlayerPtr()->getTag() )
-            {
-                // 총쏜사람이 플레이어일 경우 크로스헤어 이벤트를 발동시킨다.
-                _game->sendMessage(0.0, _owner, _owner, MessageType::CROSS_HAIR_EVENT, nullptr);
-            }
         }
     }
    

@@ -231,7 +231,7 @@ namespace realtrick
         private:
             
             ConditionBringData _params;
-            std::bitset<9> _maskedPlayer;
+            std::bitset<30> _maskedPlayer;
             
         };
         

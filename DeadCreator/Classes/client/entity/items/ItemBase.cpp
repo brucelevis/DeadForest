@@ -22,6 +22,7 @@ _inSlotImage(nullptr),
 _texType(ui::Widget::TextureResType::LOCAL)
 {
     ADD_FAMILY_MASK(_familyMask, ITEM_BASE);
+    _playerType = PlayerType::NEUTRAL;
     setBoundingRadius(20.0f);
 }
 

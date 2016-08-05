@@ -172,7 +172,7 @@ namespace realtrick
             void addAction(ActionBase* action) { action->setOwner(this); _actions.pushBack(action); }
             
             Game* getGame() const { return _game; }
-            std::bitset<9> getPlayers() const { return _players; }
+            std::bitset<30> getPlayers() const { return _players; }
             
             void setTriggerID(int id) { _id = id; }
             int getTriggerID() const { return _id; }
@@ -185,7 +185,7 @@ namespace realtrick
             int _id;
             bool _isPreserveTrigger;
             
-            std::bitset<9> _players;
+            std::bitset<30> _players;
             cocos2d::Vector<ConditionBase*> _conditions;
             cocos2d::Vector<ActionBase*> _actions;
             

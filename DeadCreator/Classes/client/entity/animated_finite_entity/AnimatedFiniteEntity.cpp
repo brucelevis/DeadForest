@@ -22,6 +22,7 @@ _deathTime(0.0f),
 _currIdx(0)
 {
     setEntityType(EntityType::ENTITY_FINITE);
+    _playerType = PlayerType::NEUTRAL;
 }
 
 

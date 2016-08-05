@@ -69,14 +69,10 @@ bool EntityZombie::handleMessage(const Telegram& msg)
     if ( msg.msg  == MessageType::HITTED_BY_GUN )
     {
         ReceiverSenderDamage s = *static_cast<ReceiverSenderDamage*>(msg.extraInfo);
-        int dam = s.damage;
-        this->setBlood( getBlood() - dam );
-        if ( this->getBlood() <= 0 )
-        {
-            this->getFSM()->changeState(&ZombieDead::getInstance());
-        }
+        if ( _blood > 0 ) _blood -= s.damage;
+        if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&ZombieDead::getInstance());
         
-        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1,4)) + ".png"},
+        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1, 5)) + ".png"},
                                                                    random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
         blood->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
                                      getWorldPosition().y + random(-30, 30)));
@@ -88,13 +84,9 @@ bool EntityZombie::handleMessage(const Telegram& msg)
     else if (msg.msg == MessageType::HITTED_BY_AXE )
     {
         ReceiverSenderDamage s = *static_cast<ReceiverSenderDamage*>(msg.extraInfo);
-        int dam = s.damage;
-        this->setBlood( this->getBlood() - dam );
+        if ( _blood > 0 ) _blood -= s.damage;
+        if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&ZombieDead::getInstance());
         
-        if ( this->getBlood() <= 0 )
-        {
-            this->getFSM()->changeState(&ZombieDead::getInstance());
-        }
         
         for(int i = 0 ; i < 5 ; ++ i)
         {

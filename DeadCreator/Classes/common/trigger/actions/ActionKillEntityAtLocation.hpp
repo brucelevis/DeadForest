@@ -187,9 +187,6 @@ namespace realtrick
                     auto entity = ent.second;
                     int player = static_cast<int>(entity->getPlayerType());
                     
-                    _game->addLog(cocos2d::StringUtils::format("player : %d", player));
-                    _game->addLog(cocos2d::StringUtils::format("entity : %d", static_cast<int>(_params.entity)));
-                    
                     if ( _maskedPlayer.test(player) &&
                         _params.entity == entity->getEntityType() &&
                         numberOfRemoveEntity > 0 &&

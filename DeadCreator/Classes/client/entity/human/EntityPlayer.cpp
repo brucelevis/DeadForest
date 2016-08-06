@@ -130,15 +130,12 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         if ( _blood > 0 ) _blood -= s.damage;
         if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&HumanBackDeadState::getInstance());
         
-        for(int i = 0 ; i < 5 ; ++ i)
-        {
-            AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood1.png"},
-                                                                       random(5.0f, 10.0f), cocos2d::ui::Widget::TextureResType::PLIST);
-            blood->setWorldPosition(Vec2(getWorldPosition().x + random(-20, 20),
-                                         getWorldPosition().y + random(-20, 20)));
-            blood->setScale(0.3f);
-            _game->addEntity(blood);
-        }
+        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"big_blood.PNG"},
+                                                                   random(5.0f, 10.0f), cocos2d::ui::Widget::TextureResType::PLIST);
+        blood->setScale(0.5f);
+        blood->setWorldPosition(getWorldPosition());
+        blood->setRotation(random(0.0f, 360.f));
+        _game->addEntity(blood);
         
         ret = true;
     }

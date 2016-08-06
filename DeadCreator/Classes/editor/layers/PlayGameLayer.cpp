@@ -22,10 +22,10 @@ void PlayGameLayer::showLayer(bool& opened)
 {
     static bool isStatusOn = true;
     static bool isPlayerInfo = true;
-    static bool isNavGraphOn = true;
-    static bool isCellSpaceOn = true;
-    static bool isPhysicsViewOn = true;
-    static bool isLocationViewOn = true;
+    static bool isNavGraphOn = false;
+    static bool isCellSpaceOn = false;
+    static bool isPhysicsViewOn = false;
+    static bool isLocationViewOn = false;
     
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2  - GAME_SCREEN_WIDTH / 2,
                                    ImGui::GetIO().DisplaySize.y / 2  - GAME_SCREEN_HEIGHT / 2), ImGuiSetCond_Once);

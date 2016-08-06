@@ -88,15 +88,12 @@ bool EntityZombie::handleMessage(const Telegram& msg)
         if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&ZombieDead::getInstance());
         
         
-        for(int i = 0 ; i < 5 ; ++ i)
-        {
-            AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood1.png"},
-                                                                       random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
-            blood->setWorldPosition(Vec2(getWorldPosition().x + random(-20, 20),
-                                         getWorldPosition().y + random(-20, 20)));
-            blood->setScale(0.3f);
-            _game->addEntity(blood);
-        }
+        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"big_blood.PNG"},
+                                                                   random(5.0f, 10.0f), cocos2d::ui::Widget::TextureResType::PLIST);
+        blood->setRotation(random(0.0f, 360.f));
+        blood->setWorldPosition(getWorldPosition());
+        blood->setScale(0.5f);
+        _game->addEntity(blood);
         
         ret = true;
     }

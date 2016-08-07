@@ -381,6 +381,7 @@ void EditScene::createGMXLayer(GMXFile* file)
     _layer = GMXLayer::create(*this, *file);
     addChild(_layer);
     
+    _forceSettingLayer->setGMXLayer(_layer);
     _showGMXLayer = true;
     
     // menu
@@ -447,6 +448,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
         _layer->enableFirstFile(false);
         addChild(_layer);
         
+        _forceSettingLayer->setGMXLayer(_layer);
         _showGMXLayer = true;
         
         // tile infos
@@ -606,6 +608,8 @@ void EditScene::closeGMXLayer()
     
     _layer->removeFromParent();
     _layer = nullptr;
+    
+    _forceSettingLayer->setGMXLayer(nullptr);
 }
 
 

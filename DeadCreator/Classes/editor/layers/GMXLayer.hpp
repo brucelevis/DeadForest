@@ -17,6 +17,7 @@
 #include "Tileset.hpp"
 #include "CommandQueue.hpp"
 #include "SizeProtocol.h"
+#include "PlayerInfo.hpp"
 
 namespace realtrick
 {
@@ -122,6 +123,7 @@ namespace realtrick
             const std::vector<LocationNode*>& getLocations() const { return _locations; }
             
             void addTrigger(GameTrigger* trigger);
+            std::vector<PlayerInfo*>& getPlayerInfos() { return _playerInfos; }
             
         private:
             
@@ -196,6 +198,8 @@ namespace realtrick
             
             bool _isFirstFile = true;
             std::string _currFilePath;
+            
+            std::vector<PlayerInfo*> _playerInfos;
             
         };
         

@@ -13,6 +13,7 @@
 #include "imgui_internal.h"
 
 #include "EditScene.hpp"
+#include "GMXLayer.hpp"
 #include "SizeProtocol.h"
 
 namespace realtrick
@@ -25,11 +26,11 @@ namespace realtrick
             
         public:
             
-            explicit ForceSettingLayer(EditScene* layer) :
-            _imguiLayer(layer)
+            ForceSettingLayer(EditScene* imguiLayer) :
+            _imguiLayer(imguiLayer)
             {
-                _force1Name[0] = '\0';
-                _force2Name[0] = '\0';
+                std::strncpy(_force1Name, "Force 1", 20);
+                std::strncpy(_force2Name, "Force 2", 20);
             }
             
             virtual ~ForceSettingLayer() = default;
@@ -58,9 +59,31 @@ namespace realtrick
                     ImGui::InputText("", _force1Name, 20);
                     ImGui::PopItemWidth();
                     ImGui::BeginChild("dummy1", ImVec2(200,200), true);
+                    
+                    if ( _isItemClicked && ImGui::IsMouseReleased(0) && ImGui::IsMouseHoveringWindow() )
+                    {
+                        _gmxLayer->getPlayerInfos().at(_clickedPlayer - 1)->force = Force::FORCE_1;
+                        _isItemClicked = false;
+                    }
+                    
+                    for( const auto& player : _gmxLayer->getPlayerInfos() )
+                    {
+                        PlayerInfo* info = player;
+                        if ( info->force != Force::FORCE_1) continue;
+                        std::string name = "Player " + _to_string(static_cast<int>(info->player));
+                        ImGui::Selectable(name.c_str());
+                        if ( ImGui::IsItemClicked() )
+                        {
+                            _isItemClicked = true;
+                            _clickedPlayer = static_cast<int>(info->player);
+                        }
+                    }
+                    
                     ImGui::EndChild();
+                    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_ComboBg]);
                     ImGui::Checkbox("ally", &_isForce1Ally);
                     ImGui::SameLine(); ImGui::Checkbox("vision", &_isForce1Vision);
+                    ImGui::PopStyleColor();
                     ImGui::PopID();
                     ImGui::EndGroup();
                     
@@ -71,9 +94,31 @@ namespace realtrick
                     ImGui::InputText("", _force2Name, 20);
                     ImGui::PopItemWidth();
                     ImGui::BeginChild("dummy2", ImVec2(200,200), true);
+                    
+                    if ( _isItemClicked && ImGui::IsMouseReleased(0) && ImGui::IsMouseHoveringWindow() )
+                    {
+                        _gmxLayer->getPlayerInfos().at(_clickedPlayer - 1)->force = Force::FORCE_2;
+                        _isItemClicked = false;
+                    }
+                    
+                    for( const auto& player : _gmxLayer->getPlayerInfos() )
+                    {
+                        PlayerInfo* info = player;
+                        if ( info->force != Force::FORCE_2) continue;
+                        std::string name = "Player " + _to_string(static_cast<int>(info->player));
+                        ImGui::Selectable(name.c_str());
+                        if ( ImGui::IsItemClicked() )
+                        {
+                            _isItemClicked = true;
+                            _clickedPlayer = static_cast<int>(info->player);
+                        }
+                    }
+
                     ImGui::EndChild();
+                    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_ComboBg]);
                     ImGui::Checkbox("ally", &_isForce2Ally);
                     ImGui::SameLine(); ImGui::Checkbox("vision", &_isForce2Vision);
+                    ImGui::PopStyleColor();
                     ImGui::PopID();
                     ImGui::EndGroup();
                     
@@ -100,10 +145,15 @@ namespace realtrick
                 _imguiLayer->enableModal(false);
             }
             
+            void setGMXLayer(GMXLayer* layer) { _gmxLayer = layer; }
             
         private:
             
             EditScene* _imguiLayer;
+            GMXLayer* _gmxLayer;
+            
+            bool _isItemClicked = false;
+            int _clickedPlayer = 1;
             
             char _force1Name[20];
             bool _isForce1Ally = true;

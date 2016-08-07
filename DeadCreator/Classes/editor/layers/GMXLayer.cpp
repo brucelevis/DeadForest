@@ -70,6 +70,9 @@ GMXLayer::~GMXLayer()
     
     _selectedEntities.clear();
     
+    for(auto& player: _playerInfos) CC_SAFE_DELETE(player);
+    _playerInfos.clear();
+    
     _currCommand = nullptr;
 }
 
@@ -149,6 +152,15 @@ bool GMXLayer::init()
     
     _renameLocationLayer = RenameLocationLayer::create(*this);
     addChild(_renameLocationLayer);
+    
+    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER1, Force::FORCE_1, Owner::HUMAN));
+    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER2, Force::FORCE_1, Owner::HUMAN));
+    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER3, Force::FORCE_1, Owner::HUMAN));
+    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER4, Force::FORCE_1, Owner::HUMAN));
+    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER5, Force::FORCE_1, Owner::HUMAN));
+    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER6, Force::FORCE_1, Owner::HUMAN));
+    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER7, Force::FORCE_1, Owner::HUMAN));
+    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER8, Force::FORCE_1, Owner::HUMAN));
     
     _tileToolCommand = new TileToolCommand(this);
     _addEntityToolCommand = new AddEntityToolCommand(this);

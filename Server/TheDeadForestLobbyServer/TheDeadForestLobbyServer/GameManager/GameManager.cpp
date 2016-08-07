@@ -18,8 +18,8 @@ void GameManager::loadGameMap(const char* fileName)
 	if (_gameMap != nullptr)
 	{
 		throw std::runtime_error("<GameManager::loadGameMap> GameMap is already exist.");
-	}
-
+    }
+    
 	_cellSpace = new CellSpacePartition(Prm.getValueAsInt("worldWidth"),
 		Prm.getValueAsInt("worldHeight"),
 		Prm.getValueAsInt("cellWidth"),
@@ -308,11 +308,13 @@ void GameManager::adjustPosition()
 void GameManager::setLoadGamePlayer(int vid)
 {
 	auto entity = static_cast <EntityHuman*>(getEntityFromID(vid));
-	entity->setIsLoad(true);
+    if(entity != nullptr){
+        entity->setIsLoad(true);
 
-	if (isAllReady()) {
-		sendGameStart();
-	}
+        if (isAllReady()) {
+            sendGameStart();
+        }
+    }
 }
 
 void GameManager::sendGameStart()

@@ -15,6 +15,7 @@ using namespace std;
 int pid = -1;
 int rMode = 1;
 int rid = 0;
+int gid = 0;
 
 void connectServer(){
     cout<<"<CONNECT_SERVER>"<<endl;
@@ -50,28 +51,29 @@ void successLoadGame(){
     Server::getInstance().write(packet);
 }
 
-void moveJoystick(){
+/**
+ *@param True/False 터치 시작/종료
+ */
+void moveJoystick(bool isTouched, float x, float y){
     
     cout<<"<MOVE_JOYSTICK>"<<endl;
-    /*
-    bool isTouched = (data.type == JoystickEx::ClickEventType::BEGAN);
     
     flatbuffers::FlatBufferBuilder builder;
-    auto obj = fpacket::CreatePacketMoveJoystick(builder, _gameMgr->getPlayerPtr()->getTag(), isTouched, data.dir.x, data.dir.y);
+    auto obj = fpacket::CreatePacketMoveJoystick(builder, gid, isTouched, x, y);
     builder.Finish(obj);
     
     Packet* packet = new Packet();
     packet->encode(builder.GetBufferPointer(), builder.GetSize(), PacketType::MOVE_JOYSTICK);
     Server::getInstance().write(packet);
-     */
+    
 }
+
 int main()
 {
     
     connectServer();
     
     while(true){
-        
         if ( !Server::getInstance().isQueueEmpty() )
         {
             Packet* packet;
@@ -120,12 +122,16 @@ int main()
                     auto obj = fpacket::GetPacketFirstPlayerInfos(packet->body());
                     auto own = obj->own();
                     cout<<"[own] id: "<<own->id()<<", pos: ("<<own->pos_x()<<", "<<own->pos_y()<<"), name: "<<own->name()->c_str()<<endl;
+                    gid = own->id();
                     successLoadGame();
+                    
                     break;
                 }
                 case PacketType::GAME_START:
                 {
                     cout<<"<GAME_START>"<<endl;
+                    
+                    moveJoystick(true, 1, 1);
                     break;
                 }
                     

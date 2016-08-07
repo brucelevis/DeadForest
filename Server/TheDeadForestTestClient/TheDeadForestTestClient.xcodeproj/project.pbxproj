@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0B2D6BF41D18266200A13347 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2D6BF31D18266200A13347 /* main.cpp */; };
-		0B2D6BFB1D18267C00A13347 /* boost.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B2D6BFA1D18267C00A13347 /* boost.framework */; };
 		0B45B00A1D43060500E933F2 /* Rect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45AFFF1D43060500E933F2 /* Rect.cpp */; };
 		0B45B00B1D43060500E933F2 /* Vec2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45B0051D43060500E933F2 /* Vec2.cpp */; };
 		0B45B0151D43078D00E933F2 /* Geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45B00F1D43078D00E933F2 /* Geometry.cpp */; };
@@ -18,6 +17,7 @@
 		0B45B0571D4323A000E933F2 /* ParamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45B0541D4323A000E933F2 /* ParamLoader.cpp */; };
 		0B802E791D56CBF900F182F8 /* Params.ini in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0B802E781D56CBF700F182F8 /* Params.ini */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		0B8DC3EA1D3085BA005C32EE /* Server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B8DC3E81D3085BA005C32EE /* Server.cpp */; };
+		0BCB97F91D57456300C44BF4 /* boost.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BCB97F81D57456300C44BF4 /* boost.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,7 +45,6 @@
 /* Begin PBXFileReference section */
 		0B2D6BF01D18266200A13347 /* TheDeadForestTestClient */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TheDeadForestTestClient; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B2D6BF31D18266200A13347 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		0B2D6BFA1D18267C00A13347 /* boost.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = boost.framework; path = ../boost.framework; sourceTree = "<group>"; };
 		0B45AFDB1D43060500E933F2 /* ArrayType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayType.h; sourceTree = "<group>"; };
 		0B45AFDC1D43060500E933F2 /* CCMathBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCMathBase.h; sourceTree = "<group>"; };
 		0B45AFDE1D43060500E933F2 /* allocators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = allocators.h; sourceTree = "<group>"; };
@@ -126,6 +125,7 @@
 		0B8DC3F01D309456005C32EE /* reflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reflection.h; sourceTree = "<group>"; };
 		0B8DC3F11D309456005C32EE /* reflection_generated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reflection_generated.h; sourceTree = "<group>"; };
 		0B8DC3F21D309456005C32EE /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
+		0BCB97F81D57456300C44BF4 /* boost.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = boost.framework; path = ../../../DEV/TheDeadForest/Server/boost.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,7 +133,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B2D6BFB1D18267C00A13347 /* boost.framework in Frameworks */,
+				0BCB97F91D57456300C44BF4 /* boost.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,7 +143,7 @@
 		0B2D6BE71D18266200A13347 = {
 			isa = PBXGroup;
 			children = (
-				0B2D6BFA1D18267C00A13347 /* boost.framework */,
+				0BCB97F81D57456300C44BF4 /* boost.framework */,
 				0B2D6BF21D18266200A13347 /* TheDeadForestTestClient */,
 				0B2D6BF11D18266200A13347 /* Products */,
 			);

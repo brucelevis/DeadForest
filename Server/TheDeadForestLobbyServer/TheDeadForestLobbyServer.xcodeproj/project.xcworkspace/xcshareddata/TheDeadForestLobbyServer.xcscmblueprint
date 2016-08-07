@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "B376F328AF1077427D0DF9638FF06E15E47183A1",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "B376F328AF1077427D0DF9638FF06E15E47183A1" : 0,
+    "91FAB31489056A41074A79A5CA40A7BDD3C766D2" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "2E8BA9D3-1376-44FE-854B-27B064282002",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "B376F328AF1077427D0DF9638FF06E15E47183A1" : "NewDeadForest\/",
+    "91FAB31489056A41074A79A5CA40A7BDD3C766D2" : "DEV\/TheDeadForest\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "TheDeadForestLobbyServer",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Server\/TheDeadForestLobbyServer\/TheDeadForestLobbyServer.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/2016-Realtrick\/DeadForest.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "91FAB31489056A41074A79A5CA40A7BDD3C766D2"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/Realtrick-Games\/DeadForest.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "B376F328AF1077427D0DF9638FF06E15E47183A1"
+    }
+  ]
+}

@@ -71,6 +71,7 @@ namespace realtrick
 			_container.insert(std::make_pair(key, value));
 
 		}
+        
     }
     
     

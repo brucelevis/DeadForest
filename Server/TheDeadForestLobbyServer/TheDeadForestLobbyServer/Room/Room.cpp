@@ -146,7 +146,7 @@ void Room::updateGame()
     
     _gameManager->adjustPosition();
     
-    int targetTime = getServer()->getTickCount() + 100;
+    int targetTime = getServer()->getTickCount() + 1000;
     getServer()->enqueueTimer(getRoomId(), targetTime, OP_GAME_TIMER);
 }
 

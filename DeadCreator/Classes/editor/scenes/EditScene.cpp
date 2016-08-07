@@ -28,6 +28,7 @@ using namespace cocos2d;
 #include "Actions.hpp"
 #include "StringHelper.hpp"
 #include "DummyScene.hpp"
+#include "ForceSettingLayer.hpp"
 using namespace realtrick;
 using namespace realtrick::editor;
 
@@ -63,6 +64,9 @@ bool EditScene::init()
     _playGameLayer = PlayGameLayer::create(this);
     addChild(_playGameLayer);
     
+    _forceSettingLayer = ForceSettingLayer::create(this);
+    addChild(_forceSettingLayer);
+    
     addImGUI([this] {
         
         _isEditMode = (_layer && !_showPlayGameLayer);
@@ -72,6 +76,7 @@ bool EditScene::init()
         if ( _showOpenMap ) _openLayer->showLayer(_showOpenMap);
         if ( _showSaveQueryLayer ) _saveQueryLayer->showLayer(_showSaveQueryLayer);
         if ( _showPlayGameLayer ) _playGameLayer->showLayer(_showPlayGameLayer);
+        if ( _showForceSettingLayer ) _forceSettingLayer->showLayer(_showForceSettingLayer);
         if ( _layer && _showGMXLayer && !_showPlayGameLayer ) _layer->showLayer(_showGMXLayer);
         
         if (ImGui::BeginMainMenuBar())
@@ -104,8 +109,8 @@ bool EditScene::init()
             
             if (ImGui::BeginMenu("Players", _isPlayerEnable && !_showPlayGameLayer))
             {
-                if (ImGui::MenuItem("Player Setting")) {}
-                if (ImGui::MenuItem("Force Setting")) {}   
+                if (ImGui::MenuItem("Player Setting", "SHIFT+P")) {}
+                if (ImGui::MenuItem("Force Setting", "SHIFT+F", &_showForceSettingLayer)) {}
                 ImGui::EndMenu();
             }
             

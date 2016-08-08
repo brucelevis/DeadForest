@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B095E801D5845EF002EE9BE /* GameManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B095E771D5845EF002EE9BE /* GameManager.cpp */; };
+		0B095E811D5845EF002EE9BE /* GameMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B095E7A1D5845EF002EE9BE /* GameMap.cpp */; };
+		0B095E821D5845EF002EE9BE /* ParamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B095E7D1D5845EF002EE9BE /* ParamLoader.cpp */; };
+		0B095E861D584796002EE9BE /* Room.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B095E841D584796002EE9BE /* Room.cpp */; };
 		0B2D6BF41D18266200A13347 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2D6BF31D18266200A13347 /* main.cpp */; };
 		0B45B00A1D43060500E933F2 /* Rect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45AFFF1D43060500E933F2 /* Rect.cpp */; };
 		0B45B00B1D43060500E933F2 /* Vec2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45B0051D43060500E933F2 /* Vec2.cpp */; };
@@ -43,8 +47,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0B095E771D5845EF002EE9BE /* GameManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameManager.cpp; sourceTree = "<group>"; };
+		0B095E781D5845EF002EE9BE /* GameManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameManager.hpp; sourceTree = "<group>"; };
+		0B095E7A1D5845EF002EE9BE /* GameMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameMap.cpp; sourceTree = "<group>"; };
+		0B095E7B1D5845EF002EE9BE /* GameMap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameMap.hpp; sourceTree = "<group>"; };
+		0B095E7D1D5845EF002EE9BE /* ParamLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParamLoader.cpp; sourceTree = "<group>"; };
+		0B095E7E1D5845EF002EE9BE /* ParamLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ParamLoader.hpp; sourceTree = "<group>"; };
+		0B095E7F1D5845EF002EE9BE /* ParamLoader.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ParamLoader.inl; sourceTree = "<group>"; };
+		0B095E841D584796002EE9BE /* Room.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Room.cpp; sourceTree = "<group>"; };
+		0B095E851D584796002EE9BE /* Room.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Room.h; sourceTree = "<group>"; };
 		0B2D6BF01D18266200A13347 /* TheDeadForestTestClient */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TheDeadForestTestClient; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B2D6BF31D18266200A13347 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		0B31FCBD1D58C09200A79F62 /* FlatbufferPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlatbufferPacket.h; sourceTree = "<group>"; };
 		0B45AFDB1D43060500E933F2 /* ArrayType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayType.h; sourceTree = "<group>"; };
 		0B45AFDC1D43060500E933F2 /* CCMathBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCMathBase.h; sourceTree = "<group>"; };
 		0B45AFDE1D43060500E933F2 /* allocators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = allocators.h; sourceTree = "<group>"; };
@@ -140,6 +154,44 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0B095E761D5845EF002EE9BE /* GameManager */ = {
+			isa = PBXGroup;
+			children = (
+				0B095E771D5845EF002EE9BE /* GameManager.cpp */,
+				0B095E781D5845EF002EE9BE /* GameManager.hpp */,
+			);
+			path = GameManager;
+			sourceTree = "<group>";
+		};
+		0B095E791D5845EF002EE9BE /* GameMap */ = {
+			isa = PBXGroup;
+			children = (
+				0B095E7A1D5845EF002EE9BE /* GameMap.cpp */,
+				0B095E7B1D5845EF002EE9BE /* GameMap.hpp */,
+				0B095E7C1D5845EF002EE9BE /* ScriptSystem */,
+			);
+			path = GameMap;
+			sourceTree = "<group>";
+		};
+		0B095E7C1D5845EF002EE9BE /* ScriptSystem */ = {
+			isa = PBXGroup;
+			children = (
+				0B095E7D1D5845EF002EE9BE /* ParamLoader.cpp */,
+				0B095E7E1D5845EF002EE9BE /* ParamLoader.hpp */,
+				0B095E7F1D5845EF002EE9BE /* ParamLoader.inl */,
+			);
+			path = ScriptSystem;
+			sourceTree = "<group>";
+		};
+		0B095E831D584796002EE9BE /* Room */ = {
+			isa = PBXGroup;
+			children = (
+				0B095E841D584796002EE9BE /* Room.cpp */,
+				0B095E851D584796002EE9BE /* Room.h */,
+			);
+			path = Room;
+			sourceTree = "<group>";
+		};
 		0B2D6BE71D18266200A13347 = {
 			isa = PBXGroup;
 			children = (
@@ -160,6 +212,9 @@
 		0B2D6BF21D18266200A13347 /* TheDeadForestTestClient */ = {
 			isa = PBXGroup;
 			children = (
+				0B095E831D584796002EE9BE /* Room */,
+				0B095E761D5845EF002EE9BE /* GameManager */,
+				0B095E791D5845EF002EE9BE /* GameMap */,
 				0B802E771D56CBF700F182F8 /* resource */,
 				0B45B0531D4323A000E933F2 /* ScriptSystem */,
 				0B45B0361D43089A00E933F2 /* CellSpacePartition */,
@@ -348,6 +403,7 @@
 		0B8DC3EC1D309456005C32EE /* flatbuffers */ = {
 			isa = PBXGroup;
 			children = (
+				0B31FCBD1D58C09200A79F62 /* FlatbufferPacket.h */,
 				0B8DC3ED1D309456005C32EE /* flatbuffers.h */,
 				0B8DC3EE1D309456005C32EE /* hash.h */,
 				0B8DC3EF1D309456005C32EE /* idl.h */,
@@ -416,9 +472,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B45B0421D43089A00E933F2 /* clipper.cpp in Sources */,
+				0B095E801D5845EF002EE9BE /* GameManager.cpp in Sources */,
 				0B45B0281D43081E00E933F2 /* MessageDispatcher.cpp in Sources */,
+				0B095E811D5845EF002EE9BE /* GameMap.cpp in Sources */,
+				0B095E821D5845EF002EE9BE /* ParamLoader.cpp in Sources */,
 				0B8DC3EA1D3085BA005C32EE /* Server.cpp in Sources */,
 				0B45B00B1D43060500E933F2 /* Vec2.cpp in Sources */,
+				0B095E861D584796002EE9BE /* Room.cpp in Sources */,
 				0B45B0571D4323A000E933F2 /* ParamLoader.cpp in Sources */,
 				0B45B0151D43078D00E933F2 /* Geometry.cpp in Sources */,
 				0B2D6BF41D18266200A13347 /* main.cpp in Sources */,

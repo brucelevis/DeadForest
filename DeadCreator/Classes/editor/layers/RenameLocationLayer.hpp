@@ -47,7 +47,8 @@ namespace realtrick
             void showLayer(bool& opened)
             {
                 ImGuiContext& g = *GImGui;
-                ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 430) / 2, (g.IO.DisplaySize.x - 200) / 2), ImGuiSetCond_Once);
+                ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 430) / 2,
+                                               (g.IO.DisplaySize.y - 200) / 2), ImGuiSetCond_Once);
                 ImGui::OpenPopup("Change Location Name");
                 if (ImGui::BeginPopupModal("Change Location Name", NULL, ImGuiWindowFlags_AlwaysAutoResize))
                 {

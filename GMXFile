@@ -103,6 +103,13 @@ table Polygon
    vertices : [Vector2];
 }
 
+table PlayerInfo
+{
+   player : int;
+   force : int;
+   owner : int;
+}
+
 table GMXFile
 {
    default_type : TileType;
@@ -114,6 +121,7 @@ table GMXFile
    cell_space_size : Size;
    locations : [Location];
    triggers : [Trigger];
+   playerInfos : [PlayerInfo];
 }
 
 root_type GMXFile;

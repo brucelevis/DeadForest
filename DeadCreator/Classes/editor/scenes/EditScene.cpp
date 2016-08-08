@@ -104,19 +104,13 @@ bool EditScene::init()
                 ImGui::EndMenu();
             }
             
-            if (ImGui::BeginMenu("Players", _isPlayerEnable && !_showPlayGameLayer))
-            {
-                ImGui::MenuItem("Player Setting", "SHIFT+P", &_layer->isShowPlayerSetting());
-                ImGui::MenuItem("Force Setting", "SHIFT+F", &_layer->isShowForceSetting());
-                ImGui::EndMenu();
-            }
-            
             if (ImGui::BeginMenu("Windows", _isWindowEnable && !_showPlayGameLayer))
             {
                 ImGui::MenuItem("Navigator", "SHIFT+N", &_layer->isShowNavigator());
                 ImGui::MenuItem("Palette", "SHIFT+P", &_layer->isShowPalette());
                 ImGui::MenuItem("History", "SHIFT+H", &_layer->isShowHistory());
                 ImGui::MenuItem("Trigger", "SHIFT+T", &_layer->isShowTriggerEdit());
+                ImGui::MenuItem("Force", "SHIFT+F", &_layer->isShowForceSetting());
                 ImGui::MenuItem("Property", "SHIFT+R");
                 ImGui::EndMenu();
             }
@@ -153,7 +147,6 @@ bool EditScene::init()
                      ImGuiWindowFlags_NoSavedSettings|
                      ImGuiWindowFlags_NoBringToFrontOnFocus|
                      ImGuiWindowFlags_ShowBorders);
-        
         
         static float newAlpha;
         if ( isNew() )
@@ -327,19 +320,24 @@ bool EditScene::init()
         
         ImGui::PopStyleColor(2);
         
-        ImGui::SameLine();
-        ImGui::PushItemWidth(200);
-        if (ImGui::Combo("##layer", &_layerType, "Tile Layer\0Entity Layer\0Location Layer\0", 4))
+        if ( _layer && !_showPlayGameLayer )
         {
-            if ( _layer ) _layer->getPaletteLayer()->setSelectedItem(-1);
-            changeLayerType( static_cast<LayerType>(_layerType) );
+            ImGui::SameLine();
+            ImGui::PushItemWidth(200);
+            if (ImGui::Combo("##layer", &_layerType, "Tile Layer\0Entity Layer\0Location Layer\0", 4))
+            {
+                if ( _layer ) _layer->getPaletteLayer()->setSelectedItem(-1);
+                changeLayerType( static_cast<LayerType>(_layerType) );
+            }
+            
+            ImGui::SameLine();
+            std::string players;
+            if (ImGui::Combo("##player", &_selectedPlayerType,
+                             "Player 1\0Player 2\0Player 3\0Player 4\0Player 5\0Player 6\0Player 7\0Player 8\0", 8))
+            {}
+            ImGui::PopItemWidth();
         }
         
-        ImGui::SameLine();
-        if (ImGui::Combo("##player", &_selectedPlayerType,
-                         "Player 1\0Player 2\0Player 3\0Player 4\0Player 5\0Player 6\0Player 7\0Player 8\0", 8))
-        {}
-        ImGui::PopItemWidth();
         ImGui::End();
         ImGui::PopStyleColor(4);
         ImGui::PopStyleVar(1);
@@ -437,6 +435,14 @@ void EditScene::createGMXLayer(const std::string& filePath)
                 
                 file->tileInfos[i][j] = tileName;
             }
+        }
+        
+        // player infos
+        for ( auto info = gmxFile->playerInfos()->begin(); info != gmxFile->playerInfos()->end() ; ++ info )
+        {
+            file->playerInfos.push_back(PlayerInfo(static_cast<PlayerType>(info->player()),
+                                                   static_cast<Force>(info->force()),
+                                                   static_cast<Owner>(info->owner())));
         }
         
         _layer = GMXLayer::create(*this, *file);

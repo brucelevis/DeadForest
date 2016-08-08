@@ -28,7 +28,10 @@ namespace realtrick
             
         public:
             
-            explicit NewFileLayer(EditScene* layer) : _imguiLayer(layer) {}
+            explicit NewFileLayer(EditScene* layer) : _imguiLayer(layer)
+            {
+                for(int i = 0 ; i < 8 ; ++ i) _playerOwners[i] = 0;
+            }
             virtual ~NewFileLayer() = default;
             static NewFileLayer* create(EditScene* layer)
             {
@@ -45,40 +48,49 @@ namespace realtrick
             void showLayer(bool& opened)
             {
                 ImGuiContext& g = *GImGui;
-                ImGui::SetNextWindowSize(ImVec2(430, 430));
-                ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 430) / 2, (g.IO.DisplaySize.y - 430) / 2), ImGuiSetCond_Once);
+                ImGui::SetNextWindowSize(ImVec2(790, 400));
+                ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - 790) / 2, (g.IO.DisplaySize.y - 400) / 2), ImGuiSetCond_Once);
                 ImGui::OpenPopup("New");
-                if (ImGui::BeginPopupModal("New", NULL))
+                if (ImGui::BeginPopupModal("New", NULL, ImGuiWindowFlags_NoResize))
                 {
                     _imguiLayer->enableModal(true);
                     
+                    ImGui::BeginGroup();
                     ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
-                    ImGui::BeginChild("##TileSize", ImVec2(0,60), true);
+                    ImGui::BeginChild("##TileSize", ImVec2(400, 60), true);
                     ImGui::Text("Tile Size");
                     ImGui::Columns(2, "##col1", false);
                     
                     const char* items1[] = {"128"};
+                    ImGui::PushItemWidth(100);
                     ImGui::Combo("width", &_tileSizeXItem, items1, 1);
+                    ImGui::PopItemWidth();
                     ImGui::NextColumn();
                     
                     const char* items2[] = {"128"};
+                    ImGui::PushItemWidth(100);
                     ImGui::Combo("height", &_tileSizeYItem, items2, 1);
+                    ImGui::PopItemWidth();
                     
                     ImGui::EndChild();
                     ImGui::PopStyleVar();
                     
                     ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
-                    ImGui::BeginChild("##Number Of Tiles", ImVec2(0,60), true);
+                    ImGui::BeginChild("##Number Of Tiles", ImVec2(400, 60), true);
                     
                     ImGui::Text("Number Of Tiles");
                     ImGui::Columns(2, "##col2", false);
                     
                     const char* items3[] = {"32", "64", "128", "192", "256" };
+                    ImGui::PushItemWidth(100);
                     ImGui::Combo("x", &_numOfTileX, items3, 5);
+                    ImGui::PopItemWidth();
                     ImGui::NextColumn();
                     
                     const char* items4[] = {"32", "64", "128", "192", "256" };
+                    ImGui::PushItemWidth(100);
                     ImGui::Combo("y", &_numOfTileY, items4, 5);
+                    ImGui::PopItemWidth();
                     
                     ImGui::EndChild();
                     ImGui::PopStyleVar();
@@ -87,10 +99,8 @@ namespace realtrick
                                 atoi(items1[_tileSizeXItem]) * atoi(items3[_numOfTileX]),
                                 atoi(items2[_tileSizeYItem]) * atoi(items4[_numOfTileY]));
                     
-                    ImGui::Text("\n");
-                    
                     ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
-                    ImGui::BeginChild("##Default Tile", ImVec2(0,180), true);
+                    ImGui::BeginChild("##Default Tile", ImVec2(400, 180), true);
                     
                     ImGui::Text("Default Tile");
                     
@@ -99,14 +109,34 @@ namespace realtrick
                     
                     ImGui::EndChild();
                     ImGui::PopStyleVar();
+                    ImGui::EndGroup();
                     
-                    static int nextNumber = 0;
+                    ImGui::SameLine();
+                    ImGui::BeginGroup();
+                    ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
+                    ImGui::BeginChild("Player Setting", ImVec2(370, 328), true);
+                    ImGui::Text("Player Setting");
+                    ImGui::Separator();
+                    for(int i = 0 ; i < 8 ; ++ i)
+                    {
+                        ImGui::PushID(i);
+                        ImGui::TextUnformatted(std::string("Player " + _to_string(i + 1)).c_str());
+                        ImGui::SameLine();
+                        ImGui::PushItemWidth(265);
+                        ImGui::Combo("", &_playerOwners[i], "Human\0Computer\0Unused\0");
+                        ImGui::PopItemWidth();
+                        ImGui::PopID();
+                    }
+                    ImGui::EndChild();
+                    ImGui::PopStyleVar();
+                    ImGui::EndGroup();
                     
                     if (ImGui::Button("Create"))
                     {
                         // create map
                         GMXFile* file = new GMXFile();
                         
+                        static int nextNumber = 0;
                         file->fileName = "untitled_map_" + _to_string(nextNumber++);
                         file->tileWidth = atoi(items1[_tileSizeXItem]);
                         file->tileHeight = atoi(items2[_tileSizeYItem]);
@@ -120,9 +150,7 @@ namespace realtrick
                         
                         file->tileInfos.resize(y);
                         for(int i = 0 ; i < y ; ++ i)
-                        {
                             file->tileInfos[i].resize(x);
-                        }
                         
                         for(int i = 0 ; i < y; ++ i)
                         {
@@ -137,6 +165,13 @@ namespace realtrick
                                 
                                 file->tileInfos[i][j] = tileName;
                             }
+                        }
+                        
+                        for(int i = 0 ; i < 8 ; ++ i)
+                        {
+                            file->playerInfos.push_back(PlayerInfo(static_cast<PlayerType>(i + 1),
+                                                                   Force::FORCE_1,
+                                                                   static_cast<Owner>(_playerOwners[i])));
                         }
                         
                         _imguiLayer->createGMXLayer(file);
@@ -179,6 +214,8 @@ namespace realtrick
             int _numOfTileX = 0;
             int _numOfTileY = 0;
             int _currentTile = 0;
+            
+            int _playerOwners[8];
             
         };
         

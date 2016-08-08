@@ -23,7 +23,6 @@
 #include "MainMenu3.hpp"
 #include "LocationNode.hpp"
 #include "RenameLocationLayer.hpp"
-#include "PlayerSettingLayer.hpp"
 #include "ForceSettingLayer.hpp"
 #include "StringHelper.hpp"
 using namespace cocos2d;
@@ -69,8 +68,6 @@ GMXLayer::~GMXLayer()
     _tileImages.clear();
     
     _selectedEntities.clear();
-    
-    for(auto& player: _playerInfos) CC_SAFE_DELETE(player);
     _playerInfos.clear();
     
     _currCommand = nullptr;
@@ -153,20 +150,8 @@ bool GMXLayer::init()
     _renameLocationLayer = RenameLocationLayer::create(*this);
     addChild(_renameLocationLayer);
     
-    _playerSettingLayer = PlayerSettingLayer::create(*this);
-    addChild(_playerSettingLayer);
-    
     _forceSettingLayer = ForceSettingLayer::create(*this);
     addChild(_forceSettingLayer);
-    
-    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER1, Force::FORCE_1, Owner::HUMAN));
-    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER2, Force::FORCE_1, Owner::HUMAN));
-    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER3, Force::FORCE_1, Owner::HUMAN));
-    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER4, Force::FORCE_1, Owner::HUMAN));
-    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER5, Force::FORCE_1, Owner::HUMAN));
-    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER6, Force::FORCE_1, Owner::HUMAN));
-    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER7, Force::FORCE_1, Owner::HUMAN));
-    _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER8, Force::FORCE_1, Owner::HUMAN));
     
     _tileToolCommand = new TileToolCommand(this);
     _addEntityToolCommand = new AddEntityToolCommand(this);
@@ -212,6 +197,11 @@ void GMXLayer::initFile()
     }
     
     updateChunk(_camera->getPosition());
+
+    for(int i = 0 ; i < 8 ; ++ i)
+    {
+        _playerInfos.push_back(PlayerInfo(_file.playerInfos[i].player, _file.playerInfos[i].force, _file.playerInfos[i].owner));
+    }
 }
 
 
@@ -274,7 +264,7 @@ void GMXLayer::showLayer(bool& opened)
     _tileRoot->setPosition(_layerSize / 2);
     _clipNode->setClippingRegion(cocos2d::Rect(0, 0, _layerSize.width, _layerSize.height));
     
-    if ( !_imguiLayer.isModal() && !_isShowTriggerEdit && !_isShowForceSetting && !_isShowPlayerSetting ) updateCocosLogic();
+    if ( !_imguiLayer.isModal() && !_isShowTriggerEdit && !_isShowForceSetting && !_isShowRenameLocationLayer ) updateCocosLogic();
     
     ImGui::End();
     ImGui::PopStyleVar(2);
@@ -293,7 +283,6 @@ void GMXLayer::showLayer(bool& opened)
     if ( _isShowHistory ) _historyLayer->showLayer(_isShowHistory);
     if ( _isShowRenameLocationLayer ) _renameLocationLayer->showLayer(_isShowRenameLocationLayer);
     if ( _isShowTriggerEdit ) _triggerEditLayer->showLayer(_isShowTriggerEdit);
-    if ( _isShowPlayerSetting ) _playerSettingLayer->showLayer(_isShowPlayerSetting);
     if ( _isShowForceSetting ) _forceSettingLayer->showLayer(_isShowForceSetting);
 }
 
@@ -336,7 +325,6 @@ void GMXLayer::updateCocosLogic()
             if ( _currCommand ) _currCommand->begin();
             _isLeftMouseClickEventDone = true;
         }
-        
     }
     else if ( ImGui::GetIO().MouseReleased[0] && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
     {
@@ -470,10 +458,49 @@ void GMXLayer::updateCocosLogic()
         _paletteLayer->setSelectedItem(-1);
         clearSelectedEntites();
     }
-    
+
     auto layerType = _imguiLayer.getLayerType();
-    if ( layerType == LayerType::ENTITY )
+    if ( layerType == LayerType::TILE )
     {
+        TileType selectedTile = static_cast<TileType>(_paletteLayer->getSelectedItem());
+        auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
+        if ( selectedTile != TileType::INVALID )
+        {
+            if ( selectedTile == TileType::DIRT ) _selectedItem->setTexture("1_1_1234.png");
+            else if ( selectedTile == TileType::GRASS ) _selectedItem->setTexture("selected_grass.png");
+            else if ( selectedTile == TileType::WATER ) _selectedItem->setTexture("3_1_1234.png");
+            else if ( selectedTile == TileType::HILL ) _selectedItem->setTexture("5_1_1234.png");
+            
+            if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
+            {
+                Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
+                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
+                if ( !isClickedResizeButton )
+                {
+                    putTile(selectedTile, indices.first, indices.second);
+                }
+            }
+        }
+        
+        Vec2 hoveredRegionCenterPos = _tiles[indices.second][indices.first].getPosition();
+        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0),
+                                        hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), 2.0f, Color4F::GREEN);
+        
+        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2),
+                                        hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
+        
+        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0),
+                                        hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), 2.0f, Color4F::GREEN);
+        
+        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2),
+                                        hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
+        _selectedItem->setPosition(_tiles[indices.second][indices.first].getPosition());
+        _selectedItem->setOpacity(128);
+    }
+    
+    else if ( layerType == LayerType::ENTITY )
+    {
+        // select entities
         static bool isSelecting = false;
         if ( selectedItem == - 1)
         {
@@ -519,55 +546,10 @@ void GMXLayer::updateCocosLogic()
                 isSelecting = false;
             }
         }
-    }
-    
-    if ( layerType == LayerType::TILE )
-    {
-        TileType selectedTile = static_cast<TileType>(_paletteLayer->getSelectedItem());
-        auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
-        if ( selectedTile != TileType::INVALID )
-        {
-            if ( selectedTile == TileType::DIRT )
-            {
-                _selectedItem->setTexture("1_1_1234.png");
-            }
-            else if ( selectedTile == TileType::GRASS )
-            {
-                _selectedItem->setTexture("selected_grass.png");
-            }
-            else if ( selectedTile == TileType::WATER )
-            {
-                _selectedItem->setTexture("3_1_1234.png");
-            }
-            else if ( selectedTile == TileType::HILL )
-            {
-                _selectedItem->setTexture("5_1_1234.png");
-            }
-            
-            if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
-            {
-                Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
-                bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
-                if ( !isClickedResizeButton )
-                {
-                    putTile(selectedTile, indices.first, indices.second);
-                }
-            }
-        }
         
-        Vec2 hoveredRegionCenterPos = _tiles[indices.second][indices.first].getPosition();
-        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), 2.0f, Color4F::GREEN);
-        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, _file.tileHeight / 2), hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
-        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(_file.tileWidth / 2, 0), hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), 2.0f, Color4F::GREEN);
-        _hoveredTileRegion->drawSegment(hoveredRegionCenterPos + Vec2(0, -_file.tileHeight / 2), hoveredRegionCenterPos + Vec2(-_file.tileWidth / 2, 0), 2.0f, Color4F::GREEN);
-        _selectedItem->setPosition(_tiles[indices.second][indices.first].getPosition());
-        _selectedItem->setOpacity(128);
-    }
-    else if ( layerType == LayerType::ENTITY )
-    {
+        // put entity
         _selectedItem->setPosition(_mousePosInWorld);
         EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
-        
         if ( selectedEntity != EntityType::DEFAULT )
         {
             _selectedItem->setTexture(EditorEntity::getEntityTableByType().at(selectedEntity).fileName);
@@ -595,69 +577,69 @@ void GMXLayer::updateCocosLogic()
     }
     
     
-    if ( !_isShowRenameLocationLayer )
+    // screen move logic
+    if ( ImGui::GetIO().KeysDown[262] ) _cameraDirection.x = 1.0f;
+    else if ( ImGui::GetIO().KeysDown[263] ) _cameraDirection.x = -1.0f;
+    else _cameraDirection.x = 0.0f;
+    
+    if ( ImGui::GetIO().KeysDown[265] ) _cameraDirection.y = 1.0f;
+    else if ( ImGui::GetIO().KeysDown[264] ) _cameraDirection.y = -1.0f;
+    else _cameraDirection.y = 0.0f;
+    
+    auto dt = Director::getInstance()->getDeltaTime();
+    _centerViewParam.x += (_cameraDirection.x * _windowSpeed * dt) / (_file.worldSize.width - _layerSize.width);
+    _centerViewParam.y += (_cameraDirection.y * _windowSpeed * dt) / (_file.worldSize.height - _layerSize.height);
+    _centerViewParam.clamp(Vec2::ZERO, Vec2::ONE);
+    
+    Vec2 oldPosition = _camera->getPosition();
+    Vec2 newPosition = Vec2( _layerSize.width / 2 + (_file.worldSize.width - _layerSize.width) * _centerViewParam.x,
+                            _layerSize.height / 2 + (_file.worldSize.height - _layerSize.height) * _centerViewParam.y);
+    
+    _camera->setPosition(newPosition);
+    auto cameraPos = _camera->getPosition();
+    cameraPos.clamp(Vec2(_layerSize / 2), Vec2(_file.worldSize) - Vec2(_layerSize / 2));
+    _camera->setPosition(cameraPos);
+    
+    if ( _cellSpacePartition->isUpdateChunk(oldPosition, newPosition) )
     {
-        if ( ImGui::GetIO().KeysDown[262] ) _cameraDirection.x = 1.0f;
-        else if ( ImGui::GetIO().KeysDown[263] ) _cameraDirection.x = -1.0f;
-        else _cameraDirection.x = 0.0f;
-        
-        if ( ImGui::GetIO().KeysDown[265] ) _cameraDirection.y = 1.0f;
-        else if ( ImGui::GetIO().KeysDown[264] ) _cameraDirection.y = -1.0f;
-        else _cameraDirection.y = 0.0f;
-        
-        auto dt = Director::getInstance()->getDeltaTime();
-        _centerViewParam.x += (_cameraDirection.x * _windowSpeed * dt) / (_file.worldSize.width - _layerSize.width);
-        _centerViewParam.y += (_cameraDirection.y * _windowSpeed * dt) / (_file.worldSize.height - _layerSize.height);
-        _centerViewParam.clamp(Vec2::ZERO, Vec2::ONE);
-        
-        Vec2 oldPosition = _camera->getPosition();
-        Vec2 newPosition = Vec2( _layerSize.width / 2 + (_file.worldSize.width - _layerSize.width) * _centerViewParam.x,
-                                _layerSize.height / 2 + (_file.worldSize.height - _layerSize.height) * _centerViewParam.y);
-        
-        _camera->setPosition(newPosition);
-        auto cameraPos = _camera->getPosition();
-        cameraPos.clamp(Vec2(_layerSize / 2), Vec2(_file.worldSize) - Vec2(_layerSize / 2));
-        _camera->setPosition(cameraPos);
-        
-        if ( _cellSpacePartition->isUpdateChunk(oldPosition, newPosition) )
-        {
-            updateChunk(newPosition);
-        }
-        
-        _tileRoot->setPosition( Vec2(_layerSize / 2) + _tileRootWorldPosition - _camera->getPosition() );
-        _rootNode->setPosition( -_camera->getPosition() + Vec2(_layerSize / 2) );
-        
-        if ( ImGui::IsKeyPressed(259) || ImGui::IsKeyPressed(261) ) // back space, delete
-        {
-            // remove command
-            auto prevCommand = _currCommand;
-            _currCommand = _removeEntityToolCommand;
-            
-            _currCommand->begin();
-            
-            static_cast<RemoveEntityToolCommand*>(_currCommand)->pushEntity(_selectedEntities);
-            removeSelectedEntities(true);
-            if ( !_currCommand->empty() )
-            {
-                _historyLayer->pushCommand(_currCommand->clone());
-            }
-            
-            _currCommand->end();
-            _currCommand = prevCommand;
-            
-            
-            if ( _imguiLayer.getLayerType() == LayerType::LOCATION )
-            {
-                // remove location
-                for (auto& loc : _locations)
-                {
-                    loc->setSelected(false);
-                }
-                removeLocation(_grabbedLocation);
-            }
-            
-        }
+        updateChunk(newPosition);
     }
+    
+    _tileRoot->setPosition( Vec2(_layerSize / 2) + _tileRootWorldPosition - _camera->getPosition() );
+    _rootNode->setPosition( -_camera->getPosition() + Vec2(_layerSize / 2) );
+    
+    // back space, delete
+    if ( ImGui::IsKeyPressed(259) || ImGui::IsKeyPressed(261) )
+    {
+        // remove command
+        auto prevCommand = _currCommand;
+        _currCommand = _removeEntityToolCommand;
+        
+        _currCommand->begin();
+        
+        static_cast<RemoveEntityToolCommand*>(_currCommand)->pushEntity(_selectedEntities);
+        removeSelectedEntities(true);
+        if ( !_currCommand->empty() )
+        {
+            _historyLayer->pushCommand(_currCommand->clone());
+        }
+        
+        _currCommand->end();
+        _currCommand = prevCommand;
+        
+        
+        if ( _imguiLayer.getLayerType() == LayerType::LOCATION )
+        {
+            // remove location
+            for (auto& loc : _locations)
+            {
+                loc->setSelected(false);
+            }
+            removeLocation(_grabbedLocation);
+        }
+        
+    }
+    
 }
 
 
@@ -1691,6 +1673,7 @@ void GMXLayer::save(const std::string& path)
     
     flatbuffers::FlatBufferBuilder builder;
     
+    
     // tile infos
     std::vector<flatbuffers::Offset<DeadCreator::TileInfo>> tileInfos;
     for (int i = 0 ; i < _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4; ++ i)
@@ -1718,6 +1701,7 @@ void GMXLayer::save(const std::string& path)
     DeadCreator::Coord numOfTiles(_file.numOfTileX, _file.numOfTileY);
     DeadCreator::Size tileSize(_file.tileWidth, _file.tileHeight);
     
+    
     // collision regions
     std::vector<flatbuffers::Offset<DeadCreator::Polygon>> collisionRegions;
     for(int i = 0 ; i < _collisionRegions.size() ; ++ i)
@@ -1730,6 +1714,7 @@ void GMXLayer::save(const std::string& path)
         auto poly = DeadCreator::CreatePolygon(builder, builder.CreateVectorOfStructs(polygon));
         collisionRegions.push_back(poly);
     }
+    
     
     // entities
     std::vector<flatbuffers::Offset<DeadCreator::Entity>> entities;
@@ -1749,6 +1734,7 @@ void GMXLayer::save(const std::string& path)
     // cell space size
     DeadCreator::Size cellSpaceSize(_file.tileWidth * 5, _file.tileHeight * 5);
     
+    
     // locations
     std::vector<flatbuffers::Offset<DeadCreator::Location>> locations;
     for(int i = 0 ; i < _locations.size(); ++ i)
@@ -1760,9 +1746,19 @@ void GMXLayer::save(const std::string& path)
                                                         &size, &pos));
     }
     
+    
     // triggers
     std::vector<flatbuffers::Offset<DeadCreator::Trigger>> triggers;
     _triggerEditLayer->saveTriggers(builder, triggers);
+    
+    
+    // player infos
+    std::vector<flatbuffers::Offset<DeadCreator::PlayerInfo>> playerInfos;
+    for( const auto& info : _file.playerInfos )
+    {
+        auto obj = DeadCreator::CreatePlayerInfo(builder, static_cast<int>(info.player), static_cast<int>(info.force), static_cast<int>(info.owner));
+        playerInfos.push_back(obj);
+    }
     
     
     auto file = DeadCreator::CreateGMXFile(builder,
@@ -1772,7 +1768,8 @@ void GMXLayer::save(const std::string& path)
                                            builder.CreateVector(entities),
                                            &cellSpaceSize,
                                            builder.CreateVector(locations),
-                                           builder.CreateVector(triggers));
+                                           builder.CreateVector(triggers),
+                                           builder.CreateVector(playerInfos));
     builder.Finish(file);
     
     flatbuffers::SaveFile(path.c_str(),

@@ -84,7 +84,8 @@ namespace realtrick
                 ImGui::BeginChild("##child", ImVec2(0, _layerSize.height - height - g.Style.FramePadding.y * 2.0f), true);
                 {
                     static cocos2d::Vec2 mousePosInCocos2dMatrix;
-                    mousePosInCocos2dMatrix = cocos2d::Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
+                    mousePosInCocos2dMatrix = cocos2d::Vec2(ImGui::GetIO().MousePos.x,
+                                                            ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
                     if ( ImGui::IsMouseHoveringWindow() && ImGui::GetIO().MouseClicked[0] )
                     {
                         cocos2d::Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerSize.height - _layerPosition.y, _layerSize.width, _layerSize.height);

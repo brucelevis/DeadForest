@@ -49,7 +49,10 @@ namespace realtrick
             void showLayer(bool& opened)
             {
                 ImGui::OpenPopup("Force Setting");
-                if (ImGui::BeginPopupModal("Force Setting", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+                if (ImGui::BeginPopupModal("Force Setting", NULL,
+                                           ImGuiWindowFlags_AlwaysAutoResize |
+                                           ImGuiWindowFlags_NoResize |
+                                           ImGuiWindowFlags_NoCollapse))
                 {
                     ImGui::BeginGroup();
                     ImGui::PushID(0);
@@ -60,20 +63,20 @@ namespace realtrick
                     
                     if ( _isItemClicked && ImGui::IsMouseReleased(0) && ImGui::IsMouseHoveringWindow() )
                     {
-                        _gmxLayer.getPlayerInfos().at(_clickedPlayer - 1)->force = Force::FORCE_1;
+                        _gmxLayer.getPlayerInfos().at(_clickedPlayer - 1).force = Force::FORCE_1;
                         _isItemClicked = false;
                     }
                     
                     for( const auto& player : _gmxLayer.getPlayerInfos() )
                     {
-                        PlayerInfo* info = player;
-                        if ( info->force != Force::FORCE_1) continue;
-                        std::string name = "Player " + _to_string(static_cast<int>(info->player));
+                        const PlayerInfo& info = player;
+                        if ( info.force != Force::FORCE_1 || info.owner != Owner::HUMAN ) continue;
+                        std::string name = "Player " + _to_string(static_cast<int>(info.player));
                         ImGui::Selectable(name.c_str());
                         if ( ImGui::IsItemClicked() )
                         {
                             _isItemClicked = true;
-                            _clickedPlayer = static_cast<int>(info->player);
+                            _clickedPlayer = static_cast<int>(info.player);
                         }
                     }
                     
@@ -95,20 +98,20 @@ namespace realtrick
                     
                     if ( _isItemClicked && ImGui::IsMouseReleased(0) && ImGui::IsMouseHoveringWindow() )
                     {
-                        _gmxLayer.getPlayerInfos().at(_clickedPlayer - 1)->force = Force::FORCE_2;
+                        _gmxLayer.getPlayerInfos().at(_clickedPlayer - 1).force = Force::FORCE_2;
                         _isItemClicked = false;
                     }
                     
                     for( const auto& player : _gmxLayer.getPlayerInfos() )
                     {
-                        PlayerInfo* info = player;
-                        if ( info->force != Force::FORCE_2) continue;
-                        std::string name = "Player " + _to_string(static_cast<int>(info->player));
+                        const PlayerInfo& info = player;
+                        if ( info.force != Force::FORCE_2 || info.owner != Owner::HUMAN ) continue;
+                        std::string name = "Player " + _to_string(static_cast<int>(info.player));
                         ImGui::Selectable(name.c_str());
                         if ( ImGui::IsItemClicked() )
                         {
                             _isItemClicked = true;
-                            _clickedPlayer = static_cast<int>(info->player);
+                            _clickedPlayer = static_cast<int>(info.player);
                         }
                     }
 

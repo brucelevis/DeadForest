@@ -81,7 +81,7 @@ void TriggerEditLayer::showLayer(bool& opened)
 {
     ImGuiContext& g = *GImGui;
     ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - TRIGGER_EDIT_WIDTH) / 2,
-                                   (g.IO.DisplaySize.x - TRIGGER_EDIT_HEIGHT) / 2), ImGuiSetCond_FirstUseEver);
+                                   (g.IO.DisplaySize.y - TRIGGER_EDIT_HEIGHT) / 2), ImGuiSetCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(TRIGGER_EDIT_WIDTH, TRIGGER_EDIT_HEIGHT));
     ImGui::OpenPopup("Trigger Editor");
     if (ImGui::BeginPopupModal("Trigger Editor", NULL, ImGuiWindowFlags_NoResize))

@@ -38,7 +38,6 @@ namespace realtrick
         class EditorEntity;
         class GameTrigger;
         class HistoryLayer;
-        class PlayerSettingLayer;
         class ForceSettingLayer;
         
         class GMXLayer : public cocos2d::Layer
@@ -78,7 +77,6 @@ namespace realtrick
             bool& isShowNavigator() { return _isShowNavigator; }
             bool& isShowHistory() { return _isShowHistory; }
             bool& isShowTriggerEdit() { return _isShowTriggerEdit; }
-            bool& isShowPlayerSetting() { return _isShowPlayerSetting; }
             bool& isShowForceSetting() { return _isShowForceSetting; }
             
             bool isRedo() const;
@@ -127,7 +125,7 @@ namespace realtrick
             const std::vector<LocationNode*>& getLocations() const { return _locations; }
             
             void addTrigger(GameTrigger* trigger);
-            std::vector<PlayerInfo*>& getPlayerInfos() { return _playerInfos; }
+            std::vector<PlayerInfo>& getPlayerInfos() { return _playerInfos; }
             
         private:
             
@@ -185,9 +183,6 @@ namespace realtrick
             TriggerEditLayer* _triggerEditLayer = nullptr;
             bool _isShowTriggerEdit = false;
             
-            PlayerSettingLayer* _playerSettingLayer = nullptr;
-            bool _isShowPlayerSetting = false;
-            
             ForceSettingLayer* _forceSettingLayer = nullptr;
             bool _isShowForceSetting = false;
             
@@ -209,7 +204,7 @@ namespace realtrick
             bool _isFirstFile = true;
             std::string _currFilePath;
             
-            std::vector<PlayerInfo*> _playerInfos;
+            std::vector<PlayerInfo> _playerInfos;
             
         };
         

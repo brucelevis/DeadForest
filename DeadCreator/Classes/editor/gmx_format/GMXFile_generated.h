@@ -41,6 +41,8 @@ namespace DeadCreator {
     
     struct Polygon;
     
+    struct PlayerInfo;
+    
     struct GMXFile;
     
     enum Approximation {
@@ -664,6 +666,49 @@ namespace DeadCreator {
         return builder_.Finish();
     }
     
+    struct PlayerInfo FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_PLAYER = 4,
+            VT_FORCE = 6,
+            VT_OWNER = 8
+        };
+        int32_t player() const { return GetField<int32_t>(VT_PLAYER, 0); }
+        int32_t force() const { return GetField<int32_t>(VT_FORCE, 0); }
+        int32_t owner() const { return GetField<int32_t>(VT_OWNER, 0); }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<int32_t>(verifier, VT_PLAYER) &&
+            VerifyField<int32_t>(verifier, VT_FORCE) &&
+            VerifyField<int32_t>(verifier, VT_OWNER) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct PlayerInfoBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_player(int32_t player) { fbb_.AddElement<int32_t>(PlayerInfo::VT_PLAYER, player, 0); }
+        void add_force(int32_t force) { fbb_.AddElement<int32_t>(PlayerInfo::VT_FORCE, force, 0); }
+        void add_owner(int32_t owner) { fbb_.AddElement<int32_t>(PlayerInfo::VT_OWNER, owner, 0); }
+        PlayerInfoBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        PlayerInfoBuilder &operator=(const PlayerInfoBuilder &);
+        flatbuffers::Offset<PlayerInfo> Finish() {
+            auto o = flatbuffers::Offset<PlayerInfo>(fbb_.EndTable(start_, 3));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<PlayerInfo> CreatePlayerInfo(flatbuffers::FlatBufferBuilder &_fbb,
+                                                            int32_t player = 0,
+                                                            int32_t force = 0,
+                                                            int32_t owner = 0) {
+        PlayerInfoBuilder builder_(_fbb);
+        builder_.add_owner(owner);
+        builder_.add_force(force);
+        builder_.add_player(player);
+        return builder_.Finish();
+    }
+    
     struct GMXFile FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
         enum {
             VT_DEFAULT_TYPE = 4,
@@ -674,7 +719,8 @@ namespace DeadCreator {
             VT_ENTITIES = 14,
             VT_CELL_SPACE_SIZE = 16,
             VT_LOCATIONS = 18,
-            VT_TRIGGERS = 20
+            VT_TRIGGERS = 20,
+            VT_PLAYERINFOS = 22
         };
         TileType default_type() const { return static_cast<TileType>(GetField<int32_t>(VT_DEFAULT_TYPE, 0)); }
         const flatbuffers::Vector<flatbuffers::Offset<TileInfo>> *tiles() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<TileInfo>> *>(VT_TILES); }
@@ -685,6 +731,7 @@ namespace DeadCreator {
         const Size *cell_space_size() const { return GetStruct<const Size *>(VT_CELL_SPACE_SIZE); }
         const flatbuffers::Vector<flatbuffers::Offset<Location>> *locations() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Location>> *>(VT_LOCATIONS); }
         const flatbuffers::Vector<flatbuffers::Offset<Trigger>> *triggers() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Trigger>> *>(VT_TRIGGERS); }
+        const flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>> *playerInfos() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>> *>(VT_PLAYERINFOS); }
         bool Verify(flatbuffers::Verifier &verifier) const {
             return VerifyTableStart(verifier) &&
             VerifyField<int32_t>(verifier, VT_DEFAULT_TYPE) &&
@@ -706,6 +753,9 @@ namespace DeadCreator {
             VerifyField<flatbuffers::uoffset_t>(verifier, VT_TRIGGERS) &&
             verifier.Verify(triggers()) &&
             verifier.VerifyVectorOfTables(triggers()) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_PLAYERINFOS) &&
+            verifier.Verify(playerInfos()) &&
+            verifier.VerifyVectorOfTables(playerInfos()) &&
             verifier.EndTable();
         }
     };
@@ -722,10 +772,11 @@ namespace DeadCreator {
         void add_cell_space_size(const Size *cell_space_size) { fbb_.AddStruct(GMXFile::VT_CELL_SPACE_SIZE, cell_space_size); }
         void add_locations(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Location>>> locations) { fbb_.AddOffset(GMXFile::VT_LOCATIONS, locations); }
         void add_triggers(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Trigger>>> triggers) { fbb_.AddOffset(GMXFile::VT_TRIGGERS, triggers); }
+        void add_playerInfos(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>>> playerInfos) { fbb_.AddOffset(GMXFile::VT_PLAYERINFOS, playerInfos); }
         GMXFileBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
         GMXFileBuilder &operator=(const GMXFileBuilder &);
         flatbuffers::Offset<GMXFile> Finish() {
-            auto o = flatbuffers::Offset<GMXFile>(fbb_.EndTable(start_, 9));
+            auto o = flatbuffers::Offset<GMXFile>(fbb_.EndTable(start_, 10));
             return o;
         }
     };
@@ -739,8 +790,10 @@ namespace DeadCreator {
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Entity>>> entities = 0,
                                                       const Size *cell_space_size = 0,
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Location>>> locations = 0,
-                                                      flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Trigger>>> triggers = 0) {
+                                                      flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Trigger>>> triggers = 0,
+                                                      flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>>> playerInfos = 0) {
         GMXFileBuilder builder_(_fbb);
+        builder_.add_playerInfos(playerInfos);
         builder_.add_triggers(triggers);
         builder_.add_locations(locations);
         builder_.add_cell_space_size(cell_space_size);

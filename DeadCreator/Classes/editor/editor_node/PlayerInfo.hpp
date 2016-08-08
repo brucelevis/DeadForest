@@ -6,6 +6,8 @@
 //
 //
 
+#pragma once
+
 #include "Types.hpp"
 
 namespace realtrick
@@ -13,8 +15,8 @@ namespace realtrick
     namespace editor
     {
         
-        enum class Force : int { FORCE_1, FORCE_2 };
-        enum class Owner : int { HUMAN, COMPUTER, UNUSED };
+        enum class Force : int { FORCE_1 = 0, FORCE_2 = 1 };
+        enum class Owner : int { HUMAN = 0, COMPUTER = 1, UNUSED = 2 };
         
         struct PlayerInfo
         {

@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <array>
+
 #include "cocos2d.h"
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -26,11 +28,9 @@ namespace realtrick
             
         public:
             
-            ForceSettingLayer(GMXLayer& layer) :
+            explicit ForceSettingLayer(GMXLayer& layer) :
             _gmxLayer(layer)
             {
-                std::strncpy(_force1Name, "Force 1", 20);
-                std::strncpy(_force2Name, "Force 2", 20);
             }
             
             virtual ~ForceSettingLayer() = default;
@@ -46,6 +46,14 @@ namespace realtrick
                 return nullptr;
             }
             
+            virtual bool init() override
+            {
+                if ( !Node::init() )
+                    return false;
+                
+                return true;
+            }
+            
             void showLayer(bool& opened)
             {
                 ImGui::OpenPopup("Force Setting");
@@ -54,12 +62,14 @@ namespace realtrick
                                            ImGuiWindowFlags_NoResize |
                                            ImGuiWindowFlags_NoCollapse))
                 {
+                    auto& file = _gmxLayer.getFile();
+                    
                     ImGui::BeginGroup();
                     ImGui::PushID(0);
                     ImGui::PushItemWidth(200);
-                    ImGui::InputText("", _force1Name, 20);
+                    ImGui::InputText("", file.force1.name.data(), 20);
                     ImGui::PopItemWidth();
-                    ImGui::BeginChild("dummy1", ImVec2(200,200), true);
+                    ImGui::BeginChild("dummy1", ImVec2(200, 200), true);
                     
                     if ( _isItemClicked && ImGui::IsMouseReleased(0) && ImGui::IsMouseHoveringWindow() )
                     {
@@ -82,8 +92,8 @@ namespace realtrick
                     
                     ImGui::EndChild();
                     ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_ComboBg]);
-                    ImGui::Checkbox("ally", &_isForce1Ally);
-                    ImGui::SameLine(); ImGui::Checkbox("vision", &_isForce1Vision);
+                    ImGui::Checkbox("ally", &file.force1.isAlly);
+                    ImGui::SameLine(); ImGui::Checkbox("vision", &file.force1.isVision);
                     ImGui::PopStyleColor();
                     ImGui::PopID();
                     ImGui::EndGroup();
@@ -92,7 +102,7 @@ namespace realtrick
                     ImGui::BeginGroup();
                     ImGui::PushID(1);
                     ImGui::PushItemWidth(200);
-                    ImGui::InputText("", _force2Name, 20);
+                    ImGui::InputText("", file.force2.name.data(), 20);
                     ImGui::PopItemWidth();
                     ImGui::BeginChild("dummy2", ImVec2(200,200), true);
                     
@@ -117,8 +127,8 @@ namespace realtrick
 
                     ImGui::EndChild();
                     ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_ComboBg]);
-                    ImGui::Checkbox("ally", &_isForce2Ally);
-                    ImGui::SameLine(); ImGui::Checkbox("vision", &_isForce2Vision);
+                    ImGui::Checkbox("ally", &file.force2.isAlly);
+                    ImGui::SameLine(); ImGui::Checkbox("vision", &file.force2.isVision);
                     ImGui::PopStyleColor();
                     ImGui::PopID();
                     ImGui::EndGroup();
@@ -135,9 +145,9 @@ namespace realtrick
                         closeWindow();
                         opened = false;
                     }
+                    
                     ImGui::EndPopup();
                 }
-                
             }
             
             void closeWindow()
@@ -151,14 +161,6 @@ namespace realtrick
             
             bool _isItemClicked = false;
             int _clickedPlayer = 1;
-            
-            char _force1Name[20];
-            bool _isForce1Ally = true;
-            bool _isForce1Vision = true;
-            
-            char _force2Name[20];
-            bool _isForce2Ally = true;
-            bool _isForce2Vision = true;
             
         };
         

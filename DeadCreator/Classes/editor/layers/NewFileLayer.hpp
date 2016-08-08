@@ -174,6 +174,14 @@ namespace realtrick
                                                                    static_cast<Owner>(_playerOwners[i])));
                         }
                         
+                        std::strncpy(file->force1.name.data(), "Force 1", 20);
+                        file->force1.isAlly = true;
+                        file->force1.isVision = true;
+                        
+                        std::strncpy(file->force2.name.data(), "Force 2", 20);
+                        file->force2.isAlly = true;
+                        file->force2.isVision = true;
+                        
                         _imguiLayer->createGMXLayer(file);
                         
                         opened = false;

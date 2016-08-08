@@ -13,6 +13,8 @@ namespace DeadCreator {
     
     struct Size;
     
+    struct ForceInfo;
+    
     struct TileInfo;
     
     struct Location;
@@ -154,6 +156,50 @@ namespace DeadCreator {
         int32_t height() const { return flatbuffers::EndianScalar(height_); }
     };
     STRUCT_END(Size, 8);
+    
+    struct ForceInfo FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_NAME = 4,
+            VT_IS_ALLY = 6,
+            VT_IS_VISION = 8
+        };
+        const flatbuffers::String *name() const { return GetPointer<const flatbuffers::String *>(VT_NAME); }
+        bool is_ally() const { return GetField<uint8_t>(VT_IS_ALLY, 0) != 0; }
+        bool is_vision() const { return GetField<uint8_t>(VT_IS_VISION, 0) != 0; }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_NAME) &&
+            verifier.Verify(name()) &&
+            VerifyField<uint8_t>(verifier, VT_IS_ALLY) &&
+            VerifyField<uint8_t>(verifier, VT_IS_VISION) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct ForceInfoBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_name(flatbuffers::Offset<flatbuffers::String> name) { fbb_.AddOffset(ForceInfo::VT_NAME, name); }
+        void add_is_ally(bool is_ally) { fbb_.AddElement<uint8_t>(ForceInfo::VT_IS_ALLY, static_cast<uint8_t>(is_ally), 0); }
+        void add_is_vision(bool is_vision) { fbb_.AddElement<uint8_t>(ForceInfo::VT_IS_VISION, static_cast<uint8_t>(is_vision), 0); }
+        ForceInfoBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        ForceInfoBuilder &operator=(const ForceInfoBuilder &);
+        flatbuffers::Offset<ForceInfo> Finish() {
+            auto o = flatbuffers::Offset<ForceInfo>(fbb_.EndTable(start_, 3));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<ForceInfo> CreateForceInfo(flatbuffers::FlatBufferBuilder &_fbb,
+                                                          flatbuffers::Offset<flatbuffers::String> name = 0,
+                                                          bool is_ally = false,
+                                                          bool is_vision = false) {
+        ForceInfoBuilder builder_(_fbb);
+        builder_.add_name(name);
+        builder_.add_is_vision(is_vision);
+        builder_.add_is_ally(is_ally);
+        return builder_.Finish();
+    }
     
     struct TileInfo FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
         enum {
@@ -720,7 +766,9 @@ namespace DeadCreator {
             VT_CELL_SPACE_SIZE = 16,
             VT_LOCATIONS = 18,
             VT_TRIGGERS = 20,
-            VT_PLAYERINFOS = 22
+            VT_PLAYERINFOS = 22,
+            VT_FORCE1_INFO = 24,
+            VT_FORCE2_INFO = 26
         };
         TileType default_type() const { return static_cast<TileType>(GetField<int32_t>(VT_DEFAULT_TYPE, 0)); }
         const flatbuffers::Vector<flatbuffers::Offset<TileInfo>> *tiles() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<TileInfo>> *>(VT_TILES); }
@@ -732,6 +780,8 @@ namespace DeadCreator {
         const flatbuffers::Vector<flatbuffers::Offset<Location>> *locations() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Location>> *>(VT_LOCATIONS); }
         const flatbuffers::Vector<flatbuffers::Offset<Trigger>> *triggers() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Trigger>> *>(VT_TRIGGERS); }
         const flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>> *playerInfos() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>> *>(VT_PLAYERINFOS); }
+        const ForceInfo *force1_info() const { return GetPointer<const ForceInfo *>(VT_FORCE1_INFO); }
+        const ForceInfo *force2_info() const { return GetPointer<const ForceInfo *>(VT_FORCE2_INFO); }
         bool Verify(flatbuffers::Verifier &verifier) const {
             return VerifyTableStart(verifier) &&
             VerifyField<int32_t>(verifier, VT_DEFAULT_TYPE) &&
@@ -756,6 +806,10 @@ namespace DeadCreator {
             VerifyField<flatbuffers::uoffset_t>(verifier, VT_PLAYERINFOS) &&
             verifier.Verify(playerInfos()) &&
             verifier.VerifyVectorOfTables(playerInfos()) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_FORCE1_INFO) &&
+            verifier.VerifyTable(force1_info()) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_FORCE2_INFO) &&
+            verifier.VerifyTable(force2_info()) &&
             verifier.EndTable();
         }
     };
@@ -773,10 +827,12 @@ namespace DeadCreator {
         void add_locations(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Location>>> locations) { fbb_.AddOffset(GMXFile::VT_LOCATIONS, locations); }
         void add_triggers(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Trigger>>> triggers) { fbb_.AddOffset(GMXFile::VT_TRIGGERS, triggers); }
         void add_playerInfos(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>>> playerInfos) { fbb_.AddOffset(GMXFile::VT_PLAYERINFOS, playerInfos); }
+        void add_force1_info(flatbuffers::Offset<ForceInfo> force1_info) { fbb_.AddOffset(GMXFile::VT_FORCE1_INFO, force1_info); }
+        void add_force2_info(flatbuffers::Offset<ForceInfo> force2_info) { fbb_.AddOffset(GMXFile::VT_FORCE2_INFO, force2_info); }
         GMXFileBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
         GMXFileBuilder &operator=(const GMXFileBuilder &);
         flatbuffers::Offset<GMXFile> Finish() {
-            auto o = flatbuffers::Offset<GMXFile>(fbb_.EndTable(start_, 10));
+            auto o = flatbuffers::Offset<GMXFile>(fbb_.EndTable(start_, 12));
             return o;
         }
     };
@@ -791,8 +847,12 @@ namespace DeadCreator {
                                                       const Size *cell_space_size = 0,
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Location>>> locations = 0,
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Trigger>>> triggers = 0,
-                                                      flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>>> playerInfos = 0) {
+                                                      flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>>> playerInfos = 0,
+                                                      flatbuffers::Offset<ForceInfo> force1_info = 0,
+                                                      flatbuffers::Offset<ForceInfo> force2_info = 0) {
         GMXFileBuilder builder_(_fbb);
+        builder_.add_force2_info(force2_info);
+        builder_.add_force1_info(force1_info);
         builder_.add_playerInfos(playerInfos);
         builder_.add_triggers(triggers);
         builder_.add_locations(locations);

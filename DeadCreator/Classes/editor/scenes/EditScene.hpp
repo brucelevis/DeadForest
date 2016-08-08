@@ -40,7 +40,6 @@ namespace realtrick
             void setEnableFileMenu(bool enable) { _isFileEnable = enable; }
             void setEnableEditMenu(bool enable) { _isEditEnable = enable; }
             void setEnableWindowMenu(bool enable) { _isWindowEnable = enable; }
-            void setEnablePlayerMenu(bool enable) { _isPlayerEnable = enable; }
             void setEnableSaveButton(bool enable) { _enableSaveMap = enable; }
             
             void createGMXLayer(GMXFile* file);
@@ -97,7 +96,6 @@ namespace realtrick
             
             bool _isFileEnable = true;
             bool _isEditEnable = false;
-            bool _isPlayerEnable = false;
             bool _isWindowEnable = false;
             bool _isModal = false;
             

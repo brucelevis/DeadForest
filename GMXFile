@@ -18,6 +18,13 @@ struct Size
    height : int;
 }
 
+table ForceInfo
+{
+   name : string;
+   is_ally : bool;
+   is_vision : bool;
+}
+
 enum Approximation : int { AtLeast = 0, AtMost, Exactly }
 enum TileType : int { Dirt = 0, Grass, Water, Hill }
  
@@ -122,6 +129,8 @@ table GMXFile
    locations : [Location];
    triggers : [Trigger];
    playerInfos : [PlayerInfo];
+   force1_info : ForceInfo;
+   force2_info : ForceInfo;
 }
 
 root_type GMXFile;

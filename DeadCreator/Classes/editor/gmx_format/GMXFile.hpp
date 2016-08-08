@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-#include "PlayerInfo.hpp"
+#include "Infos.hpp"
 
 namespace realtrick
 {
@@ -28,6 +28,8 @@ namespace realtrick
             int numOfTileY = -1;
             std::vector<std::vector<std::string>> tileInfos;
             std::vector<PlayerInfo> playerInfos;
+            ForceInfo force1;
+            ForceInfo force2;
             cocos2d::Size worldSize;
             int defaultTile = -1;
             

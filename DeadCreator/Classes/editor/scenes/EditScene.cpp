@@ -35,6 +35,7 @@ using namespace realtrick::editor;
 #include "GMXFile_generated.h"
 #include "util.h"
 
+
 Scene* EditScene::createScene()
 {
     auto scene = Scene::create();
@@ -277,8 +278,8 @@ bool EditScene::init()
             if ( _isEditMode ) { _layer->isShowNavigator() = !_layer->isShowNavigator(); }
         }
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("navigator");
-
-    
+        
+        
         ImGui::SameLine();
         if ( ImGuiLayer::imageButton("palette.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                      -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, windowAlpha)))
@@ -365,9 +366,9 @@ bool EditScene::init()
         ImGui::End();
         ImGui::PopStyleVar(1);
         
-//        static bool isShowDemo = true;
-//        ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-//        ImGui::ShowTestWindow(&isShowDemo);
+        //        static bool isShowDemo = true;
+        //        ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
+        //        ImGui::ShowTestWindow(&isShowDemo);
         
     }, "##main menu");
     
@@ -386,7 +387,6 @@ void EditScene::createGMXLayer(GMXFile* file)
     
     // menu
     setEnableEditMenu(true);
-    setEnablePlayerMenu(true);
     setEnableWindowMenu(true);
     
     // button
@@ -443,6 +443,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
             }
         }
         
+        
         // player infos
         for ( auto info = gmxFile->playerInfos()->begin(); info != gmxFile->playerInfos()->end() ; ++ info )
         {
@@ -451,6 +452,14 @@ void EditScene::createGMXLayer(const std::string& filePath)
                                                    static_cast<Owner>(info->owner())));
         }
         
+        std::strncpy(file->force1.name.data(), gmxFile->force1_info()->name()->c_str(), 20);
+        file->force1.isAlly = gmxFile->force1_info()->is_ally();
+        file->force1.isVision = gmxFile->force1_info()->is_vision();
+        
+        std::strncpy(file->force2.name.data(), gmxFile->force2_info()->name()->c_str(), 20);
+        file->force2.isAlly = gmxFile->force2_info()->is_ally();
+        file->force2.isVision = gmxFile->force2_info()->is_vision();
+        
         _layer = GMXLayer::create(*this, *file);
         _layer->setCurrFilePath(filePath);
         _layer->enableFirstFile(false);
@@ -458,15 +467,17 @@ void EditScene::createGMXLayer(const std::string& filePath)
         
         _showGMXLayer = true;
         
+        
         // tile infos
         for ( auto iter = gmxFile->tiles()->begin(); iter != gmxFile->tiles()->end() ; ++ iter)
         {
             int xx = iter->indices()->x();
             int yy = iter->indices()->y();
             Tileset tile = Tileset(xx, yy, iter->number()->str(),
-                                     indexToPosition(xx, yy, file->tileWidth, file->tileHeight, DUMMY_TILE_SIZE));
+                                   indexToPosition(xx, yy, file->tileWidth, file->tileHeight, DUMMY_TILE_SIZE));
             _layer->setTile(xx, yy, tile, true);
         }
+        
         
         // entities
         for ( auto iter = gmxFile->entities()->begin(); iter != gmxFile->entities()->end() ; ++ iter )
@@ -480,6 +491,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
             ent->setPlayerType(playerType);
             _layer->addEntityForce(ent, 5);
         }
+        
         
         // locations
         for ( auto iter = gmxFile->locations()->begin() ; iter != gmxFile->locations()->end() ; ++ iter)
@@ -496,19 +508,20 @@ void EditScene::createGMXLayer(const std::string& filePath)
             _layer->addLocation(loc);
         }
         
+        
         // triggers
         for ( auto trigger = gmxFile->triggers()->begin(); trigger != gmxFile->triggers()->end() ; ++ trigger )
         {
             GameTrigger* newTrigger = new GameTrigger();
             
             // set players
-            for(auto index = trigger->players()->begin(); index != trigger->players()->end(); ++index)
+            for(auto index = trigger->players()->begin(); index != trigger->players()->end(); ++ index)
             {
                 newTrigger->isPlayerSelected[*index - 1] = true;
             }
             
             // set conditions
-            for(auto cond = trigger->conditions()->begin() ; cond != trigger->conditions()->end(); ++cond)
+            for(auto cond = trigger->conditions()->begin() ; cond != trigger->conditions()->end(); ++ cond)
             {
                 auto condType = cond->condition_type();
                 switch (condType)
@@ -544,8 +557,9 @@ void EditScene::createGMXLayer(const std::string& filePath)
                 }
             }
             
+            
             // set actions
-            for(auto act = trigger->actions()->begin() ; act != trigger->actions()->end(); ++act)
+            for(auto act = trigger->actions()->begin() ; act != trigger->actions()->end(); ++ act)
             {
                 auto actType = act->action_type();
                 switch (actType)
@@ -575,7 +589,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         
                         action->setEntity(static_cast<EntityType>(actionObject->entity_type()));
                         action->setPlayerType(static_cast<PlayerType>(actionObject->player()));
-    
+                        
                         LocationNode* locationPtr = _layer->findLocation(actionObject->location_name()->str());
                         action->setLocation(locationPtr);
                         
@@ -592,10 +606,11 @@ void EditScene::createGMXLayer(const std::string& filePath)
         
         _layer->updateCollisionRegion();
         
+        
         // menu
         setEnableEditMenu(true);
-        setEnablePlayerMenu(true);
         setEnableWindowMenu(true);
+        
         
         // button
         setEnableSaveButton(true);
@@ -609,7 +624,6 @@ void EditScene::createGMXLayer(const std::string& filePath)
 void EditScene::closeGMXLayer()
 {
     setEnableEditMenu(false);
-    setEnablePlayerMenu(false);
     setEnableWindowMenu(false);
     setEnableSaveButton(false);
     
@@ -620,22 +634,14 @@ void EditScene::closeGMXLayer()
 
 void EditScene::doNewButton()
 {
-    if ( _layer )
-    {
-        _layer->updateChunk(_layer->getCameraPosition());
-    }
-    
+    if ( _layer ) _layer->updateChunk(_layer->getCameraPosition());
     _showNewMap = true;
 }
 
 
 void EditScene::doOpenButton()
 {
-    if ( _layer )
-    {
-        _layer->updateChunk(_layer->getCameraPosition());
-    }
-    
+    if ( _layer ) _layer->updateChunk(_layer->getCameraPosition());
     _showOpenMap = true;
 }
 
@@ -643,6 +649,7 @@ void EditScene::doOpenButton()
 void EditScene::changeLayerType(LayerType type)
 {
     _layerType = static_cast<int>(type);
+    
     if ( _layer )
     {
         if ( type == LayerType::LOCATION ) _layer->setVisibleLocations(true);
@@ -724,15 +731,13 @@ void EditScene::stopGame()
     _layer->setVisible(true);
     enableModal(false);
     
-    try
-    {
+    try {
         boost::filesystem::remove(boost::filesystem::path("temp_game_map"));
-    }
-    catch ( std::exception& e)
-    {
+    } catch ( std::exception& e) {
         cocos2d::log("%s", e.what());
     }
 }
+
 
 
 

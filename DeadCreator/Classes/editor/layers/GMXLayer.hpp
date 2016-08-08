@@ -17,7 +17,7 @@
 #include "Tileset.hpp"
 #include "CommandQueue.hpp"
 #include "SizeProtocol.h"
-#include "PlayerInfo.hpp"
+#include "Infos.hpp"
 
 namespace realtrick
 {
@@ -52,7 +52,7 @@ namespace realtrick
             virtual bool init() override;
             void updateCocosLogic();
             
-            const GMXFile& getFile() const { return _file; }
+            GMXFile& getFile() { return _file; }
             void setTile(int x, int y, const Tileset& tile, bool isExecCommand = false);
             const Tileset& getTile(int x, int y) const { return _tiles[y][x]; }
             

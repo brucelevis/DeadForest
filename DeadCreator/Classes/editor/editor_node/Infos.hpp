@@ -1,5 +1,5 @@
 //
-//  PlayerInfo.hpp
+//  Infos.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 8. 7..
@@ -7,6 +7,8 @@
 //
 
 #pragma once
+
+#include <array>
 
 #include "Types.hpp"
 
@@ -29,6 +31,13 @@ namespace realtrick
             force(f),
             owner(o)
             {}
+        };
+            
+        struct ForceInfo
+        {
+            std::array<char, 20> name;
+            bool isAlly;
+            bool isVision;
         };
         
     }

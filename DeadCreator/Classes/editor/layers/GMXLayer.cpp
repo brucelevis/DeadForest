@@ -168,9 +168,7 @@ void GMXLayer::initFile()
     
     _tiles.resize(y);
     for(int i = 0 ; i < y ; ++ i)
-    {
         _tiles[i].resize(x);
-    }
     
     for(int i = 0 ; i < y; ++ i)
     {
@@ -1754,12 +1752,15 @@ void GMXLayer::save(const std::string& path)
     
     // player infos
     std::vector<flatbuffers::Offset<DeadCreator::PlayerInfo>> playerInfos;
-    for( const auto& info : _file.playerInfos )
+    for( const auto& info : _playerInfos )
     {
         auto obj = DeadCreator::CreatePlayerInfo(builder, static_cast<int>(info.player), static_cast<int>(info.force), static_cast<int>(info.owner));
         playerInfos.push_back(obj);
     }
     
+    // force info
+    auto force1 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force1.name.data()), _file.force1.isAlly, _file.force1.isVision);
+    auto force2 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force2.name.data()), _file.force2.isAlly, _file.force2.isVision);
     
     auto file = DeadCreator::CreateGMXFile(builder,
                                            static_cast<DeadCreator::TileType>(_file.defaultTile),
@@ -1769,7 +1770,8 @@ void GMXLayer::save(const std::string& path)
                                            &cellSpaceSize,
                                            builder.CreateVector(locations),
                                            builder.CreateVector(triggers),
-                                           builder.CreateVector(playerInfos));
+                                           builder.CreateVector(playerInfos),
+                                           force1, force2);
     builder.Finish(file);
     
     flatbuffers::SaveFile(path.c_str(),

@@ -31,7 +31,6 @@ _inventory(nullptr)
 EntityPlayer::~EntityPlayer()
 {
     CC_SAFE_DELETE(_FSM);
-    
     CC_SAFE_RELEASE_NULL(_weaponStatus);
     CC_SAFE_RELEASE_NULL(_inventory);
 }
@@ -109,6 +108,7 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         
         ret = true;
     }
+    
     else if ( msg.msg  == MessageType::HITTED_BY_GUN )
     {
         ReceiverSenderDamage s = *static_cast<ReceiverSenderDamage*>(msg.extraInfo);
@@ -124,6 +124,7 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         
         ret = true;
     }
+    
     else if (msg.msg == MessageType::HITTED_BY_AXE )
     {
         ReceiverSenderDamage s = *static_cast<ReceiverSenderDamage*>(msg.extraInfo);
@@ -139,6 +140,7 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         
         ret = true;
     }
+    
     else if ( msg.msg == MessageType::PLAY_SOUND )
     {
         SoundSource s =  *static_cast<SoundSource*>(msg.extraInfo);

@@ -64,7 +64,6 @@ bool EditScene::init()
     _playGameLayer = PlayGameLayer::create(this);
     addChild(_playGameLayer);
     
-    
     addImGUI([this] {
         
         _isEditMode = (_layer && !_showPlayGameLayer);
@@ -323,7 +322,7 @@ bool EditScene::init()
         if ( _layer && !_showPlayGameLayer )
         {
             ImGui::SameLine();
-            ImGui::PushItemWidth(200);
+            ImGui::PushItemWidth(250);
             if (ImGui::Combo("##layer", &_layerType, "Tile Layer\0Entity Layer\0Location Layer\0", 4))
             {
                 if ( _layer ) _layer->getPaletteLayer()->setSelectedItem(-1);
@@ -332,9 +331,16 @@ bool EditScene::init()
             
             ImGui::SameLine();
             std::string players;
-            if (ImGui::Combo("##player", &_selectedPlayerType,
-                             "Player 1\0Player 2\0Player 3\0Player 4\0Player 5\0Player 6\0Player 7\0Player 8\0", 8))
-            {}
+            for( const auto& info :_layer->getFile().playerInfos )
+            {
+                std::string player = "Player " + _to_string(static_cast<int>(info.player));
+                std::string owner;
+                if ( info.owner == Owner::HUMAN ) owner = "(Human)";
+                else if ( info.owner == Owner::COMPUTER ) owner = "(Computer)";
+                else if ( info.owner == Owner::UNUSED ) owner = "(Unused)";
+                players += (player + " " + owner + '\0');
+            }
+            ImGui::Combo("##player", &_selectedPlayerType, players.c_str(), 8);
             ImGui::PopItemWidth();
         }
         

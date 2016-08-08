@@ -81,6 +81,7 @@ bool EntityZombie::handleMessage(const Telegram& msg)
         
         ret = true;
     }
+    
     else if (msg.msg == MessageType::HITTED_BY_AXE )
     {
         ReceiverSenderDamage s = *static_cast<ReceiverSenderDamage*>(msg.extraInfo);

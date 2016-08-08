@@ -64,8 +64,6 @@ bool EditScene::init()
     _playGameLayer = PlayGameLayer::create(this);
     addChild(_playGameLayer);
     
-    _forceSettingLayer = ForceSettingLayer::create(this);
-    addChild(_forceSettingLayer);
     
     addImGUI([this] {
         
@@ -76,7 +74,6 @@ bool EditScene::init()
         if ( _showOpenMap ) _openLayer->showLayer(_showOpenMap);
         if ( _showSaveQueryLayer ) _saveQueryLayer->showLayer(_showSaveQueryLayer);
         if ( _showPlayGameLayer ) _playGameLayer->showLayer(_showPlayGameLayer);
-        if ( _showForceSettingLayer ) _forceSettingLayer->showLayer(_showForceSettingLayer);
         if ( _layer && _showGMXLayer && !_showPlayGameLayer ) _layer->showLayer(_showGMXLayer);
         
         if (ImGui::BeginMainMenuBar())
@@ -109,8 +106,8 @@ bool EditScene::init()
             
             if (ImGui::BeginMenu("Players", _isPlayerEnable && !_showPlayGameLayer))
             {
-                if (ImGui::MenuItem("Player Setting", "SHIFT+P")) {}
-                if (ImGui::MenuItem("Force Setting", "SHIFT+F", &_showForceSettingLayer)) {}
+                ImGui::MenuItem("Player Setting", "SHIFT+P", &_layer->isShowPlayerSetting());
+                ImGui::MenuItem("Force Setting", "SHIFT+F", &_layer->isShowForceSetting());
                 ImGui::EndMenu();
             }
             
@@ -381,7 +378,6 @@ void EditScene::createGMXLayer(GMXFile* file)
     _layer = GMXLayer::create(*this, *file);
     addChild(_layer);
     
-    _forceSettingLayer->setGMXLayer(_layer);
     _showGMXLayer = true;
     
     // menu
@@ -448,7 +444,6 @@ void EditScene::createGMXLayer(const std::string& filePath)
         _layer->enableFirstFile(false);
         addChild(_layer);
         
-        _forceSettingLayer->setGMXLayer(_layer);
         _showGMXLayer = true;
         
         // tile infos
@@ -608,8 +603,6 @@ void EditScene::closeGMXLayer()
     
     _layer->removeFromParent();
     _layer = nullptr;
-    
-    _forceSettingLayer->setGMXLayer(nullptr);
 }
 
 

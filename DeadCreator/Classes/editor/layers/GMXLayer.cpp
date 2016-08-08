@@ -23,6 +23,8 @@
 #include "MainMenu3.hpp"
 #include "LocationNode.hpp"
 #include "RenameLocationLayer.hpp"
+#include "PlayerSettingLayer.hpp"
+#include "ForceSettingLayer.hpp"
 #include "StringHelper.hpp"
 using namespace cocos2d;
 using namespace realtrick;
@@ -60,12 +62,10 @@ GMXLayer::~GMXLayer()
     
     _entities.clear();
     
-    for(auto& tile : _tiles)
-        tile.clear();
+    for(auto& tile : _tiles) tile.clear();
     _tiles.clear();
     
-    for( auto& tile : _tileImages)
-        tile.clear();
+    for( auto& tile : _tileImages) tile.clear();
     _tileImages.clear();
     
     _selectedEntities.clear();
@@ -152,6 +152,12 @@ bool GMXLayer::init()
     
     _renameLocationLayer = RenameLocationLayer::create(*this);
     addChild(_renameLocationLayer);
+    
+    _playerSettingLayer = PlayerSettingLayer::create(*this);
+    addChild(_playerSettingLayer);
+    
+    _forceSettingLayer = ForceSettingLayer::create(*this);
+    addChild(_forceSettingLayer);
     
     _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER1, Force::FORCE_1, Owner::HUMAN));
     _playerInfos.push_back(new PlayerInfo(PlayerType::PLAYER2, Force::FORCE_1, Owner::HUMAN));
@@ -268,7 +274,7 @@ void GMXLayer::showLayer(bool& opened)
     _tileRoot->setPosition(_layerSize / 2);
     _clipNode->setClippingRegion(cocos2d::Rect(0, 0, _layerSize.width, _layerSize.height));
     
-    if ( !_imguiLayer.isModal() && !_isShowTriggerEdit ) updateCocosLogic();
+    if ( !_imguiLayer.isModal() && !_isShowTriggerEdit && !_isShowForceSetting && !_isShowPlayerSetting ) updateCocosLogic();
     
     ImGui::End();
     ImGui::PopStyleVar(2);
@@ -287,6 +293,8 @@ void GMXLayer::showLayer(bool& opened)
     if ( _isShowHistory ) _historyLayer->showLayer(_isShowHistory);
     if ( _isShowRenameLocationLayer ) _renameLocationLayer->showLayer(_isShowRenameLocationLayer);
     if ( _isShowTriggerEdit ) _triggerEditLayer->showLayer(_isShowTriggerEdit);
+    if ( _isShowPlayerSetting ) _playerSettingLayer->showLayer(_isShowPlayerSetting);
+    if ( _isShowForceSetting ) _forceSettingLayer->showLayer(_isShowForceSetting);
 }
 
 

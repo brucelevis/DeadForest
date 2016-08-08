@@ -26,15 +26,15 @@ namespace realtrick
             
         public:
             
-            ForceSettingLayer(EditScene* imguiLayer) :
-            _imguiLayer(imguiLayer)
+            ForceSettingLayer(GMXLayer& layer) :
+            _gmxLayer(layer)
             {
                 std::strncpy(_force1Name, "Force 1", 20);
                 std::strncpy(_force2Name, "Force 2", 20);
             }
             
             virtual ~ForceSettingLayer() = default;
-            static ForceSettingLayer* create(EditScene* layer)
+            static ForceSettingLayer* create(GMXLayer& layer)
             {
                 auto ret = new (std::nothrow) ForceSettingLayer(layer);
                 if ( ret && ret->init() )
@@ -51,8 +51,6 @@ namespace realtrick
                 ImGui::OpenPopup("Force Setting");
                 if (ImGui::BeginPopupModal("Force Setting", NULL, ImGuiWindowFlags_AlwaysAutoResize))
                 {
-                    _imguiLayer->enableModal(true);
-                    
                     ImGui::BeginGroup();
                     ImGui::PushID(0);
                     ImGui::PushItemWidth(200);
@@ -62,11 +60,11 @@ namespace realtrick
                     
                     if ( _isItemClicked && ImGui::IsMouseReleased(0) && ImGui::IsMouseHoveringWindow() )
                     {
-                        _gmxLayer->getPlayerInfos().at(_clickedPlayer - 1)->force = Force::FORCE_1;
+                        _gmxLayer.getPlayerInfos().at(_clickedPlayer - 1)->force = Force::FORCE_1;
                         _isItemClicked = false;
                     }
                     
-                    for( const auto& player : _gmxLayer->getPlayerInfos() )
+                    for( const auto& player : _gmxLayer.getPlayerInfos() )
                     {
                         PlayerInfo* info = player;
                         if ( info->force != Force::FORCE_1) continue;
@@ -97,11 +95,11 @@ namespace realtrick
                     
                     if ( _isItemClicked && ImGui::IsMouseReleased(0) && ImGui::IsMouseHoveringWindow() )
                     {
-                        _gmxLayer->getPlayerInfos().at(_clickedPlayer - 1)->force = Force::FORCE_2;
+                        _gmxLayer.getPlayerInfos().at(_clickedPlayer - 1)->force = Force::FORCE_2;
                         _isItemClicked = false;
                     }
                     
-                    for( const auto& player : _gmxLayer->getPlayerInfos() )
+                    for( const auto& player : _gmxLayer.getPlayerInfos() )
                     {
                         PlayerInfo* info = player;
                         if ( info->force != Force::FORCE_2) continue;
@@ -142,15 +140,11 @@ namespace realtrick
             void closeWindow()
             {
                 ImGui::CloseCurrentPopup();
-                _imguiLayer->enableModal(false);
             }
-            
-            void setGMXLayer(GMXLayer* layer) { _gmxLayer = layer; }
             
         private:
             
-            EditScene* _imguiLayer;
-            GMXLayer* _gmxLayer;
+            GMXLayer& _gmxLayer;
             
             bool _isItemClicked = false;
             int _clickedPlayer = 1;

@@ -86,7 +86,7 @@ namespace realtrick
                 
                 bool itemSelected = false;
                 
-                if (ImGui::Combo("type", &_paletteType, "tile\0human\0item\0"))
+                if (ImGui::Combo("type", &_paletteType, "tile\0human\0enemy\0item\0"))
                 {
                     itemSelected = false;
                     _selectedItem = -1;
@@ -132,7 +132,7 @@ namespace realtrick
                     }
                 }
                 
-                static int counter = 0;
+                int counter = 0;
                 const auto& entities = EditorEntity::getEntityTableByType();
                 for( auto& ent : entities)
                 {
@@ -149,8 +149,8 @@ namespace realtrick
                         {
                             _gmxLayer.setCommand(_gmxLayer.getAddEntityToolCommand());
                         }
+                        counter++;
                     }
-                    counter++;
                 }
                 counter = 0;
                 

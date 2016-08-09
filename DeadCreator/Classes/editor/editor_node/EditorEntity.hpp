@@ -90,7 +90,7 @@ namespace realtrick
                 if ( isFirstCall )
                 {
                     table[EntityType::ENTITY_PLAYER] = EntityData(EntityType::ENTITY_PLAYER, PaletteType::HUMAN, "Sheriff", "sheriff.png");
-                    table[EntityType::ENTITY_ZOMBIE] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::HUMAN, "Zombie", "zombie2.png");
+                    table[EntityType::ENTITY_ZOMBIE] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::ENEMY, "Zombie", "zombie2.png");
                     table[EntityType::ITEM_M16A2] = EntityData(EntityType::ITEM_M16A2, PaletteType::ITEM, "M16A2", "M16A2.png");
                     table[EntityType::ITEM_M1897] = EntityData(EntityType::ITEM_M1897, PaletteType::ITEM,"M1897", "M1897.png");
                     table[EntityType::ITEM_GLOCK17] = EntityData(EntityType::ITEM_GLOCK17, PaletteType::ITEM,"Glock17", "Glock17.png");
@@ -111,7 +111,7 @@ namespace realtrick
                 if ( isFirstCall )
                 {
                     table["Sheriff"] = EntityData(EntityType::ENTITY_PLAYER, PaletteType::HUMAN, "Sheriff", "sheriff.png");
-                    table["Zombie"] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::HUMAN, "Zombie", "zombie2.png");
+                    table["Zombie"] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::ENEMY, "Zombie", "zombie2.png");
                     table["M16A2"] = EntityData(EntityType::ITEM_M16A2, PaletteType::ITEM,"M16A2", "M16A2.png");
                     table["M1897"] = EntityData(EntityType::ITEM_M1897, PaletteType::ITEM,"M1897", "M1897.png");
                     table["Glock17"] = EntityData(EntityType::ITEM_GLOCK17, PaletteType::ITEM,"Glock17", "Glock17.png");

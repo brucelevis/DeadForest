@@ -18,6 +18,7 @@ namespace realtrick
             DEFAULT = -1,
             TILE = 0,
             HUMAN,
+            ENEMY,
             ITEM,
         };
             

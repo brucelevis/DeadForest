@@ -50,7 +50,8 @@ _windowSpeed(1000),
 _tileRoot(nullptr),
 _viewX(30),
 _viewY(60)
-{}
+{
+}
 
 
 GMXLayer::~GMXLayer()
@@ -195,7 +196,7 @@ void GMXLayer::initFile()
     }
     
     updateChunk(_camera->getPosition());
-
+    
     for(int i = 0 ; i < 8 ; ++ i)
     {
         _playerInfos.push_back(PlayerInfo(_file.playerInfos[i].player, _file.playerInfos[i].force, _file.playerInfos[i].owner));
@@ -456,7 +457,7 @@ void GMXLayer::updateCocosLogic()
         _paletteLayer->setSelectedItem(-1);
         clearSelectedEntites();
     }
-
+    
     auto layerType = _imguiLayer.getLayerType();
     if ( layerType == LayerType::TILE )
     {
@@ -558,17 +559,45 @@ void GMXLayer::updateCocosLogic()
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
-                    EditorEntity* ent = EditorEntity::create(getNextValidID(), selectedEntity);
-                    ent->setPosition(_mousePosInWorld);
-                    if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN )
+                    // _imguiLayer.getSelectedPlayerType() : 1 ~ 8
+                    // file.playeInfos : 0 ~ 7
+                    int selectedPlayerType = static_cast<int>(_imguiLayer.getSelectedPlayerType()) - 1;
+                    if ( _file.playerInfos[selectedPlayerType].owner == Owner::HUMAN )
                     {
-                        ent->setPlayerType(_imguiLayer.getSelectedPlayerType());
+                        if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN )
+                        {
+                            if ( getNumberOfHumanEntity(_imguiLayer.getSelectedPlayerType()) == 0 )
+                            {
+                                EditorEntity* ent = EditorEntity::create(getNextValidID(), selectedEntity);
+                                ent->setPosition(_mousePosInWorld);
+                                ent->setPlayerType(_imguiLayer.getSelectedPlayerType());
+                                addEntity(ent, 5);
+                            }
+                            else if ( getNumberOfHumanEntity(_imguiLayer.getSelectedPlayerType()) != 0 )
+                            {
+                                
+                            }
+                        }
                     }
-                    else if ( _paletteLayer->getPaletteType() == PaletteType::ITEM )
+                    else // (owner is computer)
                     {
+                        if (_paletteLayer->getPaletteType() == PaletteType::HUMAN ||
+                            _paletteLayer->getPaletteType() == PaletteType::ENEMY)
+                        {
+                            EditorEntity* ent = EditorEntity::create(getNextValidID(), selectedEntity);
+                            ent->setPosition(_mousePosInWorld);
+                            ent->setPlayerType(_imguiLayer.getSelectedPlayerType());
+                            addEntity(ent, 5);
+                        }
+                    }
+                    
+                    if ( _paletteLayer->getPaletteType() == PaletteType::ITEM )
+                    {
+                        EditorEntity* ent = EditorEntity::create(getNextValidID(), selectedEntity);
+                        ent->setPosition(_mousePosInWorld);
                         ent->setPlayerType(PlayerType::NEUTRAL);
+                        addEntity(ent, 5);
                     }
-                    addEntity(ent, 5);
                 }
             }
         }
@@ -821,43 +850,59 @@ void GMXLayer::putTile(TileType type, int x, int y)
                     std::string tail = temp.getTileTail();
                     if ( tail == "2")
                     {
-                        s.push(Tileset(nei[0].first, nei[0].second, Tileset::getTileHeader(TileType::DIRT) + "2", indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
-                        s.push(Tileset(nei[1].first, nei[1].second, Tileset::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
-                        s.push(Tileset(nei[7].first, nei[7].second, Tileset::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[0].first, nei[0].second, Tileset::getTileHeader(TileType::DIRT) + "2",
+                                       indexToPosition(nei[0].first, nei[0].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[1].first, nei[1].second, Tileset::getTileHeader(TileType::DIRT) + "23",
+                                       indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[7].first, nei[7].second, Tileset::getTileHeader(TileType::DIRT) + "12",
+                                       indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "23")
                     {
-                        s.push(Tileset(nei[1].first, nei[1].second, Tileset::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[1].first, nei[1].second, Tileset::getTileHeader(TileType::DIRT) + "23",
+                                       indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "3")
                     {
-                        s.push(Tileset(nei[1].first, nei[1].second, Tileset::getTileHeader(TileType::DIRT) + "23", indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
-                        s.push(Tileset(nei[2].first, nei[2].second, Tileset::getTileHeader(TileType::DIRT) + "3", indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
-                        s.push(Tileset(nei[3].first, nei[3].second, Tileset::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[1].first, nei[1].second, Tileset::getTileHeader(TileType::DIRT) + "23",
+                                       indexToPosition(nei[1].first, nei[1].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[2].first, nei[2].second, Tileset::getTileHeader(TileType::DIRT) + "3",
+                                       indexToPosition(nei[2].first, nei[2].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[3].first, nei[3].second, Tileset::getTileHeader(TileType::DIRT) + "34",
+                                       indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "34")
                     {
-                        s.push(Tileset(nei[3].first, nei[3].second, Tileset::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[3].first, nei[3].second, Tileset::getTileHeader(TileType::DIRT) + "34",
+                                       indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "4")
                     {
-                        s.push(Tileset(nei[3].first, nei[3].second, Tileset::getTileHeader(TileType::DIRT) + "34", indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
-                        s.push(Tileset(nei[4].first, nei[4].second, Tileset::getTileHeader(TileType::DIRT) + "4", indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
-                        s.push(Tileset(nei[5].first, nei[5].second, Tileset::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[3].first, nei[3].second, Tileset::getTileHeader(TileType::DIRT) + "34",
+                                       indexToPosition(nei[3].first, nei[3].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[4].first, nei[4].second, Tileset::getTileHeader(TileType::DIRT) + "4",
+                                       indexToPosition(nei[4].first, nei[4].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[5].first, nei[5].second, Tileset::getTileHeader(TileType::DIRT) + "14",
+                                       indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "14")
                     {
-                        s.push(Tileset(nei[5].first, nei[5].second, Tileset::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[5].first, nei[5].second, Tileset::getTileHeader(TileType::DIRT) + "14",
+                                       indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "1")
                     {
-                        s.push(Tileset(nei[5].first, nei[5].second, Tileset::getTileHeader(TileType::DIRT) + "14", indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
-                        s.push(Tileset(nei[6].first, nei[6].second, Tileset::getTileHeader(TileType::DIRT) + "1", indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
-                        s.push(Tileset(nei[7].first, nei[7].second, Tileset::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[5].first, nei[5].second, Tileset::getTileHeader(TileType::DIRT) + "14",
+                                       indexToPosition(nei[5].first, nei[5].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[6].first, nei[6].second, Tileset::getTileHeader(TileType::DIRT) + "1",
+                                       indexToPosition(nei[6].first, nei[6].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[7].first, nei[7].second, Tileset::getTileHeader(TileType::DIRT) + "12",
+                                       indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
                     }
                     else if ( tail == "12")
                     {
-                        s.push(Tileset(nei[7].first, nei[7].second, Tileset::getTileHeader(TileType::DIRT) + "12", indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
+                        s.push(Tileset(nei[7].first, nei[7].second, Tileset::getTileHeader(TileType::DIRT) + "12",
+                                       indexToPosition(nei[7].first, nei[7].second, tileWidth, tileHeight, dummy)));
                     }
                     
                     setTile(xx, yy, temp);
@@ -944,8 +989,7 @@ bool GMXLayer::addEntity(EditorEntity* entity, int localZOrder, bool isExecComma
 
 bool GMXLayer::addEntityForce(EditorEntity* entity, int localZOrder)
 {
-    auto iter = _entities.find(entity->getID());
-    if ( iter == std::end(_entities))
+    if ( getEntityFromID(entity->getID()) == nullptr )
     {
         _navigatorLayer->addEntity(entity);
         _rootNode->addChild(entity, localZOrder);
@@ -958,18 +1002,47 @@ bool GMXLayer::addEntityForce(EditorEntity* entity, int localZOrder)
 }
 
 
-bool GMXLayer::eraseEntity(int id, bool isExecCommand)
+int GMXLayer::getNumberOfHumanEntity(PlayerType player)
+{
+    int ret = 0;
+    for ( const auto& ent : _entities )
+    {
+        auto entity = ent.second;
+        EntityType entityType = entity->getEntityType();
+        if (entity->isVisible() &&
+            entity->getPlayerType() == player &&
+            (entityType == EntityType::ENTITY_PLAYER || entityType == EntityType::ENTITY_ZOMBIE))
+        {
+            ret ++;
+        }
+    }
+    return ret;
+}
+
+
+EditorEntity* GMXLayer::getEntityFromID(int id)
 {
     auto iter = _entities.find(id);
     if ( iter != std::end(_entities))
     {
+        return iter->second;
+    }
+    return nullptr;
+}
+
+
+bool GMXLayer::eraseEntity(int id, bool isExecCommand)
+{
+    auto entity = getEntityFromID(id);
+    if ( entity )
+    {
         _navigatorLayer->eraseEntity(id);
-        iter->second->setVisible(false);
-        iter->second->setSelected(false);
+        entity->setVisible(false);
+        entity->setSelected(false);
         if ( !isExecCommand)
         {
             _entities.erase(id);
-            iter->second->removeFromParent();
+            entity->removeFromParent();
         }
         
         return true;

@@ -18,6 +18,7 @@
 #include "CommandQueue.hpp"
 #include "SizeProtocol.h"
 #include "Infos.hpp"
+#include "Types.hpp"
 
 namespace realtrick
 {
@@ -92,8 +93,9 @@ namespace realtrick
             
             bool addEntity(EditorEntity* entity, int localZOrder = 0, bool isExecCommand = false);
             bool addEntityForce(EditorEntity* entity, int localZOrder = 0);
-            
             bool eraseEntity(int id, bool isExecCommand = false);
+            int getNumberOfHumanEntity(PlayerType player);
+            EditorEntity* getEntityFromID(int id);
             
             static int getNextValidID() { static int validID = 0; return validID++; }
             static void enableTitleClicked() { TITLE_CLICKED = true; }
@@ -160,6 +162,7 @@ namespace realtrick
             std::vector< std::vector<Tileset> > _tiles;
             std::vector< std::vector<TileImage*> > _tileImages;
             std::vector< EditorEntity* > _selectedEntities;
+            
             
             int _viewX;
             int _viewY;

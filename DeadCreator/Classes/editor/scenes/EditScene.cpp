@@ -275,7 +275,10 @@ bool EditScene::init()
         if (ImGuiLayer::imageButton("navi.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                     -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
-            if ( _isEditMode ) { _layer->isShowNavigator() = !_layer->isShowNavigator(); }
+            if ( _isEditMode )
+            {
+                _layer->isShowNavigator() = !_layer->isShowNavigator();
+            }
         }
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("navigator");
         
@@ -284,7 +287,10 @@ bool EditScene::init()
         if ( ImGuiLayer::imageButton("palette.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                      -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, windowAlpha)))
         {
-            if ( _isEditMode ) { _layer->isShowPalette() = !_layer->isShowPalette(); }
+            if ( _isEditMode )
+            {
+                _layer->isShowPalette() = !_layer->isShowPalette();
+            }
         }
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("palette");
         
@@ -292,7 +298,10 @@ bool EditScene::init()
         if (ImGuiLayer::imageButton("history.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                     -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
-            if ( _isEditMode ) { _layer->isShowHistory() = !_layer->isShowHistory(); }
+            if ( _isEditMode )
+            {
+                _layer->isShowHistory() = !_layer->isShowHistory();
+            }
         }
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("history");
         
@@ -300,7 +309,10 @@ bool EditScene::init()
         if ( ImGuiLayer::imageButton("trigger.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                      -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
-            if ( _isEditMode ) { _layer->isShowTriggerEdit() = !_layer->isShowTriggerEdit(); }
+            if ( _isEditMode )
+            {
+                _layer->isShowTriggerEdit() = !_layer->isShowTriggerEdit();
+            }
         }
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("trigger");
         
@@ -332,7 +344,7 @@ bool EditScene::init()
             
             ImGui::SameLine();
             std::string players;
-            for( const auto& info :_layer->getFile().playerInfos )
+            for( const auto& info : _layer->getFile().playerInfos )
             {
                 std::string player = "Player " + _to_string(static_cast<int>(info.player));
                 std::string owner;
@@ -341,7 +353,18 @@ bool EditScene::init()
                 else if ( info.owner == Owner::UNUSED ) owner = "(Unused)";
                 players += (player + " " + owner + '\0');
             }
-            ImGui::Combo("##player", &_selectedPlayerType, players.c_str(), 8);
+            static int oldSelectedPlayer = _selectedPlayerType;
+            if ( ImGui::Combo("##player", &_selectedPlayerType, players.c_str(), 8) )
+            {
+                if ( _layer->getFile().playerInfos[_selectedPlayerType].owner == Owner::UNUSED )
+                {
+                    _selectedPlayerType = oldSelectedPlayer;
+                }
+                else
+                {
+                    oldSelectedPlayer = _selectedPlayerType;
+                }
+            }
             ImGui::PopItemWidth();
         }
         

@@ -11,6 +11,10 @@
 		0B095E811D5845EF002EE9BE /* GameMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B095E7A1D5845EF002EE9BE /* GameMap.cpp */; };
 		0B095E821D5845EF002EE9BE /* ParamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B095E7D1D5845EF002EE9BE /* ParamLoader.cpp */; };
 		0B095E861D584796002EE9BE /* Room.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B095E841D584796002EE9BE /* Room.cpp */; };
+		0B2A65E11D5B4FC50013338B /* Client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A65DF1D5B4FC50013338B /* Client.cpp */; };
+		0B2A65EA1D5B5CCF0013338B /* DynamicEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A65E31D5B5CCF0013338B /* DynamicEntity.cpp */; };
+		0B2A65EB1D5B5CCF0013338B /* EntityBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A65E51D5B5CCF0013338B /* EntityBase.cpp */; };
+		0B2A65EC1D5B5CCF0013338B /* EntityHuman.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A65E71D5B5CCF0013338B /* EntityHuman.cpp */; };
 		0B2D6BF41D18266200A13347 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2D6BF31D18266200A13347 /* main.cpp */; };
 		0B45B00A1D43060500E933F2 /* Rect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45AFFF1D43060500E933F2 /* Rect.cpp */; };
 		0B45B00B1D43060500E933F2 /* Vec2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45B0051D43060500E933F2 /* Vec2.cpp */; };
@@ -56,6 +60,15 @@
 		0B095E7F1D5845EF002EE9BE /* ParamLoader.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ParamLoader.inl; sourceTree = "<group>"; };
 		0B095E841D584796002EE9BE /* Room.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Room.cpp; sourceTree = "<group>"; };
 		0B095E851D584796002EE9BE /* Room.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Room.h; sourceTree = "<group>"; };
+		0B2A65DF1D5B4FC50013338B /* Client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Client.cpp; sourceTree = "<group>"; };
+		0B2A65E01D5B4FC50013338B /* Client.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Client.hpp; sourceTree = "<group>"; };
+		0B2A65E31D5B5CCF0013338B /* DynamicEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicEntity.cpp; sourceTree = "<group>"; };
+		0B2A65E41D5B5CCF0013338B /* DynamicEntity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DynamicEntity.hpp; sourceTree = "<group>"; };
+		0B2A65E51D5B5CCF0013338B /* EntityBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityBase.cpp; sourceTree = "<group>"; };
+		0B2A65E61D5B5CCF0013338B /* EntityBase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityBase.hpp; sourceTree = "<group>"; };
+		0B2A65E71D5B5CCF0013338B /* EntityHuman.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityHuman.cpp; sourceTree = "<group>"; };
+		0B2A65E81D5B5CCF0013338B /* EntityHuman.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityHuman.hpp; sourceTree = "<group>"; };
+		0B2A65E91D5B5CCF0013338B /* EntityType.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityType.hpp; sourceTree = "<group>"; };
 		0B2D6BF01D18266200A13347 /* TheDeadForestTestClient */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TheDeadForestTestClient; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B2D6BF31D18266200A13347 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		0B31FCBD1D58C09200A79F62 /* FlatbufferPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlatbufferPacket.h; sourceTree = "<group>"; };
@@ -192,6 +205,20 @@
 			path = Room;
 			sourceTree = "<group>";
 		};
+		0B2A65E21D5B5CA40013338B /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				0B2A65E31D5B5CCF0013338B /* DynamicEntity.cpp */,
+				0B2A65E41D5B5CCF0013338B /* DynamicEntity.hpp */,
+				0B2A65E51D5B5CCF0013338B /* EntityBase.cpp */,
+				0B2A65E61D5B5CCF0013338B /* EntityBase.hpp */,
+				0B2A65E71D5B5CCF0013338B /* EntityHuman.cpp */,
+				0B2A65E81D5B5CCF0013338B /* EntityHuman.hpp */,
+				0B2A65E91D5B5CCF0013338B /* EntityType.hpp */,
+			);
+			path = Entity;
+			sourceTree = "<group>";
+		};
 		0B2D6BE71D18266200A13347 = {
 			isa = PBXGroup;
 			children = (
@@ -212,6 +239,7 @@
 		0B2D6BF21D18266200A13347 /* TheDeadForestTestClient */ = {
 			isa = PBXGroup;
 			children = (
+				0B2A65E21D5B5CA40013338B /* Entity */,
 				0B095E831D584796002EE9BE /* Room */,
 				0B095E761D5845EF002EE9BE /* GameManager */,
 				0B095E791D5845EF002EE9BE /* GameMap */,
@@ -229,6 +257,8 @@
 				0B8DC3E81D3085BA005C32EE /* Server.cpp */,
 				0B8DC3E91D3085BA005C32EE /* Server.hpp */,
 				0B2D6BF31D18266200A13347 /* main.cpp */,
+				0B2A65DF1D5B4FC50013338B /* Client.cpp */,
+				0B2A65E01D5B4FC50013338B /* Client.hpp */,
 			);
 			path = TheDeadForestTestClient;
 			sourceTree = "<group>";
@@ -478,11 +508,15 @@
 				0B095E821D5845EF002EE9BE /* ParamLoader.cpp in Sources */,
 				0B8DC3EA1D3085BA005C32EE /* Server.cpp in Sources */,
 				0B45B00B1D43060500E933F2 /* Vec2.cpp in Sources */,
+				0B2A65EB1D5B5CCF0013338B /* EntityBase.cpp in Sources */,
 				0B095E861D584796002EE9BE /* Room.cpp in Sources */,
 				0B45B0571D4323A000E933F2 /* ParamLoader.cpp in Sources */,
+				0B2A65EC1D5B5CCF0013338B /* EntityHuman.cpp in Sources */,
 				0B45B0151D43078D00E933F2 /* Geometry.cpp in Sources */,
 				0B2D6BF41D18266200A13347 /* main.cpp in Sources */,
 				0B45B0161D43078D00E933F2 /* Mat3.cpp in Sources */,
+				0B2A65EA1D5B5CCF0013338B /* DynamicEntity.cpp in Sources */,
+				0B2A65E11D5B4FC50013338B /* Client.cpp in Sources */,
 				0B45B00A1D43060500E933F2 /* Rect.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

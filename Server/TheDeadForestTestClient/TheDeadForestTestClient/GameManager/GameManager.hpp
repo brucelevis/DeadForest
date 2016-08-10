@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Room.h"
 #include "CellSpacePartition.hpp"
 #include "GameMap.hpp"
 #include "EntityHuman.hpp"
@@ -28,8 +27,7 @@ namespace realtrick
     {
     public:
 
-		GameManager(Room* room) :
-			_room(room),
+		GameManager() :
 			_nextValidID(0),
 			_gameMap(nullptr)
 		{};
@@ -85,7 +83,6 @@ namespace realtrick
 
 	private:
 
-		Room*										_room;
 
 		std::map<int, EntityBase*>                  _entities;
 

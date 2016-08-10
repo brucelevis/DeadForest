@@ -9,7 +9,7 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "Types.hpp"
+#include "Infos.hpp"
 #include "MessageNode.hpp"
 #include "MessageDispatcher.hpp"
 
@@ -42,6 +42,9 @@ namespace realtrick
             void setPlayerType(PlayerType type) { _playerType = type; }
             PlayerType getPlayerType() const { return _playerType; }
             
+            void setForce(Force force) { _force = force; }
+            Force getForce() const { return _force; }
+            
             float getBoundingRadius() const { return _boundingRadius; }
             void setBoundingRadius(float r) { _boundingRadius = r; }
             
@@ -56,6 +59,7 @@ namespace realtrick
             int                     _entityType;
             cocos2d::Vec2           _worldPosition;
             PlayerType              _playerType;
+            Force                   _force;
             float                   _boundingRadius;
             
         };

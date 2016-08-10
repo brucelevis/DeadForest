@@ -18,6 +18,7 @@ namespace realtrick
     {
         
         class Game;
+        class BrainBase;
         
         class HumanBase : public EntityBase
         {
@@ -98,6 +99,7 @@ namespace realtrick
         protected:
             
             Animator*                       _animator;
+            BrainBase*                      _brain;
             
             cocos2d::Vec2                   _heading;
             cocos2d::Vec2                   _targetHeading;

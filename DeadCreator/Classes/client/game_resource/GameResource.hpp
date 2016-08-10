@@ -13,7 +13,7 @@
 #include "ParamLoader.hpp"
 
 #include "GMXFile_generated.h"
-#include "Types.hpp"
+#include "Infos.hpp"
 #include "Tileset.hpp"
 
 #include "Conditions.hpp"
@@ -104,6 +104,13 @@ namespace realtrick
             
             // trigger
             std::vector<TriggerData> _triggers;
+            
+            // player info
+            PlayerInfo _playerInfo;
+            
+            // force
+            ForceInfo _force1Info;
+            ForceInfo _force2Info;
             
         };
         

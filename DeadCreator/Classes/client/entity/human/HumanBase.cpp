@@ -9,6 +9,7 @@
 #include "HumanBase.hpp"
 #include "ParamLoader.hpp"
 #include "Game.hpp"
+#include "ZombieBrain.hpp"
 
 using namespace cocos2d;
 using namespace realtrick::client;
@@ -80,6 +81,8 @@ HumanBase* HumanBase::create(Game* game)
 
 void HumanBase::update(float dt)
 {
+    if ( _brain ) _brain->think();
+    
     // move and rotate
     this->moveEntity();
     this->rotateEntity();

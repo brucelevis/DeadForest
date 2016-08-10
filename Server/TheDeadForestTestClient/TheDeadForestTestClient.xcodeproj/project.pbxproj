@@ -15,6 +15,24 @@
 		0B2A65EA1D5B5CCF0013338B /* DynamicEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A65E31D5B5CCF0013338B /* DynamicEntity.cpp */; };
 		0B2A65EB1D5B5CCF0013338B /* EntityBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A65E51D5B5CCF0013338B /* EntityBase.cpp */; };
 		0B2A65EC1D5B5CCF0013338B /* EntityHuman.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A65E71D5B5CCF0013338B /* EntityHuman.cpp */; };
+		0B2A65F81D5B5F0E0013338B /* HumanFistStates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A65F11D5B5F0E0013338B /* HumanFistStates.cpp */; };
+		0B2A65F91D5B5F0E0013338B /* HumanGlobalState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A65F31D5B5F0E0013338B /* HumanGlobalState.cpp */; };
+		0B2A65FA1D5B5F0E0013338B /* HumanGlock17States.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A65F51D5B5F0E0013338B /* HumanGlock17States.cpp */; };
+		0B2A66081D5B5F460013338B /* AnimationPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2A65FD1D5B5F460013338B /* AnimationPlayer.cpp */; };
+		0B2A66121D5B6A7B0013338B /* Params.ini in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0B802E781D56CBF700F182F8 /* Params.ini */; };
+		0B2A66131D5B6A7B0013338B /* jsonData.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0B2A660E1D5B6A6B0013338B /* jsonData.txt */; };
+		0B2A66141D5B6A7B0013338B /* multi_map.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0B2A660F1D5B6A6B0013338B /* multi_map.txt */; };
+		0B2A66151D5B6A7B0013338B /* simple_server_map.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0B2A66101D5B6A6B0013338B /* simple_server_map.txt */; };
+		0B2A66161D5B6A7B0013338B /* single_map.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0B2A66111D5B6A6B0013338B /* single_map.txt */; };
+		0B2A66181D5B6A980013338B /* ParamLoader.inl in Resources */ = {isa = PBXBuildFile; fileRef = 0B095E7F1D5845EF002EE9BE /* ParamLoader.inl */; };
+		0B2A66191D5B6A980013338B /* CellSpacePartition.inl in Resources */ = {isa = PBXBuildFile; fileRef = 0B45B0381D43089A00E933F2 /* CellSpacePartition.inl */; };
+		0B2A661A1D5B6A980013338B /* Physics.inl in Resources */ = {isa = PBXBuildFile; fileRef = 0B45B0141D43078D00E933F2 /* Physics.inl */; };
+		0B2A661B1D5B6A980013338B /* Vec2.inl in Resources */ = {isa = PBXBuildFile; fileRef = 0B45B0071D43060500E933F2 /* Vec2.inl */; };
+		0B2A661C1D5B6AA30013338B /* jsonData.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0B2A660E1D5B6A6B0013338B /* jsonData.txt */; };
+		0B2A661D1D5B6AA30013338B /* multi_map.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0B2A660F1D5B6A6B0013338B /* multi_map.txt */; };
+		0B2A661E1D5B6AA30013338B /* simple_server_map.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0B2A66101D5B6A6B0013338B /* simple_server_map.txt */; };
+		0B2A661F1D5B6AA30013338B /* single_map.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0B2A66111D5B6A6B0013338B /* single_map.txt */; };
+		0B2A66201D5B6AAA0013338B /* Params.ini in Resources */ = {isa = PBXBuildFile; fileRef = 0B802E781D56CBF700F182F8 /* Params.ini */; };
 		0B2D6BF41D18266200A13347 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B2D6BF31D18266200A13347 /* main.cpp */; };
 		0B45B00A1D43060500E933F2 /* Rect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45AFFF1D43060500E933F2 /* Rect.cpp */; };
 		0B45B00B1D43060500E933F2 /* Vec2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45B0051D43060500E933F2 /* Vec2.cpp */; };
@@ -22,8 +40,6 @@
 		0B45B0161D43078D00E933F2 /* Mat3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45B0111D43078D00E933F2 /* Mat3.cpp */; };
 		0B45B0281D43081E00E933F2 /* MessageDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45B0231D43081E00E933F2 /* MessageDispatcher.cpp */; };
 		0B45B0421D43089A00E933F2 /* clipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45B03B1D43089A00E933F2 /* clipper.cpp */; };
-		0B45B0571D4323A000E933F2 /* ParamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B45B0541D4323A000E933F2 /* ParamLoader.cpp */; };
-		0B802E791D56CBF900F182F8 /* Params.ini in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0B802E781D56CBF700F182F8 /* Params.ini */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		0B8DC3EA1D3085BA005C32EE /* Server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B8DC3E81D3085BA005C32EE /* Server.cpp */; };
 		0BCB97F91D57456300C44BF4 /* boost.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BCB97F81D57456300C44BF4 /* boost.framework */; };
 /* End PBXBuildFile section */
@@ -44,7 +60,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				0B802E791D56CBF900F182F8 /* Params.ini in CopyFiles */,
+				0B2A66121D5B6A7B0013338B /* Params.ini in CopyFiles */,
+				0B2A66131D5B6A7B0013338B /* jsonData.txt in CopyFiles */,
+				0B2A66141D5B6A7B0013338B /* multi_map.txt in CopyFiles */,
+				0B2A66151D5B6A7B0013338B /* simple_server_map.txt in CopyFiles */,
+				0B2A66161D5B6A7B0013338B /* single_map.txt in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +89,30 @@
 		0B2A65E71D5B5CCF0013338B /* EntityHuman.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityHuman.cpp; sourceTree = "<group>"; };
 		0B2A65E81D5B5CCF0013338B /* EntityHuman.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityHuman.hpp; sourceTree = "<group>"; };
 		0B2A65E91D5B5CCF0013338B /* EntityType.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EntityType.hpp; sourceTree = "<group>"; };
+		0B2A65EF1D5B5ED50013338B /* State.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = State.hpp; sourceTree = "<group>"; };
+		0B2A65F01D5B5ED50013338B /* StateMachine.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = StateMachine.hpp; sourceTree = "<group>"; };
+		0B2A65F11D5B5F0E0013338B /* HumanFistStates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HumanFistStates.cpp; sourceTree = "<group>"; };
+		0B2A65F21D5B5F0E0013338B /* HumanFistStates.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HumanFistStates.hpp; sourceTree = "<group>"; };
+		0B2A65F31D5B5F0E0013338B /* HumanGlobalState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HumanGlobalState.cpp; sourceTree = "<group>"; };
+		0B2A65F41D5B5F0E0013338B /* HumanGlobalState.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HumanGlobalState.hpp; sourceTree = "<group>"; };
+		0B2A65F51D5B5F0E0013338B /* HumanGlock17States.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HumanGlock17States.cpp; sourceTree = "<group>"; };
+		0B2A65F61D5B5F0E0013338B /* HumanGlock17States.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HumanGlock17States.hpp; sourceTree = "<group>"; };
+		0B2A65F71D5B5F0E0013338B /* HumanOwnedStates.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HumanOwnedStates.hpp; sourceTree = "<group>"; };
+		0B2A65FC1D5B5F460013338B /* AnimationBase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AnimationBase.hpp; sourceTree = "<group>"; };
+		0B2A65FD1D5B5F460013338B /* AnimationPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationPlayer.cpp; sourceTree = "<group>"; };
+		0B2A65FE1D5B5F460013338B /* AnimationPlayer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AnimationPlayer.hpp; sourceTree = "<group>"; };
+		0B2A66001D5B5F460013338B /* HumanAxeAnimations.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HumanAxeAnimations.hpp; sourceTree = "<group>"; };
+		0B2A66011D5B5F460013338B /* HumanDeadAnimations.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HumanDeadAnimations.hpp; sourceTree = "<group>"; };
+		0B2A66021D5B5F460013338B /* HumanFistAnimations.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HumanFistAnimations.hpp; sourceTree = "<group>"; };
+		0B2A66031D5B5F460013338B /* HumanFootAnimations.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HumanFootAnimations.hpp; sourceTree = "<group>"; };
+		0B2A66041D5B5F460013338B /* HumanGlock17Animations.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HumanGlock17Animations.hpp; sourceTree = "<group>"; };
+		0B2A66051D5B5F460013338B /* HumanM16A2Animations.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HumanM16A2Animations.hpp; sourceTree = "<group>"; };
+		0B2A66061D5B5F460013338B /* HumanM1897Animations.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HumanM1897Animations.hpp; sourceTree = "<group>"; };
+		0B2A66071D5B5F460013338B /* HumanOwnedAnimations.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HumanOwnedAnimations.hpp; sourceTree = "<group>"; };
+		0B2A660E1D5B6A6B0013338B /* jsonData.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = jsonData.txt; path = ../../../../../DEV/TheDeadForest/Server/TheDeadForestTestClient/TheDeadForestTestClient/resource/jsonData.txt; sourceTree = "<group>"; };
+		0B2A660F1D5B6A6B0013338B /* multi_map.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = multi_map.txt; path = ../../../../../DEV/TheDeadForest/Server/TheDeadForestTestClient/TheDeadForestTestClient/resource/multi_map.txt; sourceTree = "<group>"; };
+		0B2A66101D5B6A6B0013338B /* simple_server_map.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = simple_server_map.txt; path = ../../../../../DEV/TheDeadForest/Server/TheDeadForestTestClient/TheDeadForestTestClient/resource/simple_server_map.txt; sourceTree = "<group>"; };
+		0B2A66111D5B6A6B0013338B /* single_map.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = single_map.txt; path = ../../../../../DEV/TheDeadForest/Server/TheDeadForestTestClient/TheDeadForestTestClient/resource/single_map.txt; sourceTree = "<group>"; };
 		0B2D6BF01D18266200A13347 /* TheDeadForestTestClient */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TheDeadForestTestClient; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B2D6BF31D18266200A13347 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		0B31FCBD1D58C09200A79F62 /* FlatbufferPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlatbufferPacket.h; sourceTree = "<group>"; };
@@ -129,9 +173,6 @@
 		0B45B03B1D43089A00E933F2 /* clipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = clipper.cpp; sourceTree = "<group>"; };
 		0B45B03C1D43089A00E933F2 /* clipper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = clipper.hpp; sourceTree = "<group>"; };
 		0B45B03D1D43089A00E933F2 /* ClipperWrapper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ClipperWrapper.hpp; sourceTree = "<group>"; };
-		0B45B0541D4323A000E933F2 /* ParamLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParamLoader.cpp; sourceTree = "<group>"; };
-		0B45B0551D4323A000E933F2 /* ParamLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ParamLoader.hpp; sourceTree = "<group>"; };
-		0B45B0561D4323A000E933F2 /* ParamLoader.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ParamLoader.inl; sourceTree = "<group>"; };
 		0B802E781D56CBF700F182F8 /* Params.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Params.ini; sourceTree = "<group>"; };
 		0B8DC3DD1D3085BA005C32EE /* PacketCancelSearchGame_generated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PacketCancelSearchGame_generated.h; sourceTree = "<group>"; };
 		0B8DC3DE1D3085BA005C32EE /* PacketDoSearchGame_generated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PacketDoSearchGame_generated.h; sourceTree = "<group>"; };
@@ -219,6 +260,56 @@
 			path = Entity;
 			sourceTree = "<group>";
 		};
+		0B2A65ED1D5B5ED50013338B /* State */ = {
+			isa = PBXGroup;
+			children = (
+				0B2A65EE1D5B5ED50013338B /* Human */,
+				0B2A65EF1D5B5ED50013338B /* State.hpp */,
+				0B2A65F01D5B5ED50013338B /* StateMachine.hpp */,
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
+		0B2A65EE1D5B5ED50013338B /* Human */ = {
+			isa = PBXGroup;
+			children = (
+				0B2A65F11D5B5F0E0013338B /* HumanFistStates.cpp */,
+				0B2A65F21D5B5F0E0013338B /* HumanFistStates.hpp */,
+				0B2A65F31D5B5F0E0013338B /* HumanGlobalState.cpp */,
+				0B2A65F41D5B5F0E0013338B /* HumanGlobalState.hpp */,
+				0B2A65F51D5B5F0E0013338B /* HumanGlock17States.cpp */,
+				0B2A65F61D5B5F0E0013338B /* HumanGlock17States.hpp */,
+				0B2A65F71D5B5F0E0013338B /* HumanOwnedStates.hpp */,
+			);
+			path = Human;
+			sourceTree = "<group>";
+		};
+		0B2A65FB1D5B5F460013338B /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				0B2A65FC1D5B5F460013338B /* AnimationBase.hpp */,
+				0B2A65FD1D5B5F460013338B /* AnimationPlayer.cpp */,
+				0B2A65FE1D5B5F460013338B /* AnimationPlayer.hpp */,
+				0B2A65FF1D5B5F460013338B /* Human */,
+			);
+			path = Animation;
+			sourceTree = "<group>";
+		};
+		0B2A65FF1D5B5F460013338B /* Human */ = {
+			isa = PBXGroup;
+			children = (
+				0B2A66001D5B5F460013338B /* HumanAxeAnimations.hpp */,
+				0B2A66011D5B5F460013338B /* HumanDeadAnimations.hpp */,
+				0B2A66021D5B5F460013338B /* HumanFistAnimations.hpp */,
+				0B2A66031D5B5F460013338B /* HumanFootAnimations.hpp */,
+				0B2A66041D5B5F460013338B /* HumanGlock17Animations.hpp */,
+				0B2A66051D5B5F460013338B /* HumanM16A2Animations.hpp */,
+				0B2A66061D5B5F460013338B /* HumanM1897Animations.hpp */,
+				0B2A66071D5B5F460013338B /* HumanOwnedAnimations.hpp */,
+			);
+			path = Human;
+			sourceTree = "<group>";
+		};
 		0B2D6BE71D18266200A13347 = {
 			isa = PBXGroup;
 			children = (
@@ -239,12 +330,13 @@
 		0B2D6BF21D18266200A13347 /* TheDeadForestTestClient */ = {
 			isa = PBXGroup;
 			children = (
+				0B2A65FB1D5B5F460013338B /* Animation */,
+				0B2A65ED1D5B5ED50013338B /* State */,
 				0B2A65E21D5B5CA40013338B /* Entity */,
 				0B095E831D584796002EE9BE /* Room */,
 				0B095E761D5845EF002EE9BE /* GameManager */,
 				0B095E791D5845EF002EE9BE /* GameMap */,
 				0B802E771D56CBF700F182F8 /* resource */,
-				0B45B0531D4323A000E933F2 /* ScriptSystem */,
 				0B45B0361D43089A00E933F2 /* CellSpacePartition */,
 				0B45B0391D43089A00E933F2 /* Clipping */,
 				0B45B00E1D43078D00E933F2 /* Math */,
@@ -396,20 +488,14 @@
 			path = Clipper;
 			sourceTree = "<group>";
 		};
-		0B45B0531D4323A000E933F2 /* ScriptSystem */ = {
-			isa = PBXGroup;
-			children = (
-				0B45B0541D4323A000E933F2 /* ParamLoader.cpp */,
-				0B45B0551D4323A000E933F2 /* ParamLoader.hpp */,
-				0B45B0561D4323A000E933F2 /* ParamLoader.inl */,
-			);
-			path = ScriptSystem;
-			sourceTree = "<group>";
-		};
 		0B802E771D56CBF700F182F8 /* resource */ = {
 			isa = PBXGroup;
 			children = (
 				0B802E781D56CBF700F182F8 /* Params.ini */,
+				0B2A660E1D5B6A6B0013338B /* jsonData.txt */,
+				0B2A660F1D5B6A6B0013338B /* multi_map.txt */,
+				0B2A66101D5B6A6B0013338B /* simple_server_map.txt */,
+				0B2A66111D5B6A6B0013338B /* single_map.txt */,
 			);
 			path = resource;
 			sourceTree = "<group>";
@@ -455,6 +541,7 @@
 				0B2D6BED1D18266200A13347 /* Frameworks */,
 				0B2D6BEE1D18266200A13347 /* CopyFiles */,
 				0B802E751D56CBBC00F182F8 /* CopyFiles */,
+				0B2A66171D5B6A880013338B /* Resources */,
 			);
 			buildRules = (
 			);
@@ -496,12 +583,33 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		0B2A66171D5B6A880013338B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B2A66201D5B6AAA0013338B /* Params.ini in Resources */,
+				0B2A661C1D5B6AA30013338B /* jsonData.txt in Resources */,
+				0B2A661D1D5B6AA30013338B /* multi_map.txt in Resources */,
+				0B2A661E1D5B6AA30013338B /* simple_server_map.txt in Resources */,
+				0B2A661F1D5B6AA30013338B /* single_map.txt in Resources */,
+				0B2A66181D5B6A980013338B /* ParamLoader.inl in Resources */,
+				0B2A66191D5B6A980013338B /* CellSpacePartition.inl in Resources */,
+				0B2A661A1D5B6A980013338B /* Physics.inl in Resources */,
+				0B2A661B1D5B6A980013338B /* Vec2.inl in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		0B2D6BEC1D18266200A13347 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B2A65FA1D5B5F0E0013338B /* HumanGlock17States.cpp in Sources */,
 				0B45B0421D43089A00E933F2 /* clipper.cpp in Sources */,
+				0B2A65F81D5B5F0E0013338B /* HumanFistStates.cpp in Sources */,
 				0B095E801D5845EF002EE9BE /* GameManager.cpp in Sources */,
 				0B45B0281D43081E00E933F2 /* MessageDispatcher.cpp in Sources */,
 				0B095E811D5845EF002EE9BE /* GameMap.cpp in Sources */,
@@ -510,11 +618,12 @@
 				0B45B00B1D43060500E933F2 /* Vec2.cpp in Sources */,
 				0B2A65EB1D5B5CCF0013338B /* EntityBase.cpp in Sources */,
 				0B095E861D584796002EE9BE /* Room.cpp in Sources */,
-				0B45B0571D4323A000E933F2 /* ParamLoader.cpp in Sources */,
+				0B2A65F91D5B5F0E0013338B /* HumanGlobalState.cpp in Sources */,
 				0B2A65EC1D5B5CCF0013338B /* EntityHuman.cpp in Sources */,
 				0B45B0151D43078D00E933F2 /* Geometry.cpp in Sources */,
 				0B2D6BF41D18266200A13347 /* main.cpp in Sources */,
 				0B45B0161D43078D00E933F2 /* Mat3.cpp in Sources */,
+				0B2A66081D5B5F460013338B /* AnimationPlayer.cpp in Sources */,
 				0B2A65EA1D5B5CCF0013338B /* DynamicEntity.cpp in Sources */,
 				0B2A65E11D5B4FC50013338B /* Client.cpp in Sources */,
 				0B45B00A1D43060500E933F2 /* Rect.cpp in Sources */,

@@ -14,8 +14,12 @@
 #include <boost/thread.hpp>
 #include <boost/lockfree/queue.hpp>
 
-#include <queue>
+#include <iostream>
+#include <memory>
+#include <utility>
 #include <vector>
+#include <map>
+#include <queue>
 
 #include "Server.hpp"
 #include "GeneratedPackets.hpp"
@@ -51,6 +55,8 @@ namespace realtrick
         
         virtual ~Client() = default;
         
+        void timerThread();
+        
         void run();
         
     private:
@@ -68,8 +74,6 @@ namespace realtrick
         unsigned int getTickCount();
         
         void enqueueTimer(int id, unsigned int time, int type);
-        
-        void timerThread();
         
         std::priority_queue<eventToken, std::vector<eventToken>, mycomp> _timerQueue;
         

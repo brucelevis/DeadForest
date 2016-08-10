@@ -108,7 +108,7 @@ void Client::timerThread(){
 void Client::run()
 {
     
-    _timerThread = new boost::thread(boost::bind(&Client::timerThread));
+    _timerThread = new boost::thread(boost::bind(&Client::timerThread, this));
     
     connectServer();
     

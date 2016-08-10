@@ -19,8 +19,16 @@ namespace realtrick
             
         public:
             
-            explicit ZombieBrain(HumanBase* owner) : BrainBase(owner) {}
-            virtual ~ZombieBrain() = default;
+            explicit ZombieBrain(HumanBase* owner) : BrainBase(owner)
+            {
+                _thinker = new GoalThink(owner);
+            }
+            
+            virtual ~ZombieBrain()
+            {
+                delete _thinker;
+                _thinker = nullptr;
+            }
             
             virtual void think() override
             {

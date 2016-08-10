@@ -16,21 +16,21 @@ namespace realtrick
     namespace client
     {
         
-        class EntityPlayer;
+        class HumanBase;
         class Telegram;
         
         //
         // HumanBackDeadState
         //
-        class HumanBackDeadState : public State<EntityPlayer>, public Singleton<HumanBackDeadState>
+        class HumanBackDeadState : public State, public Singleton<HumanBackDeadState>
         {
             
         public:
             
-            virtual void enter(EntityPlayer* human) override;
-            virtual void execute(EntityPlayer* human) override;
-            virtual void exit(EntityPlayer* human) override;
-            virtual bool onMessage(EntityPlayer* human, const Telegram& msg) override;
+            virtual void enter(HumanBase* human) override;
+            virtual void execute(HumanBase* human) override;
+            virtual void exit(HumanBase* human) override;
+            virtual bool onMessage(HumanBase* human, const Telegram& msg) override;
             
         private:
             

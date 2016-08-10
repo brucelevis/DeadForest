@@ -10,12 +10,12 @@
 #include "MessageDispatcher.hpp"
 #include "MessageTypes.hpp"
 #include "Telegram.hpp"
-#include "EntityPlayer.hpp"
+#include "HumanBase.hpp"
 #include "Game.hpp"
 #include "HumanOwnedAnimations.hpp"
 using namespace realtrick::client;
 
-void HumanBackDeadState::enter(EntityPlayer* human)
+void HumanBackDeadState::enter(HumanBase* human)
 {
     human->getGame()->sendMessage(cocos2d::random(3.0, 7.0), human, human, MessageType::DIE, nullptr);
     human->setDead();
@@ -28,18 +28,18 @@ void HumanBackDeadState::enter(EntityPlayer* human)
 }
 
 
-void HumanBackDeadState::execute(EntityPlayer* human)
+void HumanBackDeadState::execute(HumanBase* human)
 {
 }
 
 
-void HumanBackDeadState::exit(EntityPlayer* human)
+void HumanBackDeadState::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
 
 
-bool HumanBackDeadState::onMessage(EntityPlayer* human, const Telegram& msg)
+bool HumanBackDeadState::onMessage(HumanBase* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::DIE )
     {

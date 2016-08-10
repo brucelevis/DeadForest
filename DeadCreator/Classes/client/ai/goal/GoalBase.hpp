@@ -26,7 +26,10 @@ namespace realtrick
             
         public:
             
-            explicit GoalBase(HumanBase* owner) : _owner(owner) {}
+            explicit GoalBase(HumanBase* owner) : _owner(owner)
+            {
+                setGoalStatus(GoalStatus::INACTIVE);
+            }
             virtual ~GoalBase() = default;
             
             GoalStatus getGoalStatus() const { return _goalStatus; }
@@ -40,48 +43,10 @@ namespace realtrick
             virtual void activate() = 0;
             virtual GoalStatus process() = 0;
             virtual void terminate() = 0;
-            
-            virtual GoalStatus processSubgoals()
-            {
-                while (!_subGoals.empty() &&
-                       (_subGoals.back()->isCompleted() || _subGoals.back()->isFailed()))
-                {
-                    auto recentGoal = _subGoals.back();
-                    recentGoal->terminate();
-                    CC_SAFE_DELETE(recentGoal);
-                    _subGoals.pop_back();
-                }
-                
-                if ( !_subGoals.empty() )
-                {
-                    auto goalStatus = _subGoals.back()->process();
-                    if ( goalStatus == GoalStatus::COMPLETED && _subGoals.size() > 1 )
-                    {
-                        return GoalStatus::ACTIVE;
-                    }
-                    return goalStatus;
-                }
-                
-                // if sub goals is empty
-                return GoalStatus::COMPLETED;
-            }
-            
-            void addSubgoal(GoalBase* goal) { _subGoals.push_back(goal); }
-            
-            void removeAllSubgoals()
-            {
-                for ( auto& goal : _subGoals )
-                {
-                    goal->terminate();
-                    CC_SAFE_DELETE(goal);
-                }
-                _subGoals.clear();
-            }
-            
+    
         protected:
             
             HumanBase* _owner;
-            std::vector<GoalBase*> _subGoals;
             GoalStatus _goalStatus;
             
         };

@@ -8,7 +8,6 @@
 
 #pragma once
 
-
 namespace realtrick
 {
     namespace client

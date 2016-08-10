@@ -14,17 +14,18 @@
 #include "WeaponStatus.hpp"
 #include "AnimatedFiniteEntity.hpp"
 #include "RenderingSystem.hpp"
+#include "ZombieBrain.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
 
 EntityPlayer::EntityPlayer(Game* game) : HumanBase(game),
-_FSM(nullptr),
 _equipedWeapon(nullptr),
 _weaponStatus(nullptr),
 _inventory(nullptr)
 {
     setEntityType(EntityType::ENTITY_PLAYER);
+    setMaxSpeed(100.0f);
 }
 
 
@@ -33,6 +34,8 @@ EntityPlayer::~EntityPlayer()
     CC_SAFE_DELETE(_FSM);
     CC_SAFE_RELEASE_NULL(_weaponStatus);
     CC_SAFE_RELEASE_NULL(_inventory);
+    
+    CC_SAFE_DELETE(_brain);
 }
 
 
@@ -41,7 +44,7 @@ bool EntityPlayer::init()
     if ( !HumanBase::init() )
         return false;
     
-    _FSM = new StateMachine<EntityPlayer>(this);
+    _FSM = new StateMachine(this);
     _FSM->setCurrState(&HumanFistIdleLoop::getInstance());
     _FSM->changeState(&HumanFistIdleLoop::getInstance());
     
@@ -50,6 +53,8 @@ bool EntityPlayer::init()
     
     _inventory = Inventory::create(_game);
     _inventory->retain();
+    
+//    _brain = new ZombieBrain(this);
     
     return true;
 }
@@ -71,8 +76,6 @@ EntityPlayer* EntityPlayer::create(Game* game)
 void EntityPlayer::update(float dt)
 {
     HumanBase::update(dt);
-    
-    if ( _FSM ) _FSM->update(dt);
 }
 
 
@@ -99,7 +102,9 @@ bool EntityPlayer::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityB
 
 bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
 {
-    bool ret = _FSM->handleMessage(msg);
+    bool ret = false;
+    
+    ret = HumanBase::handleMessage(msg);
     
     if ( msg.msg == MessageType::WEAPON_READY )
     {
@@ -141,22 +146,13 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         ret = true;
     }
     
-    else if ( msg.msg == MessageType::PLAY_SOUND )
-    {
-        SoundSource s =  *static_cast<SoundSource*>(msg.extraInfo);
-        float t = (1.0f - (s.position - _game->getRenderingSysetm()->getCameraPosition()).getLength() / s.soundRange) * s.volume;
-        experimental::AudioEngine::setVolume( experimental::AudioEngine::play2d(s.fileName), t);
-        
-        ret = true;
-    }
-    
     return ret;
 }
 
 
 void EntityPlayer::suicide()
 {
-    _FSM->changeState(&HumanBackDeadState::getInstance());
+    if ( _FSM ) _FSM->changeState(&HumanBackDeadState::getInstance());
 }
 
 

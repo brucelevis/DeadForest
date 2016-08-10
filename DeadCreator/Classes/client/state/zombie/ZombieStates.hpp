@@ -17,12 +17,12 @@ namespace realtrick
     {
         
         class Telegram;
-        class EntityZombie;
+        class HumanBase;
         
         //
         // ZombieIdleLoop
         //
-        class ZombieIdleLoop : public State<EntityZombie>, public Singleton<ZombieIdleLoop>
+        class ZombieIdleLoop : public State, public Singleton<ZombieIdleLoop>
         {
             
         public:
@@ -31,10 +31,10 @@ namespace realtrick
             ZombieIdleLoop() = default;
             virtual ~ZombieIdleLoop() = default;
             
-            virtual void enter(EntityZombie* zombie) override;
-            virtual void execute(EntityZombie* zombie) override;
-            virtual void exit(EntityZombie* zombie) override;
-            virtual bool onMessage(EntityZombie* zombie, const Telegram& msg) override;
+            virtual void enter(HumanBase* zombie) override;
+            virtual void execute(HumanBase* zombie) override;
+            virtual void exit(HumanBase* zombie) override;
+            virtual bool onMessage(HumanBase* zombie, const Telegram& msg) override;
             
         };
         
@@ -42,7 +42,7 @@ namespace realtrick
         //
         // ZombieRunLoop
         //
-        class ZombieRunLoop : public State<EntityZombie>, public Singleton<ZombieRunLoop>
+        class ZombieRunLoop : public State, public Singleton<ZombieRunLoop>
         {
             
         public:
@@ -51,10 +51,10 @@ namespace realtrick
             ZombieRunLoop() = default;
             virtual ~ZombieRunLoop() = default;
             
-            virtual void enter(EntityZombie* zombie) override;
-            virtual void execute(EntityZombie* zombie) override;
-            virtual void exit(EntityZombie* zombie) override;
-            virtual bool onMessage(EntityZombie* zombie, const Telegram& msg) override;
+            virtual void enter(HumanBase* zombie) override;
+            virtual void execute(HumanBase* zombie) override;
+            virtual void exit(HumanBase* zombie) override;
+            virtual bool onMessage(HumanBase* zombie, const Telegram& msg) override;
             
         };
         
@@ -62,7 +62,7 @@ namespace realtrick
         //
         // ZombieAttack
         //
-        class ZombieAttack : public State<EntityZombie>, public Singleton<ZombieAttack>
+        class ZombieAttack : public State, public Singleton<ZombieAttack>
         {
             
         public:
@@ -71,10 +71,10 @@ namespace realtrick
             ZombieAttack() = default;
             virtual ~ZombieAttack() = default;
             
-            virtual void enter(EntityZombie* zombie) override;
-            virtual void execute(EntityZombie* zombie) override;
-            virtual void exit(EntityZombie* zombie) override;
-            virtual bool onMessage(EntityZombie* zombie, const Telegram& msg) override;
+            virtual void enter(HumanBase* zombie) override;
+            virtual void execute(HumanBase* zombie) override;
+            virtual void exit(HumanBase* zombie) override;
+            virtual bool onMessage(HumanBase* zombie, const Telegram& msg) override;
             
         };
         
@@ -82,7 +82,7 @@ namespace realtrick
         //
         // ZombieDead
         //
-        class ZombieDead : public State<EntityZombie>, public Singleton<ZombieDead>
+        class ZombieDead : public State, public Singleton<ZombieDead>
         {
             
         public:
@@ -91,10 +91,10 @@ namespace realtrick
             ZombieDead() = default;
             virtual ~ZombieDead() = default;
             
-            virtual void enter(EntityZombie* zombie) override;
-            virtual void execute(EntityZombie* zombie) override;
-            virtual void exit(EntityZombie* zombie) override;
-            virtual bool onMessage(EntityZombie* zombie, const Telegram& msg) override;
+            virtual void enter(HumanBase* zombie) override;
+            virtual void execute(HumanBase* zombie) override;
+            virtual void exit(HumanBase* zombie) override;
+            virtual bool onMessage(HumanBase* zombie, const Telegram& msg) override;
             
         };
         

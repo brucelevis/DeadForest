@@ -11,20 +11,22 @@
 #include "StringHelper.hpp"
 #include "Game.hpp"
 #include "AnimatedFiniteEntity.hpp"
+#include "ZombieBrain.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
 
-EntityZombie::EntityZombie(Game* game) : HumanBase(game),
-_FSM(nullptr)
+EntityZombie::EntityZombie(Game* game) : HumanBase(game)
 {
     setEntityType(EntityType::ENTITY_ZOMBIE);
+    setMaxSpeed(50.0f);
 }
 
 
 EntityZombie::~EntityZombie()
 {
     CC_SAFE_DELETE(_FSM);
+    CC_SAFE_DELETE(_brain);
 }
 
 
@@ -33,9 +35,11 @@ bool EntityZombie::init()
     if ( !HumanBase::init() )
         return false;
     
-    _FSM = new StateMachine<EntityZombie>(this);
+    _FSM = new StateMachine(this);
     _FSM->setCurrState(&ZombieIdleLoop::getInstance());
     _FSM->changeState(&ZombieIdleLoop::getInstance());
+    
+    _brain = new ZombieBrain(this);
     
     return true;
 }
@@ -57,14 +61,14 @@ EntityZombie* EntityZombie::create(Game* game)
 void EntityZombie::update(float dt)
 {
     HumanBase::update(dt);
-    
-    if ( _FSM ) _FSM->update(dt);
 }
 
 
 bool EntityZombie::handleMessage(const Telegram& msg)
 {
-    bool ret = _FSM->handleMessage(msg);
+    bool ret = false;
+    
+    ret = HumanBase::handleMessage(msg);
     
     if ( msg.msg  == MessageType::HITTED_BY_GUN )
     {
@@ -105,7 +109,7 @@ bool EntityZombie::handleMessage(const Telegram& msg)
 
 void EntityZombie::suicide()
 {
-    _FSM->changeState(&ZombieDead::getInstance());
+    if ( _FSM ) _FSM->changeState(&ZombieDead::getInstance());
 }
 
 

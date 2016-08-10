@@ -10,7 +10,7 @@
 #include "Telegram.hpp"
 #include "MessageTypes.hpp"
 #include "MessageDispatcher.hpp"
-#include "EntityPlayer.hpp"
+#include "HumanBase.hpp"
 #include "HumanOwnedAnimations.hpp"
 #include "Game.hpp"
 #include "WeaponBase.hpp"
@@ -24,14 +24,14 @@ using namespace realtrick::client;
 //
 // HumanM16A2IdleLoop
 //
-void HumanM16A2IdleLoop::enter(EntityPlayer* human)
+void HumanM16A2IdleLoop::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanM16A2IdleLoop::getInstance());
     human->setVelocity( Vec2::ZERO );
     human->setStateName("idle");
 }
 
-void HumanM16A2IdleLoop::execute(EntityPlayer* human)
+void HumanM16A2IdleLoop::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -47,10 +47,10 @@ void HumanM16A2IdleLoop::execute(EntityPlayer* human)
         human->setVelocity( moving * human->getWalkSpeed() );
         
         // 공격준비가 되었을때
-        if ( human->getEquipedWeapon()->isReadyToAttack() )
+        if ( static_cast<EntityPlayer*>(human)->getEquipedWeapon()->isReadyToAttack() )
         {
             // 1. 남아있는 총알이 있음.
-            if ( human->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
+            if ( static_cast<EntityPlayer*>(human)->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
             {
                 // 공격 상태로 전환
                 human->getFSM()->changeState(&HumanM16A2Attack::getInstance());
@@ -65,10 +65,10 @@ void HumanM16A2IdleLoop::execute(EntityPlayer* human)
                 human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
             }
             
-            WeaponBase* weapon = human->getEquipedWeapon();
+            WeaponBase* weapon = static_cast<EntityPlayer*>(human)->getEquipedWeapon();
             human->getGame()->sendMessage(weapon->getDelay(), human, human, MessageType::WEAPON_READY, reinterpret_cast<void*>(weapon));
             
-            human->getEquipedWeapon()->enableReadyToAttack(false);
+            static_cast<EntityPlayer*>(human)->getEquipedWeapon()->enableReadyToAttack(false);
         }
     }
     
@@ -88,12 +88,12 @@ void HumanM16A2IdleLoop::execute(EntityPlayer* human)
     }
 }
 
-void HumanM16A2IdleLoop::exit(EntityPlayer* human)
+void HumanM16A2IdleLoop::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanM16A2IdleLoop::onMessage(EntityPlayer* human, const Telegram& msg)
+bool HumanM16A2IdleLoop::onMessage(HumanBase* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::RELOAD_WEAPON )
     {
@@ -109,14 +109,14 @@ bool HumanM16A2IdleLoop::onMessage(EntityPlayer* human, const Telegram& msg)
 //
 // HumanM16A2MoveLoop
 //
-void HumanM16A2MoveLoop::enter(EntityPlayer* human)
+void HumanM16A2MoveLoop::enter(HumanBase* human)
 {
     human->getAnimator()->pushFramesAtoB(&AnimHumanM16A2MoveLoop::getInstance(), 0, 5);
     human->setRunStats(true);
     human->setStateName("run");
 }
 
-void HumanM16A2MoveLoop::execute(EntityPlayer* human)
+void HumanM16A2MoveLoop::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -153,12 +153,12 @@ void HumanM16A2MoveLoop::execute(EntityPlayer* human)
     
 }
 
-void HumanM16A2MoveLoop::exit(EntityPlayer* human)
+void HumanM16A2MoveLoop::exit(HumanBase* human)
 {
     human->setRunStats(false);
     human->getAnimator()->clearFrameQueue();    }
 
-bool HumanM16A2MoveLoop::onMessage(EntityPlayer* human, const Telegram& msg)
+bool HumanM16A2MoveLoop::onMessage(HumanBase* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::RELOAD_WEAPON )
     {
@@ -174,7 +174,7 @@ bool HumanM16A2MoveLoop::onMessage(EntityPlayer* human, const Telegram& msg)
 //
 // HumanM16A2Attack
 //
-void HumanM16A2Attack::enter(EntityPlayer* human)
+void HumanM16A2Attack::enter(HumanBase* human)
 {
     SoundSource s;
     s.fileName = "M16A2Fire.mp3";
@@ -191,7 +191,7 @@ void HumanM16A2Attack::enter(EntityPlayer* human)
     human->setStateName("attack");
 }
 
-void HumanM16A2Attack::execute(EntityPlayer* human)
+void HumanM16A2Attack::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -211,20 +211,20 @@ void HumanM16A2Attack::execute(EntityPlayer* human)
     }
 }
 
-void HumanM16A2Attack::exit(EntityPlayer* human)
+void HumanM16A2Attack::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanM16A2Attack::onMessage(EntityPlayer* human, const Telegram& msg)
+bool HumanM16A2Attack::onMessage(HumanBase* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::M16A2_SHOOT )
     {
-        if ( human->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
+        if ( static_cast<EntityPlayer*>(human)->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
         {
-            human->getEquipedWeapon()->attack();
-            human->getEquipedWeapon()->setNumOfLeftRounds( human->getEquipedWeapon()->getNumOfLeftRounds() - 1);
-            human->getWeaponStatus()->setWeaponStatus(human->getEquipedWeapon());
+            static_cast<EntityPlayer*>(human)->getEquipedWeapon()->attack();
+            static_cast<EntityPlayer*>(human)->getEquipedWeapon()->setNumOfLeftRounds( static_cast<EntityPlayer*>(human)->getEquipedWeapon()->getNumOfLeftRounds() - 1);
+            static_cast<EntityPlayer*>(human)->getWeaponStatus()->setWeaponStatus(static_cast<EntityPlayer*>(human)->getEquipedWeapon());
         }
         
         return true;
@@ -237,7 +237,7 @@ bool HumanM16A2Attack::onMessage(EntityPlayer* human, const Telegram& msg)
 //
 // HumanM16A2Reload
 //
-void HumanM16A2Reload::enter(EntityPlayer* human)
+void HumanM16A2Reload::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanM16A2Reload::getInstance());
     
@@ -250,7 +250,7 @@ void HumanM16A2Reload::enter(EntityPlayer* human)
     human->setStateName("reload");
 }
 
-void HumanM16A2Reload::execute(EntityPlayer* human)
+void HumanM16A2Reload::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -270,19 +270,19 @@ void HumanM16A2Reload::execute(EntityPlayer* human)
     }
 }
 
-void HumanM16A2Reload::exit(EntityPlayer* human)
+void HumanM16A2Reload::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanM16A2Reload::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
+bool HumanM16A2Reload::onMessage(HumanBase* human, const Telegram& msg) { return false; }
 
 
 
 //
 // HumanM16A2Out
 //
-void HumanM16A2Out::enter(EntityPlayer* human)
+void HumanM16A2Out::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanM16A2Out::getInstance());
     
@@ -295,7 +295,7 @@ void HumanM16A2Out::enter(EntityPlayer* human)
     human->setStateName("equip weapon");
 }
 
-void HumanM16A2Out::execute(EntityPlayer* human)
+void HumanM16A2Out::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -315,19 +315,19 @@ void HumanM16A2Out::execute(EntityPlayer* human)
     }
 }
 
-void HumanM16A2Out::exit(EntityPlayer* human)
+void HumanM16A2Out::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanM16A2Out::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
+bool HumanM16A2Out::onMessage(HumanBase* human, const Telegram& msg) { return false; }
 
 
 
 //
 // HumanM16A2In
 //
-void HumanM16A2In::enter(EntityPlayer* human)
+void HumanM16A2In::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanM16A2In::getInstance());
     
@@ -340,7 +340,7 @@ void HumanM16A2In::enter(EntityPlayer* human)
     human->setStateName("release weapon");
 }
 
-void HumanM16A2In::execute(EntityPlayer* human)
+void HumanM16A2In::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -356,7 +356,7 @@ void HumanM16A2In::execute(EntityPlayer* human)
     
     if(human->getAnimator()->isQueueEmpty())
     {
-        if ( human->getEquipedWeapon() == nullptr )
+        if ( static_cast<EntityPlayer*>(human)->getEquipedWeapon() == nullptr )
         {
             // 무기가 없으면 주먹 상태로
             human->getFSM()->changeState(&HumanFistOut::getInstance());
@@ -364,17 +364,17 @@ void HumanM16A2In::execute(EntityPlayer* human)
         else
         {
             // 있으면 해당무기를 꺼냄.
-            human->getEquipedWeapon()->outWeapon();
+            static_cast<EntityPlayer*>(human)->getEquipedWeapon()->outWeapon();
         }
     }
 }
 
-void HumanM16A2In::exit(EntityPlayer* human)
+void HumanM16A2In::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
 
-bool HumanM16A2In::onMessage(EntityPlayer* human, const Telegram& msg) { return false; }
+bool HumanM16A2In::onMessage(HumanBase* human, const Telegram& msg) { return false; }
 
 
 

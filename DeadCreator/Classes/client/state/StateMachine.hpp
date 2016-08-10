@@ -18,12 +18,12 @@ namespace realtrick
     namespace client
     {
         
-        template <class entityType> class StateMachine
+        class StateMachine
         {
             
         public:
             
-            explicit StateMachine(entityType* owner) :
+            explicit StateMachine(HumanBase* owner) :
             _owner(owner),
             _currState(nullptr),
             _prevState(nullptr)
@@ -31,11 +31,11 @@ namespace realtrick
             
             virtual ~StateMachine() = default;
             
-            void setCurrState(State<entityType>* s)     { _currState = s; }
-            void setPrevState(State<entityType>* s)     { _prevState = s; }
+            void setCurrState(State* s)     { _currState = s; }
+            void setPrevState(State* s)     { _prevState = s; }
             
-            State<entityType>* getCurrState() const     { return _currState; }
-            State<entityType>* getPrevState() const     { return _prevState; }
+            State* getCurrState() const     { return _currState; }
+            State* getPrevState() const     { return _prevState; }
             
             void update(float dt)
             {
@@ -47,7 +47,7 @@ namespace realtrick
                 return ( _currState && _currState->onMessage(_owner, msg) );
             }
             
-            void changeState(State<entityType>* newState)
+            void changeState(State* newState)
             {
                 _prevState = _currState;
                 _currState->exit(_owner);
@@ -62,9 +62,9 @@ namespace realtrick
             
         private:
             
-            entityType*             _owner;
-            State<entityType>*      _currState;
-            State<entityType>*      _prevState;
+            HumanBase*              _owner;
+            State*                  _currState;
+            State*                  _prevState;
             
         };
         

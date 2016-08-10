@@ -33,8 +33,6 @@ namespace realtrick
             virtual bool handleMessage(const Telegram& msg) override;
             virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other) override;
             
-            StateMachine<EntityPlayer>* getFSM() const { return _FSM; }
-            
             WeaponBase* getEquipedWeapon() const { return _equipedWeapon; }
             void setEquipedWeapon(WeaponBase* newWeapon) { _equipedWeapon = newWeapon; }
             
@@ -48,8 +46,6 @@ namespace realtrick
             virtual void suicide() override;
             
         protected:
-            
-            StateMachine<EntityPlayer>*     _FSM;
             
             WeaponBase*                     _equipedWeapon;
             WeaponStatus*                   _weaponStatus;

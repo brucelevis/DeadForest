@@ -43,6 +43,7 @@ namespace realtrick
             virtual bool handleMessage(const Telegram& msg) override;
         
             Animator* getAnimator() const { return _animator; }
+            StateMachine* getFSM() const { return _FSM; }
             
             cocos2d::Vec2 getHeading() const { return _heading; }
             
@@ -99,6 +100,7 @@ namespace realtrick
         protected:
             
             Animator*                       _animator;
+            StateMachine*                   _FSM;
             BrainBase*                      _brain;
             
             cocos2d::Vec2                   _heading;

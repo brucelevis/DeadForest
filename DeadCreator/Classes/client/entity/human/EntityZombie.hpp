@@ -28,14 +28,12 @@ namespace realtrick
             
             virtual bool handleMessage(const Telegram& msg) override;
             
-            StateMachine<EntityZombie>* getFSM() const { return _FSM; }
-            
             virtual void update(float dt) override;
             virtual void suicide() override;
             
-        protected:
+        private:
             
-            StateMachine<EntityZombie>*     _FSM;
+            /* ... */
             
         };
         

@@ -8,20 +8,20 @@ namespace realtrick
     namespace client
     {
         
-        class EntityPlayer;
+        class HumanBase;
         class Telegram;
         
         //
         // HumanAxeIdleLoop
         //
-        class HumanAxeIdleLoop : public State<EntityPlayer>, public Singleton<HumanAxeIdleLoop>
+        class HumanAxeIdleLoop : public State, public Singleton<HumanAxeIdleLoop>
         {
             
         public:
             
-            virtual void enter(EntityPlayer* human) override;
-            virtual void execute(EntityPlayer* human) override;
-            virtual void exit(EntityPlayer* human) override;
+            virtual void enter(HumanBase* human) override;
+            virtual void execute(HumanBase* human) override;
+            virtual void exit(HumanBase* human) override;
             
         };
         
@@ -29,14 +29,14 @@ namespace realtrick
         //
         // HumanAxeOut
         //
-        class HumanAxeOut : public State<EntityPlayer>, public Singleton<HumanAxeOut>
+        class HumanAxeOut : public State, public Singleton<HumanAxeOut>
         {
             
         public:
             
-            virtual void enter(EntityPlayer* human) override;
-            virtual void execute(EntityPlayer* human) override;
-            virtual void exit(EntityPlayer* human) override;
+            virtual void enter(HumanBase* human) override;
+            virtual void execute(HumanBase* human) override;
+            virtual void exit(HumanBase* human) override;
             
         };
         
@@ -44,14 +44,14 @@ namespace realtrick
         //
         // HumanAxeIn
         //
-        class HumanAxeIn : public State<EntityPlayer>, public Singleton<HumanAxeIn>
+        class HumanAxeIn : public State, public Singleton<HumanAxeIn>
         {
             
         public:
             
-            virtual void enter(EntityPlayer* human) override;
-            virtual void execute(EntityPlayer* human) override;
-            virtual void exit(EntityPlayer* human) override;
+            virtual void enter(HumanBase* human) override;
+            virtual void execute(HumanBase* human) override;
+            virtual void exit(HumanBase* human) override;
             
         };
         
@@ -59,14 +59,14 @@ namespace realtrick
         //
         // HumanAxeMoveLoop
         //
-        class HumanAxeMoveLoop : public State<EntityPlayer>, public Singleton<HumanAxeMoveLoop>
+        class HumanAxeMoveLoop : public State, public Singleton<HumanAxeMoveLoop>
         {
             
         public:
             
-            virtual void enter(EntityPlayer* human) override;
-            virtual void execute(EntityPlayer* human) override;
-            virtual void exit(EntityPlayer* human) override;
+            virtual void enter(HumanBase* human) override;
+            virtual void execute(HumanBase* human) override;
+            virtual void exit(HumanBase* human) override;
 
         };
         
@@ -74,14 +74,14 @@ namespace realtrick
         //
         // HumanAxeAttackReady
         //
-        class HumanAxeAttackReady : public State<EntityPlayer>, public Singleton<HumanAxeAttackReady>
+        class HumanAxeAttackReady : public State, public Singleton<HumanAxeAttackReady>
         {
             
         public:
             
-            virtual void enter(EntityPlayer* human) override;
-            virtual void execute(EntityPlayer* human) override;
-            virtual void exit(EntityPlayer* human) override;
+            virtual void enter(HumanBase* human) override;
+            virtual void execute(HumanBase* human) override;
+            virtual void exit(HumanBase* human) override;
             
         };
         
@@ -89,14 +89,14 @@ namespace realtrick
         //
         // HumanAxeAttackRelease
         //
-        class HumanAxeAttackRelease : public State<EntityPlayer>, public Singleton<HumanAxeAttackRelease>
+        class HumanAxeAttackRelease : public State, public Singleton<HumanAxeAttackRelease>
         {
             
         public:
             
-            virtual void enter(EntityPlayer* human) override;
-            virtual void execute(EntityPlayer* human) override;
-            virtual void exit(EntityPlayer* human) override;
+            virtual void enter(HumanBase* human) override;
+            virtual void execute(HumanBase* human) override;
+            virtual void exit(HumanBase* human) override;
             
         };
         
@@ -104,14 +104,14 @@ namespace realtrick
         //
         // HumanAxeAttackHover
         //
-        class HumanAxeAttackHover : public State<EntityPlayer>, public Singleton<HumanAxeAttackHover>
+        class HumanAxeAttackHover : public State, public Singleton<HumanAxeAttackHover>
         {
             
         public:
             
-            virtual void enter(EntityPlayer* human) override;
-            virtual void execute(EntityPlayer* human) override;
-            virtual void exit(EntityPlayer* human) override;
+            virtual void enter(HumanBase* human) override;
+            virtual void execute(HumanBase* human) override;
+            virtual void exit(HumanBase* human) override;
             
         };
         
@@ -119,14 +119,14 @@ namespace realtrick
         //
         // HumanAxeAttackAction
         //
-        class HumanAxeAttackAction : public State<EntityPlayer>, public Singleton<HumanAxeAttackAction>
+        class HumanAxeAttackAction : public State, public Singleton<HumanAxeAttackAction>
         {
             
         public:
             
-            virtual void enter(EntityPlayer* human) override;
-            virtual void execute(EntityPlayer* human) override;
-            virtual void exit(EntityPlayer* human) override;
+            virtual void enter(HumanBase* human) override;
+            virtual void execute(HumanBase* human) override;
+            virtual void exit(HumanBase* human) override;
             
         };
         

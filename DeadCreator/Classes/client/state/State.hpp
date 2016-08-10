@@ -14,15 +14,16 @@ namespace realtrick
     {
         
         class Telegram;
+        class HumanBase;
         
-        template <class entityType> struct  State
+        struct  State
         {
             
             virtual ~State() = default;
-            virtual void enter(entityType*) = 0;
-            virtual void execute(entityType*) = 0;
-            virtual void exit(entityType*) = 0;
-            virtual bool onMessage(entityType*, const Telegram&)  { return false; }
+            virtual void enter(HumanBase*) = 0;
+            virtual void execute(HumanBase*) = 0;
+            virtual void exit(HumanBase*) = 0;
+            virtual bool onMessage(HumanBase*, const Telegram&)  { return false; }
             
         };
         

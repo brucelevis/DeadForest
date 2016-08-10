@@ -6,10 +6,9 @@
 //
 //
 
-#include "GoalBase.hpp"
-
 #include <chrono>
 
+#include "GoalBase.hpp"
 
 namespace realtrick
 {
@@ -21,26 +20,16 @@ namespace realtrick
             
         public:
             
-            explicit GoalWander(HumanBase* owner) : GoalBase(owner)
-            {}
-            virtual ~GoalWander() = default;
+            explicit GoalWander(HumanBase* owner);
+            virtual ~GoalWander();
             
-            virtual void activate() override
-            {
-            }
-            
-            virtual GoalStatus process() override
-            {
-                return GoalStatus::ACTIVE;
-            }
-            
-            virtual void terminate() override
-            {
-            }
+            virtual void activate() override;
+            virtual GoalStatus process() override;
+            virtual void terminate() override;
             
         private:
             
-            std::chrono::high_resolution_clock _start;
+            std::chrono::duration<double> _start;
             
         };
         

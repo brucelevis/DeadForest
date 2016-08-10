@@ -10,7 +10,7 @@
 #include "Telegram.hpp"
 #include "MessageTypes.hpp"
 #include "MessageDispatcher.hpp"
-#include "EntityPlayer.hpp"
+#include "HumanBase.hpp"
 #include "HumanOwnedAnimations.hpp"
 #include "Game.hpp"
 using namespace cocos2d;
@@ -19,14 +19,14 @@ using namespace realtrick::client;
 //
 // HumanFistIdleLoop
 //
-void HumanFistIdleLoop::enter(EntityPlayer* human)
+void HumanFistIdleLoop::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanFistIdleLoop::getInstance());
     human->setVelocity( Vec2::ZERO );
     human->setStateName("idle");
 }
 
-void HumanFistIdleLoop::execute(EntityPlayer* human)
+void HumanFistIdleLoop::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -57,7 +57,7 @@ void HumanFistIdleLoop::execute(EntityPlayer* human)
     }
 }
 
-void HumanFistIdleLoop::exit(EntityPlayer* human)
+void HumanFistIdleLoop::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
@@ -66,14 +66,14 @@ void HumanFistIdleLoop::exit(EntityPlayer* human)
 //
 // HumanFistMoveLoop
 //
-void HumanFistMoveLoop::enter(EntityPlayer* human)
+void HumanFistMoveLoop::enter(HumanBase* human)
 {
     human->getAnimator()->pushFramesAtoB(&AnimHumanFistMoveLoop::getInstance(), 0, 5);
     human->setRunStats(true);
     human->setStateName("run");
 }
 
-void HumanFistMoveLoop::execute(EntityPlayer* human)
+void HumanFistMoveLoop::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -108,7 +108,7 @@ void HumanFistMoveLoop::execute(EntityPlayer* human)
     }
 }
 
-void HumanFistMoveLoop::exit(EntityPlayer* human)
+void HumanFistMoveLoop::exit(HumanBase* human)
 {
     human->setRunStats(false);
     human->getAnimator()->clearFrameQueue();
@@ -118,13 +118,13 @@ void HumanFistMoveLoop::exit(EntityPlayer* human)
 //
 // HumanFistOut
 //
-void HumanFistOut::enter(EntityPlayer* human)
+void HumanFistOut::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanFistOut::getInstance());
     human->setStateName("release completed");
 }
 
-void HumanFistOut::execute(EntityPlayer* human)
+void HumanFistOut::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -144,7 +144,7 @@ void HumanFistOut::execute(EntityPlayer* human)
     }
 }
 
-void HumanFistOut::exit(EntityPlayer* human)
+void HumanFistOut::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
@@ -153,7 +153,7 @@ void HumanFistOut::exit(EntityPlayer* human)
 //
 // HumanFistIn
 //
-void HumanFistIn::enter(EntityPlayer* human)
+void HumanFistIn::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanFistIn::getInstance());
     
@@ -166,7 +166,7 @@ void HumanFistIn::enter(EntityPlayer* human)
     human->setStateName("pick weapon");
 }
 
-void HumanFistIn::execute(EntityPlayer* human)
+void HumanFistIn::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -182,11 +182,11 @@ void HumanFistIn::execute(EntityPlayer* human)
     
     if(human->getAnimator()->isQueueEmpty())
     {
-        human->getEquipedWeapon()->outWeapon();
+        static_cast<EntityPlayer*>(human)->getEquipedWeapon()->outWeapon();
     }
 }
 
-void HumanFistIn::exit(EntityPlayer* human)
+void HumanFistIn::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
@@ -195,13 +195,13 @@ void HumanFistIn::exit(EntityPlayer* human)
 //
 // HumanFistAttackReady
 //
-void HumanFistAttackReady::enter(EntityPlayer* human)
+void HumanFistAttackReady::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanFistAttackReady::getInstance());
     human->setStateName("raise right hand");
 }
 
-void HumanFistAttackReady::execute(EntityPlayer* human)
+void HumanFistAttackReady::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -222,7 +222,7 @@ void HumanFistAttackReady::execute(EntityPlayer* human)
     else human->setVelocity( Vec2::ZERO );
 }
 
-void HumanFistAttackReady::exit(EntityPlayer* human)
+void HumanFistAttackReady::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
@@ -231,13 +231,13 @@ void HumanFistAttackReady::exit(EntityPlayer* human)
 //
 // HumanFistAttackRelease
 //
-void HumanFistAttackRelease::enter(EntityPlayer* human)
+void HumanFistAttackRelease::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanFistAttackRelease::getInstance());
     human->setStateName("take down right hand");
 }
 
-void HumanFistAttackRelease::execute(EntityPlayer* human)
+void HumanFistAttackRelease::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -251,7 +251,7 @@ void HumanFistAttackRelease::execute(EntityPlayer* human)
     else human->setVelocity( Vec2::ZERO );
 }
 
-void HumanFistAttackRelease::exit(EntityPlayer* human)
+void HumanFistAttackRelease::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
@@ -260,13 +260,13 @@ void HumanFistAttackRelease::exit(EntityPlayer* human)
 //
 // HumanFistAttackHover
 //
-void HumanFistAttackHover::enter(EntityPlayer* human)
+void HumanFistAttackHover::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanFistAttackHover::getInstance());
     human->setStateName("attack ready");
 }
 
-void HumanFistAttackHover::execute(EntityPlayer* human)
+void HumanFistAttackHover::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -288,7 +288,7 @@ void HumanFistAttackHover::execute(EntityPlayer* human)
     else human->setVelocity( Vec2::ZERO );
 }
 
-void HumanFistAttackHover::exit(EntityPlayer* human)
+void HumanFistAttackHover::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }
@@ -297,13 +297,13 @@ void HumanFistAttackHover::exit(EntityPlayer* human)
 //
 // HumanFistAttackAction
 //
-void HumanFistAttackAction::enter(EntityPlayer* human)
+void HumanFistAttackAction::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanFistAttackAction::getInstance());
     human->setStateName("attack");
 }
 
-void HumanFistAttackAction::execute(EntityPlayer* human)
+void HumanFistAttackAction::execute(HumanBase* human)
 {
     int inputMask = human->getInputMask();
     Vec2 moving = human->getMoving();
@@ -318,7 +318,7 @@ void HumanFistAttackAction::execute(EntityPlayer* human)
 
 }
 
-void HumanFistAttackAction::exit(EntityPlayer* human)
+void HumanFistAttackAction::exit(HumanBase* human)
 {
     human->getAnimator()->clearFrameQueue();
 }

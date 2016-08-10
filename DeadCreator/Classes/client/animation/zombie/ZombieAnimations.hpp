@@ -51,7 +51,7 @@ namespace realtrick
                 _maxFrame       = 14;
                 _fileName       = "ZombieRunLoop";
                 _priority       = 4;
-                _frameSwapTime  = 0.1f;
+                _frameSwapTime  = 0.07f;
                 _isReversePlay  = true;
             }
             

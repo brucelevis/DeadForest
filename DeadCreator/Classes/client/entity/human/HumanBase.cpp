@@ -9,6 +9,7 @@
 #include "HumanBase.hpp"
 #include "ParamLoader.hpp"
 #include "Game.hpp"
+#include "RenderingSystem.hpp"
 #include "ZombieBrain.hpp"
 
 using namespace cocos2d;
@@ -25,6 +26,7 @@ _maxSpeed(0.0f),
 _turnSpeed(0.0f),
 _speed(0.0f),
 _animator(nullptr),
+_brain(nullptr),
 _inputMask(0),
 _blood(0),
 _maxBlood(0),
@@ -40,7 +42,6 @@ _stateName("idle")
     ADD_FAMILY_MASK(_familyMask, HUMAN_BASE);
     setBoundingRadius(Prm.getValueAsFloat("boundingRadius"));
     setTurnSpeed(Prm.getValueAsFloat("turnSpeed"));
-    setMaxSpeed(Prm.getValueAsFloat("maxSpeed"));
 }
 
 
@@ -82,6 +83,7 @@ HumanBase* HumanBase::create(Game* game)
 void HumanBase::update(float dt)
 {
     if ( _brain ) _brain->think();
+    if ( _FSM ) _FSM->update(dt);
     
     // move and rotate
     this->moveEntity();
@@ -208,7 +210,7 @@ void HumanBase::setFootGauge(float g)
         
         SoundSource s;
         s.position = getWorldPosition();
-        s.soundRange = 50.0f;
+        s.soundRange = 1000.0f;
         s.volume = 0.2f;
         
         if ( onTile == TileType::DIRT ) s.fileName = "Dirt" + _to_string(random(1, 4)) + ".mp3";
@@ -226,6 +228,19 @@ void HumanBase::setFootGauge(float g)
 
 bool HumanBase::handleMessage(const Telegram& msg)
 {
+    bool ret = false;
+    
+    if ( _FSM ) ret = _FSM->handleMessage(msg);
+    
+    if ( msg.msg == MessageType::PLAY_SOUND )
+    {
+        SoundSource* s =  static_cast<SoundSource*>(msg.extraInfo);
+        float t = (1.0f - (s->position - _game->getRenderingSysetm()->getCameraPosition()).getLength() / s->soundRange) * s->volume;
+        experimental::AudioEngine::setVolume( experimental::AudioEngine::play2d(s->fileName), t);
+        
+        return true;
+    }
+    
     return false;
 }
 

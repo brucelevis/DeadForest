@@ -85,22 +85,24 @@ void Client::enqueueTimer(int id, unsigned int time, int type)
 
 void Client::timerThread(){
     
-    while (true)
+    cout << "timerThread" << endl;
+    int StartTick;
+    
+    while(true)
     {
-        while  (false == _timerQueue.empty())
+        
+        if( getTickCount() - StartTick >= 0.05f*1000 )
         {
-            unsigned int curTickCount = getTickCount();
-            if (_timerQueue.top().targetTime > curTickCount) break;
-            eventToken et = _timerQueue.top();
+            StartTick = getTickCount();
+            cout << StartTick << " : 1초마다 한번씩 실행됩니다\n";
             
-            if(et.eventType == OP_ROOM_TIMER){
-                cout << "timerThread: OP_ROOM_TIMER" <<endl;
-            }else if(et.eventType == OP_GAME_TIMER){
-                cout << "timerThread: OP_GAME_TIMER" <<endl;
-                
-            }
-            _timerQueue.pop();
         }
+        else
+        {
+            sleep( 0.05f*1000 ); // 20 프레임
+        }
+        
+        
     }
     
 }
@@ -108,9 +110,9 @@ void Client::timerThread(){
 void Client::run()
 {
     
-    _timerThread = new boost::thread(boost::bind(&Client::timerThread, this));
+    _timerThread = new thread(bind(&Client::timerThread, this));
     
-    connectServer();
+    //connectServer();
     
     while(true){
         
@@ -150,13 +152,15 @@ void Client::run()
                     rid = obj->roomId();
                     cout<<"<SUCCESS_SEARCH_GAME> room id: "<<rid<<endl;
                     
-                    
+                    //룸생성
                     successLoadGame();
                     break;
                 }
                 case PacketType::FAIL_SEARCH_GAME:
                 {
                     cout<<"<FAIL_SEARCH_GAME>"<<endl;
+                    //정보 삭제
+                    rid = 0;
                     break;
                 }
                 case PacketType::FISRT_PLAYER_INFOS:
@@ -167,7 +171,7 @@ void Client::run()
                     cout<<"[own] id: "<<own->id()<<", pos: ("<<own->pos_x()<<", "<<own->pos_y()<<"), name: "<<own->name()->c_str()<<endl;
                     gid = own->id();
                     
-                    
+                    //TODO - 방 만들고 게임 초기화
                     successLoadGame();
                     
                     break;
@@ -177,6 +181,13 @@ void Client::run()
                     cout<<"<GAME_START>"<<endl;
                     
                     moveJoystick(true, 1, 1);
+                    
+                    break;
+                }
+                case PacketType::ENTITY_POS:
+                {
+                    cout<<"<ENTITY_POS>"<<endl;
+                    //위치정보 갱신
                     break;
                 }
                     
@@ -187,10 +198,12 @@ void Client::run()
                 }
             }
         }
+        //sleep(1);
         
     }
     
     _timerThread->join();
+     
     
 }
 

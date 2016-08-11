@@ -499,7 +499,7 @@ void Server::timerThread()
             if(et.eventType == OP_ROOM_TIMER){
                 cout << "timerThread: OP_ROOM_TIMER" <<endl;
                 Room* curRoom = getRoom(et.eventId);
-                if(curRoom->getRoomState() == static_cast<int> (RoomState::WAIT)){
+                if(curRoom != nullptr && curRoom->getRoomState() == static_cast<int> (RoomState::WAIT)){
                     
                     if( curRoom != nullptr && curRoom->getRoomTimer() == et.targetTime){
                         curRoom->sendPlayerSuccessSearchGame();

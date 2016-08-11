@@ -27,7 +27,8 @@ enum class PacketType : int
     FISRT_PLAYER_INFOS,      //sc
     SUCCESS_LOAD_GAME,
     GAME_START,            //sc
-    MOVE_JOYSTICK         //sc,cs
+    MOVE_JOYSTICK,         //sc,cs
+    ENTITY_POS             //sc
 };
 
 class Packet

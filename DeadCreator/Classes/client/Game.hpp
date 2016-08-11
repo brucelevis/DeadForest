@@ -42,6 +42,7 @@ namespace realtrick
         class LogicStream;
         class GameResource;
         class EntityManager;
+        class UiLayer;
         
         class Game : public cocos2d::Node
         {
@@ -68,10 +69,12 @@ namespace realtrick
             void addEntity(EntityBase* ent, int zOrder = 0);
             void removeEntity(EntityBase* ent);
             EntityPlayer* getPlayerPtr() const;
+            EntityBase* getEntityFromID(int id) const;
             
             void killEntity(EntityBase* ent);
             
-            void loadGMXFile(const std::string& path);
+            void loadGMXFileFromPath(const std::string& path);
+            void loadGMXFileFromBinary(const char* binary);
             void loadGameContents(PlayerType ownPlayer);
             void loadBGM();
             
@@ -95,6 +98,8 @@ namespace realtrick
             const std::string& getLogString() const { return _logString; }
             bool& isLogAdded() { return _isLogAdded; }
             
+            void runCrossHairEffect(const std::string& name);
+            
         private:
             
             cocos2d::Size _winSize;
@@ -117,6 +122,9 @@ namespace realtrick
             
             // message system
             MessageDispatcher* _messenger;
+            
+            // ui
+            UiLayer* _uiLayer;
             
             LogicStream* _logicStream;
             

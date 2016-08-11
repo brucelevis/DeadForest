@@ -252,11 +252,13 @@ void PlayGameLayer::showLayer(bool& opened)
     }
 }
 
+
 void PlayGameLayer::playGame()
 {
     _gameLayer = realtrick::client::DummyScene::create(this);
     addChild(_gameLayer);
 }
+
 
 void PlayGameLayer::closeLayer()
 {

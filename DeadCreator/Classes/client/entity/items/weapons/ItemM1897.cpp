@@ -151,6 +151,9 @@ void ItemM1897::attack()
             }
         }
     }
+    
+    if ( isHit ) _game->sendMessage(0.0, _owner, _owner, MessageType::HIT, nullptr);
+    else _game->sendMessage(0.0, _owner, _owner, MessageType::NO_HIT, nullptr);
 }
 
 

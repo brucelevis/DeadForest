@@ -100,6 +100,7 @@ table Trigger
 
 table Entity
 {
+   id : int;
    player_type : int;
    entity_type : int;
    pos : Vector2;

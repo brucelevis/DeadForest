@@ -120,6 +120,17 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&HumanBackDeadState::getInstance());
     }
     
+    else if ( msg.msg == MessageType::HIT )
+    {
+        _game->runCrossHairEffect("hit");
+        ret = true;
+    }
+    else if ( msg.msg == MessageType::NO_HIT )
+    {
+        _game->runCrossHairEffect("fire");
+        ret = true;
+    }
+    
     return ret;
 }
 

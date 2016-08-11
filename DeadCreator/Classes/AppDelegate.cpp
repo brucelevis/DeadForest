@@ -2,20 +2,14 @@
 #include "EditScene.hpp"
 #include "MainMenu3.hpp"
 #include "DummyScene.hpp"
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 #include "ImGuiGLViewImpl.h"
 #include "ImGuiLayer.h"
-#endif
 
 #include "SizeProtocol.h"
 
 USING_NS_CC;
 
 static cocos2d::Size designResolutionSize = cocos2d::Size(SCREEN_WIDTH, SCREEN_HEIGHT);
-static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
-static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
 
 AppDelegate::AppDelegate() {
     
@@ -42,14 +36,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     auto glview = director->getOpenGLView();
     if(!glview)
     {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
-        glview = ImGuiGLViewImpl::createWithRect("Dead Creator 1.1", Rect(0, 0,
-                                                                           designResolutionSize.width,
-                                                                           designResolutionSize.height));
-#elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-        glview = GLViewImpl::createWithRect("Dead Forest", Rect(0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
-#endif
-        
+        glview = ImGuiGLViewImpl::createWithRect("Dead Creator 1.1", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
         director->setOpenGLView(glview);
     }
     
@@ -61,13 +48,8 @@ bool AppDelegate::applicationDidFinishLaunching()
     
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images.plist");
     
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
     auto scene = realtrick::editor::EditScene::createScene();
     director->runWithScene(scene);
-#elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-//    auto scene = realtrick::client::Game::createScene();
-//    director->runWithScene(scene);
-#endif
     
     return true;
 }

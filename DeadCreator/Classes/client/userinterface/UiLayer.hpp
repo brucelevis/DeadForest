@@ -42,6 +42,8 @@ namespace realtrick
             Inventory* getInventory() const { return _inventory; }
             WeaponStatus* getWeaponStatus() const { return _weaponStatus; }
             
+            void runCrossHairEffect(const std::string& name);
+            
         private:
             
             Game* _game;
@@ -55,16 +57,19 @@ namespace realtrick
             HpBar* _hpBar;
             
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
+            
             JoystickEx* _moveJoystick;
             JoystickEx* _attackJoystick;
             CircularBezel* _bezel;
+            
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+            
             enum InputMask { UP = 0, DOWN, LEFT, RIGHT, RUNNING };
             std::bitset<5> _inputMask;
             cocos2d::Vec2 _mouseDirection = cocos2d::Vec2::UNIT_X;
             bool _isInputMaskDirty = false;
-#endif
             
+#endif
             
         };
         

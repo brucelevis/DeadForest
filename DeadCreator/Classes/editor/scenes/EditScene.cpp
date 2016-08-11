@@ -509,7 +509,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
             PlayerType playerType = static_cast<PlayerType>(iter->player_type());
             auto entType = static_cast<EntityType>(iter->entity_type());
             
-            EditorEntity* ent = EditorEntity::create(_layer->getNextValidID(), entType);
+            EditorEntity* ent = EditorEntity::create(iter->id(), entType);
             ent->setPosition(pos);
             ent->setPlayerType(playerType);
             _layer->addEntityForce(ent, 5);

@@ -124,7 +124,7 @@ void ItemGlock17::attack()
         if ( collider.second != nullptr )
         {
             _game->addLog(StringUtils::format("<WeaponBase::attack> hit at (%.0f, %.0f), id: %d.",
-                          collider.second->getWorldPosition().x, collider.second->getWorldPosition().y, collider.second->getTag()));
+                                              collider.second->getWorldPosition().x, collider.second->getWorldPosition().y, collider.second->getTag()));
             
             ReceiverSenderDamage d;
             d.receiverID = collider.second->getTag();
@@ -137,8 +137,17 @@ void ItemGlock17::attack()
             s.position = worldPos + shootAt * collider.first;
             s.soundRange = 2000.0f;
             _game->sendMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
+            
+            _game->sendMessage(0.0, _owner, _owner, MessageType::HIT, nullptr);
         }
-        
+        else
+        {
+            _game->sendMessage(0.0, _owner, _owner, MessageType::NO_HIT, nullptr);
+        }
+    }
+    else
+    {
+        _game->sendMessage(0.0, _owner, _owner, MessageType::NO_HIT, nullptr);
     }
 }
 

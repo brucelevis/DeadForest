@@ -86,6 +86,7 @@ namespace realtrick
         
     struct EntityData
     {
+        int id;
         PlayerType playerType;
         EntityType entityType;
         cocos2d::Vec2 position;

@@ -44,14 +44,28 @@ namespace realtrick
                 return nullptr;
             }
             
+            static EntityManager* create(Game* game)
+            {
+                auto ret = new (std::nothrow) EntityManager(game);
+                if ( ret && ret->init() )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
             bool initWithResource(GameResource* res, PlayerType ownPlayer);
+            bool init() { return true; }
             
             void addEntity(EntityBase* entity);
+            void addEntity(EntityBase* entity, int id);
             bool removeEntity(EntityBase* entity);
             EntityBase* getEntityFromID(int ID);
             
             const std::map<int, EntityBase*>& getEntities() const { return _entities; }
-            int getNextValidID() { static int nextValidID = 0; return nextValidID++; }
+            int getNextValidID();
             
             EntityPlayer* getPlayerPtr() const { return _player; }
             

@@ -103,6 +103,7 @@ void ItemAxe::attack()
         s.position = worldPos;
         s.soundRange = 200.0f;
         _game->sendMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
+        _game->sendMessage(0.0, _owner, _owner, MessageType::HIT, nullptr);
     }
     else
     {
@@ -111,6 +112,7 @@ void ItemAxe::attack()
         s.position = worldPos;
         s.soundRange = 200.0f;
         _game->sendMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
+        _game->sendMessage(0.0, _owner, _owner, MessageType::NO_HIT, nullptr);
     }
 }
 

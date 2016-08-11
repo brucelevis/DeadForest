@@ -139,7 +139,7 @@ bool UiLayer::init()
         
     };
     mouse->onMouseUp = [this](Event* event){
-    
+        
         AttJoystickData data;
         data.ref = this;
         data.type = ui::Widget::TouchEventType::ENDED;
@@ -250,7 +250,28 @@ bool UiLayer::init()
     
     _crossHair = CrossHair::create("aim_point.png");
     _crossHair->setScale(0.8f);
-    _crossHair->setRange(75.0f);
+    _crossHair->setRange(90.0f);
+    
+    _crossHair->setEffect("hit", CrossHairEffect({
+        "cross_hair0.png",
+        "cross_hair1.png",
+        "cross_hair2.png",
+        "cross_hair3.png",
+        "cross_hair4.png",
+        "cross_hair5.png",
+        "cross_hair6.png",
+        "cross_hair7.png" }, 0.035f));
+    
+    _crossHair->setEffect("fire", CrossHairEffect({
+        "cross_hair0.png",
+        "cross_hair0.png",
+        "cross_hair0.png",
+        "cross_hair0.png",
+        "cross_hair0.png",
+        "cross_hair0.png",
+        "cross_hair0.png",
+        "cross_hair0.png" }, 0.035f));
+    
     _inGameUiLayer->addChild(_crossHair);
     
     //
@@ -323,6 +344,12 @@ void UiLayer::update(float dt)
         _isInputMaskDirty = false;
     }
 #endif
+}
+
+
+void UiLayer::runCrossHairEffect(const std::string& name)
+{
+    _crossHair->runEffect(name);
 }
 
 

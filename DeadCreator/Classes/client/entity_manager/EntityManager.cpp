@@ -20,6 +20,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
     // load entities
     for (auto entity = res->_entities.begin(); entity != res->_entities.end(); ++ entity)
     {
+        int id = entity->id;
         EntityType entityType = static_cast<EntityType>(entity->entityType);
         PlayerType playerType = static_cast<PlayerType>(entity->playerType);
         Vec2 position(entity->position);
@@ -29,7 +30,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             EntityPlayer* human = EntityPlayer::create(_game);
             human->setWorldPosition(position);
             human->setPlayerType(playerType);
-            addEntity(human);
+            addEntity(human, id);
             
             if ( playerType == ownPlayer ) _player = human;
         }
@@ -39,7 +40,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             EntityZombie* zombie = EntityZombie::create(_game);
             zombie->setWorldPosition(position);
             zombie->setPlayerType(playerType);
-            addEntity(zombie);
+            addEntity(zombie, id);
         }
         
         else if ( entityType == EntityType::BULLET_556MM )
@@ -47,7 +48,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             Bullet556mm* item = Bullet556mm::create(_game);
             item->setWorldPosition(position);
             item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item);
+            addEntity(item, id);
         }
         
         else if ( entityType == EntityType::BULLET_9MM )
@@ -55,7 +56,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             Bullet9mm* item = Bullet9mm::create(_game);
             item->setWorldPosition(position);
             item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item);
+            addEntity(item, id);
         }
         
         else if ( entityType == EntityType::BULLET_SHELL )
@@ -63,7 +64,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             BulletShell* item = BulletShell::create(_game);
             item->setWorldPosition(position);
             item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item);
+            addEntity(item, id);
         }
         
         else if ( entityType == EntityType::ITEM_AXE )
@@ -71,7 +72,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             ItemAxe* item = ItemAxe::create(_game);
             item->setWorldPosition(position);
             item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item);
+            addEntity(item, id);
         }
         
         else if ( entityType == EntityType::ITEM_GLOCK17 )
@@ -79,7 +80,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             ItemGlock17* item = ItemGlock17::create(_game);
             item->setWorldPosition(position);
             item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item);
+            addEntity(item, id);
         }
         
         else if ( entityType == EntityType::ITEM_M16A2 )
@@ -87,7 +88,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             ItemM16A2* item = ItemM16A2::create(_game);
             item->setWorldPosition(position);
             item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item);
+            addEntity(item, id);
         }
         
         else if ( entityType == EntityType::ITEM_M1897 )
@@ -95,8 +96,10 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             ItemM1897* item = ItemM1897::create(_game);
             item->setWorldPosition(position);
             item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item);
+            addEntity(item, id);
         }
+        
+        cocos2d::log("id: %d", id);
     }
     
     return true;
@@ -106,6 +109,14 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
 void EntityManager::addEntity(EntityBase* entity)
 {
     int id = getNextValidID();
+    addEntity(entity, id);
+}
+
+
+void EntityManager::addEntity(EntityBase* entity, int id)
+{
+    if ( getEntityFromID(id) ) throw std::runtime_error("entity is already exist");
+    
     entity->setTag(id);
     _entities.insert( {id, entity} );
 }
@@ -141,6 +152,17 @@ void EntityManager::update(float dt)
         entity.second->update(dt);
 }
 
+
+int EntityManager::getNextValidID()
+{
+    int numOfTry = 1000000;
+    while ( numOfTry-- )
+    {
+        int randomID = cocos2d::random(0, 2100000000);
+        if ( getEntityFromID(randomID) == nullptr ) return randomID;
+    }
+    return -1;
+}
 
 
 

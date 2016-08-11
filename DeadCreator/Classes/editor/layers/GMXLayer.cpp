@@ -1795,6 +1795,7 @@ void GMXLayer::save(const std::string& path)
         {
             DeadCreator::Vector2 v(ent.second->getPosition().x, ent.second->getPosition().y);
             auto e = DeadCreator::CreateEntity(builder,
+                                               ent.second->getID(),
                                                static_cast<int>(ent.second->getPlayerType()),
                                                static_cast<int>(ent.second->getEntityType()),
                                                &v);
@@ -1949,6 +1950,18 @@ bool GMXLayer::isRedo() const { return _historyLayer->isRedo(); }
 bool GMXLayer::isUndo() const { return _historyLayer->isUndo(); }
 void GMXLayer::redo() { _historyLayer->redo(); updateCollisionRegion(); }
 void GMXLayer::undo() { _historyLayer->undo(); updateCollisionRegion(); }
+
+
+int GMXLayer::getNextValidID()
+{
+    int numOfTry = 1000000;
+    while ( numOfTry-- )
+    {
+        int randomID = cocos2d::random(0, 2100000000);
+        if ( getEntityFromID(randomID) == nullptr ) return randomID;
+    }
+    return -1;
+}
 
 
 

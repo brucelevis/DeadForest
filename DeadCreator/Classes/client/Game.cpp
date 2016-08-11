@@ -248,9 +248,16 @@ void Game::pushLogic(double delaySeconds, MessageType type, void* extraInfo)
 }
 
 
-void Game::loadGMXFile(const std::string& path)
+void Game::loadGMXFileFromPath(const std::string& path)
 {
     _gameResource = GameResource::createWithGMXFile(path);
+    _releasePool.addObject(_gameResource);
+}
+
+
+void Game::loadGMXFileFromBinary(const char* binary)
+{
+    _gameResource = GameResource::createWithBinary(binary);
     _releasePool.addObject(_gameResource);
 }
 
@@ -290,8 +297,8 @@ void Game::loadGameContents(PlayerType ownPlayer)
         _renderingSystem->addEntity(entity.second, zOrder);
     }
     
-    auto uiLayer = UiLayer::create(this);
-    _renderingSystem->addUINode(uiLayer);
+    _uiLayer = UiLayer::create(this);
+    _renderingSystem->addUINode(_uiLayer);
 }
 
 
@@ -375,6 +382,12 @@ EntityPlayer* Game::getPlayerPtr() const
 }
 
 
+EntityBase* Game::getEntityFromID(int id) const
+{
+    return _entityManager->getEntityFromID(id);
+}
+
+
 void Game::addLog(const std::string& log)
 {
     std::string newLog = log;
@@ -406,6 +419,12 @@ void Game::clearLogs()
     _logs.clear();
     _logString.clear();
     _isLogAdded = false;
+}
+
+
+void Game::runCrossHairEffect(const std::string& name)
+{
+    _uiLayer->runCrossHairEffect(name);
 }
 
 

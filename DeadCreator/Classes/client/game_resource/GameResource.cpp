@@ -18,10 +18,7 @@ bool GameResource::initGMXFile(const std::string& path)
     // decode flatbuffers
     std::string loadedData;
     auto ret = flatbuffers::LoadFile(path.c_str(), true, &loadedData);
-    if ( ret )
-    {
-        initWithBinary(loadedData.c_str());
-    }
+    if ( ret ) initWithBinary(loadedData.c_str());
     return ret;
 }
 
@@ -85,6 +82,7 @@ bool GameResource::initWithBinary(const char* buffer)
     for ( auto entity = file->entities()->begin(); entity != file->entities()->end(); ++ entity )
     {
         EntityData data;
+        data.id = entity->id();
         data.playerType = static_cast<PlayerType>(entity->player_type());
         data.entityType = static_cast<EntityType>(entity->entity_type());
         data.position.setPoint(entity->pos()->x(), entity->pos()->y());

@@ -136,9 +136,18 @@ void ItemM16A2::attack()
             s.position = worldPos + shootAt * collider.first;
             s.soundRange = 2000.0f;
             _game->sendMessage(0.0, _owner, _owner, MessageType::PLAY_SOUND, &s);
+            
+            _game->sendMessage(0.0, _owner, _owner, MessageType::HIT, nullptr);
+        }
+        else
+        {
+            _game->sendMessage(0.0, _owner, _owner, MessageType::NO_HIT, nullptr);
         }
     }
-   
+    else
+    {
+        _game->sendMessage(0.0, _owner, _owner, MessageType::NO_HIT, nullptr);
+    }
 }
 
 

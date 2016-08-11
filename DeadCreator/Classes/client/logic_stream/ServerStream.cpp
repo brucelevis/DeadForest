@@ -33,6 +33,8 @@ void ServerStream::update(float dt)
         {
             case PacketType::LOAD_GMXFILE:
             {
+                const char* binary = "";
+                _game->loadGMXFileFromBinary(binary);
                 
                 break;
             }

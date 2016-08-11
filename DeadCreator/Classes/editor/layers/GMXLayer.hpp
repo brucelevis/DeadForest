@@ -97,7 +97,7 @@ namespace realtrick
             int getNumberOfHumanEntity(PlayerType player);
             EditorEntity* getEntityFromID(int id);
             
-            static int getNextValidID() { static int validID = 0; return validID++; }
+            int getNextValidID();
             static void enableTitleClicked() { TITLE_CLICKED = true; }
             static void disableTitleClicked() { TITLE_CLICKED = false; }
             static bool isTitleClicked() { return TITLE_CLICKED; }

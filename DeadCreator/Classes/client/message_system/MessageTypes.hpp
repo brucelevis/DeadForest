@@ -47,6 +47,8 @@ namespace realtrick
             M16A2_SHOOT = 17,
             SHOW_NEXT_FRAME = 18,
             ADD_OBJECT_TO_RENDER = 19,
+            NO_HIT = 20,
+            HIT = 21,
         };
         
         enum HumanBehaviorType

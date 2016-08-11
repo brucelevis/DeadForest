@@ -21,6 +21,8 @@
 #include "SizeProtocol.h"
 #include "ParamLoader.hpp"
 #include "InputCommands.hpp"
+#include "RenderingSystem.hpp"
+#include "CrossHair.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -55,6 +57,7 @@ bool UiLayer::init()
         return false;
     
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+    this->scheduleUpdate();
     
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
     
@@ -112,8 +115,6 @@ bool UiLayer::init()
     addChild(_bezel, Z_ORDER_UI - 1);
     
 #elif ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
-    
-    this->scheduleUpdate();
     
     auto mouse = EventListenerMouse::create();
     mouse->onMouseDown = [this](Event* event){
@@ -242,6 +243,16 @@ bool UiLayer::init()
     addChild(_inventorySwitch, Z_ORDER_UI);
     
     
+    _inGameUiLayer = Node::create();
+    _inGameUiLayer->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
+    _inGameUiLayer->setScale(_game->getRenderingSysetm()->getZoomScale().x, _game->getRenderingSysetm()->getZoomScale().y);
+    addChild(_inGameUiLayer);
+    
+    _crossHair = CrossHair::create("aim_point.png");
+    _crossHair->setScale(0.8f);
+    _crossHair->setRange(75.0f);
+    _inGameUiLayer->addChild(_crossHair);
+    
     //
     // Rain Effect
     //
@@ -264,6 +275,9 @@ bool UiLayer::init()
 
 void UiLayer::update(float dt)
 {
+    _crossHair->setRotation(-physics::getAngleFromZero(_game->getPlayerPtr()->getHeading()));
+    
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     if ( _isInputMaskDirty )
     {
         Vec2 moveDirection(Vec2::ZERO);
@@ -308,6 +322,7 @@ void UiLayer::update(float dt)
         
         _isInputMaskDirty = false;
     }
+#endif
 }
 
 

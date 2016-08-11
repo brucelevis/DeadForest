@@ -8,7 +8,7 @@
 
 #include "MainMenu3.hpp"
 #include "GeneratedPackets.hpp"
-#include "Server.hpp"
+#include "GameServer.hpp"
 #include "Game.hpp"
 #include "SizeProtocol.h"
 using namespace realtrick::client;
@@ -55,10 +55,10 @@ Scene* MainMenu3::createScene()
 
 void MainMenu3::update(float dt)
 {
-    if ( !Server::getInstance().isQueueEmpty() )
+    if ( !GameServer::getInstance().isQueueEmpty() )
     {
         Packet* packet;
-        Server::getInstance().dequeue(packet);
+        GameServer::getInstance().dequeue(packet);
         packet->decode();
         
         switch ( packet->type() )
@@ -126,7 +126,7 @@ bool MainMenu3::init()
         
         Packet* packet = new Packet();
         packet->encode(fbb.GetBufferPointer(), fbb.GetSize(), PacketType::SIGN_UP);
-        Server::getInstance().write(packet);
+        GameServer::getInstance().write(packet);
         
     });
     labelMenu->setAnchorPoint(Vec2(0.0f, 0.5f));
@@ -854,7 +854,7 @@ void MainMenu3::_showCustomMenu(float delay)
             
             Packet* packet = new Packet();
             packet->encode(builder.GetBufferPointer(), builder.GetSize(), PacketType::DO_SEARCH_GAME);
-            Server::getInstance().write(packet);
+            GameServer::getInstance().write(packet);
             
             _hideCustomMenuAndShowCustomSearchMenu(delay);
         }
@@ -951,7 +951,7 @@ void MainMenu3::_showCustomSearchMenu(float delay)
             
             Packet* packet = new Packet();
             packet->encode(builder.GetBufferPointer(), builder.GetSize(), PacketType::CANCEL_SEARCH_GAME);
-            Server::getInstance().write(packet);
+            GameServer::getInstance().write(packet);
             
             _hideCustomSearchMenuAndShowCustomMenu(delay);
         }

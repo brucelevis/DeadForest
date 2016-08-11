@@ -71,9 +71,9 @@ namespace realtrick
             
             void killEntity(EntityBase* ent);
             
-            
             void loadGMXFile(const std::string& path);
-            void loadUiLayer();
+            void loadGameContents(PlayerType ownPlayer);
+            void loadBGM();
             
             std::list<EntityBase*> getNeighborsOnMove(const cocos2d::Vec2& pos, float speed) const;
             std::list<EntityBase*> getNeighborsOnAttack(const cocos2d::Vec2& pos, const cocos2d::Vec2& dir, float range) const;

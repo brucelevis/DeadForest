@@ -15,7 +15,7 @@ using namespace realtrick::client;
 using namespace cocos2d;
 
 
-bool EntityManager::initWithResource(GameResource* res)
+bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
 {
     // load entities
     for (auto entity = res->_entities.begin(); entity != res->_entities.end(); ++ entity)
@@ -31,7 +31,7 @@ bool EntityManager::initWithResource(GameResource* res)
             human->setPlayerType(playerType);
             addEntity(human);
             
-            if ( !_player ) _player = human;
+            if ( playerType == ownPlayer ) _player = human;
         }
         
         else if ( entityType == EntityType::ENTITY_ZOMBIE )
@@ -97,7 +97,6 @@ bool EntityManager::initWithResource(GameResource* res)
             item->setPlayerType(PlayerType::NEUTRAL);
             addEntity(item);
         }
-
     }
     
     return true;

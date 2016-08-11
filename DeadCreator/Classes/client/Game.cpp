@@ -17,6 +17,7 @@
 #include "TriggerSystem.hpp"
 #include "RenderingSystem.hpp"
 #include "SingleStream.hpp"
+#include "ServerStream.hpp"
 #include "GameResource.hpp"
 #include "EntityManager.hpp"
 using namespace cocos2d;
@@ -80,7 +81,8 @@ bool Game::init()
     this->scheduleUpdate();
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 
-    _logicStream = new SingleStream(this);
+    if ( Prm.getValueAsBool("useNetwork") ) _logicStream = new ServerStream(this);
+    else _logicStream = new SingleStream(this);
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
@@ -122,7 +124,7 @@ void Game::update(float dt)
 }
 
 
-void Game::loadUiLayer()
+void Game::loadBGM()
 {
     _bgmID = experimental::AudioEngine::play2d("rainfall.mp3", true);
     experimental::AudioEngine::setVolume(_bgmID, 0.3f);
@@ -250,22 +252,26 @@ void Game::loadGMXFile(const std::string& path)
 {
     _gameResource = GameResource::createWithGMXFile(path);
     _releasePool.addObject(_gameResource);
-    
+}
+
+
+void Game::loadGameContents(PlayerType ownPlayer)
+{
     _messenger = MessageDispatcher::create(this);
     _releasePool.addObject(_messenger);
+    
+    _entityManager = EntityManager::createWithResouce(this, _gameResource, ownPlayer);
+    _releasePool.addObject(_entityManager);
     
     _renderingSystem = RenderingSystem::create(this, _gameResource);
     _renderingSystem->setZoom(Prm.getValueAsFloat("cameraZoom"));
     addChild(_renderingSystem);
     
-    _cellSpace = CellSpacePartition::createWithResource(_gameResource);
-    _releasePool.addObject(_cellSpace);
-    
-    _entityManager = EntityManager::createWithResouce(this, _gameResource);
-    _releasePool.addObject(_entityManager);
-    
     _triggerSystem = TriggerSystem::createWithResouce(this, _gameResource);
     _releasePool.addObject(_triggerSystem);
+    
+    _cellSpace = CellSpacePartition::createWithResource(_gameResource);
+    _releasePool.addObject(_cellSpace);
     
     const auto& walls = _gameResource->getCollisionData();
     for (const auto& wall : walls )
@@ -277,7 +283,11 @@ void Game::loadGMXFile(const std::string& path)
     for ( const auto& entity : entities )
     {
         _cellSpace->addEntity(entity.second);
-        _renderingSystem->addEntity(entity.second, 1);
+        
+        int zOrder = 0;
+        if ( isMasked(entity.second->getFamilyMask(), FamilyMask::ITEM_BASE) ) zOrder = Z_ORDER_ITEMS;
+        else if ( isMasked(entity.second->getFamilyMask(), FamilyMask::HUMAN_BASE) ) zOrder = Z_ORDER_HUMAN;
+        _renderingSystem->addEntity(entity.second, zOrder);
     }
     
     auto uiLayer = UiLayer::create(this);
@@ -383,7 +393,6 @@ void Game::addLog(const std::string& log)
         _logString.pop_back(); // 'n'
         auto recentStringSize = recentString.size();
         while ( recentStringSize-- ) _logString.pop_back();
-
     }
     
     _logs.push_back( {log, numOfOverlap} );

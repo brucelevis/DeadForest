@@ -37,8 +37,6 @@ EntityPlayer::~EntityPlayer()
     CC_SAFE_DELETE(_FSM);
     CC_SAFE_RELEASE_NULL(_weaponStatus);
     CC_SAFE_RELEASE_NULL(_inventory);
-    
-    CC_SAFE_DELETE(_brain);
 }
 
 
@@ -56,8 +54,6 @@ bool EntityPlayer::init()
     
     _inventory = Inventory::create(_game);
     _inventory->retain();
-    
-//    _brain = new ZombieBrain(this);
     
     return true;
 }

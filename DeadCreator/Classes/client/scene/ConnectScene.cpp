@@ -7,10 +7,10 @@
 //
 
 #include "ConnectScene.hpp"
-#include "Server.hpp"
+#include "GameServer.hpp"
 #include "MainMenu3.hpp"
-#include "GeneratedPackets.hpp"
 #include "SizeProtocol.h"
+#include "ParamLoader.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -44,10 +44,10 @@ Scene* ConnectScene::createScene()
 
 void ConnectScene::update(float dt)
 {
-    if ( !Server::getInstance().isQueueEmpty() )
+    if ( !GameServer::getInstance().isQueueEmpty() )
     {
         Packet* packet;
-        Server::getInstance().dequeue(packet);
+        GameServer::getInstance().dequeue(packet);
         packet->decode();
         
         switch ( packet->type() )
@@ -81,7 +81,7 @@ void ConnectScene::update(float dt)
 
 void ConnectScene::doConnect()
 {
-    Server::getInstance().connect();
+    GameServer::getInstance().connect(Prm.getValueAsString("serverIP"), Prm.getValueAsString("serverPort"));
     this->stopAllActions();
     
     for(auto i = 0 ; i < _progressDots.size(); ++ i)

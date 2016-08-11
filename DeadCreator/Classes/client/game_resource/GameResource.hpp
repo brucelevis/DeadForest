@@ -42,7 +42,6 @@ namespace realtrick
         
             virtual ~GameResource() = default;
             
-            bool initGMXFile(const std::string& path);
             static GameResource* createWithGMXFile(const std::string& path)
             {
                 auto ret = new (std::nothrow) GameResource();
@@ -54,6 +53,21 @@ namespace realtrick
                 CC_SAFE_DELETE(ret);
                 return nullptr;
             }
+            
+            static GameResource* createWithBinary(const char* buffer)
+            {
+                auto ret = new (std::nothrow) GameResource();
+                if ( ret && ret->initWithBinary(buffer) )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
+            bool initGMXFile(const std::string& path);
+            bool initWithBinary(const char* buffer);
             
             // this is constant datas so data that from "getter" is available in game.
             // hence mutable datas (such as entities, triggers) do not have to make getter. (just use for initialize game)

@@ -25,6 +25,7 @@ namespace realtrick
         class WeaponStatus;
         class HpBar;
         class InfoSystem;
+        class CrossHair;
         
         class UiLayer : public cocos2d::Node
         {
@@ -49,6 +50,8 @@ namespace realtrick
             Inventory* _inventory;
             cocos2d::ui::CheckBox* _inventorySwitch;
             WeaponStatus* _weaponStatus;
+            cocos2d::Node* _inGameUiLayer;
+            CrossHair* _crossHair;
             HpBar* _hpBar;
             
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )

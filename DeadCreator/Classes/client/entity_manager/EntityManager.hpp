@@ -9,6 +9,7 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "Types.hpp"
 
 namespace realtrick
 {
@@ -31,10 +32,10 @@ namespace realtrick
             {}
             
             virtual ~EntityManager() = default;
-            static EntityManager* createWithResouce(Game* game, GameResource* res)
+            static EntityManager* createWithResouce(Game* game, GameResource* res, PlayerType ownPlayer)
             {
                 auto ret = new (std::nothrow) EntityManager(game);
-                if ( ret && ret->initWithResource(res) )
+                if ( ret && ret->initWithResource(res, ownPlayer) )
                 {
                     ret->autorelease();
                     return ret;
@@ -43,7 +44,7 @@ namespace realtrick
                 return nullptr;
             }
             
-            bool initWithResource(GameResource* res);
+            bool initWithResource(GameResource* res, PlayerType ownPlayer);
             
             void addEntity(EntityBase* entity);
             bool removeEntity(EntityBase* entity);
@@ -61,6 +62,7 @@ namespace realtrick
             Game* _game;
             std::map<int, EntityBase*> _entities;
             EntityPlayer* _player;
+            PlayerType _playerType;
             
         };
         

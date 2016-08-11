@@ -191,9 +191,9 @@ void HumanBase::rotateEntity()
             rotMat.rotate(-MATH_DEG_TO_RAD(_turnSpeed * dt));
             setHeading(rotMat.getTransformedVector(getHeading()));
         }
+        
+        setRotationZ(-physics::getAngleFromZero(getHeading()));
     }
-    
-    setRotationZ(-physics::getAngleFromZero(getHeading()));
 }
 
 

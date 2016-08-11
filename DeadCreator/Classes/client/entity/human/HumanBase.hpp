@@ -59,9 +59,6 @@ namespace realtrick
             cocos2d::Vec2 getVelocity() const { return _velocity; }
             void setVelocity(const cocos2d::Vec2 velocity) { _velocity = velocity; }
             
-            float getMaxSpeed() const { return _maxSpeed; }
-            void setMaxSpeed(float maxSpeed) { _maxSpeed = maxSpeed; }
-            
             float getTurnSpeed() const { return _turnSpeed; }
             void setTurnSpeed(float speed) { _turnSpeed = speed; }
             
@@ -93,6 +90,9 @@ namespace realtrick
             void setStateName(const std::string& name) { _stateName = name; }
             std::string getStateName() const { return _stateName; }
             
+            void setInventoryOpened(bool enable) { _isInventoryOpened = enable; }
+            bool isInventoryOpened() const { return _isInventoryOpened; }
+            
         private:
         
             void setHeading(const cocos2d::Vec2 heading) { _heading = heading; _heading.normalize(); }
@@ -110,7 +110,6 @@ namespace realtrick
             cocos2d::Vec2                   _right;
             cocos2d::Vec2                   _velocity;
             
-            float                           _maxSpeed;
             float                           _turnSpeed;
             float                           _speed;
             
@@ -121,6 +120,7 @@ namespace realtrick
             bool                            _isAlive;
             bool                            _isRun;
             bool                            _isFovOn;
+            bool                            _isInventoryOpened;
 
             float                           _walkSpeed;
             float                           _runSpeed;

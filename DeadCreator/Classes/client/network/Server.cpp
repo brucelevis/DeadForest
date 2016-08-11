@@ -32,7 +32,6 @@ void Server::close()
     _io.post([this]
     {
         closeSocket();
-        enableConnected(false);
         _thread->join();
         CC_SAFE_DELETE(_thread);
     });
@@ -46,8 +45,6 @@ void Server::doConnect(boost::asio::ip::tcp::resolver::iterator endpoint)
                                {
                                    if ( !ec )
                                    {
-                                       enableConnected(true);
-                                       
                                        flatbuffers::FlatBufferBuilder builder;
                                        auto obj = fpacket::CreatePacketLogin(builder, cocos2d::UserDefault::getInstance()->getIntegerForKey("pid", -1));
                                        builder.Finish(obj);

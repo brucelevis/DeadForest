@@ -18,7 +18,7 @@ namespace realtrick
 {
     namespace client
     {
-    
+        
         class InputReload : public InputCommandBase
         {
             
@@ -33,14 +33,16 @@ namespace realtrick
             
             virtual void execute() override
             {
-                WeaponBase* equipedWeapon = _player->getEquipedWeapon();
-                
-                if ( equipedWeapon != nullptr &&
-                    equipedWeapon->getEntityType() != EntityType::ITEM_AXE )
+                if ( !_player->isInventoryOpened() )
                 {
-                    equipedWeapon->reload();
+                    WeaponBase* equipedWeapon = _player->getEquipedWeapon();
+                    
+                    if ( equipedWeapon != nullptr &&
+                        equipedWeapon->getEntityType() != EntityType::ITEM_AXE )
+                    {
+                        equipedWeapon->reload();
+                    }
                 }
-
             }
             
         private:

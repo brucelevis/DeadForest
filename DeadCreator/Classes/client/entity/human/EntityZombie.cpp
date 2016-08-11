@@ -19,7 +19,10 @@ using namespace cocos2d;
 EntityZombie::EntityZombie(Game* game) : HumanBase(game)
 {
     setEntityType(EntityType::ENTITY_ZOMBIE);
-    setMaxSpeed(50.0f);
+    setRunSpeed(150.0f);
+    setWalkSpeed(75.0f);
+    _maxBlood = 100;
+    _blood = _maxBlood;
 }
 
 

@@ -27,12 +27,12 @@ using namespace cocos2d;
 
 UiLayer::UiLayer(Game* game) : _game(game)
 {
-    
 }
 
 
 UiLayer::~UiLayer()
 {
+    Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
 }
 
 
@@ -55,6 +55,8 @@ bool UiLayer::init()
         return false;
     
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+    
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
     
     Vec2 joystickScale(GAME_SCREEN_WIDTH / 1136, GAME_SCREEN_HEIGHT / 640);
     Vec2 joystickPos = Vec2(150.0f * joystickScale.x, 150.0f * joystickScale.y);
@@ -109,13 +111,93 @@ bool UiLayer::init()
     });
     addChild(_bezel, Z_ORDER_UI - 1);
     
+#elif ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+    
+    this->scheduleUpdate();
+    
+    auto mouse = EventListenerMouse::create();
+    mouse->onMouseDown = [this](Event* event){
+        
+        EventMouse* e = static_cast<EventMouse*>(event);
+        Vec2 screenPos = Vec2(e->getCursorX(), e->getCursorY());
+        Vec2 localPos = getParent()->convertToNodeSpace(screenPos);
+        
+        if ( localPos.x > 0.0f && localPos.x < GAME_SCREEN_WIDTH && localPos.y > 0.0f && localPos.y < GAME_SCREEN_HEIGHT )
+        {
+            const auto& inventoryAABB = _inventorySwitch->getBoundingBox();
+            const cocos2d::Rect reloadButtonAABB = cocos2d::Rect(_weaponStatus->getPosition() - Vec2(40,40), Size(80, 80));
+            
+            if ( !inventoryAABB.containsPoint(localPos) && !reloadButtonAABB.containsPoint(localPos) )
+            {
+                AttJoystickData data;
+                data.ref = this;
+                data.type = ui::Widget::TouchEventType::BEGAN;
+                _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
+            }
+        }
+        
+    };
+    mouse->onMouseUp = [this](Event* event){
+    
+        AttJoystickData data;
+        data.ref = this;
+        data.type = ui::Widget::TouchEventType::ENDED;
+        _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
+        
+    };
+    mouse->onMouseMove = [this](Event* event) {
+        
+        EventMouse* e = static_cast<EventMouse*>(event);
+        Vec2 screenPos = Vec2(e->getCursorX(), e->getCursorY());
+        Vec2 localPos = getParent()->convertToNodeSpace(screenPos);
+        
+        if ( localPos.x > 0.0f && localPos.x < GAME_SCREEN_WIDTH && localPos.y > 0.0f && localPos.y < GAME_SCREEN_HEIGHT )
+        {
+            _mouseDirection = Vec2(localPos.x - GAME_SCREEN_WIDTH / 2, localPos.y - GAME_SCREEN_HEIGHT / 2).getNormalized();
+            _isInputMaskDirty = true;
+        }
+        
+    };
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(mouse, this);
+    
+    
+    auto keyboard = EventListenerKeyboard::create();
+    keyboard->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) {
+        
+        auto oldMask = _inputMask;
+        
+        if ( keyCode == EventKeyboard::KeyCode::KEY_W ) _inputMask.set(InputMask::UP);
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_S ) _inputMask.set(InputMask::DOWN);
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_A ) _inputMask.set(InputMask::LEFT);
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_D ) _inputMask.set(InputMask::RIGHT);
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT ) _inputMask.set(InputMask::RUNNING);
+        
+        if ( oldMask != _inputMask ) _isInputMaskDirty = true;
+        
+    };
+    keyboard->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) {
+        
+        auto oldMask = _inputMask;
+        
+        if ( keyCode == EventKeyboard::KeyCode::KEY_W ) _inputMask.reset(InputMask::UP);
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_S ) _inputMask.reset(InputMask::DOWN);
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_A ) _inputMask.reset(InputMask::LEFT);
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_D ) _inputMask.reset(InputMask::RIGHT);
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT ) _inputMask.reset(InputMask::RUNNING);
+        
+        if ( oldMask != _inputMask ) _isInputMaskDirty = true;
+        
+    };
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboard, this);
+    
+#endif
+    
     auto player = _game->getPlayerPtr();
     if ( player )
     {
         _weaponStatus = player->getWeaponStatus();
         _weaponStatus->setPosition(Vec2(_winSize.width * 0.9f, _winSize.height * 0.9f));
         addChild(_weaponStatus, Z_ORDER_UI - 1);
-        
         
         _inventory = player->getInventory();
         _inventory->setPosition(Vec2(_winSize / 2));
@@ -130,12 +212,12 @@ bool UiLayer::init()
                                            if ( type == ui::CheckBox::EventType::SELECTED )
                                            {
                                                // 인벤토리를 열면 모든 조이스틱을 비활성화 시킨다.
+                                               
                                                _inventory->open();
-                                               _attackJoystick->disableJoystick();
-                                               _moveJoystick->disableJoystick();
                                                _weaponStatus->disableButton();
                                                
                                                EntityPlayer* player = _game->getPlayerPtr();
+                                               player->setInventoryOpened(true);
                                                
                                                MoveJoystickData data1;
                                                data1.ref = ref;
@@ -151,8 +233,9 @@ bool UiLayer::init()
                                            else
                                            {
                                                _inventory->close();
-                                               _attackJoystick->enableJoystick();
-                                               _moveJoystick->enableJoystick();
+                                               
+                                               EntityPlayer* player = _game->getPlayerPtr();
+                                               player->setInventoryOpened(false);
                                                _weaponStatus->enableButton();
                                            }
                                        });
@@ -171,12 +254,60 @@ bool UiLayer::init()
         addChild(rain, Z_ORDER_UI - 2);
     }
     
-    
     _hpBar = HpBar::create(_game);
     _hpBar->setPosition(Vec2(_winSize.width * 0.03f, _winSize.height * 0.9f));
     addChild(_hpBar);
     
     return true;
+}
+
+
+void UiLayer::update(float dt)
+{
+    if ( _isInputMaskDirty )
+    {
+        Vec2 moveDirection(Vec2::ZERO);
+        if ( _inputMask.test(InputMask::UP) ) moveDirection += Vec2::UNIT_Y;
+        if ( _inputMask.test(InputMask::DOWN) ) moveDirection -= Vec2::UNIT_Y;
+        if ( _inputMask.test(InputMask::LEFT) ) moveDirection -= Vec2::UNIT_X;
+        if ( _inputMask.test(InputMask::RIGHT) ) moveDirection += Vec2::UNIT_X;
+        
+        if ( _inputMask.test(InputMask::RUNNING) )
+        {
+            BezelDirectionTriggerData data;
+            data.ref = this;
+            data.dir = Vec2::ZERO;
+            data.type = ui::Widget::TouchEventType::ENDED;
+            _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
+        }
+        else
+        {
+            BezelDirectionTriggerData data;
+            data.ref = this;
+            data.dir = _mouseDirection;
+            data.type = ui::Widget::TouchEventType::MOVED;
+            _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
+        }
+        
+        if ( !moveDirection.isZero() )
+        {
+            MoveJoystickData data;
+            data.ref = this;
+            data.dir = moveDirection.getNormalized();
+            data.type = JoystickEx::ClickEventType::BEGAN;
+            _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data);
+        }
+        else
+        {
+            MoveJoystickData data;
+            data.ref = this;
+            data.dir = Vec2::ZERO;
+            data.type = JoystickEx::ClickEventType::ENDED;
+            _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data);
+        }
+        
+        _isInputMaskDirty = false;
+    }
 }
 
 

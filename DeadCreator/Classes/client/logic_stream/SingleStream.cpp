@@ -34,7 +34,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     {
         _game->loadUiLayer();
         _game->resumeGame();
-    
+        
         return true;
     }
     
@@ -118,7 +118,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::PUSH_ITEM_TO_INVENTORY )
     {
         ItemAndOwner* data = static_cast<ItemAndOwner*>(msg.extraInfo);
-            data->item->setOwner(data->owner);
+        data->item->setOwner(data->owner);
         _game->getPlayerPtr()->getInventory()->pushItem(data->item);
         
         EntityPlayer* player = _game->getPlayerPtr();

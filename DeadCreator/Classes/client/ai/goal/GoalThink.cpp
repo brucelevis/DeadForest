@@ -13,11 +13,6 @@ using namespace realtrick::client;
 
 GoalThink::GoalThink(HumanBase* owner) : GoalCompositeBase(owner)
 {
-    /*
-     
-     create sub goals
-     
-     */
 }
 
 

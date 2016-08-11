@@ -25,7 +25,10 @@ _weaponStatus(nullptr),
 _inventory(nullptr)
 {
     setEntityType(EntityType::ENTITY_PLAYER);
-    setMaxSpeed(100.0f);
+    setRunSpeed(150.0f);
+    setWalkSpeed(75.0f);
+    _maxBlood = 100;
+    _blood = _maxBlood;
 }
 
 

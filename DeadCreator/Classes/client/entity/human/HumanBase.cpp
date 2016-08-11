@@ -23,7 +23,6 @@ _moving(Vec2::UNIT_X),
 _left(Vec2::ZERO),
 _right(Vec2::ZERO),
 _velocity(Vec2::ZERO),
-_maxSpeed(0.0f),
 _turnSpeed(0.0f),
 _speed(0.0f),
 _animator(nullptr),
@@ -34,8 +33,9 @@ _maxBlood(0),
 _isAlive(false),
 _isRun(false),
 _isFovOn(false),
-_walkSpeed(Prm.getValueAsFloat("walkSpeed")),
-_runSpeed(Prm.getValueAsFloat("runSpeed")),
+_isInventoryOpened(false),
+_walkSpeed(0.0f),
+_runSpeed(0.0f),
 _footGauge(0.0f),
 _rotation(0.0f),
 _stateName("idle")
@@ -58,10 +58,6 @@ bool HumanBase::init()
         return false;
     
     _animator = new Animator(this);
-    
-    _maxBlood = Prm.getValueAsInt("maxBlood");
-    _blood = _maxBlood;
-    
     setAlive();
     
     return true;

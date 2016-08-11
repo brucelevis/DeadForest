@@ -36,15 +36,13 @@ namespace realtrick
             void write(Packet* packet);
             void close();
             
-            bool isConnected() const { return _isConnected; }
-            
             void enqueue(Packet* p) { while(!_queue.push(p)); }
             void dequeue(Packet*& p) { while(!_queue.pop(p)); }
             bool isQueueEmpty() const { return _queue.empty(); }
             
         private:
             
-            Server() : _socket(_io), _queue(512), _isConnected(false) {}
+            Server() : _socket(_io), _queue(512) {}
             Server(const Server& rhs) = delete;
             Server& operator=(const Server& rhs) = delete;
             
@@ -52,7 +50,6 @@ namespace realtrick
             void doWrite();
             void doReadHeader();
             void doReadBody();
-            void enableConnected(bool enable) { _isConnected = enable; }
             void closeSocket() { _socket.close(); }
             
         private:
@@ -64,7 +61,6 @@ namespace realtrick
             
             Packet _buffer;
             std::deque<Packet*> _writeDeque;
-            std::atomic<bool> _isConnected;
             
         };
         

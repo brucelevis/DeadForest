@@ -25,9 +25,7 @@ namespace realtrick
             InputMoveBegin(HumanBase* human, const cocos2d::Vec2& dir) :
             _human(human),
             _moveDir(dir)
-            {
-                
-            }
+            {}
             virtual ~InputMoveBegin() = default;
             
             virtual void execute() override

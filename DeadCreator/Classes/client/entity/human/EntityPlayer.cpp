@@ -114,36 +114,11 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         ret = true;
     }
     
-    else if ( msg.msg  == MessageType::HITTED_BY_GUN )
+    if ( msg.msg == MessageType::HITTED_BY_GUN || msg.msg == MessageType::HITTED_BY_AXE )
     {
-        ReceiverSenderDamage s = *static_cast<ReceiverSenderDamage*>(msg.extraInfo);
-        if ( _blood > 0 ) _blood -= s.damage;
+        ReceiverSenderDamage* s = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
+        if ( _blood > 0 ) _blood -= s->damage;
         if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&HumanBackDeadState::getInstance());
-        
-        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1, 5)) + ".png"},
-                                                                   random(5.0f, 10.0f), cocos2d::ui::Widget::TextureResType::PLIST);
-        blood->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
-                                     getWorldPosition().y + random(-30, 30)));
-        blood->setScale(0.2f);
-        _game->addEntity(blood);
-        
-        ret = true;
-    }
-    
-    else if (msg.msg == MessageType::HITTED_BY_AXE )
-    {
-        ReceiverSenderDamage s = *static_cast<ReceiverSenderDamage*>(msg.extraInfo);
-        if ( _blood > 0 ) _blood -= s.damage;
-        if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&HumanBackDeadState::getInstance());
-        
-        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"big_blood.PNG"},
-                                                                   random(5.0f, 10.0f), cocos2d::ui::Widget::TextureResType::PLIST);
-        blood->setScale(0.5f);
-        blood->setWorldPosition(getWorldPosition());
-        blood->setRotation(random(0.0f, 360.f));
-        _game->addEntity(blood);
-        
-        ret = true;
     }
     
     return ret;

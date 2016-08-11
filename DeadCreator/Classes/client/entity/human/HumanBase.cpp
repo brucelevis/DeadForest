@@ -11,9 +11,10 @@
 #include "Game.hpp"
 #include "RenderingSystem.hpp"
 #include "ZombieBrain.hpp"
-
+#include "AnimatedFiniteEntity.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
+
 
 HumanBase::HumanBase(Game* game) : EntityBase(game),
 _heading(Vec2::UNIT_X),
@@ -41,7 +42,7 @@ _stateName("idle")
 {
     ADD_FAMILY_MASK(_familyMask, HUMAN_BASE);
     setBoundingRadius(Prm.getValueAsFloat("boundingRadius"));
-    setTurnSpeed(Prm.getValueAsFloat("turnSpeed"));
+    setTurnSpeed(720.0f);
 }
 
 
@@ -241,7 +242,31 @@ bool HumanBase::handleMessage(const Telegram& msg)
         return true;
     }
     
-    return false;
+    else if ( msg.msg  == MessageType::HITTED_BY_GUN )
+    {
+        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1, 5)) + ".png"},
+                                                                   random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
+        blood->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
+                                     getWorldPosition().y + random(-30, 30)));
+        blood->setScale(0.2f);
+        _game->addEntity(blood);
+        
+        ret = true;
+    }
+    
+    else if ( msg.msg == MessageType::HITTED_BY_AXE )
+    {
+        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"big_blood.PNG"},
+                                                                   random(5.0f, 10.0f), cocos2d::ui::Widget::TextureResType::PLIST);
+        blood->setRotation(random(0.0f, 360.f));
+        blood->setWorldPosition(getWorldPosition());
+        blood->setScale(0.5f);
+        _game->addEntity(blood);
+        
+        ret = true;
+    }
+    
+    return ret;
 }
 
 

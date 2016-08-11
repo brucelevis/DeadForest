@@ -91,6 +91,7 @@ void HumanAxeMoveLoop::execute(HumanBase* human)
         if ( currFrame == 5 || currFrame == 11 )
         {
             human->getFSM()->changeState(&HumanAxeIdleLoop::getInstance());
+            return ;
         }
     }
     

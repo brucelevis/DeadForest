@@ -66,7 +66,7 @@ namespace realtrick
             void setTurnSpeed(float speed) { _turnSpeed = speed; }
             
             bool isAlive() const { return _isAlive; }
-            void setDead() { _isAlive = false; }
+            void setDead() { setVelocity(cocos2d::Vec2::ZERO); _isAlive = false; }
             void setAlive() { _isAlive = true; _blood = _maxBlood; }
             
             int getBlood() const { return _blood; }

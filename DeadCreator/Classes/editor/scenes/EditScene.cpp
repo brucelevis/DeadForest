@@ -593,12 +593,14 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         auto action = new ActionDisplayText();
                         action->setText(actionObject->text()->str());
                         newTrigger->addAction(action);
+                        
                         break;
                     }
                     case DeadCreator::ActionBase_PreserveTrigger:
                     {
                         auto action = new ActionPreserveTrigger();
                         newTrigger->addAction(action);
+                        
                         break;
                     }
                     case DeadCreator::ActionBase_KillEntityAtLocation:
@@ -612,6 +614,49 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         
                         action->setEntity(static_cast<EntityType>(actionObject->entity_type()));
                         action->setPlayerType(static_cast<PlayerType>(actionObject->player()));
+                        
+                        LocationNode* locationPtr = _layer->findLocation(actionObject->location_name()->str());
+                        action->setLocation(locationPtr);
+                        
+                        newTrigger->addAction(action);
+                        
+                        break;
+                    }
+                    case DeadCreator::ActionBase_MoveLocation:
+                    {
+                        auto actionObject = static_cast<const DeadCreator::MoveLocation*>(act->action());
+                        auto action = new ActionMoveLocation();
+                        
+                        LocationNode* destLocationPtr = _layer->findLocation(actionObject->dest_location_name()->str());
+                        action->setDestLocation(destLocationPtr);
+
+                        action->setEntity(static_cast<EntityType>(actionObject->entity_type()));
+                        action->setPlayerType(static_cast<PlayerType>(actionObject->player()));
+                        
+                        LocationNode* sourceLocationPtr = _layer->findLocation(actionObject->source_location_name()->str());
+                        action->setSourceLocation(sourceLocationPtr);
+                        
+                        newTrigger->addAction(action);
+                        
+                        break;
+                    }
+                    case DeadCreator::ActionBase_PlaySound:
+                    {
+                        auto actionObject = static_cast<const DeadCreator::PlaySound*>(act->action());
+                        auto action = new ActionPlaySound();
+                        
+                        action->setFileName(actionObject->file_name()->str());
+                        
+                        newTrigger->addAction(action);
+                        
+                        break;
+                    }
+                    case DeadCreator::ActionBase_PlaySoundAtLocation:
+                    {
+                        auto actionObject = static_cast<const DeadCreator::PlaySoundAtLocation*>(act->action());
+                        auto action = new ActionPlaySoundAtLocation();
+                        
+                        action->setFileName(actionObject->file_name()->str());
                         
                         LocationNode* locationPtr = _layer->findLocation(actionObject->location_name()->str());
                         action->setLocation(locationPtr);

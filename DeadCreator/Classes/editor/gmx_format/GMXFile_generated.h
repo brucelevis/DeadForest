@@ -29,7 +29,13 @@ namespace DeadCreator {
     
     struct DisplayText;
     
+    struct PlaySoundAtLocation;
+    
+    struct PlaySound;
+    
     struct PreserveTrigger;
+    
+    struct MoveLocation;
     
     struct KillEntityAtLocation;
     
@@ -102,12 +108,15 @@ namespace DeadCreator {
         ActionBase_DisplayText = 1,
         ActionBase_PreserveTrigger = 2,
         ActionBase_KillEntityAtLocation = 3,
+        ActionBase_MoveLocation = 4,
+        ActionBase_PlaySoundAtLocation = 5,
+        ActionBase_PlaySound = 6,
         ActionBase_MIN = ActionBase_NONE,
-        ActionBase_MAX = ActionBase_KillEntityAtLocation
+        ActionBase_MAX = ActionBase_PlaySound
     };
     
     inline const char **EnumNamesActionBase() {
-        static const char *names[] = { "NONE", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", nullptr };
+        static const char *names[] = { "NONE", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", nullptr };
         return names;
     }
     
@@ -440,6 +449,77 @@ namespace DeadCreator {
         return builder_.Finish();
     }
     
+    struct PlaySoundAtLocation FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_FILE_NAME = 4,
+            VT_LOCATION_NAME = 6
+        };
+        const flatbuffers::String *file_name() const { return GetPointer<const flatbuffers::String *>(VT_FILE_NAME); }
+        const flatbuffers::String *location_name() const { return GetPointer<const flatbuffers::String *>(VT_LOCATION_NAME); }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_FILE_NAME) &&
+            verifier.Verify(file_name()) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_LOCATION_NAME) &&
+            verifier.Verify(location_name()) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct PlaySoundAtLocationBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_file_name(flatbuffers::Offset<flatbuffers::String> file_name) { fbb_.AddOffset(PlaySoundAtLocation::VT_FILE_NAME, file_name); }
+        void add_location_name(flatbuffers::Offset<flatbuffers::String> location_name) { fbb_.AddOffset(PlaySoundAtLocation::VT_LOCATION_NAME, location_name); }
+        PlaySoundAtLocationBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        PlaySoundAtLocationBuilder &operator=(const PlaySoundAtLocationBuilder &);
+        flatbuffers::Offset<PlaySoundAtLocation> Finish() {
+            auto o = flatbuffers::Offset<PlaySoundAtLocation>(fbb_.EndTable(start_, 2));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<PlaySoundAtLocation> CreatePlaySoundAtLocation(flatbuffers::FlatBufferBuilder &_fbb,
+                                                                              flatbuffers::Offset<flatbuffers::String> file_name = 0,
+                                                                              flatbuffers::Offset<flatbuffers::String> location_name = 0) {
+        PlaySoundAtLocationBuilder builder_(_fbb);
+        builder_.add_location_name(location_name);
+        builder_.add_file_name(file_name);
+        return builder_.Finish();
+    }
+    
+    struct PlaySound FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_FILE_NAME = 4
+        };
+        const flatbuffers::String *file_name() const { return GetPointer<const flatbuffers::String *>(VT_FILE_NAME); }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_FILE_NAME) &&
+            verifier.Verify(file_name()) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct PlaySoundBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_file_name(flatbuffers::Offset<flatbuffers::String> file_name) { fbb_.AddOffset(PlaySound::VT_FILE_NAME, file_name); }
+        PlaySoundBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        PlaySoundBuilder &operator=(const PlaySoundBuilder &);
+        flatbuffers::Offset<PlaySound> Finish() {
+            auto o = flatbuffers::Offset<PlaySound>(fbb_.EndTable(start_, 1));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<PlaySound> CreatePlaySound(flatbuffers::FlatBufferBuilder &_fbb,
+                                                          flatbuffers::Offset<flatbuffers::String> file_name = 0) {
+        PlaySoundBuilder builder_(_fbb);
+        builder_.add_file_name(file_name);
+        return builder_.Finish();
+    }
+    
     struct PreserveTrigger FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
         bool Verify(flatbuffers::Verifier &verifier) const {
             return VerifyTableStart(verifier) &&
@@ -460,6 +540,57 @@ namespace DeadCreator {
     
     inline flatbuffers::Offset<PreserveTrigger> CreatePreserveTrigger(flatbuffers::FlatBufferBuilder &_fbb) {
         PreserveTriggerBuilder builder_(_fbb);
+        return builder_.Finish();
+    }
+    
+    struct MoveLocation FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_DEST_LOCATION_NAME = 4,
+            VT_ENTITY_TYPE = 6,
+            VT_PLAYER = 8,
+            VT_SOURCE_LOCATION_NAME = 10
+        };
+        const flatbuffers::String *dest_location_name() const { return GetPointer<const flatbuffers::String *>(VT_DEST_LOCATION_NAME); }
+        int32_t entity_type() const { return GetField<int32_t>(VT_ENTITY_TYPE, 0); }
+        int32_t player() const { return GetField<int32_t>(VT_PLAYER, 0); }
+        const flatbuffers::String *source_location_name() const { return GetPointer<const flatbuffers::String *>(VT_SOURCE_LOCATION_NAME); }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_DEST_LOCATION_NAME) &&
+            verifier.Verify(dest_location_name()) &&
+            VerifyField<int32_t>(verifier, VT_ENTITY_TYPE) &&
+            VerifyField<int32_t>(verifier, VT_PLAYER) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_SOURCE_LOCATION_NAME) &&
+            verifier.Verify(source_location_name()) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct MoveLocationBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_dest_location_name(flatbuffers::Offset<flatbuffers::String> dest_location_name) { fbb_.AddOffset(MoveLocation::VT_DEST_LOCATION_NAME, dest_location_name); }
+        void add_entity_type(int32_t entity_type) { fbb_.AddElement<int32_t>(MoveLocation::VT_ENTITY_TYPE, entity_type, 0); }
+        void add_player(int32_t player) { fbb_.AddElement<int32_t>(MoveLocation::VT_PLAYER, player, 0); }
+        void add_source_location_name(flatbuffers::Offset<flatbuffers::String> source_location_name) { fbb_.AddOffset(MoveLocation::VT_SOURCE_LOCATION_NAME, source_location_name); }
+        MoveLocationBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        MoveLocationBuilder &operator=(const MoveLocationBuilder &);
+        flatbuffers::Offset<MoveLocation> Finish() {
+            auto o = flatbuffers::Offset<MoveLocation>(fbb_.EndTable(start_, 4));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<MoveLocation> CreateMoveLocation(flatbuffers::FlatBufferBuilder &_fbb,
+                                                                flatbuffers::Offset<flatbuffers::String> dest_location_name = 0,
+                                                                int32_t entity_type = 0,
+                                                                int32_t player = 0,
+                                                                flatbuffers::Offset<flatbuffers::String> source_location_name = 0) {
+        MoveLocationBuilder builder_(_fbb);
+        builder_.add_source_location_name(source_location_name);
+        builder_.add_player(player);
+        builder_.add_entity_type(entity_type);
+        builder_.add_dest_location_name(dest_location_name);
         return builder_.Finish();
     }
     
@@ -889,6 +1020,9 @@ namespace DeadCreator {
             case ActionBase_DisplayText: return verifier.VerifyTable(reinterpret_cast<const DisplayText *>(union_obj));
             case ActionBase_PreserveTrigger: return verifier.VerifyTable(reinterpret_cast<const PreserveTrigger *>(union_obj));
             case ActionBase_KillEntityAtLocation: return verifier.VerifyTable(reinterpret_cast<const KillEntityAtLocation *>(union_obj));
+            case ActionBase_MoveLocation: return verifier.VerifyTable(reinterpret_cast<const MoveLocation *>(union_obj));
+            case ActionBase_PlaySoundAtLocation: return verifier.VerifyTable(reinterpret_cast<const PlaySoundAtLocation *>(union_obj));
+            case ActionBase_PlaySound: return verifier.VerifyTable(reinterpret_cast<const PlaySound *>(union_obj));
             default: return false;
         }
     }

@@ -113,7 +113,7 @@ namespace realtrick
             
             virtual void doAction()
             {
-                _game->addLog(cocos2d::StringUtils::format("display text: \"%s\"", _params.text.c_str()));
+                _game->displayText(_params.text);
             }
             
         private:

@@ -11,3 +11,6 @@
 #include "ActionDisplayText.hpp"
 #include "ActionPreserveTrigger.hpp"
 #include "ActionKillEntityAtLocation.hpp"
+#include "ActionMoveLocation.hpp"
+#include "ActionPlaySound.hpp"
+#include "ActionPlaySoundAtLocation.hpp"

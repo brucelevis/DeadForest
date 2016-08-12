@@ -80,10 +80,6 @@ void ItemAxe::attack()
             if( human->isAlive() && physics::intersect(Segment(worldPos, worldPos + _owner->getHeading() * getRange()),
                                                        Circle(d->getWorldPosition(), human->getBoundingRadius())) )
             {
-                _game->addLog(StringUtils::format("<WeaponBase::attack> hit at (%.0f, %.0f), id: %d.",
-                    human->getWorldPosition().x,
-                    human->getWorldPosition().y,
-                    human->getTag()));
                 
                 ReceiverSenderDamage s;
                 s.damage = getDamage();

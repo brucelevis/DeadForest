@@ -69,6 +69,7 @@ namespace realtrick
                 label += "Conditions:\n";
                 for(int i = 0 ; i < conditions.size(); ++ i)
                 {
+                    label += "- ";
                     label += conditions[i]->getSummaryString();
                     label += '\n';
                 }
@@ -76,6 +77,7 @@ namespace realtrick
                 label += "Actions:\n";
                 for(int i = 0 ; i < actions.size() ; ++ i)
                 {
+                    label += "- ";
                     label += actions[i]->getSummaryString();
                     label += '\n';
                 }

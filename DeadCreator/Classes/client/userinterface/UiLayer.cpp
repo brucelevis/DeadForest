@@ -274,6 +274,11 @@ bool UiLayer::init()
     
     _inGameUiLayer->addChild(_crossHair);
     
+    
+    _infoSystem = InfoSystem::create("SpecialElite.TTF");
+    _infoSystem->setPosition(Vec2(0, -100.0f));
+    _inGameUiLayer->addChild(_infoSystem);
+    
     //
     // Rain Effect
     //
@@ -350,6 +355,12 @@ void UiLayer::update(float dt)
 void UiLayer::runCrossHairEffect(const std::string& name)
 {
     _crossHair->runEffect(name);
+}
+
+
+void UiLayer::displayText(const std::string& text)
+{
+    _infoSystem->pushMessage(text);
 }
 
 

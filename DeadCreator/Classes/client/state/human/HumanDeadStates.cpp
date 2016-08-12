@@ -17,6 +17,8 @@ using namespace realtrick::client;
 
 void HumanBackDeadState::enter(HumanBase* human)
 {
+    human->setLocalZOrder(Z_ORDER_HUMAN - 1);
+    
     human->getGame()->sendMessage(cocos2d::random(3.0, 7.0), human, human, MessageType::DIE, nullptr);
     human->setDead();
     

@@ -145,6 +145,7 @@ bool ZombieAttack::onMessage(HumanBase* zombie, const Telegram& msg)
 //
 void ZombieDead::enter(HumanBase* zombie)
 {
+    zombie->setLocalZOrder(Z_ORDER_HUMAN - 1);
     zombie->getGame()->sendMessage(cocos2d::random(3.0, 7.0), zombie, zombie, MessageType::DIE, nullptr);
     zombie->setDead();
     

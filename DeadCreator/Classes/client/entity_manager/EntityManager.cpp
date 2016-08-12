@@ -98,8 +98,6 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             item->setPlayerType(PlayerType::NEUTRAL);
             addEntity(item, id);
         }
-        
-        cocos2d::log("id: %d", id);
     }
     
     return true;

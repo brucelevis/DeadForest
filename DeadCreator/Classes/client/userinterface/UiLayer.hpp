@@ -43,6 +43,7 @@ namespace realtrick
             WeaponStatus* getWeaponStatus() const { return _weaponStatus; }
             
             void runCrossHairEffect(const std::string& name);
+            void displayText(const std::string& text);
             
         private:
             
@@ -55,6 +56,7 @@ namespace realtrick
             cocos2d::Node* _inGameUiLayer;
             CrossHair* _crossHair;
             HpBar* _hpBar;
+            InfoSystem* _infoSystem;
             
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
             

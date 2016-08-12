@@ -107,10 +107,7 @@ void Game::update(float dt)
     // 1. update entities
     _entityManager->update(dt);
     
-    // 2. trigger update and execute
-    _triggerSystem->update(dt);
-    
-    // 3. set game camera position and chunk update (if cell space is changed)
+    // 2. set game camera position and chunk update (if cell space is changed)
     _renderingSystem->setCameraPosition(_entityManager->getPlayerPtr()->getWorldPosition());
     
     if ( oldIndex != getFocusedTileIndex(_renderingSystem->getCameraPosition(),
@@ -119,6 +116,9 @@ void Game::update(float dt)
     {
         _renderingSystem->updateChunk();
     }
+    
+    // 3. trigger update and execute
+    _triggerSystem->update(dt);
     
     _messenger->dispatchDelayedMessages();
 }
@@ -292,8 +292,14 @@ void Game::loadGameContents(PlayerType ownPlayer)
         _cellSpace->addEntity(entity.second);
         
         int zOrder = 0;
-        if ( isMasked(entity.second->getFamilyMask(), FamilyMask::ITEM_BASE) ) zOrder = Z_ORDER_ITEMS;
-        else if ( isMasked(entity.second->getFamilyMask(), FamilyMask::HUMAN_BASE) ) zOrder = Z_ORDER_HUMAN;
+        if ( isMasked(entity.second->getFamilyMask(), FamilyMask::ITEM_BASE) )
+        {
+            zOrder = Z_ORDER_ITEMS;
+        }
+        else if ( isMasked(entity.second->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+        {
+            zOrder = Z_ORDER_HUMAN;
+        }
         _renderingSystem->addEntity(entity.second, zOrder);
     }
     
@@ -425,6 +431,12 @@ void Game::clearLogs()
 void Game::runCrossHairEffect(const std::string& name)
 {
     _uiLayer->runCrossHairEffect(name);
+}
+
+
+void Game::displayText(const std::string& text)
+{
+    _uiLayer->displayText(text);
 }
 
 

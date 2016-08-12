@@ -66,6 +66,17 @@ bool TriggerSystem::initWithResource(GameResource* res)
                 newTrigger->addAction(action);
             }
             
+            else if ( (*act)->type == TriggerComponentType::ACTION_MOVE_LOCATION )
+            {
+                auto data = static_cast<ActionMoveLocationData*>(*act);
+                auto action = ActionMoveLocation::create(_game,
+                                                         data->destLocation,
+                                                         data->entity,
+                                                         data->player,
+                                                         data->sourceLocation);
+                newTrigger->addAction(action);
+            }
+            
             else if ( (*act)->type == TriggerComponentType::ACTION_KILL_ENTITY_AT_LOCATION )
             {
                 auto data = static_cast<ActionKillEntityAtLocationData*>(*act);
@@ -74,6 +85,22 @@ bool TriggerSystem::initWithResource(GameResource* res)
                                                                  data->entity,
                                                                  data->player,
                                                                  data->location);
+                newTrigger->addAction(action);
+            }
+            
+            else if ( (*act)->type == TriggerComponentType::ACTION_PLAY_SOUND )
+            {
+                auto data = static_cast<ActionPlaySoundData*>(*act);
+                auto action = ActionPlaySound::create(_game, data->fileName);
+                newTrigger->addAction(action);
+            }
+            
+            else if ( (*act)->type == TriggerComponentType::ACTION_PLAY_SOUND_AT_LOCATION )
+            {
+                auto data = static_cast<ActionPlaySoundAtLocationData*>(*act);
+                auto action = ActionPlaySoundAtLocation::create(_game,
+                                                                data->fileName,
+                                                                data->location);
                 newTrigger->addAction(action);
             }
             

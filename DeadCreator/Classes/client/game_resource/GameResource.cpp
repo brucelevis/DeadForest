@@ -176,6 +176,18 @@ bool GameResource::initWithBinary(const char* buffer)
                     
                     break;
                 }
+                case DeadCreator::ActionBase_MoveLocation:
+                {
+                    auto actionObject = static_cast<const DeadCreator::MoveLocation*>(act->action());
+                    auto action = new ActionMoveLocationData();
+                    action->destLocation = _locations.at(actionObject->dest_location_name()->str());
+                    action->entity = static_cast<EntityType>(actionObject->entity_type());
+                    action->player = static_cast<PlayerType>(actionObject->player());
+                    action->sourceLocation = _locations.at(actionObject->source_location_name()->str());
+                    data.actions.push_back(action);
+                    
+                    break;
+                }
                 case DeadCreator::ActionBase_KillEntityAtLocation:
                 {
                     auto actionObject = static_cast<const DeadCreator::KillEntityAtLocation*>(act->action());
@@ -183,6 +195,25 @@ bool GameResource::initWithBinary(const char* buffer)
                     action->number = actionObject->numberAll();
                     action->entity = static_cast<EntityType>(actionObject->entity_type());
                     action->player = static_cast<PlayerType>(actionObject->player());
+                    action->location = _locations.at(actionObject->location_name()->str());
+                    data.actions.push_back(action);
+                    
+                    break;
+                }
+                case DeadCreator::ActionBase_PlaySound:
+                {
+                    auto actionObject = static_cast<const DeadCreator::PlaySound*>(act->action());
+                    auto action = new ActionPlaySoundData();
+                    action->fileName = actionObject->file_name()->str();
+                    data.actions.push_back(action);
+                    
+                    break;
+                }
+                case DeadCreator::ActionBase_PlaySoundAtLocation:
+                {
+                    auto actionObject = static_cast<const DeadCreator::PlaySoundAtLocation*>(act->action());
+                    auto action = new ActionPlaySoundAtLocationData();
+                    action->fileName = actionObject->file_name()->str();
                     action->location = _locations.at(actionObject->location_name()->str());
                     data.actions.push_back(action);
                     

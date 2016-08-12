@@ -57,7 +57,23 @@ table DisplayText
 {
    text : string;
 }
+table PlaySoundAtLocation
+{
+   file_name : string;
+   location_name : string;
+}
+table PlaySound
+{
+   file_name : string;
+}
 table PreserveTrigger{}
+table MoveLocation
+{
+   dest_location_name : string;
+   entity_type : int;
+   player : int;
+   source_location_name : string;
+}
 table KillEntityAtLocation
 {
    numberAll : int;
@@ -78,7 +94,10 @@ union ActionBase
 { 
    DisplayText,
    PreserveTrigger,
-   KillEntityAtLocation
+   KillEntityAtLocation,
+   MoveLocation,
+   PlaySoundAtLocation,
+   PlaySound
 }
 
 table Condition 

@@ -72,6 +72,9 @@ bool TriggerEditLayer::init()
     
     _actionList.push_back(new ActionDisplayText());
     _actionList.push_back(new ActionKillEntityAtLocation());
+    _actionList.push_back(new ActionMoveLocation());
+    _actionList.push_back(new ActionPlaySound());
+    _actionList.push_back(new ActionPlaySoundAtLocation());
     _actionList.push_back(new ActionPreserveTrigger());
     
     return true;
@@ -275,6 +278,7 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
             for (int i = 0 ; i < trigger->conditions.size(); ++ i)
             {
                 ImGui::PushID(i);
+                ImGui::Bullet();
                 if ( trigger->conditions[i]->drawSelectableSummary(trigger->conditions[i]->isSelected()) )
                 {
                     for(int j = 0 ; j < trigger->conditions.size(); ++ j)
@@ -364,6 +368,7 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
             for (int i = 0 ; i < trigger->actions.size(); ++ i)
             {
                 ImGui::PushID(i);
+                ImGui::Bullet();
                 if ( trigger->actions[i]->drawSelectableSummary(trigger->actions[i]->isSelected()) )
                 {
                     for(int j = 0 ; j < trigger->actions.size(); ++ j)

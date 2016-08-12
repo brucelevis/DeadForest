@@ -137,10 +137,6 @@ void ItemM1897::attack()
             // 최소거리에 충돌된 충돌체가 사람이면 처리. (벽일수도있음)
             if ( collider.second != nullptr )
             {
-                _game->addLog(StringUtils::format("<WeaponBase::attack> hit at (%.0f, %.0f), id: %d.",
-                                                  collider.second->getWorldPosition().x, collider.second->getWorldPosition().y,
-                                                  collider.second->getTag()));
-                
                 ReceiverSenderDamage s;
                 s.receiverID = collider.second->getTag();
                 s.senderID = _owner->getTag();

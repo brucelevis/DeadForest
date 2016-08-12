@@ -235,10 +235,10 @@ bool HumanBase::handleMessage(const Telegram& msg)
         float t = (1.0f - (s->position - _game->getRenderingSysetm()->getCameraPosition()).getLength() / s->soundRange) * s->volume;
         experimental::AudioEngine::setVolume( experimental::AudioEngine::play2d(s->fileName), t);
         
-        return true;
+        ret = true;
     }
     
-    else if ( msg.msg  == MessageType::HITTED_BY_GUN )
+    if ( msg.msg  == MessageType::HITTED_BY_GUN )
     {
         AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1, 5)) + ".png"},
                                                                    random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
@@ -250,7 +250,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
         ret = true;
     }
     
-    else if ( msg.msg == MessageType::HITTED_BY_AXE )
+    if ( msg.msg == MessageType::HITTED_BY_AXE )
     {
         AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"big_blood.PNG"},
                                                                    random(5.0f, 10.0f), cocos2d::ui::Widget::TextureResType::PLIST);

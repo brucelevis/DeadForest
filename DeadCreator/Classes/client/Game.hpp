@@ -99,6 +99,7 @@ namespace realtrick
             bool& isLogAdded() { return _isLogAdded; }
             
             void runCrossHairEffect(const std::string& name);
+            void displayText(const std::string& text);
             
         private:
             

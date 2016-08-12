@@ -15,6 +15,7 @@
 #include "EntityManager.hpp"
 
 #include "Game.hpp"
+#include "GameResource.hpp"
 #include "EntityBase.hpp"
 
 namespace realtrick
@@ -155,7 +156,7 @@ namespace realtrick
             ApproximationType approximation;
             int number;
             EntityType entity;
-            cocos2d::Rect location;
+            std::string location;
             
             ConditionBringData() { type = TriggerComponentType::CONDITION_BRING; }
         };
@@ -173,7 +174,7 @@ namespace realtrick
             
             static ConditionBring* create(Game* game,
                                           PlayerType playerType, ApproximationType appType,
-                                          int number, EntityType entType, const cocos2d::Rect& loc)
+                                          int number, EntityType entType, const std::string& loc)
             {
                 auto ret = new (std::nothrow) ConditionBring(game);
                 if ( ret && ret->init(playerType, appType, number, entType, loc) )
@@ -185,7 +186,7 @@ namespace realtrick
                 return nullptr;
             }
             
-            bool init(PlayerType playerType, ApproximationType appType, int number, EntityType entType, const cocos2d::Rect& loc)
+            bool init(PlayerType playerType, ApproximationType appType, int number, EntityType entType, const std::string& loc)
             {
                 _params.player = playerType;
                 _params.approximation = appType;
@@ -202,7 +203,8 @@ namespace realtrick
                 else _maskedPlayer.set(static_cast<int>(_params.player));
                     
                 const auto& entities = _game->getEntityManager()->getEntities();
-                
+                const auto& locations = _game->getGameResource()->getLocations();
+                    
                 // 플레이어 타입인지 체크. (o)
                 // 엔티티 타입 체크. (o)
                 // 충돌됐는지 체크. (o)
@@ -215,7 +217,7 @@ namespace realtrick
                     
                     if ( _maskedPlayer.test(player) &&
                         _params.entity == entity->getEntityType() &&
-                        _params.location.intersectsCircle(entity->getWorldPosition(), entity->getBoundingRadius()) )
+                        locations.at(_params.location).intersectsCircle(entity->getWorldPosition(), entity->getBoundingRadius()) )
                     {
                         numberOfReadyEntities++;
                     }

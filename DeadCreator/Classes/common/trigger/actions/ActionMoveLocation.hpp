@@ -10,6 +10,7 @@
 
 #include "ActionBase.hpp"
 #include "TriggerParameters.hpp"
+#include "GameResource.hpp"
 
 namespace realtrick
 {
@@ -134,10 +135,10 @@ namespace realtrick
         
         struct ActionMoveLocationData: public TriggerDataBase
         {
-            cocos2d::Rect destLocation;
+            std::string destLocation;
             EntityType entity;
             PlayerType player;
-            cocos2d::Rect sourceLocation;
+            std::string sourceLocation;
             
             ActionMoveLocationData() { type = TriggerComponentType::ACTION_MOVE_LOCATION; }
         };
@@ -153,9 +154,9 @@ namespace realtrick
             virtual ~ActionMoveLocation() = default;
             
             static ActionMoveLocation* create(Game* game,
-                                              const cocos2d::Rect& destLocation,
+                                              const std::string& destLocation,
                                               EntityType entity, PlayerType player,
-                                              const cocos2d::Rect& sourceLocation)
+                                              const std::string& sourceLocation)
             {
                 auto ret = new (std::nothrow) ActionMoveLocation(game);
                 if ( ret && ret->init(destLocation, entity, player, sourceLocation) )
@@ -167,7 +168,7 @@ namespace realtrick
                 return nullptr;
             }
             
-            bool init(const cocos2d::Rect& destLocation, EntityType entity, PlayerType player, const cocos2d::Rect& sourceLocation)
+            bool init(const std::string& destLocation, EntityType entity, PlayerType player, const std::string& sourceLocation)
             {
                 _params.destLocation = destLocation;
                 _params.entity = entity;
@@ -182,7 +183,29 @@ namespace realtrick
                 if ( _params.player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
                 else _maskedPlayer.set(static_cast<int>(_params.player));
                 
-                _game->addLog("move location");
+                const auto& entities = _game->getEntityManager()->getEntities();
+                const auto& locations = _game->getGameResource()->getLocations();
+                for ( const auto& entity : entities )
+                {
+                    auto currEntity = entity.second;
+                    int player = static_cast<int>(currEntity->getPlayerType());
+                    
+                    if (_maskedPlayer.test(player) &&
+                        currEntity->getEntityType() == _params.entity &&
+                        locations.at(_params.sourceLocation).intersectsCircle(currEntity->getWorldPosition(), currEntity->getBoundingRadius()))
+                    {
+                        cocos2d::Rect updateRect(currEntity->getWorldPosition().x - locations.at(_params.sourceLocation).size.width / 2,
+                                                 currEntity->getWorldPosition().y - locations.at(_params.sourceLocation).size.height / 2,
+                                                 locations.at(_params.sourceLocation).size.width,
+                                                 locations.at(_params.sourceLocation).size.height);
+                        
+                        _game->getGameResource()->updateLocation(_params.destLocation, updateRect);
+                        
+                        _game->addLog("move location");
+                        
+                        break;
+                    }
+                }
             }
             
         private:

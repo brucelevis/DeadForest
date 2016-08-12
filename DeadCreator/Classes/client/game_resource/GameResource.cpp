@@ -7,6 +7,8 @@
 //
 
 #include "GameResource.hpp"
+#include "Conditions.hpp"
+#include "Actions.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -134,7 +136,7 @@ bool GameResource::initWithBinary(const char* buffer)
                     condition->approximation = static_cast<ApproximationType>(conditionObject->approximation());
                     condition->number = conditionObject->number();
                     condition->entity = static_cast<EntityType>(conditionObject->entity_type());
-                    condition->location = _locations.at(conditionObject->location_name()->str());
+                    condition->location = conditionObject->location_name()->str();
                     data.conditions.push_back(condition);
                     break;
                 }
@@ -180,10 +182,10 @@ bool GameResource::initWithBinary(const char* buffer)
                 {
                     auto actionObject = static_cast<const DeadCreator::MoveLocation*>(act->action());
                     auto action = new ActionMoveLocationData();
-                    action->destLocation = _locations.at(actionObject->dest_location_name()->str());
+                    action->destLocation = actionObject->dest_location_name()->str();
                     action->entity = static_cast<EntityType>(actionObject->entity_type());
                     action->player = static_cast<PlayerType>(actionObject->player());
-                    action->sourceLocation = _locations.at(actionObject->source_location_name()->str());
+                    action->sourceLocation = actionObject->source_location_name()->str();
                     data.actions.push_back(action);
                     
                     break;
@@ -195,7 +197,7 @@ bool GameResource::initWithBinary(const char* buffer)
                     action->number = actionObject->numberAll();
                     action->entity = static_cast<EntityType>(actionObject->entity_type());
                     action->player = static_cast<PlayerType>(actionObject->player());
-                    action->location = _locations.at(actionObject->location_name()->str());
+                    action->location = actionObject->location_name()->str();
                     data.actions.push_back(action);
                     
                     break;
@@ -214,7 +216,7 @@ bool GameResource::initWithBinary(const char* buffer)
                     auto actionObject = static_cast<const DeadCreator::PlaySoundAtLocation*>(act->action());
                     auto action = new ActionPlaySoundAtLocationData();
                     action->fileName = actionObject->file_name()->str();
-                    action->location = _locations.at(actionObject->location_name()->str());
+                    action->location = actionObject->location_name()->str();
                     data.actions.push_back(action);
                     
                     break;
@@ -230,6 +232,13 @@ bool GameResource::initWithBinary(const char* buffer)
 }
 
 
+void GameResource::updateLocation(const std::string& key, const cocos2d::Rect& rect)
+{
+    // location is update only. (can't create new one)
+    if ( _locations.count(key) == 0) throw std::runtime_error(cocos2d::StringUtils::format("%s(key) is not exist location", key.c_str()));
+    
+    _locations[key] = rect;
+}
 
 
 

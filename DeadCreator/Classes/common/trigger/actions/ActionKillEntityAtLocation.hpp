@@ -10,6 +10,7 @@
 
 #include "ActionBase.hpp"
 #include "TriggerParameters.hpp"
+#include "GameResource.hpp"
 
 namespace realtrick
 {
@@ -135,7 +136,7 @@ namespace realtrick
             int number;
             EntityType entity;
             PlayerType player;
-            cocos2d::Rect location;
+            std::string location;
             
             ActionKillEntityAtLocationData() { type = TriggerComponentType::ACTION_KILL_ENTITY_AT_LOCATION; }
         };
@@ -150,10 +151,10 @@ namespace realtrick
             
             virtual ~ActionKillEntityAtLocation() = default;
             
-            static ActionKillEntityAtLocation* create(Game* game, int number, EntityType entity, PlayerType player, const cocos2d::Rect& locationRect)
+            static ActionKillEntityAtLocation* create(Game* game, int number, EntityType entity, PlayerType player, const std::string& location)
             {
                 auto ret = new (std::nothrow) ActionKillEntityAtLocation(game);
-                if ( ret && ret->init(number, entity, player, locationRect) )
+                if ( ret && ret->init(number, entity, player, location) )
                 {
                     ret->autorelease();
                     return ret;
@@ -162,12 +163,12 @@ namespace realtrick
                 return nullptr;
             }
             
-            bool init(int number, EntityType entity, PlayerType player, const cocos2d::Rect& locationRect)
+            bool init(int number, EntityType entity, PlayerType player, const std::string& location)
             {
                 _params.number = number;
                 _params.entity = entity;
                 _params.player = player;
-                _params.location = locationRect;
+                _params.location = location;
                 
                 return true;
             }
@@ -178,6 +179,7 @@ namespace realtrick
                 else _maskedPlayer.set(static_cast<int>(_params.player));
                 
                 const auto& entities = _game->getEntityManager()->getEntities();
+                const auto& locations = _game->getGameResource()->getLocations();
                 std::vector<EntityBase*> removeList;
                 int numberOfRemoveEntity = 10000; /* all */
                 if ( _params.number != -1 ) numberOfRemoveEntity = _params.number;
@@ -190,7 +192,7 @@ namespace realtrick
                     if ( _maskedPlayer.test(player) &&
                         _params.entity == entity->getEntityType() &&
                         numberOfRemoveEntity > 0 &&
-                        _params.location.intersectsCircle(entity->getWorldPosition(), entity->getBoundingRadius()) )
+                        locations.at(_params.location).intersectsCircle(entity->getWorldPosition(), entity->getBoundingRadius()) )
                     {
                         removeList.push_back(entity);
                         --numberOfRemoveEntity;

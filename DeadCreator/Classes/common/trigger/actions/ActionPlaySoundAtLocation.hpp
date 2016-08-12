@@ -109,7 +109,7 @@ namespace realtrick
         struct ActionPlaySoundAtLocationData: public TriggerDataBase
         {
             std::string fileName;
-            cocos2d::Rect location;
+            std::string location;
             
             ActionPlaySoundAtLocationData() { type = TriggerComponentType::ACTION_PLAY_SOUND_AT_LOCATION; }
         };
@@ -124,10 +124,10 @@ namespace realtrick
             
             virtual ~ActionPlaySoundAtLocation() = default;
             
-            static ActionPlaySoundAtLocation* create(Game* game, const std::string& fileName, const cocos2d::Rect& locationRect)
+            static ActionPlaySoundAtLocation* create(Game* game, const std::string& fileName, const std::string& location)
             {
                 auto ret = new (std::nothrow) ActionPlaySoundAtLocation(game);
-                if ( ret && ret->init(fileName, locationRect) )
+                if ( ret && ret->init(fileName, location) )
                 {
                     ret->autorelease();
                     return ret;
@@ -136,10 +136,10 @@ namespace realtrick
                 return nullptr;
             }
             
-            bool init(const std::string& fileName, const cocos2d::Rect& locationRect)
+            bool init(const std::string& fileName, const std::string& location)
             {
                 _params.fileName = fileName;
-                _params.location = locationRect;
+                _params.location = location;
                 
                 return true;
             }
@@ -147,12 +147,13 @@ namespace realtrick
             virtual void doAction()
             {
                 _maskedPlayer = _owner->getPlayers();
+                const auto& locations = _game->getGameResource()->getLocations();
                 
                 if ( _maskedPlayer.test(static_cast<int>(_game->getPlayerPtr()->getPlayerType())) )
                 {
                     SoundSource s;
                     s.fileName = _params.fileName;
-                    s.position = cocos2d::Vec2(_params.location.getMidX(), _params.location.getMidY());
+                    s.position = cocos2d::Vec2(locations.at(_params.location).getMidX(), locations.at(_params.location).getMidY());
                     s.soundRange = 1000.0f;
                     s.volume = 1.0f;
                     _game->sendMessage(0.0, _game->getPlayerPtr(), nullptr, MessageType::PLAY_SOUND, &s);

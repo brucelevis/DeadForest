@@ -11,6 +11,7 @@
 #include "GameResource.hpp"
 #include "TileHelperFunctions.hpp"
 #include "TileImage.hpp"
+#include "Game.hpp"
 using namespace realtrick::client;
 
 

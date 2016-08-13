@@ -30,15 +30,6 @@ You can test and play with real-time.
 
 **Client** run real-time rendering to the actual game data using the built in editor. [cocos2d-x](http://cocos2d-x.org) game engine is helps this works. Since the game is a large game world we were using various optimization techniques(such as cell space partition, deferred rendering)
 
-![CellSpacePartition](http://i.imgur.com/tCV8nCm.jpg)
-This can be through lowering the average basic operations of the game (such as collision detecting) is to be done.
-
-![DeferredRendering](http://i.imgur.com/UNrrzW1.png)
-As a result, many lighting and post effects represents only a small number of draw call.
-I used [Sprite Illuminator](https://www.codeandweb.com/spriteilluminator) to generate 2d normap map. I think that it is greate tool compared to other tools(easy to use and provides various functions).
-
-And [Texture Packer](https://www.codeandweb.com/texturepacker) help to manage sprites. 
-
 **Server** has not yet been developed.
 
 How to build

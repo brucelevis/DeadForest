@@ -344,8 +344,9 @@ bool EditScene::init()
             
             ImGui::SameLine();
             std::string players;
-            for( const auto& info : _layer->getFile().playerInfos )
+            for ( int i = 1 ; i <= 8 ; ++ i )
             {
+                const auto& info = _layer->getFile().playerInfos[i];
                 std::string player = "Player " + _to_string(static_cast<int>(info.player));
                 std::string owner;
                 if ( info.owner == Owner::HUMAN ) owner = "(Human)";
@@ -356,7 +357,7 @@ bool EditScene::init()
             static int oldSelectedPlayer = _selectedPlayerType;
             if ( ImGui::Combo("##player", &_selectedPlayerType, players.c_str(), 8) )
             {
-                if ( _layer->getFile().playerInfos[_selectedPlayerType].owner == Owner::UNUSED )
+                if ( _layer->getFile().playerInfos[_selectedPlayerType + 1].owner == Owner::UNUSED )
                 {
                     _selectedPlayerType = oldSelectedPlayer;
                 }
@@ -468,11 +469,13 @@ void EditScene::createGMXLayer(const std::string& filePath)
         
         
         // player infos
+        int i = 1;
         for ( auto info = gmxFile->playerInfos()->begin(); info != gmxFile->playerInfos()->end() ; ++ info )
         {
-            file->playerInfos.push_back(PlayerInfo(static_cast<PlayerType>(info->player()),
-                                                   static_cast<Force>(info->force()),
-                                                   static_cast<Owner>(info->owner())));
+            file->playerInfos[i] = PlayerInfo(static_cast<PlayerType>(info->player()),
+                                              static_cast<Force>(info->force()),
+                                              static_cast<Owner>(info->owner()));
+            ++i;
         }
         
         std::strncpy(file->force1.name.data(), gmxFile->force1_info()->name()->c_str(), 20);
@@ -629,7 +632,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         
                         LocationNode* destLocationPtr = _layer->findLocation(actionObject->dest_location_name()->str());
                         action->setDestLocation(destLocationPtr);
-
+                        
                         action->setEntity(static_cast<EntityType>(actionObject->entity_type()));
                         action->setPlayerType(static_cast<PlayerType>(actionObject->player()));
                         

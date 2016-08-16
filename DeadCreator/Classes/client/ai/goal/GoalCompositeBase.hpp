@@ -22,20 +22,14 @@ namespace realtrick
         public:
             
             explicit GoalCompositeBase(HumanBase* owner) : GoalBase(owner) {}
-            virtual ~GoalCompositeBase()
-            {
-                removeAllSubgoals();
-            }
+            virtual ~GoalCompositeBase() { _subGoals.clear(); }
             
             void addSubgoal(GoalBase* goal) { _subGoals.push_back(goal); }
             
             void removeAllSubgoals()
             {
                 for ( auto& goal : _subGoals )
-                {
                     goal->terminate();
-                    CC_SAFE_DELETE(goal);
-                }
                 _subGoals.clear();
             }
             
@@ -47,26 +41,20 @@ namespace realtrick
             
             GoalStatus processSubgoals()
             {
-                if ( !_subGoals.empty() )
-                {
-                    auto goalStatus = _subGoals.back()->process();
-                    if ( goalStatus == GoalStatus::COMPLETED || goalStatus == GoalStatus::FAILED )
-                    {
-                        auto recentGoal = _subGoals.back();
-                        recentGoal->terminate();
-                        CC_SAFE_DELETE(recentGoal);
-                        _subGoals.pop_back();
-    
-                        if ( _subGoals.size() > 1 )
-                        {
-                            return GoalStatus::ACTIVE;
-                        }
-                    }
-                    return goalStatus;
-                }
+                if ( _subGoals.empty() ) return GoalStatus::COMPLETED;
                 
-                // if sub goals is empty
-                return GoalStatus::COMPLETED;
+                auto goalStatus = _subGoals.back()->process();
+                if ( goalStatus == GoalStatus::COMPLETED || goalStatus == GoalStatus::FAILED )
+                {
+                    auto recentGoal = _subGoals.back();
+                    recentGoal->terminate();
+                    recentGoal->setGoalStatus(GoalStatus::INACTIVE);
+                    _subGoals.pop_back();
+                    
+                    if ( _subGoals.empty() ) return goalStatus;
+                    else return GoalStatus::ACTIVE;
+                }
+                return goalStatus;
             }
             
         protected:

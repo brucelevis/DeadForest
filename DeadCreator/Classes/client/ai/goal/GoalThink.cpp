@@ -18,12 +18,19 @@ GoalThink::GoalThink(HumanBase* owner) : GoalCompositeBase(owner)
 
 GoalThink::~GoalThink()
 {
+    for( auto& goal : _goalEntry ) CC_SAFE_DELETE(goal);
+    _goalEntry.clear();
 }
 
 
 void GoalThink::activate()
 {
-    addSubgoal(new GoalWander(_owner));
+    if ( _goalEntry.empty() ) return ;
+    
+    auto bestGoal = *std::max_element(std::begin(_goalEntry), std::end(_goalEntry), [](GoalBase* g1, GoalBase* g2) {
+                                          return (g1->getWeight() < g2->getWeight());
+                                      });
+    addSubgoal(bestGoal);
     setGoalStatus(GoalStatus::ACTIVE);
 }
 

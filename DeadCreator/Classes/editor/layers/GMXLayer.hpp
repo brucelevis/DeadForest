@@ -127,7 +127,7 @@ namespace realtrick
             const std::vector<LocationNode*>& getLocations() const { return _locations; }
             
             void addTrigger(GameTrigger* trigger);
-            std::vector<PlayerInfo>& getPlayerInfos() { return _playerInfos; }
+            PlayerInfo* getPlayerInfos() { return _playerInfos; }
             
         private:
             
@@ -207,7 +207,7 @@ namespace realtrick
             bool _isFirstFile = true;
             std::string _currFilePath;
             
-            std::vector<PlayerInfo> _playerInfos;
+            PlayerInfo _playerInfos[9];
             
         };
         

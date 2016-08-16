@@ -121,7 +121,7 @@ namespace realtrick
             std::vector<TriggerData> _triggers;
             
             // player info
-            PlayerInfo _playerInfo;
+            PlayerInfo _playerInfos[9];
             
             // force
             ForceInfo _force1Info;

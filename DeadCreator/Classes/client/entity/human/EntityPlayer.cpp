@@ -14,7 +14,7 @@
 #include "WeaponStatus.hpp"
 #include "AnimatedFiniteEntity.hpp"
 #include "RenderingSystem.hpp"
-#include "ZombieBrain.hpp"
+#include "PursuerBrain.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 

@@ -93,6 +93,8 @@ namespace realtrick
             void setInventoryOpened(bool enable) { _isInventoryOpened = enable; }
             bool isInventoryOpened() const { return _isInventoryOpened; }
             
+            void setBrain(BrainBase* brain);
+            
         private:
         
             void setHeading(const cocos2d::Vec2 heading) { _heading = heading; _heading.normalize(); }

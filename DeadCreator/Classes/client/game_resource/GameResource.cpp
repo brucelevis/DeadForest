@@ -228,6 +228,17 @@ bool GameResource::initWithBinary(const char* buffer)
         _triggers.push_back(data);
     }
     
+    // 10. player infos
+    int i = 1;
+    for ( auto info = file->playerInfos()->begin(); info != file->playerInfos()->end() ; ++ info )
+    {
+        
+        _playerInfos[i] = PlayerInfo(static_cast<PlayerType>(info->player()),
+                                     static_cast<Force>(info->force()),
+                                     static_cast<Owner>(info->owner()));
+        ++i;
+    }
+    
     return true;
 }
 

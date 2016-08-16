@@ -27,8 +27,11 @@ namespace realtrick
             virtual GoalStatus process() override;
             virtual void terminate() override;
             
+            void addGoalEntry(GoalBase* goal) { _goalEntry.push_back(goal); }
+            
         private:
             
+            std::vector<GoalBase*> _goalEntry;
             
         };
         

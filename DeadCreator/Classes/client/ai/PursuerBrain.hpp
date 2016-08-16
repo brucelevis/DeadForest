@@ -1,8 +1,8 @@
 //
-//  ZombieBrain.hpp
+//  PursuerBrain.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 8. 10..
+//  Created by mac on 2016. 8. 17..
 //
 //
 
@@ -14,22 +14,22 @@ namespace realtrick
     namespace client
     {
         
-        class ZombieBrain : public BrainBase
+        class PursuerBrain : public BrainBase
         {
             
         public:
             
-            explicit ZombieBrain(HumanBase* owner) : BrainBase(owner)
+            explicit PursuerBrain(HumanBase* owner) : BrainBase(owner)
             {
                 _thinker = new GoalThink(owner);
-                
-                GoalWander* wander = new GoalWander(_owner);
-                wander->setEvaluator([this](HumanBase* owner) { return 1; });
-                
-                _thinker->addGoalEntry(wander);
+//                
+//                GoalWander* wander = new GoalWander(_owner);
+//                wander->setEvaluator([this](HumanBase* owner) { return 1; });
+//                
+//                _thinker->addGoalEntry(wander);
             }
             
-            virtual ~ZombieBrain()
+            virtual ~PursuerBrain()
             {
                 delete _thinker;
                 _thinker = nullptr;

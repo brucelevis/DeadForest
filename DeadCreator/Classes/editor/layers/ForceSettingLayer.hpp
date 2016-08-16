@@ -73,13 +73,13 @@ namespace realtrick
                     
                     if ( _isItemClicked && ImGui::IsMouseReleased(0) && ImGui::IsMouseHoveringWindow() )
                     {
-                        _gmxLayer.getPlayerInfos().at(_clickedPlayer - 1).force = Force::FORCE_1;
+                        (_gmxLayer.getPlayerInfos() + _clickedPlayer)->force = Force::FORCE_1;
                         _isItemClicked = false;
                     }
                     
-                    for( const auto& player : _gmxLayer.getPlayerInfos() )
+                    for ( auto i = 1 ; i <= 8 ; ++ i)
                     {
-                        const PlayerInfo& info = player;
+                        const PlayerInfo& info = *(_gmxLayer.getPlayerInfos() + i);
                         if ( info.force != Force::FORCE_1 || info.owner != Owner::HUMAN ) continue;
                         std::string name = "Player " + _to_string(static_cast<int>(info.player));
                         ImGui::Selectable(name.c_str());
@@ -108,13 +108,13 @@ namespace realtrick
                     
                     if ( _isItemClicked && ImGui::IsMouseReleased(0) && ImGui::IsMouseHoveringWindow() )
                     {
-                        _gmxLayer.getPlayerInfos().at(_clickedPlayer - 1).force = Force::FORCE_2;
+                        (_gmxLayer.getPlayerInfos() + _clickedPlayer)->force = Force::FORCE_2;
                         _isItemClicked = false;
                     }
                     
-                    for( const auto& player : _gmxLayer.getPlayerInfos() )
+                    for ( auto i = 1 ; i <= 8 ; ++ i)
                     {
-                        const PlayerInfo& info = player;
+                        const PlayerInfo& info = *(_gmxLayer.getPlayerInfos() + i);
                         if ( info.force != Force::FORCE_2 || info.owner != Owner::HUMAN ) continue;
                         std::string name = "Player " + _to_string(static_cast<int>(info.player));
                         ImGui::Selectable(name.c_str());

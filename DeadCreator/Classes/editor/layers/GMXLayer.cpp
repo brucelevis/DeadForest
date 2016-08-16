@@ -69,7 +69,6 @@ GMXLayer::~GMXLayer()
     _tileImages.clear();
     
     _selectedEntities.clear();
-    _playerInfos.clear();
     
     _currCommand = nullptr;
 }
@@ -197,9 +196,9 @@ void GMXLayer::initFile()
     
     updateChunk(_camera->getPosition());
     
-    for(int i = 0 ; i < 8 ; ++ i)
+    for(int i = 1 ; i <= 8 ; ++ i)
     {
-        _playerInfos.push_back(PlayerInfo(_file.playerInfos[i].player, _file.playerInfos[i].force, _file.playerInfos[i].owner));
+        _playerInfos[i] = PlayerInfo(_file.playerInfos[i].player, _file.playerInfos[i].force, _file.playerInfos[i].owner);
     }
 }
 
@@ -559,9 +558,7 @@ void GMXLayer::updateCocosLogic()
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
                 if ( !isClickedResizeButton )
                 {
-                    // _imguiLayer.getSelectedPlayerType() : 1 ~ 8
-                    // file.playeInfos : 0 ~ 7
-                    int selectedPlayerType = static_cast<int>(_imguiLayer.getSelectedPlayerType()) - 1;
+                    int selectedPlayerType = static_cast<int>(_imguiLayer.getSelectedPlayerType());
                     if ( _file.playerInfos[selectedPlayerType].owner == Owner::HUMAN )
                     {
                         if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN )
@@ -1826,9 +1823,12 @@ void GMXLayer::save(const std::string& path)
     
     // player infos
     std::vector<flatbuffers::Offset<DeadCreator::PlayerInfo>> playerInfos;
-    for( const auto& info : _playerInfos )
+    for( int i = 1 ; i <= 8 ; ++ i )
     {
-        auto obj = DeadCreator::CreatePlayerInfo(builder, static_cast<int>(info.player), static_cast<int>(info.force), static_cast<int>(info.owner));
+        auto obj = DeadCreator::CreatePlayerInfo(builder,
+                                                 static_cast<int>(_playerInfos[i].player),
+                                                 static_cast<int>(_playerInfos[i].force),
+                                                 static_cast<int>(_playerInfos[i].owner));
         playerInfos.push_back(obj);
     }
     

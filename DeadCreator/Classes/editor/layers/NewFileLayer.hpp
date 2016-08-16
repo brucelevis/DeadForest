@@ -167,11 +167,11 @@ namespace realtrick
                             }
                         }
                         
-                        for(int i = 0 ; i < 8 ; ++ i)
+                        for(int i = 1 ; i <= 8 ; ++ i)
                         {
-                            file->playerInfos.push_back(PlayerInfo(static_cast<PlayerType>(i + 1),
-                                                                   Force::FORCE_1,
-                                                                   static_cast<Owner>(_playerOwners[i])));
+                            file->playerInfos[i] = PlayerInfo(static_cast<PlayerType>(i),
+                                                              Force::FORCE_1,
+                                                              static_cast<Owner>(_playerOwners[i]));
                         }
                         
                         std::strncpy(file->force1.name.data(), "Force 1", 20);

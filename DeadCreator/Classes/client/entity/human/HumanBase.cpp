@@ -49,6 +49,7 @@ _stateName("idle")
 HumanBase::~HumanBase()
 {
     CC_SAFE_DELETE(_animator);
+    CC_SAFE_DELETE(_brain);
 }
 
 
@@ -266,7 +267,11 @@ bool HumanBase::handleMessage(const Telegram& msg)
 }
 
 
-
+void HumanBase::setBrain(BrainBase* brain)
+{
+    CC_SAFE_DELETE(_brain);
+    _brain = brain;
+}
 
 
 

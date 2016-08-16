@@ -11,6 +11,7 @@
 #include "EntityZombie.hpp"
 #include "EntityPlayer.hpp"
 #include "Items.hpp"
+#include "Brains.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -30,7 +31,11 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             EntityPlayer* human = EntityPlayer::create(_game);
             human->setWorldPosition(position);
             human->setPlayerType(playerType);
+            human->setForce(res->_playerInfos[static_cast<int>(playerType)].force);
             addEntity(human, id);
+            
+            if ( res->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
+                human->setBrain(new PursuerBrain(human));
             
             if ( playerType == ownPlayer ) _player = human;
         }
@@ -40,7 +45,11 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             EntityZombie* zombie = EntityZombie::create(_game);
             zombie->setWorldPosition(position);
             zombie->setPlayerType(playerType);
+            zombie->setForce(res->_playerInfos[static_cast<int>(playerType)].force);
             addEntity(zombie, id);
+            
+            if ( res->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
+                zombie->setBrain(new ZombieBrain(zombie));
         }
         
         else if ( entityType == EntityType::BULLET_556MM )

@@ -27,7 +27,7 @@ namespace realtrick
             int numOfTileX = -1;
             int numOfTileY = -1;
             std::vector<std::vector<std::string>> tileInfos;
-            std::vector<PlayerInfo> playerInfos;
+            PlayerInfo playerInfos[9];
             ForceInfo force1;
             ForceInfo force2;
             cocos2d::Size worldSize;

@@ -42,8 +42,6 @@ bool EntityZombie::init()
     _FSM->setCurrState(&ZombieIdleLoop::getInstance());
     _FSM->changeState(&ZombieIdleLoop::getInstance());
     
-    _brain = new ZombieBrain(this);
-    
     return true;
 }
 

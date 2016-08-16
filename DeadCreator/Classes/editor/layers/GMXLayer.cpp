@@ -1717,7 +1717,7 @@ std::pair<int, int> GMXLayer::getNextTileIndex(const std::string& tailWithInputD
 void GMXLayer::save(const std::string& path)
 {
     _isFirstFile = false;
-    _currFilePath = path;
+    if ( path != "temp_game_map" ) _currFilePath = path;
     
     log("save! path: %s", path.c_str());
     log("file name: %s", _file.fileName.c_str());

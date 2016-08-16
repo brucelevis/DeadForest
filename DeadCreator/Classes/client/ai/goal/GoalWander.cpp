@@ -33,8 +33,8 @@ void GoalWander::activate()
 GoalBase::GoalStatus GoalWander::process()
 {
     if ( getGoalStatus() == GoalStatus::INACTIVE ) activate();
-    std::chrono::duration<double> interval = (std::chrono::system_clock::now().time_since_epoch() - _start);
     
+    std::chrono::duration<double> interval = (std::chrono::system_clock::now().time_since_epoch() - _start);
     if ( interval.count() > 1.0 )
     {
         return GoalStatus::COMPLETED;

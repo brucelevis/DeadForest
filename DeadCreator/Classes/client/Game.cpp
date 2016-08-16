@@ -81,8 +81,10 @@ bool Game::init()
     this->scheduleUpdate();
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 
-    if ( Prm.getValueAsBool("useNetwork") ) _logicStream = new ServerStream(this);
-    else _logicStream = new SingleStream(this);
+//    if ( Prm.getValueAsBool("useNetwork") ) _logicStream = new ServerStream(this);
+//    else _logicStream = new SingleStream(this);
+    
+    _logicStream = new SingleStream(this);
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
@@ -94,7 +96,7 @@ void Game::update(float dt)
 {
     // """IMPORTANT"""
     // logicStream's update() must call before checking pause.
-    // because network stream will load data through this method (although game is puased, load game must process)
+    // because server stream will load data through this method (although game is puased, load game must process)
     _logicStream->update(dt);
     
     // checking pause is done

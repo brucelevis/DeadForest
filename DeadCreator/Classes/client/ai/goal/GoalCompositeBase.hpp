@@ -21,8 +21,14 @@ namespace realtrick
             
         public:
             
-            explicit GoalCompositeBase(HumanBase* owner) : GoalBase(owner) {}
-            virtual ~GoalCompositeBase() { _subGoals.clear(); }
+            explicit GoalCompositeBase(HumanBase* owner) : GoalBase(owner)
+            {
+                setGoalType(GoalType::INVALID);
+            }
+            virtual ~GoalCompositeBase()
+            {
+                _subGoals.clear();
+            }
             
             void addSubgoal(GoalBase* goal) { _subGoals.push_back(goal); }
             

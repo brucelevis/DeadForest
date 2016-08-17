@@ -22,11 +22,11 @@ namespace realtrick
             explicit PursuerBrain(HumanBase* owner) : BrainBase(owner)
             {
                 _thinker = new GoalThink(owner);
-//                
-//                GoalWander* wander = new GoalWander(_owner);
-//                wander->setEvaluator([this](HumanBase* owner) { return 1; });
-//                
-//                _thinker->addGoalEntry(wander);
+                
+                GoalHuntTarget* huntTarget = new GoalHuntTarget(_owner);
+                huntTarget->setEvaluator([this](HumanBase* owner) { return 1; });
+                
+                _thinker->addGoalEntry(huntTarget);
             }
             
             virtual ~PursuerBrain()

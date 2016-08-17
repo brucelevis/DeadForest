@@ -1,37 +1,35 @@
 //
-//  GoalThink.hpp
+//  GoalTraverseEdge.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 8. 10..
+//  Created by mac on 2016. 8. 17..
 //
 //
 
-#pragma once
+#include <chrono>
 
-#include "GoalCompositeBase.hpp"
+#include "GoalBase.hpp"
 
 namespace realtrick
 {
     namespace client
     {
         
-        class GoalThink : public GoalCompositeBase
+        class GoalTraverseEdge : public GoalBase
         {
             
         public:
             
-            explicit GoalThink(HumanBase* owner);
-            virtual ~GoalThink();
+            explicit GoalTraverseEdge(HumanBase* owner);
+            virtual ~GoalTraverseEdge();
             
             virtual void activate() override;
             virtual GoalStatus process() override;
             virtual void terminate() override;
             
-            void addGoalEntry(GoalBase* goal) { _goalEntry.push_back(goal); }
-          
         private:
             
-            std::vector<GoalBase*> _goalEntry;
+            std::chrono::duration<double> _start;
             
         };
         

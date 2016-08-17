@@ -9,6 +9,7 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "GoalTypes.hpp"
 
 namespace realtrick
 {
@@ -17,23 +18,25 @@ namespace realtrick
         
         class HumanBase;
         
+        enum class GoalStatus : int { ACTIVE, INACTIVE, COMPLETED, FAILED };
+        
         class GoalBase
         {
-            
-        public:
-            
-            enum class GoalStatus : int { ACTIVE, INACTIVE, COMPLETED, FAILED };
             
         public:
             
             explicit GoalBase(HumanBase* owner) : _owner(owner)
             {
                 setGoalStatus(GoalStatus::INACTIVE);
+                setGoalType(GoalType::INVALID);
             }
             virtual ~GoalBase() = default;
             
             GoalStatus getGoalStatus() const { return _goalStatus; }
             void setGoalStatus(GoalStatus status) { _goalStatus = status; }
+            
+            GoalType getGoalType() const { return _goalType; }
+            void setGoalType(GoalType goalType) { _goalType = goalType; }
             
             void setEvaluator(const std::function<int(HumanBase*)>& evaluator) { _evaluator = evaluator; }
             int getWeight() { return (_evaluator ? _evaluator(_owner) : 0); }
@@ -51,6 +54,7 @@ namespace realtrick
             
             HumanBase* _owner;
             GoalStatus _goalStatus;
+            GoalType _goalType;
             std::function<int(HumanBase*)> _evaluator;
             
         };

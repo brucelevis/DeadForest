@@ -10,6 +10,11 @@
 
 #include "GoalThink.hpp"
 #include "GoalWander.hpp"
+#include "GoalHuntTarget.hpp"
+#include "GoalTraverseEdge.hpp"
+#include "GoalReadyToFight.hpp"
+#include "GoalFindWeapon.hpp"
+#include "GoalFollowPath.hpp"
 
 
 

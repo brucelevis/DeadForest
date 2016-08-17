@@ -13,6 +13,7 @@ using namespace realtrick::client;
 
 GoalThink::GoalThink(HumanBase* owner) : GoalCompositeBase(owner)
 {
+    setGoalType(GoalType::THINK);
 }
 
 
@@ -28,14 +29,14 @@ void GoalThink::activate()
     if ( _goalEntry.empty() ) return ;
     
     auto bestGoal = *std::max_element(std::begin(_goalEntry), std::end(_goalEntry), [](GoalBase* g1, GoalBase* g2) {
-                                          return (g1->getWeight() < g2->getWeight());
-                                      });
+        return (g1->getWeight() < g2->getWeight());
+    });
     addSubgoal(bestGoal);
     setGoalStatus(GoalStatus::ACTIVE);
 }
 
 
-GoalBase::GoalStatus GoalThink::process()
+GoalStatus GoalThink::process()
 {
     if ( isInactive() ) activate();
     

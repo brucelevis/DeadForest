@@ -1,8 +1,8 @@
 //
-//  GoalThink.hpp
+//  GoalReadyToFight.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 8. 10..
+//  Created by mac on 2016. 8. 17..
 //
 //
 
@@ -15,23 +15,23 @@ namespace realtrick
     namespace client
     {
         
-        class GoalThink : public GoalCompositeBase
+        class GoalFindWeapon;
+        
+        class GoalReadyToFight : public GoalCompositeBase
         {
             
         public:
             
-            explicit GoalThink(HumanBase* owner);
-            virtual ~GoalThink();
+            explicit GoalReadyToFight(HumanBase* owner);
+            virtual ~GoalReadyToFight();
             
             virtual void activate() override;
             virtual GoalStatus process() override;
             virtual void terminate() override;
             
-            void addGoalEntry(GoalBase* goal) { _goalEntry.push_back(goal); }
-          
         private:
             
-            std::vector<GoalBase*> _goalEntry;
+            GoalFindWeapon* _goalFindWeapon;
             
         };
         

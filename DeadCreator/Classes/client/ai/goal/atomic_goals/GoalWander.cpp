@@ -12,7 +12,9 @@ using namespace realtrick::client;
 
 
 GoalWander::GoalWander(HumanBase* owner) : GoalBase(owner)
-{}
+{
+    setGoalType(GoalType::WANDER);
+}
 
 
 GoalWander::~GoalWander()
@@ -30,7 +32,7 @@ void GoalWander::activate()
 }
 
 
-GoalBase::GoalStatus GoalWander::process()
+GoalStatus GoalWander::process()
 {
     if ( getGoalStatus() == GoalStatus::INACTIVE ) activate();
     

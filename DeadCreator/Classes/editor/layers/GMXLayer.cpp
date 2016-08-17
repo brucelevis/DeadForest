@@ -17,6 +17,7 @@
 #include "HistoryLayer.hpp"
 #include "TriggerEditLayer.hpp"
 #include "TileToolCommand.hpp"
+#include "ModifyStartingPointCommand.hpp"
 #include "AddEntityToolCommand.hpp"
 #include "RemoveEntityToolCommand.hpp"
 #include "CellSpacePartition.hpp"
@@ -59,6 +60,7 @@ GMXLayer::~GMXLayer()
     CC_SAFE_DELETE(_tileToolCommand);
     CC_SAFE_DELETE(_addEntityToolCommand);
     CC_SAFE_DELETE(_removeEntityToolCommand);
+    CC_SAFE_DELETE(_modifyStartingPointCommand);
     
     _entities.clear();
     
@@ -159,6 +161,7 @@ bool GMXLayer::init()
     _tileToolCommand = new TileToolCommand(this);
     _addEntityToolCommand = new AddEntityToolCommand(this);
     _removeEntityToolCommand = new RemoveEntityToolCommand(this);
+    _modifyStartingPointCommand = new ModiftStartingPointCommand(this);
     
     return true;
 }
@@ -590,24 +593,23 @@ void GMXLayer::updateCocosLogic()
                     {
                         if ( _paletteLayer->getPaletteType() == PaletteType::HUMAN )
                         {
-                            if ( getNumberOfHumanEntity(_imguiLayer.getSelectedPlayerType()) == 0 )
+                            auto humanEntity = getHumanEntity(_imguiLayer.getSelectedPlayerType());
+                            if ( humanEntity )
+                            {
+                                // change human's starting point.
+                                _modifyStartingPointCommand->begin();
+                                _modifyStartingPointCommand->modifyStartingPoint(humanEntity, _mousePosInWorld, humanEntity->getPosition());
+                                _historyLayer->pushCommand(_modifyStartingPointCommand->clone());
+                                _modifyStartingPointCommand->end();
+                                
+                                humanEntity->setPosition(_mousePosInWorld);
+                            }
+                            else if ( !humanEntity )
                             {
                                 EditorEntity* ent = EditorEntity::create(getNextValidID(), selectedEntity);
                                 ent->setPosition(_mousePosInWorld);
                                 ent->setPlayerType(_imguiLayer.getSelectedPlayerType());
                                 addEntity(ent, 5);
-                            }
-                            else if ( getNumberOfHumanEntity(_imguiLayer.getSelectedPlayerType()) != 0 )
-                            {
-                                // change entity
-                                for ( auto& entity : _entities )
-                                {
-                                    if ( entity.second->getPlayerType() == static_cast<PlayerType>(selectedPlayerType) )
-                                    {
-                                        entity.second->setPosition(_mousePosInWorld);
-                                        break;
-                                    }
-                                }
                             }
                         }
                     }
@@ -1035,21 +1037,36 @@ bool GMXLayer::addEntityForce(EditorEntity* entity, int localZOrder)
 }
 
 
-int GMXLayer::getNumberOfHumanEntity(PlayerType player)
+int GMXLayer::getNumberOfHumanEntity(PlayerType player) const
 {
     int ret = 0;
     for ( const auto& ent : _entities )
     {
         auto entity = ent.second;
         EntityType entityType = entity->getEntityType();
-        if (entity->isVisible() &&
-            entity->getPlayerType() == player &&
+        if (entity->isVisible() && entity->getPlayerType() == player &&
             (entityType == EntityType::ENTITY_PLAYER || entityType == EntityType::ENTITY_ZOMBIE))
         {
             ret ++;
         }
     }
     return ret;
+}
+
+
+EditorEntity* GMXLayer::getHumanEntity(PlayerType player) const
+{
+    for ( const auto& ent : _entities )
+    {
+        auto entity = ent.second;
+        EntityType entityType = entity->getEntityType();
+        if (entity->isVisible() && entity->getPlayerType() == player &&
+            (entityType == EntityType::ENTITY_PLAYER || entityType == EntityType::ENTITY_ZOMBIE))
+        {
+            return ent.second;
+        }
+    }
+    return nullptr;
 }
 
 

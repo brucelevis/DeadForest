@@ -50,10 +50,7 @@ namespace realtrick
             
             virtual void begin() final
             {
-                if ( _isBegan )
-                {
-                    throw std::runtime_error("Command is already began.");
-                }
+                if ( _isBegan ) throw std::runtime_error("Command is already began.");
                 
                 _isBegan = true;
                 beginImpl();

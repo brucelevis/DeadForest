@@ -32,6 +32,7 @@ namespace realtrick
         class CommandBase;
         class AddEntityToolCommand;
         class RemoveEntityToolCommand;
+        class ModiftStartingPointCommand;
         class TileToolCommand;
         class EditorEntity;
         class LocationNode;
@@ -94,7 +95,8 @@ namespace realtrick
             bool addEntity(EditorEntity* entity, int localZOrder = 0, bool isExecCommand = false);
             bool addEntityForce(EditorEntity* entity, int localZOrder = 0);
             bool eraseEntity(int id, bool isExecCommand = false);
-            int getNumberOfHumanEntity(PlayerType player);
+            int getNumberOfHumanEntity(PlayerType player) const;
+            EditorEntity* getHumanEntity(PlayerType player) const;
             EditorEntity* getEntityFromID(int id);
             
             int getNextValidID();
@@ -194,6 +196,7 @@ namespace realtrick
             TileToolCommand* _tileToolCommand = nullptr;
             AddEntityToolCommand* _addEntityToolCommand = nullptr;
             RemoveEntityToolCommand* _removeEntityToolCommand = nullptr;
+            ModiftStartingPointCommand* _modifyStartingPointCommand = nullptr;
             
             cocos2d::Rect _selectRect;
             cocos2d::DrawNode* _selectionRectNode;

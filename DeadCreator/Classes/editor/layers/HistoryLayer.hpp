@@ -28,7 +28,7 @@ namespace realtrick
             
             explicit HistoryLayer(GMXLayer& gmxLayer) :
             _gmxLayer(gmxLayer),
-            _layerSize(cocos2d::Size(200, 300)),
+            _layerSize(cocos2d::Size(300, 400)),
             _layerPosition(cocos2d::Vec2(120, 370)),
             _boundingBoxPadding(cocos2d::Rect::ZERO)
             {}

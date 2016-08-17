@@ -124,6 +124,9 @@ bool GMXLayer::init()
     _selectedItem = Sprite::create();
     _rootNode->addChild(_selectedItem, 10);
     
+    _selectedItemBoundingCircle = DrawNode::create();
+    _rootNode->addChild(_selectedItemBoundingCircle, 20);
+    
     _cellSpacePartition = EditorCellSpacePartition::create(_file.worldSize,
                                                            Size(_file.tileWidth * 5, _file.tileHeight * 5));
     addChild(_cellSpacePartition);
@@ -449,6 +452,8 @@ void GMXLayer::updateCocosLogic()
     if ( selectedItem == -1 )
     {
         _selectedItem->setTexture("empty_image.png");
+        _selectedItemBoundingCircle->clear();
+        for ( auto& ent : _entities ) ent.second->setBoundingCircle(false, Color4F(1.00, 0.00, 0.00, 0.50));
     }
     
     if ( ImGui::GetIO().MouseClicked[1] && ImGui::IsMouseHoveringWindow() )
@@ -547,12 +552,34 @@ void GMXLayer::updateCocosLogic()
         
         // put entity
         _selectedItem->setPosition(_mousePosInWorld);
+        _selectedItemBoundingCircle->setPosition(_mousePosInWorld);
         EntityType selectedEntity = static_cast<EntityType>(_paletteLayer->getSelectedItem());
         if ( selectedEntity != EntityType::DEFAULT )
         {
             _selectedItem->setTexture(EditorEntity::getEntityTableByType().at(selectedEntity).fileName);
             _selectedItem->setOpacity(128);
-            if ( (ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
+            
+            _selectedItemBoundingCircle->clear();
+            Color4F color(0.00, 1.00, 0.00, 0.50);
+            bool isAddEntity = true;
+            for ( auto& ent : _entities )
+            {
+                if (ent.second->getEntityType() == EntityType::ENTITY_PLAYER ||
+                    ent.second->getEntityType() == EntityType::ENTITY_ZOMBIE )
+                {
+                    ent.second->setBoundingCircle(true, Color4F(1.00, 0.00, 0.00, 0.50));
+                    if ( physics::intersect(realtrick::Circle(ent.second->getPosition(), 20.0f),
+                                            realtrick::Circle(_selectedItemBoundingCircle->getPosition(),
+                                                              20.0f)) )
+                    {
+                        color = Color4F(1.00, 0.00, 0.00, 0.50);
+                        isAddEntity = false;
+                    }
+                }
+            }
+            _selectedItemBoundingCircle->drawCircle(Vec2::ZERO, 20.0f, 360.0f, 30, false, color);
+            
+            if ( (isAddEntity && ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
                 Vec2 resizeButtonOrigin(_layerPosition.x + _layerSize.width - 30, ImGui::GetIO().DisplaySize.y - _layerPosition.y - _layerSize.height);
                 bool isClickedResizeButton = cocos2d::Rect(resizeButtonOrigin.x, resizeButtonOrigin.y, 30, 30).containsPoint(mousePosInCocos2dMatrix);
@@ -572,7 +599,15 @@ void GMXLayer::updateCocosLogic()
                             }
                             else if ( getNumberOfHumanEntity(_imguiLayer.getSelectedPlayerType()) != 0 )
                             {
-                                
+                                // change entity
+                                for ( auto& entity : _entities )
+                                {
+                                    if ( entity.second->getPlayerType() == static_cast<PlayerType>(selectedPlayerType) )
+                                    {
+                                        entity.second->setPosition(_mousePosInWorld);
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
@@ -799,9 +834,9 @@ void GMXLayer::putTile(TileType type, int x, int y)
         int xx = temp.getIndexX();
         int yy = temp.getIndexY();
         
+        // 추가하는 로직
         if ( temp.getNumber().at(0) != '1')
         {
-            // 추가하는 로직
             if ( Tileset::getTileTail(temp.getNumber()) == "1234" )
             {
                 auto nei = getNeighborTiles(xx, yy);
@@ -906,9 +941,10 @@ void GMXLayer::putTile(TileType type, int x, int y)
                 }
             }
         }
+        
+        // 지우는 로직
         else // if ( temp.tileNumber[0] == '1' )
         {
-            // 지우는 로직
             if ( temp.getTileTail() == "1234" )
             {
                 auto nei = getNeighborTiles(xx, yy);

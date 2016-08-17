@@ -56,9 +56,14 @@ namespace realtrick
                 _image = cocos2d::Sprite::create(getEntityTableByType().at(type).fileName);
                 addChild(_image);
                 
-                _selectedCircle = cocos2d::Sprite::create("circle.png");
+                _selectedCircle = cocos2d::DrawNode::create();
                 _selectedCircle->setVisible(false);
+                _selectedCircle->drawCircle(cocos2d::Vec2::ZERO, 20.0f, 360.0f, 30, false, cocos2d::Color4F(1.0f, 0.0f, 0.0f, 0.5f));
                 addChild(_selectedCircle);
+                
+                _boundingCircle = cocos2d::DrawNode::create();
+                _boundingCircle->setVisible(false);
+                addChild(_boundingCircle);
                 
                 return true;
             }
@@ -80,6 +85,15 @@ namespace realtrick
             void setPlayerType(PlayerType type) { _playerType = type; }
             PlayerType getPlayerType() const { return _playerType; }
             void setSelected(bool enable) { if ( _selectedCircle ) _selectedCircle->setVisible(enable); }
+            
+            void setBoundingCircle(bool visible, const cocos2d::Color4F& color)
+            {
+                _boundingCircle->clear();
+                _boundingCircle->drawCircle(cocos2d::Vec2::ZERO, _boundingRadius, 360.0f, 30, false, color);
+                _boundingCircle->setVisible(visible);
+            }
+            void setBoundingRadius(float r) { _boundingRadius = r; }
+            float getBoundingRadius() const { return _boundingRadius; }
             
             EntityType getEntityType() const { return _type; }
             
@@ -126,11 +140,13 @@ namespace realtrick
             
         private:
             
-            int _id;
-            EntityType _type;
-            cocos2d::Sprite* _image;
-            PlayerType _playerType;
-            cocos2d::Sprite* _selectedCircle = nullptr;
+            int _id = -1;
+            EntityType _type = EntityType::DEFAULT;
+            cocos2d::Sprite* _image = nullptr;
+            PlayerType _playerType = PlayerType::INVALID;
+            cocos2d::DrawNode* _selectedCircle = nullptr;
+            cocos2d::DrawNode* _boundingCircle = nullptr;
+            float _boundingRadius = 20.0f;
             
         };
         

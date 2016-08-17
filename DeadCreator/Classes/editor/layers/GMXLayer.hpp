@@ -156,6 +156,7 @@ namespace realtrick
             cocos2d::Node* _tileRoot;
             cocos2d::Node* _rootNode;
             cocos2d::Sprite* _selectedItem;
+            cocos2d::DrawNode* _selectedItemBoundingCircle;
             
             EditorCellSpacePartition* _cellSpacePartition;
             std::map<int, EditorEntity*> _entities;

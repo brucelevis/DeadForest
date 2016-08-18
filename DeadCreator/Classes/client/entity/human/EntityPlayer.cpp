@@ -141,6 +141,13 @@ void EntityPlayer::suicide()
 }
 
 
+void EntityPlayer::reload()
+{
+    if ( _equipedWeapon ) _equipedWeapon->reload();
+}
+
+
+
 
 
 

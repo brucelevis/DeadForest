@@ -40,7 +40,7 @@ namespace realtrick
                     if ( equipedWeapon != nullptr &&
                         equipedWeapon->getEntityType() != EntityType::ITEM_AXE )
                     {
-                        equipedWeapon->reload();
+                        _player->reload();
                     }
                 }
             }

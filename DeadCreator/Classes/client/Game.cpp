@@ -126,9 +126,6 @@ void Game::update(float dt)
     // 3. trigger update and execute
     _triggerSystem->update(dt);
     
-    // 4. rendering
-    _renderingSystem->render(_camera);
-    
     _messenger->dispatchDelayedMessages();
 }
 

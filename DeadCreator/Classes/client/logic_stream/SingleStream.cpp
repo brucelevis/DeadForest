@@ -25,7 +25,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     if ( msg.msg == MessageType::LOAD_GAME_PLAYER)
     {
         _game->loadGMXFileFromPath("temp_game_map");
-//        _game->loadGMXFileFromPath(FileUtils::getInstance()->fullPathForFilename("final_client2").c_str());
+//        _game->loadGMXFileFromPath(FileUtils::getInstance()->fullPathForFilename("final_client2.gmx").c_str());
         _game->loadGameContents(PlayerType::PLAYER1);
         _game->pushLogic(0.0, MessageType::LOAD_GAME_COMPLETE, nullptr);
         

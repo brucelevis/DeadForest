@@ -172,6 +172,10 @@ bool UiLayer::init()
         else if ( keyCode == EventKeyboard::KeyCode::KEY_A ) _inputMask.set(InputMask::LEFT);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_D ) _inputMask.set(InputMask::RIGHT);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT ) _inputMask.set(InputMask::RUNNING);
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_R )
+        {
+            _game->getPlayerPtr()->reload();
+        }
         
         if ( oldMask != _inputMask ) _isInputMaskDirty = true;
         

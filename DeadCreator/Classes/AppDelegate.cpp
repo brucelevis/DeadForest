@@ -9,6 +9,7 @@
 
 USING_NS_CC;
 
+//static cocos2d::Size designResolutionSize = cocos2d::Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 static cocos2d::Size designResolutionSize = cocos2d::Size(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 AppDelegate::AppDelegate() {

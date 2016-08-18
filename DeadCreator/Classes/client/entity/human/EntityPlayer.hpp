@@ -42,6 +42,8 @@ namespace realtrick
             void setUserNickName(const std::string& name) { _userNickName = name; }
             std::string getUserNickName() const { return _userNickName; }
             
+            void reload();
+            
             virtual void update(float dt) override;
             virtual void suicide() override;
             

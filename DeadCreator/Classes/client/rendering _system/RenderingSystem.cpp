@@ -12,6 +12,7 @@
 #include "EntityBase.hpp"
 #include "UiLayer.hpp"
 #include "Camera2D.hpp"
+#include "Game.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -44,18 +45,16 @@ bool RenderingSystem::init(GameResource* res)
     if ( !Node::init() )
         return false;
     
+    setClippingRegion(cocos2d::Rect(0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
+    
     _gameScreenScale = Vec2(GAME_SCREEN_WIDTH / 1136, GAME_SCREEN_HEIGHT / 640);
     
     _renderingNode = Node::create();
     _renderingNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
-    _renderingNode->retain();
+    addChild(_renderingNode);
     
     _terrain = Terrain::create(_game);
     _renderingNode->addChild(_terrain);
-
-    _fbo = RenderTexture::create(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-    _fbo->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
-    addChild(_fbo, 5);
     
     return true;
 }
@@ -85,25 +84,15 @@ void RenderingSystem::addUINode(cocos2d::Node* node)
 }
 
 
-void RenderingSystem::render(Camera2D* camera)
-{
-    _fbo->beginWithClear(0.0, 0.0, 1.0, 0.2);
-    
-    cameraTransform(camera);
-    _renderingNode->visit();
-    
-    _fbo->end();
-}
-
-
-void RenderingSystem::cameraTransform(Camera2D* camera)
+void RenderingSystem::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& parentTransform, uint32_t parentFlags)
 {
     _renderingNode->setScale(_gameScreenScale.x * _zoomScale, _gameScreenScale.y * _zoomScale);
     for( auto& entity : _renderingNode->getChildren() )
     {
         auto ent = static_cast<EntityBase*>(entity);
-        ent->setPosition( ent->getWorldPosition() - camera->getCameraPos() );
+        ent->setPosition( ent->getWorldPosition() - _game->getCamera()->getCameraPos() );
     }
+    ClippingRectangleNode::visit(renderer, parentTransform, parentFlags);
 }
 
 

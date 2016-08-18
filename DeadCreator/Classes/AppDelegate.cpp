@@ -50,9 +50,9 @@ bool AppDelegate::applicationDidFinishLaunching()
     
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images.plist");
     
-//    auto scene = realtrick::editor::EditScene::createScene();
+    auto scene = realtrick::editor::EditScene::createScene();
 //    auto scene = realtrick::client::Game::createScene();
-    auto scene = realtrick::client::ShaderTestScene::createScene();
+//    auto scene = realtrick::client::ShaderTestScene::createScene();
     director->runWithScene(scene);
     
     return true;

@@ -22,6 +22,7 @@ namespace realtrick
         class Terrain;
         class EntityBase;
         class UiLayer;
+        class DeferredRendering;
         
         class RenderingSystem : public cocos2d::ClippingRectangleNode
         {
@@ -41,9 +42,7 @@ namespace realtrick
                 return cocos2d::Vec2(_zoomScale * _gameScreenScale.x, _zoomScale * _gameScreenScale.y);
             }
             
-            virtual void visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& parentTransform, uint32_t parentFlags) override;
-            
-            cocos2d::Vec2 getGameScreenScale() const { return _gameScreenScale; }
+            cocos2d::Vec2 getCameraPosition() const;
             
             void addEntity(EntityBase* entity, int zOrder = 0);
             void removeEntity(EntityBase* entity);
@@ -54,7 +53,7 @@ namespace realtrick
             Game* _game;
             GameResource* _gameResource;
             
-            cocos2d::Node* _renderingNode;
+            DeferredRendering* _deferredRendering;
             
             float _zoomScale;
             cocos2d::Vec2 _gameScreenScale;

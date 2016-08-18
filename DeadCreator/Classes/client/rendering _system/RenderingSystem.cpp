@@ -13,6 +13,7 @@
 #include "UiLayer.hpp"
 #include "Camera2D.hpp"
 #include "Game.hpp"
+#include "DeferredRendering.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -49,17 +50,11 @@ bool RenderingSystem::init(GameResource* res)
     
     _gameScreenScale = Vec2(GAME_SCREEN_WIDTH / 1136, GAME_SCREEN_HEIGHT / 640);
     
-    _renderingNode = Node::create();
-    _renderingNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
-    addChild(_renderingNode);
+    _deferredRendering = DeferredRendering::create(this, Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT), "shader_test.fsh");
+    addChild(_deferredRendering);
     
     _terrain = Terrain::create(_game);
-    _renderingNode->addChild(_terrain);
-    
-    
-//    auto glprogram = GLProgram::createWithFilenames("shader_test.vsh", "shader_test.fsh");
-//    auto glprogramstate = GLProgramState::getOrCreateWithGLProgram(glprogram);
-//    setGLProgramState(glprogramstate);
+    _deferredRendering->addNode("u_staticTex", _terrain);
     
     return true;
 }
@@ -71,21 +66,9 @@ void RenderingSystem::updateChunk(Camera2D* camera)
 }
 
 
-void RenderingSystem::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& parentTransform, uint32_t parentFlags)
-{
-    _renderingNode->setScale(_gameScreenScale.x * _zoomScale, _gameScreenScale.y * _zoomScale);
-    for( auto& entity : _renderingNode->getChildren() )
-    {
-        auto ent = static_cast<EntityBase*>(entity);
-        ent->setPosition( ent->getWorldPosition() - _game->getCamera()->getCameraPos() );
-    }
-    ClippingRectangleNode::visit(renderer, parentTransform, parentFlags);
-}
-
-
 void RenderingSystem::addEntity(EntityBase* entity, int zOrder)
 {
-    _renderingNode->addChild(entity, zOrder);
+    _deferredRendering->addNode("u_dynamicTex", entity, zOrder);
 }
 
 
@@ -98,6 +81,12 @@ void RenderingSystem::removeEntity(EntityBase* entity)
 void RenderingSystem::addUINode(cocos2d::Node* node)
 {
     this->addChild(node, 100);
+}
+
+
+Vec2 RenderingSystem::getCameraPosition() const
+{
+    return _game->getCamera()->getCameraPos();
 }
 
 

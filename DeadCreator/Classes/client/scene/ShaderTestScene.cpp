@@ -32,11 +32,6 @@ bool ShaderTestScene::init()
     
     this->scheduleUpdate();
     
-    auto s = Director::getInstance()->getWinSize();
-    
-    DeferredRendering* dr = DeferredRendering::create(Size(1600, 960), "shader_test.fsh");
-    addChild(dr);
-    
     return true;
 }
 

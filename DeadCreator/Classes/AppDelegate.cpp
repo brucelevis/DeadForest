@@ -4,6 +4,7 @@
 #include "DummyScene.hpp"
 #include "ImGuiGLViewImpl.h"
 #include "ImGuiLayer.h"
+#include "ShaderTestScene.hpp"
 
 #include "SizeProtocol.h"
 
@@ -37,8 +38,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     auto glview = director->getOpenGLView();
     if(!glview)
     {
-        glview = ImGuiGLViewImpl::createWithRect("Dead Creator 1.1", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
-//        glview = GLViewImpl::createWithRect("Dead", cocos2d::Rect(0,0,designResolutionSize.width, designResolutionSize.height));
+        glview = ImGuiGLViewImpl::createWithRect("Dead Creator ver.beta", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
         director->setOpenGLView(glview);
     }
     
@@ -50,8 +50,9 @@ bool AppDelegate::applicationDidFinishLaunching()
     
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images.plist");
     
-    auto scene = realtrick::editor::EditScene::createScene();
+//    auto scene = realtrick::editor::EditScene::createScene();
 //    auto scene = realtrick::client::Game::createScene();
+    auto scene = realtrick::client::ShaderTestScene::createScene();
     director->runWithScene(scene);
     
     return true;

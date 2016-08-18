@@ -56,6 +56,11 @@ bool RenderingSystem::init(GameResource* res)
     _terrain = Terrain::create(_game);
     _renderingNode->addChild(_terrain);
     
+    
+//    auto glprogram = GLProgram::createWithFilenames("shader_test.vsh", "shader_test.fsh");
+//    auto glprogramstate = GLProgramState::getOrCreateWithGLProgram(glprogram);
+//    setGLProgramState(glprogramstate);
+    
     return true;
 }
 

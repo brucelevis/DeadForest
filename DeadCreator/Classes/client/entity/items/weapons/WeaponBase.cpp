@@ -50,7 +50,6 @@ WeaponBase::WeaponBase(const WeaponBase& rhs) : ItemBase(rhs)
 
 void WeaponBase::use()
 {
-    _game->addLog(StringUtils::format("<WeaponBase::use> Weapon(%d) Equiped.", _entityType));
     if( _owner->getEquipedWeapon() == nullptr )
     {
         // 주먹일 때, 주먹을 집어넣고 무기를 세팅한다.
@@ -68,8 +67,6 @@ void WeaponBase::use()
 
 void WeaponBase::releaseWeapon()
 {
-    _game->addLog(StringUtils::format("<WeaponBase::releaseWeapon> Weapon(%d) Released.", _entityType));
-    
     // 장착 무기를 nullptr(맨손)으로 만든다.
     _owner->setEquipedWeapon(nullptr);
     // 무기를 집어넣는다.
@@ -84,7 +81,6 @@ void WeaponBase::reload()
     if ( leftRounds != maxRounds )
     {
         int ownedRound = _owner->getInventory()->getItemAmount(getBulletType());
-        _game->addLog(StringUtils::format("ownedRound: %d", ownedRound));
         if ( ownedRound != 0 )
         {
             int offset = getReloadedBulletOnce(); // 재장전할 수 있는 총알의 수

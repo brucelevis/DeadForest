@@ -36,9 +36,7 @@ namespace realtrick
                 if ( !_player->isInventoryOpened() )
                 {
                     WeaponBase* equipedWeapon = _player->getEquipedWeapon();
-                    
-                    if ( equipedWeapon != nullptr &&
-                        equipedWeapon->getEntityType() != EntityType::ITEM_AXE )
+                    if ( equipedWeapon && equipedWeapon->getEntityType() != EntityType::ITEM_AXE )
                     {
                         _player->reload();
                     }

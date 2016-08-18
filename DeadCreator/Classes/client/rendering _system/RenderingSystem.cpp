@@ -66,6 +66,18 @@ void RenderingSystem::updateChunk(Camera2D* camera)
 }
 
 
+void RenderingSystem::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& parentTransform, uint32_t parentFlags)
+{
+    _renderingNode->setScale(_gameScreenScale.x * _zoomScale, _gameScreenScale.y * _zoomScale);
+    for( auto& entity : _renderingNode->getChildren() )
+    {
+        auto ent = static_cast<EntityBase*>(entity);
+        ent->setPosition( ent->getWorldPosition() - _game->getCamera()->getCameraPos() );
+    }
+    ClippingRectangleNode::visit(renderer, parentTransform, parentFlags);
+}
+
+
 void RenderingSystem::addEntity(EntityBase* entity, int zOrder)
 {
     _renderingNode->addChild(entity, zOrder);
@@ -81,18 +93,6 @@ void RenderingSystem::removeEntity(EntityBase* entity)
 void RenderingSystem::addUINode(cocos2d::Node* node)
 {
     this->addChild(node, 100);
-}
-
-
-void RenderingSystem::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& parentTransform, uint32_t parentFlags)
-{
-    _renderingNode->setScale(_gameScreenScale.x * _zoomScale, _gameScreenScale.y * _zoomScale);
-    for( auto& entity : _renderingNode->getChildren() )
-    {
-        auto ent = static_cast<EntityBase*>(entity);
-        ent->setPosition( ent->getWorldPosition() - _game->getCamera()->getCameraPos() );
-    }
-    ClippingRectangleNode::visit(renderer, parentTransform, parentFlags);
 }
 
 

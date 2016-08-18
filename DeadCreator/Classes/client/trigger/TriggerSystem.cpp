@@ -117,11 +117,15 @@ bool TriggerSystem::initWithResource(GameResource* res)
 
 void TriggerSystem::update(float dt)
 {
+    std::chrono::duration<double> curr = std::chrono::system_clock::now().time_since_epoch();
+    if ( (curr - _lastTriggerExecutedTime).count() < _triggerExecuteTime ) return ;
+    
     for (auto& trigger : _triggers)
     {
         if ( trigger.second->isReady() )
         {
             trigger.second->doAction();
+            _lastTriggerExecutedTime = std::chrono::system_clock::now().time_since_epoch();
         }
     }
     

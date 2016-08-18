@@ -43,6 +43,7 @@ namespace realtrick
         class GameResource;
         class EntityManager;
         class UiLayer;
+        class Camera2D;
         
         class Game : public cocos2d::Node
         {
@@ -101,6 +102,8 @@ namespace realtrick
             void runCrossHairEffect(const std::string& name);
             void displayText(const std::string& text);
             
+            Camera2D* getCamera() const { return _camera; }
+            
         private:
             
             cocos2d::Size _winSize;
@@ -126,6 +129,9 @@ namespace realtrick
             
             // ui
             UiLayer* _uiLayer;
+            
+            // camera
+            Camera2D* _camera;
             
             LogicStream* _logicStream;
             

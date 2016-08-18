@@ -9,6 +9,7 @@
 #pragma once
 
 #include <vector>
+#include <chrono>
 
 #include "cocos2d.h"
 #include "GameTrigger.hpp"
@@ -28,7 +29,11 @@ namespace realtrick
             
         public:
             
-            explicit TriggerSystem(Game* game) : _game(game), _isRemoveListDirty(false)
+            explicit TriggerSystem(Game* game) :
+            _game(game),
+            _isRemoveListDirty(false),
+            _lastTriggerExecutedTime(std::chrono::system_clock::now().time_since_epoch()),
+            _triggerExecuteTime(0.33)
             {}
             virtual ~TriggerSystem() = default;
             
@@ -56,6 +61,9 @@ namespace realtrick
             cocos2d::Map<int, GameTrigger*> _triggers;
             std::vector<int> _removeIDList;
             bool _isRemoveListDirty;
+            
+            std::chrono::duration<double> _lastTriggerExecutedTime;
+            double _triggerExecuteTime;
             
         };
         

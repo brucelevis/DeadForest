@@ -9,6 +9,7 @@
 #include "HumanBase.hpp"
 #include "ParamLoader.hpp"
 #include "Game.hpp"
+#include "Camera2D.hpp"
 #include "RenderingSystem.hpp"
 #include "ZombieBrain.hpp"
 #include "AnimatedFiniteEntity.hpp"
@@ -233,7 +234,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
     if ( msg.msg == MessageType::PLAY_SOUND )
     {
         SoundSource* s =  static_cast<SoundSource*>(msg.extraInfo);
-        float t = (1.0f - (s->position - _game->getRenderingSysetm()->getCameraPosition()).getLength() / s->soundRange) * s->volume;
+        float t = (1.0f - (s->position - _game->getCamera()->getCameraPos()).getLength() / s->soundRange) * s->volume;
         experimental::AudioEngine::setVolume( experimental::AudioEngine::play2d(s->fileName), t);
         
         ret = true;

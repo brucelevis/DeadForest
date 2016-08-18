@@ -47,6 +47,7 @@ Game::~Game()
 void Game::clear()
 {
     CC_SAFE_DELETE(_logicStream);
+    CC_SAFE_DELETE(_camera);
     experimental::AudioEngine::stop(_bgmID);
 }
 
@@ -81,6 +82,9 @@ bool Game::init()
     this->scheduleUpdate();
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 
+    _camera = new Camera2D();
+    
+    
 //    if ( Prm.getValueAsBool("useNetwork") ) _logicStream = new ServerStream(this);
 //    else _logicStream = new SingleStream(this);
     
@@ -102,7 +106,7 @@ void Game::update(float dt)
     // checking pause is done
     if ( _isPaused ) return ;
     
-    pair<int, int> oldIndex = getFocusedTileIndex(_renderingSystem->getCameraPosition(),
+    pair<int, int> oldIndex = getFocusedTileIndex(_camera->getCameraPos(),
                                                   _gameResource->getTileWidth(),
                                                   _gameResource->getTileHeight(), DUMMY_TILE_SIZE);
     
@@ -110,17 +114,20 @@ void Game::update(float dt)
     _entityManager->update(dt);
     
     // 2. set game camera position and chunk update (if cell space is changed)
-    _renderingSystem->setCameraPosition(_entityManager->getPlayerPtr()->getWorldPosition());
+    _camera->setCameraPos(_entityManager->getPlayerPtr()->getWorldPosition());
     
-    if ( oldIndex != getFocusedTileIndex(_renderingSystem->getCameraPosition(),
+    if ( oldIndex != getFocusedTileIndex(_camera->getCameraPos(),
                                          _gameResource->getTileWidth(),
                                          _gameResource->getTileHeight(), DUMMY_TILE_SIZE) )
     {
-        _renderingSystem->updateChunk();
+        _renderingSystem->updateChunk(_camera);
     }
     
     // 3. trigger update and execute
     _triggerSystem->update(dt);
+    
+    // 4. rendering
+    _renderingSystem->render(_camera);
     
     _messenger->dispatchDelayedMessages();
 }

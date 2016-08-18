@@ -9,9 +9,9 @@
 #include "RenderingSystem.hpp"
 #include "SizeProtocol.h"
 #include "Terrain.hpp"
-#include "Camera2D.hpp"
 #include "EntityBase.hpp"
 #include "UiLayer.hpp"
+#include "Camera2D.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -23,7 +23,6 @@ RenderingSystem::RenderingSystem(Game* game) : _game(game)
 
 RenderingSystem::~RenderingSystem()
 {
-    CC_SAFE_DELETE(_camera);
 }
 
 
@@ -47,37 +46,24 @@ bool RenderingSystem::init(GameResource* res)
     
     _gameScreenScale = Vec2(GAME_SCREEN_WIDTH / 1136, GAME_SCREEN_HEIGHT / 640);
     
-    _clipNode = ClippingRectangleNode::create(cocos2d::Rect(0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
-    addChild(_clipNode);
-    
     _renderingNode = Node::create();
     _renderingNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
-    _clipNode->addChild(_renderingNode);
+    _renderingNode->retain();
     
     _terrain = Terrain::create(_game);
     _renderingNode->addChild(_terrain);
-    
-    _camera = new Camera2D();
+
+    _fbo = RenderTexture::create(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+    _fbo->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
+    addChild(_fbo, 5);
     
     return true;
 }
 
 
-cocos2d::Vec2 RenderingSystem::getCameraPosition() const
+void RenderingSystem::updateChunk(Camera2D* camera)
 {
-    return _camera->getCameraPos();
-}
-
-
-void RenderingSystem::setCameraPosition(const cocos2d::Vec2& pos)
-{
-    _camera->setCameraPos(pos);
-}
-
-
-void RenderingSystem::updateChunk()
-{
-    _terrain->updateChunk(getCameraPosition());
+    _terrain->updateChunk(camera->getCameraPos());
 }
 
 
@@ -95,20 +81,29 @@ void RenderingSystem::removeEntity(EntityBase* entity)
 
 void RenderingSystem::addUINode(cocos2d::Node* node)
 {
-    _clipNode->addChild(node, 100);
+    this->addChild(node, 100);
 }
 
 
-void RenderingSystem::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags)
+void RenderingSystem::render(Camera2D* camera)
+{
+    _fbo->beginWithClear(0.0, 0.0, 1.0, 0.2);
+    
+    cameraTransform(camera);
+    _renderingNode->visit();
+    
+    _fbo->end();
+}
+
+
+void RenderingSystem::cameraTransform(Camera2D* camera)
 {
     _renderingNode->setScale(_gameScreenScale.x * _zoomScale, _gameScreenScale.y * _zoomScale);
-    
     for( auto& entity : _renderingNode->getChildren() )
     {
         auto ent = static_cast<EntityBase*>(entity);
-        ent->setPosition( ent->getWorldPosition() - getCameraPosition() );
+        ent->setPosition( ent->getWorldPosition() - camera->getCameraPos() );
     }
-    Node::visit(renderer, transform, flags);
 }
 
 

@@ -34,17 +34,15 @@ namespace realtrick
             static RenderingSystem* create(Game* game, GameResource* res);
             bool init(GameResource* res);
             
-            virtual void visit(cocos2d::Renderer *renderer, const cocos2d::Mat4& transform, uint32_t flags) override;
+            void render(Camera2D* camera);
             
-            cocos2d::Vec2 getCameraPosition() const;
-            void setCameraPosition(const cocos2d::Vec2& pos);
-            
-            void updateChunk();
+            void updateChunk(Camera2D* camera);
             void setZoom(float r) { _zoomScale = r; }
             cocos2d::Vec2 getZoomScale() const
             {
                 return cocos2d::Vec2(_zoomScale * _gameScreenScale.x, _zoomScale * _gameScreenScale.y);
             }
+            void cameraTransform(Camera2D* camera);
             
             cocos2d::Vec2 getGameScreenScale() const { return _gameScreenScale; }
             
@@ -57,14 +55,14 @@ namespace realtrick
             Game* _game;
             GameResource* _gameResource;
             
-            cocos2d::ClippingRectangleNode* _clipNode;
             cocos2d::Node* _renderingNode;
             
             float _zoomScale;
             cocos2d::Vec2 _gameScreenScale;
             
-            Camera2D* _camera;
             Terrain* _terrain;
+            
+            cocos2d::RenderTexture* _fbo;
             
         };
         

@@ -2,23 +2,34 @@
 //  DeferredRendering.cpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 8. 18..
+//  Created by mac on 2016. 8. 19..
 //
 //
 
 #include "DeferredRendering.hpp"
 #include "RenderTarget.hpp"
 #include "RenderingSystem.hpp"
+#include "Effects.hpp"
 #include "EntityBase.hpp"
 using namespace realtrick::client;
-using namespace cocos2d;
 
 
-
-DeferredRendering* DeferredRendering::create(RenderingSystem* sys, const cocos2d::Size& size, const std::string& frag)
+DeferredRendering::DeferredRendering()
 {
-    auto ret = new (std::nothrow) DeferredRendering(sys);
-    if ( ret && ret->init(size, frag) )
+}
+
+
+DeferredRendering::~DeferredRendering()
+{
+    for ( const auto& target: _renderTargets ) CC_SAFE_RELEASE(target.second);
+    _renderTargets.clear();
+}
+
+
+DeferredRendering* DeferredRendering::create(const std::string& basicTextureName)
+{
+    auto ret = new (std::nothrow) DeferredRendering();
+    if ( ret && ret->initWithFile(basicTextureName) )
     {
         ret->autorelease();
         return ret;
@@ -28,40 +39,23 @@ DeferredRendering* DeferredRendering::create(RenderingSystem* sys, const cocos2d
 }
 
 
-bool DeferredRendering::init(const Size& size, const std::string& frag)
+bool DeferredRendering::initWithFile(const std::string& basicTextureName)
 {
-    if ( !Node::init() )
+    if ( !EffectSprite::initWithFile(basicTextureName) )
         return false;
     
-    _size = size;
+    setFlippedY(true);
+    setEffect(EffectDeferredRendering::create());
     
-    _fragFileName = frag;
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    auto listener = EventListenerCustom::create(EVENT_RENDERER_RECREATED, [this](EventCustom* event){
-        this->setGLProgramState(nullptr);
-        loadShader("", _fragFileName);
-    });
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-#endif
-    
-    loadShader(_fragFileName);
-    
-    _time = 0.0f;
-    _resolution = Vec2(size.width, size.height);
-    
-    scheduleUpdate();
-    
-    setContentSize(size);
-    setAnchorPoint(Vec2(0.5f, 0.5f));
-    
-    _renderTargets["u_staticTex"] = RenderTarget::create(size);
-    _renderTargets["u_dynamicTex"] = RenderTarget::create(size);
-    _renderTargets["u_normalTex"] = RenderTarget::create(size);
-    _renderTargets["u_occlusionTex"] = RenderTarget::create(size);
+    // reserved render targets
+    _renderTargets.insert( {"u_staticTex", RenderTarget::create(getContentSize())} );
+    _renderTargets.insert( {"u_dynamicTex", RenderTarget::create(getContentSize())} );
+    _renderTargets.insert( {"u_normalTex", RenderTarget::create(getContentSize())} );
+    _renderTargets.insert( {"u_occlusionTex", RenderTarget::create(getContentSize())} );
     
     for( const auto& renderTarget : _renderTargets )
     {
-        renderTarget.second->setPosition(size);
+        renderTarget.second->setPosition(getContentSize() / 2);
         renderTarget.second->retain();
     }
     
@@ -69,87 +63,22 @@ bool DeferredRendering::init(const Size& size, const std::string& frag)
 }
 
 
-void DeferredRendering::update(float dt)
-{
-    _time += dt;
-}
-
-
-void DeferredRendering::loadShader(const std::string& frag)
-{
-    auto fileUtiles = FileUtils::getInstance();
-    
-    // frag
-    auto fragmentFilePath = fileUtiles->fullPathForFilename(frag);
-    auto fragSource = fileUtiles->getStringFromFile(fragmentFilePath);
-    
-    auto glprogram = GLProgram::createWithByteArrays(ccPositionTextureColor_vert, fragSource.c_str());
-    auto glprogramstate = GLProgramState::getOrCreateWithGLProgram(glprogram);
-    setGLProgramState(glprogramstate);
-}
-
-
-void DeferredRendering::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
+void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const cocos2d::Vec2& cameraPos)
 {
     for ( const auto& target : _renderTargets )
     {
-        target.second->transform(_renderingSystem->getZoomScale(), _renderingSystem->getCameraPosition());
+        target.second->transform(zoomScale, cameraPos);
         getGLProgramState()->setUniformTexture(target.first, target.second->getTexture());
     }
-    
-    _customCommand.init(_globalZOrder, transform, flags);
-    _customCommand.func = CC_CALLBACK_0(DeferredRendering::onDraw, this, transform, flags);
-    renderer->addCommand(&_customCommand);
 }
 
 
-void DeferredRendering::onDraw(const cocos2d::Mat4 &transform, uint32_t flags)
-{
-    cocos2d::Vec2 origin = Vec2::ZERO;
-    cocos2d::Node* p = getParent();
-    while( p && p->isVisible() )
-    {
-        origin += p->getPosition();
-        p = p->getParent();
-    }
-    
-    float w = _size.width;
-    float h = _size.height;
-    GLfloat vertices[12] = {0,0, w,0, w,h, 0,0, 0,h, w,h};
-    
-    auto glProgramState = getGLProgramState();
-    glProgramState->setUniformVec2("u_resolution", _resolution);
-    glProgramState->setUniformVec2("u_origin", origin);
-    glProgramState->setVertexAttribPointer("a_position", 2, GL_FLOAT, GL_FALSE, 0, vertices);
-    
-    glProgramState->apply(transform);
-    
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    
-    CC_INCREMENT_GL_DRAWN_BATCHES_AND_VERTICES(1,6);
-}
-
-
-void DeferredRendering::addNode(const std::string& renderTargetName, EntityBase* node, int zOrder)
+void DeferredRendering::addEntity(const std::string& renderTargetName, EntityBase* node, int zOrder)
 {
     // exception!!
     if ( _renderTargets.count(renderTargetName) == 0 ) throw std::runtime_error("render target is not exist");
-    
     _renderTargets[renderTargetName]->addChild(node, zOrder);
 }
-
-
-void DeferredRendering::setPosition(const Vec2 &newPosition)
-{
-    Node::setPosition(newPosition);
-    auto position = getPosition();
-    auto frameSize = Director::getInstance()->getOpenGLView()->getFrameSize();
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    auto retinaFactor = Director::getInstance()->getOpenGLView()->getRetinaFactor();
-    _center = Vec2(position.x * frameSize.width / visibleSize.width * retinaFactor, position.y * frameSize.height / visibleSize.height * retinaFactor);
-}
-
-
 
 
 

@@ -14,7 +14,7 @@ using namespace cocos2d;
 
 RenderTarget::~RenderTarget()
 {
-    _renderTexture->release();
+    CC_SAFE_RELEASE(_renderTexture);
 }
 
 
@@ -45,7 +45,7 @@ bool RenderTarget::init(const cocos2d::Size& textureSize)
 
 void RenderTarget::transform(const cocos2d::Vec2& scale, const cocos2d::Vec2& translate)
 {
-    _renderTexture->setScale(scale.x, scale.y);
+    setScale(scale.x, scale.y);
     for( auto& entity : getChildren() )
     {
         auto ent = static_cast<EntityBase*>(entity);
@@ -56,7 +56,7 @@ void RenderTarget::transform(const cocos2d::Vec2& scale, const cocos2d::Vec2& tr
 
 cocos2d::Texture2D* RenderTarget::getTexture()
 {
-    _renderTexture->beginWithClear(0.0, 0.0, 0.0, 1.0);
+    _renderTexture->beginWithClear(0.0, 0.0, 0.0, 0.0);
     cocos2d::Node::visit();
     _renderTexture->end();
     

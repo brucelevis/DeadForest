@@ -17,8 +17,7 @@ using namespace cocos2d;
 //
 void EffectBlur::setTarget(EffectSprite *sprite)
 {
-    if (_glprogramstate == nullptr)
-        return;
+    if (_glprogramstate == nullptr) return;
     
     Size size = sprite->getTexture()->getContentSizeInPixels();
     _glprogramstate->setUniformVec2("resolution", size);
@@ -83,6 +82,8 @@ bool EffectNoise::init()
 
 void EffectNoise::setTarget(EffectSprite* sprite)
 {
+    if (_glprogramstate == nullptr) return;
+    
     auto s = sprite->getTexture()->getContentSizeInPixels();
     getGLProgramState()->setUniformVec2("resolution", Vec2(s.width, s.height));
 }
@@ -92,23 +93,22 @@ void EffectNoise::setTarget(EffectSprite* sprite)
 //
 // Effect Deferred Rendering
 //
-void EffectDeferredRendering::setTarget(EffectSprite *sprite)
-{
-    if (_glprogramstate == nullptr)
-        return;
-    
-    Size size = sprite->getTexture()->getContentSizeInPixels();
-    _glprogramstate->setUniformVec2("resolution", size);
-}
-
-
 bool EffectDeferredRendering::init()
 {
-    initGLProgramState("shader_test.fsh");
+    initGLProgramState("shader_deferred.fsh");
     return true;
 }
 
 
+void EffectDeferredRendering::setTarget(EffectSprite* sprite)
+{
+    if (_glprogramstate == nullptr) return;
+    
+//    auto size = sprite->getTexture()->getContentSizeInPixels();
+//    _glprogramstate->setUniformVec2("resolution", size);
+//    _glprogramstate->setUniformFloat("blurRadius", 10.0f);
+//    _glprogramstate->setUniformFloat("sampleNum", 5.0f);
+}
 
 
 

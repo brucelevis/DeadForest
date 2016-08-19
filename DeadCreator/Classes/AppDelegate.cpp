@@ -10,8 +10,8 @@
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-//static cocos2d::Size designResolutionSize = cocos2d::Size(SCREEN_WIDTH, SCREEN_HEIGHT);
+//static cocos2d::Size designResolutionSize = cocos2d::Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+static cocos2d::Size designResolutionSize = cocos2d::Size(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 AppDelegate::AppDelegate() {
     
@@ -50,8 +50,8 @@ bool AppDelegate::applicationDidFinishLaunching()
     
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images.plist");
     
-//    auto scene = realtrick::editor::EditScene::createScene();
-    auto scene = realtrick::client::Game::createScene();
+    auto scene = realtrick::editor::EditScene::createScene();
+//    auto scene = realtrick::client::Game::createScene();
 //    auto scene = realtrick::client::ShaderTestScene::createScene();
     director->runWithScene(scene);
     

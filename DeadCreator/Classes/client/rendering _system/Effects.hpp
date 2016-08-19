@@ -74,11 +74,10 @@ namespace realtrick
             
             CREATE_FUNC(EffectDeferredRendering);
             bool init();
-            virtual void setTarget(EffectSprite *sprite) override;
             
         protected:
-    
             
+            void setTarget(EffectSprite* sprite);
             
         };
     

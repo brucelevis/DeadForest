@@ -22,6 +22,7 @@ namespace realtrick
         class EntityBase;
         class EffectBase;
         class EffectSprite;
+        class DeferredRendering;
         
         class RenderingSystem : public cocos2d::ClippingRectangleNode
         {
@@ -53,19 +54,12 @@ namespace realtrick
             Game* _game;
             GameResource* _gameResource;
             
-            Node* _renderNode;
-            cocos2d::Vector<EffectBase*> _effects;
+            Terrain* _terrain;
             
-            cocos2d::RenderTexture* _rt;
-            cocos2d::RenderTexture* _rt2;
-            EffectSprite* _testEffect;
-            cocos2d::Sprite* _testChild;
-            
-            
+            DeferredRendering* _deferredRendering;
+     
             float _zoomScale;
             cocos2d::Vec2 _gameScreenScale;
-            
-            Terrain* _terrain;
             
         };
         

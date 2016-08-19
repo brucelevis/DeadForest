@@ -53,6 +53,32 @@ EffectSprite* EffectSprite::create(const std::string& filename)
 }
 
 
+EffectSprite* EffectSprite::createWithTexture(const std::string& filename)
+{
+    EffectSprite *sprite = new (std::nothrow) EffectSprite();
+    if (sprite && sprite->initWithTexture(Director::getInstance()->getTextureCache()->addImage(filename)))
+    {
+        sprite->autorelease();
+        return sprite;
+    }
+    CC_SAFE_DELETE(sprite);
+    return nullptr;
+}
+
+
+EffectSprite* EffectSprite::createWithTexture(cocos2d::Texture2D* texture)
+{
+    EffectSprite *sprite = new (std::nothrow) EffectSprite();
+    if (sprite && sprite->initWithTexture(texture))
+    {
+        sprite->autorelease();
+        return sprite;
+    }
+    CC_SAFE_DELETE(sprite);
+    return nullptr;
+}
+
+
 void EffectSprite::setEffect(EffectBase* effect)
 {
     if(_defaultEffect != effect)

@@ -24,6 +24,8 @@ namespace realtrick
             
             static EffectSprite* create();
             static EffectSprite* create(const std::string& filename);
+            static EffectSprite* createWithTexture(const std::string& filename);
+            static EffectSprite* createWithTexture(cocos2d::Texture2D* texture);
             
             void setEffect(EffectBase* effect);
             void addEffect(EffectBase* effect, ssize_t order);

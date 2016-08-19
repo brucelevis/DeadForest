@@ -28,7 +28,7 @@ DeferredRendering* DeferredRendering::create(RenderingSystem* sys, const cocos2d
 }
 
 
-bool DeferredRendering::init(const cocos2d::Size& size, const std::string& frag)
+bool DeferredRendering::init(const Size& size, const std::string& frag)
 {
     if ( !Node::init() )
         return false;
@@ -46,6 +46,14 @@ bool DeferredRendering::init(const cocos2d::Size& size, const std::string& frag)
     
     loadShader(_fragFileName);
     
+    _time = 0.0f;
+    _resolution = Vec2(size.width, size.height);
+    
+    scheduleUpdate();
+    
+    setContentSize(size);
+    setAnchorPoint(Vec2(0.5f, 0.5f));
+    
     _renderTargets["u_staticTex"] = RenderTarget::create(size);
     _renderTargets["u_dynamicTex"] = RenderTarget::create(size);
     _renderTargets["u_normalTex"] = RenderTarget::create(size);
@@ -53,28 +61,29 @@ bool DeferredRendering::init(const cocos2d::Size& size, const std::string& frag)
     
     for( const auto& renderTarget : _renderTargets )
     {
-        renderTarget.second->setPosition(size / 2);
+        renderTarget.second->setPosition(size);
         renderTarget.second->retain();
-//        addChild(renderTarget.second);
     }
     
     return true;
 }
 
 
-void DeferredRendering::loadShader(const std::string &frag)
+void DeferredRendering::update(float dt)
+{
+    _time += dt;
+}
+
+
+void DeferredRendering::loadShader(const std::string& frag)
 {
     auto fileUtiles = FileUtils::getInstance();
-    
-    // vert
-    std::string vertSource;
-    vertSource = ccPositionTextureColor_vert;
     
     // frag
     auto fragmentFilePath = fileUtiles->fullPathForFilename(frag);
     auto fragSource = fileUtiles->getStringFromFile(fragmentFilePath);
     
-    auto glprogram = GLProgram::createWithByteArrays(vertSource.c_str(), fragSource.c_str());
+    auto glprogram = GLProgram::createWithByteArrays(ccPositionTextureColor_vert, fragSource.c_str());
     auto glprogramstate = GLProgramState::getOrCreateWithGLProgram(glprogram);
     setGLProgramState(glprogramstate);
 }
@@ -84,40 +93,61 @@ void DeferredRendering::draw(Renderer *renderer, const Mat4 &transform, uint32_t
 {
     for ( const auto& target : _renderTargets )
     {
-        const auto& textureName = target.first;
-        const auto& renderTarget = target.second;
-        renderTarget->transform(_renderingSystem->getZoomScale(), _renderingSystem->getCameraPosition());
-        this->getGLProgramState()->setUniformTexture(textureName, renderTarget->getTexture());
+        target.second->transform(_renderingSystem->getZoomScale(), _renderingSystem->getCameraPosition());
+        getGLProgramState()->setUniformTexture(target.first, target.second->getTexture());
+    }
+    
+    _customCommand.init(_globalZOrder, transform, flags);
+    _customCommand.func = CC_CALLBACK_0(DeferredRendering::onDraw, this, transform, flags);
+    renderer->addCommand(&_customCommand);
+}
+
+
+void DeferredRendering::onDraw(const cocos2d::Mat4 &transform, uint32_t flags)
+{
+    cocos2d::Vec2 origin = Vec2::ZERO;
+    cocos2d::Node* p = getParent();
+    while( p && p->isVisible() )
+    {
+        origin += p->getPosition();
+        p = p->getParent();
     }
     
     float w = _size.width;
     float h = _size.height;
     GLfloat vertices[12] = {0,0, w,0, w,h, 0,0, 0,h, w,h};
-    this->getGLProgramState()->setVertexAttribPointer("a_position", 2, GL_FLOAT, GL_FALSE, 0, vertices);
     
-    _customCommand.init(_globalZOrder, transform, flags);
-    _customCommand.func = std::bind(&DeferredRendering::onDraw, this, transform, flags);
-    renderer->addCommand(&_customCommand);
-}
-
-
-void DeferredRendering::onDraw(const Mat4 &transform, uint32_t flags)
-{
-    this->getGLProgramState()->apply(transform);
+    auto glProgramState = getGLProgramState();
+    glProgramState->setUniformVec2("u_resolution", _resolution);
+    glProgramState->setUniformVec2("u_origin", origin);
+    glProgramState->setVertexAttribPointer("a_position", 2, GL_FLOAT, GL_FALSE, 0, vertices);
+    
+    glProgramState->apply(transform);
     
     glDrawArrays(GL_TRIANGLES, 0, 6);
+    
     CC_INCREMENT_GL_DRAWN_BATCHES_AND_VERTICES(1,6);
 }
 
 
 void DeferredRendering::addNode(const std::string& renderTargetName, EntityBase* node, int zOrder)
 {
-//    if ( _renderTargets.count(renderTargetName) == 0 )
-//        throw std::runtime_error("render target name is not exist");
-
+    // exception!!
+    if ( _renderTargets.count(renderTargetName) == 0 ) throw std::runtime_error("render target is not exist");
+    
     _renderTargets[renderTargetName]->addChild(node, zOrder);
 }
 
+
+void DeferredRendering::setPosition(const Vec2 &newPosition)
+{
+    Node::setPosition(newPosition);
+    auto position = getPosition();
+    auto frameSize = Director::getInstance()->getOpenGLView()->getFrameSize();
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    auto retinaFactor = Director::getInstance()->getOpenGLView()->getRetinaFactor();
+    _center = Vec2(position.x * frameSize.width / visibleSize.width * retinaFactor, position.y * frameSize.height / visibleSize.height * retinaFactor);
+}
 
 
 

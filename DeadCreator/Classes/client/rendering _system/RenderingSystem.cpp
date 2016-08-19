@@ -14,6 +14,7 @@
 #include "Camera2D.hpp"
 #include "Game.hpp"
 #include "DeferredRendering.hpp"
+#include "EffectSprite.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -50,13 +51,33 @@ bool RenderingSystem::init(GameResource* res)
     
     _gameScreenScale = Vec2(GAME_SCREEN_WIDTH / 1136, GAME_SCREEN_HEIGHT / 640);
     
-    _deferredRendering = DeferredRendering::create(this, Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT), "shader_test.fsh");
-    addChild(_deferredRendering);
+//    _deferredRendering = DeferredRendering::create(this, Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT), "shader_test.fsh");
+//    _deferredRendering->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2));
+//    addChild(_deferredRendering);
+    
+    _renderTarget = EffectSprite::create("HelloWorld.png");
+    addChild(_renderTarget);
+    
+    _renderNode = Node::create();
+    _renderNode->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2));
+    addChild(_renderNode);
     
     _terrain = Terrain::create(_game);
-    _deferredRendering->addNode("u_staticTex", _terrain);
+    _renderNode->addChild(_terrain);
     
     return true;
+}
+
+
+void RenderingSystem::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t flags)
+{
+    _renderNode->setScale(getZoomScale().x, getZoomScale().y);
+    for( auto& entity : _renderNode->getChildren() )
+    {
+        auto ent = static_cast<EntityBase*>(entity);
+        ent->setPosition( ent->getWorldPosition() - getCameraPosition() );
+    }
+    ClippingRectangleNode::visit(renderer, transform, flags);
 }
 
 
@@ -68,7 +89,7 @@ void RenderingSystem::updateChunk(Camera2D* camera)
 
 void RenderingSystem::addEntity(EntityBase* entity, int zOrder)
 {
-    _deferredRendering->addNode("u_dynamicTex", entity, zOrder);
+    _renderNode->addChild(entity, zOrder);
 }
 
 

@@ -12,6 +12,12 @@ using namespace realtrick::client;
 using namespace cocos2d;
 
 
+RenderTarget::~RenderTarget()
+{
+    _renderTexture->release();
+}
+
+
 RenderTarget* RenderTarget::create(const cocos2d::Size& textureSize)
 {
     auto ret = new (std::nothrow) RenderTarget();
@@ -31,7 +37,7 @@ bool RenderTarget::init(const cocos2d::Size& textureSize)
         return false;
     
     _renderTexture = cocos2d::RenderTexture::create(textureSize.width, textureSize.height);
-    addChild(_renderTexture);
+    _renderTexture->retain();
     
     return true;
 }
@@ -39,7 +45,7 @@ bool RenderTarget::init(const cocos2d::Size& textureSize)
 
 void RenderTarget::transform(const cocos2d::Vec2& scale, const cocos2d::Vec2& translate)
 {
-    setScale(scale.x, scale.y);
+    _renderTexture->setScale(scale.x, scale.y);
     for( auto& entity : getChildren() )
     {
         auto ent = static_cast<EntityBase*>(entity);

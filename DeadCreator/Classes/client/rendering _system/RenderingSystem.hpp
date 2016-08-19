@@ -23,6 +23,7 @@ namespace realtrick
         class EntityBase;
         class UiLayer;
         class DeferredRendering;
+        class EffectSprite;
         
         class RenderingSystem : public cocos2d::ClippingRectangleNode
         {
@@ -43,6 +44,7 @@ namespace realtrick
             }
             
             cocos2d::Vec2 getCameraPosition() const;
+            virtual void visit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t flags) override;
             
             void addEntity(EntityBase* entity, int zOrder = 0);
             void removeEntity(EntityBase* entity);
@@ -54,6 +56,9 @@ namespace realtrick
             GameResource* _gameResource;
             
             DeferredRendering* _deferredRendering;
+            EffectSprite* _renderTarget;
+            
+            cocos2d::Node* _renderNode;
             
             float _zoomScale;
             cocos2d::Vec2 _gameScreenScale;

@@ -22,6 +22,7 @@ namespace realtrick
             
         public:
             
+            virtual ~RenderTarget();
             static RenderTarget* create(const cocos2d::Size& textureSize);
             bool init(const cocos2d::Size& textureSize);
             void transform(const cocos2d::Vec2& scale, const cocos2d::Vec2& translate);

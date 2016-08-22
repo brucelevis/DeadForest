@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "cocos2d.h"
+
 #define ADD_FAMILY_MASK(src, mask) addMask(src, mask)
 
 namespace realtrick

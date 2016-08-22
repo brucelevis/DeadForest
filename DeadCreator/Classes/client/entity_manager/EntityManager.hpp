@@ -32,7 +32,7 @@ namespace realtrick
             {}
             
             virtual ~EntityManager() = default;
-            static EntityManager* createWithResouce(Game* game, GameResource* res, PlayerType ownPlayer)
+            static EntityManager* createWithResouce(Game* game, GameResource* res, realtrick::PlayerType ownPlayer)
             {
                 auto ret = new (std::nothrow) EntityManager(game);
                 if ( ret && ret->initWithResource(res, ownPlayer) )
@@ -56,7 +56,7 @@ namespace realtrick
                 return nullptr;
             }
             
-            bool initWithResource(GameResource* res, PlayerType ownPlayer);
+            bool initWithResource(GameResource* res, realtrick::PlayerType ownPlayer);
             bool init() { return true; }
             
             void addEntity(EntityBase* entity);
@@ -76,7 +76,7 @@ namespace realtrick
             Game* _game;
             std::map<int, EntityBase*> _entities;
             EntityPlayer* _player;
-            PlayerType _playerType;
+            realtrick::PlayerType _playerType;
             
         };
         

@@ -14,6 +14,7 @@
 
 #include <string>
 #include <array>
+#include <deque>
 
 #include "Singleton.hpp"
 #include "Packet.hpp"

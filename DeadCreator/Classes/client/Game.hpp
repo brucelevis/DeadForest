@@ -19,6 +19,7 @@
 #include "MessageDispatcher.hpp"
 #include "MessageNode.hpp"
 #include "SimpleReleasePool.hpp"
+#include "Physics.hpp"
 
 #define Z_ORDER_GAME_MAP    0
 #define Z_ORDER_SHADOW      1
@@ -81,9 +82,9 @@ namespace realtrick
             
             std::list<EntityBase*> getNeighborsOnMove(const cocos2d::Vec2& pos, float speed) const;
             std::list<EntityBase*> getNeighborsOnAttack(const cocos2d::Vec2& pos, const cocos2d::Vec2& dir, float range) const;
-            std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& pos, float speed) const;
-            std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
-            std::vector<Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const Segment& ray) const;
+            std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, float speed) const;
+            std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
+            std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const Segment& ray) const;
             
             TileType getStepOnTileType(const cocos2d::Vec2& pos);
             

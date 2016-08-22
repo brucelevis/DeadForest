@@ -39,7 +39,7 @@ namespace realtrick
             }
             
             void setEntryBullet(WeaponBase* weapon);
-            void setEntryBullet(EntityType bulletType);
+            void setEntryBullet(realtrick::EntityType bulletType);
             
             int getRemainBullet() const { return _numOfRemainBullet; }
             void setReloadCallBack(const cocos2d::ui::Widget::ccWidgetTouchCallback& callback) { _reloadButton->addTouchEventListener(callback); }

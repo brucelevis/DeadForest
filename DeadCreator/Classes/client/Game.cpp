@@ -184,9 +184,10 @@ std::list<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& position,
     return ret;
 }
 
-std::vector<Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, float speed) const
+
+std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, float speed) const
 {
-    std::vector<Polygon> ret;
+    std::vector<realtrick::Polygon> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
     for ( const int idx : cellIndices )
     {
@@ -203,9 +204,9 @@ std::vector<Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, float
 }
 
 
-std::vector<Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const
+std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const
 {
-    std::vector<Polygon> ret;
+    std::vector<realtrick::Polygon> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
     for ( const int idx : cellIndices )
     {
@@ -222,9 +223,9 @@ std::vector<Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const
 }
 
 
-std::vector<Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const Segment& ray) const
+std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const Segment& ray) const
 {
-    std::vector<Polygon> ret;
+    std::vector<realtrick::Polygon> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCellsNotCurrent(position);
     for ( const int idx : cellIndices )
     {

@@ -12,6 +12,7 @@
 #include "AnimatedButton.hpp"
 #include "Game.hpp"
 #include "ItemBase.hpp"
+using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
 

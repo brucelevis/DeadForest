@@ -49,7 +49,7 @@ namespace realtrick
             cocos2d::Size getSlotSize() const { return _slotSize; }
             
             int getItemAmount(ItemBase* item) const;
-            int getItemAmount(EntityType type) const;
+            int getItemAmount(realtrick::EntityType type) const;
             void setItemAmount(ItemBase* item, int amount);
             void disableOtherEquipedItem(int idx);
             bool isExistItem(ItemBase* item);

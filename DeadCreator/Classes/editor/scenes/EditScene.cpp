@@ -431,7 +431,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
         auto gmxFile = DeadCreator::GetGMXFile(loadData.c_str());
         
         auto file = new GMXFile();
-        file->fileName = path(filePath).leaf().native();
+        file->fileName = path(filePath).leaf().string();
         file->defaultTile = gmxFile->default_type();
         file->numOfTileX = gmxFile->number_of_tiles()->x();
         file->numOfTileY = gmxFile->number_of_tiles()->y();

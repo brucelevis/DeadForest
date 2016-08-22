@@ -9,6 +9,7 @@
 #pragma once
 
 #include <chrono>
+#include <bitset>
 
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"

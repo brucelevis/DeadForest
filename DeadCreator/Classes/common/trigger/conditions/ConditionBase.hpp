@@ -9,6 +9,7 @@
 #pragma once
 
 #include <vector>
+#include <bitset>
 
 #include "cocos2d.h"
 

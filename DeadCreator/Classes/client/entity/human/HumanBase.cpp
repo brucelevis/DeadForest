@@ -115,7 +115,7 @@ bool HumanBase::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase
 }
 
 
-bool HumanBase::isIntersectWall(const cocos2d::Vec2& futurePosition, const Polygon& wall)
+bool HumanBase::isIntersectWall(const cocos2d::Vec2& futurePosition, const realtrick::Polygon& wall)
 {
     for( int i = 0 ; i < wall.vertices.size() - 1 ; ++ i)
     {
@@ -159,7 +159,7 @@ void HumanBase::moveEntity()
     }
     
     // 벽과의 충돌처리
-    const std::vector<Polygon> walls = _game->getNeighborWalls(futurePosition, _speed);
+    const std::vector<realtrick::Polygon> walls = _game->getNeighborWalls(futurePosition, _speed);
     for( const auto& wall : walls )
     {
         if ( isIntersectWall(futurePosition, wall) )

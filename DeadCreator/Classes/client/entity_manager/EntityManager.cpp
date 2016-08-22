@@ -12,6 +12,8 @@
 #include "EntityPlayer.hpp"
 #include "Items.hpp"
 #include "Brains.hpp"
+#include "Types.hpp"
+using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
 

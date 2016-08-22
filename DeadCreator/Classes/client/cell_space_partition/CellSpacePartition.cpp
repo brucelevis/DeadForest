@@ -46,7 +46,7 @@ void CellSpacePartition::addEntity(EntityBase* ent)
 }
 
 
-void CellSpacePartition::addWall(const Polygon& wall)
+void CellSpacePartition::addWall(const realtrick::Polygon& wall)
 {
     //
     //      -------- -------- --------
@@ -94,7 +94,7 @@ void CellSpacePartition::addWall(const Polygon& wall)
         cocos2d::Rect cellAABB = cell.boundingBox;
         if ( cellAABB.intersectsRect(wallAABB) )
         {
-            std::vector<Polygon> clippedWalls = clipping::getClippedPolygons(wall, cellAABB);
+            std::vector<realtrick::Polygon> clippedWalls = clipping::getClippedPolygons(wall, cellAABB);
             for( const auto& clippedWall : clippedWalls )
                 cell.walls.push_back(clippedWall);
         }

@@ -18,7 +18,7 @@ namespace realtrick
     namespace client
     {
         
-        class MessageNode;
+        struct MessageNode;
         
         class Telegram
         {

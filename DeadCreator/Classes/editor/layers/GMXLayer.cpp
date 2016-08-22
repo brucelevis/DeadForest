@@ -274,20 +274,26 @@ void GMXLayer::showLayer(bool& opened)
     ImGui::PopStyleVar(2);
     ImGui::PopStyleColor();
     
+	if (_isShowPalette) _paletteLayer->showLayer(_isShowPalette);
+	if (_isShowNavigator) _navigatorLayer->showLayer(_isShowNavigator);
+	if (_isShowHistory) _historyLayer->showLayer(_isShowHistory);
+	if (_isShowRenameLocationLayer) _renameLocationLayer->showLayer(_isShowRenameLocationLayer);
+	if (_isShowTriggerEdit) _triggerEditLayer->showLayer(_isShowTriggerEdit);
+	if (_isShowForceSetting) _forceSettingLayer->showLayer(_isShowForceSetting);
+
     if ( opened == false )
     {
         setVisible(false);
+
         _isShowPalette = false;
         _isShowNavigator = false;
+		_isShowHistory = false;
+		_isShowRenameLocationLayer = false;
+		_isShowTriggerEdit = false;
+		_isShowForceSetting = false;
+
         _imguiLayer.closeGMXLayer();
     }
-    
-    if ( _isShowPalette ) _paletteLayer->showLayer(_isShowPalette);
-    if ( _isShowNavigator ) _navigatorLayer->showLayer(_isShowNavigator);
-    if ( _isShowHistory ) _historyLayer->showLayer(_isShowHistory);
-    if ( _isShowRenameLocationLayer ) _renameLocationLayer->showLayer(_isShowRenameLocationLayer);
-    if ( _isShowTriggerEdit ) _triggerEditLayer->showLayer(_isShowTriggerEdit);
-    if ( _isShowForceSetting ) _forceSettingLayer->showLayer(_isShowForceSetting);
 }
 
 

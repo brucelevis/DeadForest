@@ -1,4 +1,4 @@
-#if (CC_TARGET_PLATFORM == CC_FLATFORM_WIN32)
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 )
 
 // ImGui GLFW binding with OpenGL
 // You can copy and use unmodified imgui_impl_* files in your project.

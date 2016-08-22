@@ -6,6 +6,8 @@
 //
 //
 
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
+
 #include "MainMenu3.hpp"
 #include "GeneratedPackets.hpp"
 #include "GameServer.hpp"

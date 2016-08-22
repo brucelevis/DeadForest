@@ -30,7 +30,7 @@ namespace realtrick
             
             explicit NewFileLayer(EditScene* layer) : _imguiLayer(layer)
             {
-                for(int i = 0 ; i < 8 ; ++ i) _playerOwners[i] = 0;
+                for(int i = 0 ; i < 9 ; ++ i) _playerOwners[i] = 0;
             }
             virtual ~NewFileLayer() = default;
             static NewFileLayer* create(EditScene* layer)
@@ -117,10 +117,10 @@ namespace realtrick
                     ImGui::BeginChild("Player Setting", ImVec2(370, 328), true);
                     ImGui::Text("Player Setting");
                     ImGui::Separator();
-                    for(int i = 0 ; i < 8 ; ++ i)
+                    for(int i = 1 ; i <= 8 ; ++ i)
                     {
                         ImGui::PushID(i);
-                        ImGui::TextUnformatted(std::string("Player " + _to_string(i + 1)).c_str());
+                        ImGui::TextUnformatted(std::string("Player " + _to_string(i)).c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(265);
                         ImGui::Combo("", &_playerOwners[i], "Human\0Computer\0Unused\0");
@@ -223,7 +223,7 @@ namespace realtrick
             int _numOfTileY = 0;
             int _currentTile = 0;
             
-            int _playerOwners[8];
+            int _playerOwners[9];
             
         };
         

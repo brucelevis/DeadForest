@@ -100,10 +100,11 @@ namespace realtrick
             
             void checkIsSaveFile()
             {
+				char slash = '/';
                 std::string temp = _filePath;
-                auto idx = temp.find_last_of('/');
+                auto idx = temp.find_last_of(slash);
                 temp = temp.substr(0, idx);
-                temp += '/';
+                temp += slash;
                 
                 boost::filesystem::path parentPath = boost::filesystem::path(temp);
                 _isPossibleSave = (_filePath[0] != '\0' &&

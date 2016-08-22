@@ -52,9 +52,6 @@ namespace realtrick
             
             void showLayer(bool& opened)
             {
-                ImGuiContext& g = *GImGui;
-                float height = g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
-                
                 ImGui::SetNextWindowPos(ImVec2(200, 200), ImGuiSetCond_Once);
                 ImGui::SetNextWindowSize(ImVec2(205, 300), ImGuiSetCond_Once);
                 

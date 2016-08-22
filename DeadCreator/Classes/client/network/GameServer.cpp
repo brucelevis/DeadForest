@@ -6,8 +6,6 @@
 //
 //
 
-#include <boost/bind.hpp>
-
 #include "GameServer.hpp"
 #include "Packet.hpp"
 #include "GeneratedPackets.hpp"

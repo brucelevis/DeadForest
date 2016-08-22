@@ -6,6 +6,8 @@
 //
 //
 
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
+
 #include "ConnectScene.hpp"
 #include "GameServer.hpp"
 #include "MainMenu3.hpp"

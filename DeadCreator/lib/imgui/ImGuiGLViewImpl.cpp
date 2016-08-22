@@ -41,8 +41,6 @@ THE SOFTWARE.
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 
-#include "SizeProtocol.h"
-
 NS_CC_BEGIN
 
 // GLFWEventHandler
@@ -139,9 +137,6 @@ public:
     {
         if (_view)
         {
-            if ( width < SCREEN_WIDTH / 2) width = SCREEN_WIDTH / 2;
-            if ( height < SCREEN_HEIGHT / 2 ) height = SCREEN_HEIGHT / 2;
-            
             _view->setFrameSize(width, height);
             _view->setDesignResolutionSize(width, height, ResolutionPolicy::SHOW_ALL);
         }

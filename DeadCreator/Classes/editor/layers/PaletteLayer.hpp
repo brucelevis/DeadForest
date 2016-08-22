@@ -34,8 +34,7 @@ namespace realtrick
         public:
             
             explicit PaletteLayer(GMXLayer& gmxLayer):
-            _gmxLayer(gmxLayer),
-            _boundingBoxPadding(cocos2d::Rect::ZERO)
+            _gmxLayer(gmxLayer)
             {}
             
             virtual ~PaletteLayer() = default;
@@ -65,11 +64,7 @@ namespace realtrick
                              ImGuiWindowFlags_NoResize |
                              ImGuiWindowFlags_NoScrollWithMouse |
                              ImGuiWindowFlags_ShowBorders);
-                
-                _boundingBoxPadding.setRect(ImGui::GetWindowPos().x + g.Style.WindowPadding.x,
-                                            ImGui::GetWindowPos().y + g.Style.WindowPadding.y + height,
-                                            ImGui::GetWindowSize().x - g.Style.WindowPadding.x * 2.0f,
-                                            ImGui::GetWindowSize().y - g.Style.WindowPadding.y * 2.0f - height);
+           
                 
                 static cocos2d::Vec2 mousePosInCocos2dMatrix;
                 mousePosInCocos2dMatrix = cocos2d::Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
@@ -166,9 +161,7 @@ namespace realtrick
         private:
             
             GMXLayer& _gmxLayer;
-            
-            cocos2d::Rect _boundingBoxPadding;
-            
+
             int _paletteType = 0;
             int _selectedItem = -1;
             

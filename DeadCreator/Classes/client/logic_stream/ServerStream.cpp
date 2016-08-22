@@ -6,6 +6,8 @@
 //
 //
 
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
+
 #include "ServerStream.hpp"
 #include "Game.hpp"
 #include "EntityPlayer.hpp"

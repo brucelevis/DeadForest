@@ -38,7 +38,7 @@ namespace realtrick
                 _entity = rhs._entity;
             }
             
-            virtual ~AddEntityToolCommand() { if ( _entity ) _layer->eraseEntity(_entity->getID()); }
+            virtual ~AddEntityToolCommand() { /*if ( _entity ) _layer->eraseEntity(_entity->getID());*/ }
             
             virtual void execute() override
             {

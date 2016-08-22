@@ -8,9 +8,12 @@
 
 #pragma once
 
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
+
 #include <boost/asio.hpp>
 #include <boost/lockfree/queue.hpp>
 #include <boost/thread.hpp>
+#include <boost/bind.hpp>
 
 #include <string>
 #include <array>

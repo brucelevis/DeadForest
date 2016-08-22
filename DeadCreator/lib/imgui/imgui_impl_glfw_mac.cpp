@@ -1,3 +1,5 @@
+#if ( CC_TARGET_PLATFORM != CC_PLATFORM_WIN32 && CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+
 // ImGui GLFW binding with OpenGL
 // You can copy and use unmodified imgui_impl_* files in your project. 
 // If you use this binding you'll need to call 4 functions: ImGui_ImplXXXX_Init(), ImGui_ImplXXXX_NewFrame(), ImGui::Render() and ImGui_ImplXXXX_Shutdown().
@@ -277,3 +279,5 @@ void ImGui_ImplGlfw_NewFrame()
     // Start the frame
     ImGui::NewFrame();
 }
+
+#endif

@@ -53,12 +53,12 @@ bool AnimatedButton::init(const char* normal, const char* selected, cocos2d::ui:
     _sprite = Sprite::create();
     addChild(_sprite, 2);
     
-    _topInfo = ui::Text::create("", "SpecialElite.TTF", 12);
+    _topInfo = ui::Text::create("", "fonts/SpecialElite.TTF", 12);
     _topInfo->setPosition(Vec2(_button->getContentSize().width / 2.0f, _button->getContentSize().height - 20.0f));
     _topInfo->setOpacity(0);
     _button->addChild(_topInfo);
     
-    _bottomInfo = ui::Text::create("", "SpecialElite.TTF", 12);
+    _bottomInfo = ui::Text::create("", "fonts/SpecialElite.TTF", 12);
     _bottomInfo->setPosition(Vec2(_button->getContentSize().width / 2.0f, 10.0f));
     _bottomInfo->setOpacity(0);
     _button->addChild(_bottomInfo);

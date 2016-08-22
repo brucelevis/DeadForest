@@ -60,7 +60,7 @@ bool ItemSlot::init(Inventory* owner, const char* normal, const char* selected, 
     _itemImage->setPosition(Vec2(getContentSize() / 2.0f));
     addChild(_itemImage, 1);
     
-    _equippedImage = Sprite::create("active_slot.png");
+    _equippedImage = Sprite::create("client/ui/active_slot.png");
     _equippedImage->setPosition(Vec2(getContentSize() / 2.0f));
     _equippedImage->setVisible(false);
     addChild(_equippedImage, 2);
@@ -69,7 +69,7 @@ bool ItemSlot::init(Inventory* owner, const char* normal, const char* selected, 
     _extensionButtons->setPosition(Vec2(getContentSize() / 2.0f));
     addChild(_extensionButtons, 3);
     
-    _numOfItems = ui::Text::create("", "SpecialElite.TTF", 32);
+    _numOfItems = ui::Text::create("", "fonts/SpecialElite.TTF", 32);
     _numOfItems->setVisible(false);
     _numOfItems->setPosition(Vec2(_owner->getSlotSize().width * 1.2f, 18.0f));
     addChild(_numOfItems);

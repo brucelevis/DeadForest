@@ -105,13 +105,13 @@ bool MainMenu3::init()
     if ( !Layer::init() )
         return false;
     
-    _gameTitle = Sprite::create("game_title.png");
+    _gameTitle = Sprite::create("client/ui/game_title.png");
     _gameTitle->setPosition(Vec2(_winSize.width / 2.0f, _winSize.height * 0.8f));
     _gameTitle->setScale(2.0f);
     _gameTitle->runAction(Sequence::create(FadeTo::create(0.0f, 0), FadeTo::create(0.5f, 255), nullptr));
     addChild(_gameTitle);
     
-    _userName = Label::createWithTTF(UserDefault::getInstance()->getStringForKey("id"), "SpecialElite.TTF", 32);
+    _userName = Label::createWithTTF(UserDefault::getInstance()->getStringForKey("id"), "fonts/SpecialElite.TTF", 32);
     _userName->runAction(Sequence::create(FadeTo::create(0.0f, 0), FadeTo::create(0.5f, 255), nullptr));
     
     MenuItemLabel* labelMenu = MenuItemLabel::create(_userName);
@@ -151,7 +151,7 @@ void MainMenu3::_showMainMenu(float delay)
 {
     _menuHolder->setEnabled(true);
     
-    _playButton = ui::Button::create("play_n.png", "play_s.png");
+    _playButton = ui::Button::create("client/ui/play_n.png", "client/ui/play_s.png");
     _playButton->setPosition(Vec2(_winSize.width * 0.5f, _winSize.height * 0.5f));
     _playButton->setOpacity(0);
     _playButton->runAction(FadeTo::create(delay, 255));
@@ -163,7 +163,7 @@ void MainMenu3::_showMainMenu(float delay)
     });
     addChild(_playButton);
     
-    _optionButton = ui::Button::create("option_n.png", "option_s.png");
+    _optionButton = ui::Button::create("client/ui/option_n.png", "client/ui/option_s.png");
     _optionButton->setPosition(Vec2(_winSize.width * 0.5f, _winSize.height * 0.4f));
     _optionButton->setOpacity(0);
     _optionButton->runAction(FadeTo::create(delay, 255));
@@ -177,7 +177,7 @@ void MainMenu3::_showMainMenu(float delay)
     });
     addChild(_optionButton);
     
-    _exitButton = ui::Button::create("exit_n.png", "exit_s.png");
+    _exitButton = ui::Button::create("client/ui/exit_n.png", "client/ui/exit_s.png");
     _exitButton->setPosition(Vec2(_winSize.width * 0.5f, _winSize.height * 0.3f));
     _exitButton->setOpacity(0);
     _exitButton->runAction(FadeTo::create(delay, 255));
@@ -194,7 +194,7 @@ void MainMenu3::_showMainMenu(float delay)
 
 void MainMenu3::_showPlayMenu(float delay)
 {
-    _singleButton = ui::Button::create("single_n.png", "single_s.png");
+    _singleButton = ui::Button::create("client/ui/single_n.png", "client/ui/single_s.png");
     _singleButton->setPosition(Vec2(_winSize.width * 0.5f, _winSize.height * 0.55f));
     _singleButton->setOpacity(0);
     _singleButton->runAction(FadeTo::create(delay, 255));
@@ -208,7 +208,7 @@ void MainMenu3::_showPlayMenu(float delay)
     });
     addChild(_singleButton);
     
-    _multiButton = ui::Button::create("multi_n.png", "multi_s.png");
+    _multiButton = ui::Button::create("client/ui/multi_n.png", "client/ui/multi_s.png");
     _multiButton->setPosition(Vec2(_winSize.width * 0.5f, _winSize.height * 0.45f));
     _multiButton->setOpacity(0);
     _multiButton->runAction(FadeTo::create(delay, 255));
@@ -222,7 +222,7 @@ void MainMenu3::_showPlayMenu(float delay)
     });
     addChild(_multiButton);
     
-    _customButton = ui::Button::create("custom_n.png", "custom_s.png");
+    _customButton = ui::Button::create("client/ui/custom_n.png", "client/ui/custom_s.png");
     _customButton->setPosition(Vec2(_winSize.width * 0.5f, _winSize.height * 0.35f));
     _customButton->setOpacity(0);
     _customButton->runAction(FadeTo::create(delay, 255));
@@ -236,7 +236,7 @@ void MainMenu3::_showPlayMenu(float delay)
     });
     addChild(_customButton);
     
-    _backButton_play = ui::Button::create("back_n.png", "back_s.png");
+    _backButton_play = ui::Button::create("client/ui/back_n.png", "client/ui/back_s.png");
     _backButton_play->setPosition(Vec2(_winSize.width * 0.5f, _winSize.height * 0.25f));
     _backButton_play->setOpacity(0);
     _backButton_play->runAction(FadeTo::create(delay, 255));
@@ -270,7 +270,7 @@ void MainMenu3::_showMultiMenu(float delay)
                                                                       800, 250));
     addChild(_clipRectNode_multi);
     
-    _chapter1 = Sprite::create("menu_sample1.png");
+    _chapter1 = Sprite::create("client/ui/menu_sample1.png");
     _chapter1->setPosition(MENU_POSITION_1);
     _chapter1->setScale(0.8f);
     _chapter1->setOpacity(0);
@@ -278,7 +278,7 @@ void MainMenu3::_showMultiMenu(float delay)
     _chapter1->runAction(FadeTo::create(delay, 80));
     _clipRectNode_multi->addChild(_chapter1);
     
-    _chapter2 = Sprite::create("menu_sample2.png");
+    _chapter2 = Sprite::create("client/ui/menu_sample2.png");
     _chapter2->setPosition(MENU_POSITION_2);
     _chapter2->setScale(0.8f);
     _chapter2->setOpacity(0);
@@ -286,7 +286,7 @@ void MainMenu3::_showMultiMenu(float delay)
     _chapter2->setAnchorPoint(Vec2(0.5f, 0.0f));
     _clipRectNode_multi->addChild(_chapter2);
     
-    _chapter3 = Sprite::create("menu_sample3.png");
+    _chapter3 = Sprite::create("client/ui/menu_sample3.png");
     _chapter3->setPosition(MENU_POSITION_3);
     _chapter3->setScale(0.9f);
     _chapter3->setOpacity(0);
@@ -294,7 +294,7 @@ void MainMenu3::_showMultiMenu(float delay)
     _chapter3->setAnchorPoint(Vec2(0.5f, 0.0f));
     _clipRectNode_multi->addChild(_chapter3);
     
-    _chapter4 = Sprite::create("menu_sample4.png");
+    _chapter4 = Sprite::create("client/ui/menu_sample4.png");
     _chapter4->setPosition(MENU_POSITION_4);
     _chapter4->setScale(0.8f);
     _chapter4->setOpacity(0);
@@ -302,7 +302,7 @@ void MainMenu3::_showMultiMenu(float delay)
     _chapter4->setAnchorPoint(Vec2(0.5f, 0.0f));
     _clipRectNode_multi->addChild(_chapter4);
     
-    _chapter5 = Sprite::create("menu_sample1.png");
+    _chapter5 = Sprite::create("client/ui/menu_sample1.png");
     _chapter5->setPosition(MENU_POSITION_5);
     _chapter5->setScale(0.8f);
     _chapter5->setOpacity(0);
@@ -310,7 +310,7 @@ void MainMenu3::_showMultiMenu(float delay)
     _chapter5->setAnchorPoint(Vec2(0.5f, 0.0f));
     _clipRectNode_multi->addChild(_chapter5);
     
-    _leftButton_multi = ui::Button::create("arrow_n.png", "arrow_s.png");
+    _leftButton_multi = ui::Button::create("client/ui/arrow_n.png", "client/ui/arrow_s.png");
     _leftButton_multi->setRotation(270.0f);
     _leftButton_multi->setOpacity(0);
     _leftButton_multi->runAction(FadeTo::create(delay, 255));
@@ -454,7 +454,7 @@ void MainMenu3::_showMultiMenu(float delay)
     });
     addChild(_leftButton_multi);
     
-    _rightButton_multi = ui::Button::create("arrow_n.png", "arrow_s.png");
+    _rightButton_multi = ui::Button::create("client/ui/arrow_n.png", "client/ui/arrow_s.png");
     _rightButton_multi->setRotation(90.0f);
     _rightButton_multi->setPosition(Vec2(_winSize.width * 0.5f + 475.0f, _winSize.height * 0.48f));
     _rightButton_multi->setOpacity(0);
@@ -600,13 +600,13 @@ void MainMenu3::_showMultiMenu(float delay)
     });
     addChild(_rightButton_multi);
     
-    _infoText_multi = Text::create("introduce about this mode.", "SpecialElite.TTF", 30);
+    _infoText_multi = Text::create("introduce about this mode.", "fonts/SpecialElite.TTF", 30);
     _infoText_multi->setPosition(Vec2(_winSize.width * 0.5f, _winSize.height * 0.25f));
     _infoText_multi->setOpacity(0);
     _infoText_multi->runAction(FadeTo::create(delay, 255));
     addChild(_infoText_multi);
     
-    _searchButton_multi = ui::Button::create("search_n.png", "search_s.png");
+    _searchButton_multi = ui::Button::create("client/ui/search_n.png", "client/ui/search_s.png");
     _searchButton_multi->setPosition(Vec2(_winSize.width * 0.4f, _winSize.height * 0.15f));
     _searchButton_multi->setOpacity(0);
     _searchButton_multi->runAction(FadeTo::create(delay, 255));
@@ -625,7 +625,7 @@ void MainMenu3::_showMultiMenu(float delay)
     });
     addChild(_searchButton_multi);
     
-    _backButton_multi = ui::Button::create("back_n.png", "back_s.png");
+    _backButton_multi = ui::Button::create("client/ui/back_n.png", "client/ui/back_s.png");
     _backButton_multi->setPosition(Vec2(_winSize.width * 0.6f, _winSize.height * 0.15f));
     _backButton_multi->setOpacity(0);
     _backButton_multi->runAction(FadeTo::create(delay, 255));
@@ -651,7 +651,7 @@ void MainMenu3::_showCustomMenu(float delay)
                                                                        800, 250));
     addChild(_clipRectNode_custom);
     
-    _survivalMode = Sprite::create("menu_sample1.png");
+    _survivalMode = Sprite::create("client/ui/menu_sample1.png");
     _survivalMode->setPosition(MENU_POSITION_2);
     _survivalMode->setScale(0.8f);
     _survivalMode->setOpacity(0);
@@ -659,7 +659,7 @@ void MainMenu3::_showCustomMenu(float delay)
     _survivalMode->setAnchorPoint(Vec2(0.5f, 0.0f));
     _clipRectNode_custom->addChild(_survivalMode);
     
-    _battleRoyalMode = Sprite::create("menu_sample2.png");
+    _battleRoyalMode = Sprite::create("client/ui/menu_sample2.png");
     _battleRoyalMode->setPosition(MENU_POSITION_3);
     _battleRoyalMode->setScale(0.9f);
     _battleRoyalMode->setOpacity(0);
@@ -667,7 +667,7 @@ void MainMenu3::_showCustomMenu(float delay)
     _battleRoyalMode->runAction(FadeTo::create(delay, 255));
     _clipRectNode_custom->addChild(_battleRoyalMode);
     
-    _teamSurvivalMode = Sprite::create("menu_sample3.png");
+    _teamSurvivalMode = Sprite::create("client/ui/menu_sample3.png");
     _teamSurvivalMode->setPosition(MENU_POSITION_4);
     _teamSurvivalMode->setScale(0.8f);
     _teamSurvivalMode->setOpacity(0);
@@ -675,7 +675,7 @@ void MainMenu3::_showCustomMenu(float delay)
     _teamSurvivalMode->setAnchorPoint(Vec2(0.5f, 0.0f));
     _clipRectNode_custom->addChild(_teamSurvivalMode);
     
-    _leftButton_custom = ui::Button::create("arrow_n.png", "arrow_s.png");
+    _leftButton_custom = ui::Button::create("client/ui/arrow_n.png", "client/ui/arrow_s.png");
     _leftButton_custom->setRotation(270.0f);
     _leftButton_custom->setOpacity(0);
     _leftButton_custom->runAction(FadeTo::create(delay, 255));
@@ -753,7 +753,7 @@ void MainMenu3::_showCustomMenu(float delay)
     });
     addChild(_leftButton_custom);
     
-    _rightButton_custom = ui::Button::create("arrow_n.png", "arrow_s.png");
+    _rightButton_custom = ui::Button::create("client/ui/arrow_n.png", "client/ui/arrow_s.png");
     _rightButton_custom->setRotation(90.0f);
     _rightButton_custom->setPosition(Vec2(_winSize.width * 0.5f + 475.0f, _winSize.height * 0.48f));
     _rightButton_custom->setOpacity(0);
@@ -832,7 +832,7 @@ void MainMenu3::_showCustomMenu(float delay)
     });
     addChild(_rightButton_custom);
     
-    _infoText_custom = Text::create("introduce about this mode.", "SpecialElite.TTF", 30);
+    _infoText_custom = Text::create("introduce about this mode.", "fonts/SpecialElite.TTF", 30);
     _infoText_custom->setPosition(Vec2(_winSize.width * 0.5f, _winSize.height * 0.25f));
     _infoText_custom->setOpacity(0);
     _infoText_custom->runAction(FadeTo::create(delay, 255));
@@ -862,7 +862,7 @@ void MainMenu3::_showCustomMenu(float delay)
     });
     addChild(_searchButton_custom);
     
-    _backButton_custom = ui::Button::create("back_n.png", "back_s.png");
+    _backButton_custom = ui::Button::create("client/ui/back_n.png", "client/ui/back_s.png");
     _backButton_custom->setPosition(Vec2(_winSize.width * 0.6f, _winSize.height * 0.15f));
     _backButton_custom->setOpacity(0);
     _backButton_custom->runAction(FadeTo::create(delay, 255));
@@ -883,7 +883,7 @@ void MainMenu3::_showMultiSearchMenu(float delay)
     _progressDots_multi.resize(11);
     for(auto i = 0 ; i < _progressDots_multi.size(); ++ i)
     {
-        _progressDots_multi[i] = Sprite::create("dot.png");
+        _progressDots_multi[i] = Sprite::create("client/ui/dot.png");
         _progressDots_multi[i]->setScale(0.1f);
         _progressDots_multi[i]->setOpacity(0);
         _progressDots_multi[i]->setColor(Color3B::WHITE);
@@ -899,7 +899,7 @@ void MainMenu3::_showMultiSearchMenu(float delay)
     }
     
     
-    _cancelButton_multiSearch = ui::Button::create("cancel_n.png", "cancel_s.png");
+    _cancelButton_multiSearch = ui::Button::create("client/ui/cancel_n.png", "client/ui/cancel_s.png");
     _cancelButton_multiSearch->setPosition(Vec2(_winSize.width / 2 , _winSize.height * 0.3f));
     _cancelButton_multiSearch->setOpacity(0);
     _cancelButton_multiSearch->runAction(FadeTo::create(delay, 255));
@@ -920,7 +920,7 @@ void MainMenu3::_showCustomSearchMenu(float delay)
     _progressDots_custom.resize(11);
     for(auto i = 0 ; i < _progressDots_custom.size(); ++ i)
     {
-        _progressDots_custom[i] = Sprite::create("dot.png");
+        _progressDots_custom[i] = Sprite::create("client/ui/dot.png");
         _progressDots_custom[i]->setScale(0.1f);
         _progressDots_custom[i]->setOpacity(0);
         _progressDots_custom[i]->setColor(Color3B::WHITE);
@@ -936,7 +936,7 @@ void MainMenu3::_showCustomSearchMenu(float delay)
     }
     
     
-    _cancelButton_customSearch = ui::Button::create("cancel_n.png", "cancel_s.png");
+    _cancelButton_customSearch = ui::Button::create("client/ui/cancel_n.png", "client/ui/cancel_s.png");
     _cancelButton_customSearch->setPosition(Vec2(_winSize.width / 2 , _winSize.height * 0.3f));
     _cancelButton_customSearch->setOpacity(0);
     _cancelButton_customSearch->runAction(FadeTo::create(delay, 255));

@@ -104,13 +104,13 @@ void WeaponBase::reload()
         else
         {
             _game->addLog(StringUtils::format("<WeaponBase::reload> has not bullets."));
-            experimental::AudioEngine::play2d("reload_fail.mp3");
+            experimental::AudioEngine::play2d("client/sounds/reload_fail.mp3");
         }
     }
     else
     {
         _game->addLog(StringUtils::format("<WeaponBase::reload> bullet is already full."));
-        experimental::AudioEngine::play2d("reload_fail.mp3");
+        experimental::AudioEngine::play2d("client/sounds/reload_fail.mp3");
     }
 }
 

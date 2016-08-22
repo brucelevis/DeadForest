@@ -42,7 +42,7 @@ bool WeaponStatus::init()
     if ( !Node::init() )
         return false;
 
-    _reloadButton = ui::Button::create("punch_reload_n.png", "punch_reload_n.png");
+    _reloadButton = ui::Button::create("client/ui/punch_reload_n.png", "client/ui/punch_reload_n.png");
     _reloadButton->addTouchEventListener([this](Ref* ref, ui::Widget::TouchEventType type)
                                          {
                                              if ( type == ui::Widget::TouchEventType::ENDED )
@@ -52,11 +52,11 @@ bool WeaponStatus::init()
                                          });
     addChild(_reloadButton);
     
-    _remainBulletText = ui::Text::create("", "SpecialElite.TTF", 20);
+    _remainBulletText = ui::Text::create("", "fonts/SpecialElite.TTF", 20);
     _remainBulletText->setPosition(Vec2(-30.0f, -70.0f));
     addChild(_remainBulletText);
     
-    _entryBulletText = ui::Text::create("", "SpecialElite.TTF", 20);
+    _entryBulletText = ui::Text::create("", "fonts/SpecialElite.TTF", 20);
     _entryBulletText->setPosition(Vec2(30.0f, -70.0f));
     addChild(_entryBulletText);
 
@@ -74,7 +74,7 @@ void WeaponStatus::setWeaponStatus(WeaponBase* weapon)
         {
             case EntityType::ITEM_GLOCK17:
             {
-                _reloadButton->loadTextures("glock_reload_n.png", "glock_reload_s.png");
+                _reloadButton->loadTextures("client/ui/glock_reload_n.png", "client/ui/glock_reload_s.png");
                 setRemainBullet(weapon->getNumOfLeftRounds());
                 setEntryBullet(weapon);
                 
@@ -82,7 +82,7 @@ void WeaponStatus::setWeaponStatus(WeaponBase* weapon)
             }
             case EntityType::ITEM_M16A2:
             {
-                _reloadButton->loadTextures("m16a2_reload2_n.png", "m16a2_reload2_s.png");
+                _reloadButton->loadTextures("client/ui/m16a2_reload2_n.png", "client/ui/m16a2_reload2_s.png");
                 setRemainBullet(weapon->getNumOfLeftRounds());
                 setEntryBullet(weapon);
 
@@ -90,7 +90,7 @@ void WeaponStatus::setWeaponStatus(WeaponBase* weapon)
             }
             case EntityType::ITEM_M1897:
             {
-                _reloadButton->loadTextures("m1897_reload2_n.png", "m1897_reload2_s.png");
+                _reloadButton->loadTextures("client/ui/m1897_reload2_n.png", "client/ui/m1897_reload2_s.png");
                 setRemainBullet(weapon->getNumOfLeftRounds());
                 setEntryBullet(weapon);
                 
@@ -98,7 +98,7 @@ void WeaponStatus::setWeaponStatus(WeaponBase* weapon)
             }
             case EntityType::ITEM_AXE:
             {
-                _reloadButton->loadTextures("axe_reload2_n.png", "axe_reload2_n.png");
+                _reloadButton->loadTextures("client/ui/axe_reload2_n.png", "client/ui/axe_reload2_n.png");
                 
                 _remainBulletText->setString("");
                 _entryBulletText->setString("");
@@ -114,7 +114,7 @@ void WeaponStatus::setWeaponStatus(WeaponBase* weapon)
     }
     else
     {
-        _reloadButton->loadTextures("punch_reload_n.png", "punch_reload_n.png");
+        _reloadButton->loadTextures("client/ui/punch_reload_n.png", "client/ui/punch_reload_n.png");
         
         _remainBulletText->setString("");
         _entryBulletText->setString("");

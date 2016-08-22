@@ -36,11 +36,11 @@ bool HpBar::init()
     if ( !Node::init() )
         return false;
     
-    _bar = Sprite::create("hpBar.png");
+    _bar = Sprite::create("client/ui/hpBar.png");
     _bar->setAnchorPoint(Vec2(0.0f, 0.5f));
     addChild(_bar);
     
-    _bundle = Sprite::create("hpBundle.png");
+    _bundle = Sprite::create("client/ui/hpBundle.png");
     _bundle->setAnchorPoint(Vec2(0.0f, 0.5f));
     addChild(_bundle);
     

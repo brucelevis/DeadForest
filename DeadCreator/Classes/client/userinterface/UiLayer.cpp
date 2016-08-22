@@ -64,8 +64,8 @@ bool UiLayer::init()
     Vec2 joystickScale(GAME_SCREEN_WIDTH / 1136, GAME_SCREEN_HEIGHT / 640);
     Vec2 joystickPos = Vec2(150.0f * joystickScale.x, 150.0f * joystickScale.y);
     
-    _moveJoystick = JoystickEx::create("wooden_handle_n.png", "wooden_handle_n.png");
-    _moveJoystick->setJoystickPad("wooden_pad.png");
+    _moveJoystick = JoystickEx::create("client/ui/wooden_handle_n.png", "client/ui/wooden_handle_n.png");
+    _moveJoystick->setJoystickPad("client/ui/wooden_pad.png");
     _moveJoystick->setRotationType(JoystickEx::RotationType::ROTATION_8);
     _moveJoystick->setPosition(Vec2(joystickPos.x, joystickPos.y));
     _moveJoystick->setScale(joystickScale.x, joystickScale.y);
@@ -84,7 +84,7 @@ bool UiLayer::init()
     });
     addChild(_moveJoystick, Z_ORDER_UI - 1);
     
-    _attackJoystick = JoystickEx::create("wooden_attack_handle_n.png", "wooden_attack_handle_n.png");
+    _attackJoystick = JoystickEx::create("client/ui/wooden_attack_handle_n.png", "client/ui/wooden_attack_handle_n.png");
     _attackJoystick->enableDoubleClick(false);
     _attackJoystick->setPosition(Vec2(_winSize.width - joystickPos.x, joystickPos.y));
     _attackJoystick->setScale(joystickScale.x, joystickScale.y);
@@ -98,7 +98,7 @@ bool UiLayer::init()
     });
     addChild(_attackJoystick, Z_ORDER_UI - 1);
     
-    _bezel = CircularBezel::create("wooden_attack_pad.png");
+    _bezel = CircularBezel::create("client/ui/wooden_attack_pad.png");
     _bezel->setPosition(Vec2(_winSize.width - joystickPos.x, joystickPos.y));
     _bezel->setTriggerRadius( {40.0f, 250.0f} );
     _bezel->setScale(joystickScale.x, joystickScale.y);
@@ -209,7 +209,7 @@ bool UiLayer::init()
         addChild(_inventory, Z_ORDER_UI);
     }
     
-    _inventorySwitch = ui::CheckBox::create("inventory_n.png", "inventory_s.png");
+    _inventorySwitch = ui::CheckBox::create("client/ui/inventory_n.png", "client/ui/inventory_s.png");
     _inventorySwitch->setPosition(Vec2(_winSize.width / 2.0f, 50.0f));
     _inventorySwitch->setScale(1.3f);
     _inventorySwitch->addEventListener([this](Ref* ref, ui::CheckBox::EventType type)
@@ -252,34 +252,34 @@ bool UiLayer::init()
     _inGameUiLayer->setScale(_game->getRenderingSysetm()->getZoomScale().x, _game->getRenderingSysetm()->getZoomScale().y);
     addChild(_inGameUiLayer);
     
-    _crossHair = CrossHair::create("aim_point.png");
+    _crossHair = CrossHair::create("client/ui/aim_point.png");
     _crossHair->setScale(0.8f);
     _crossHair->setRange(90.0f);
     
     _crossHair->setEffect("hit", CrossHairEffect({
-        "cross_hair0.png",
-        "cross_hair1.png",
-        "cross_hair2.png",
-        "cross_hair3.png",
-        "cross_hair4.png",
-        "cross_hair5.png",
-        "cross_hair6.png",
-        "cross_hair7.png" }, 0.035f));
+        "client/ui/cross_hair0.png",
+        "client/ui/cross_hair1.png",
+        "client/ui/cross_hair2.png",
+        "client/ui/cross_hair3.png",
+        "client/ui/cross_hair4.png",
+        "client/ui/cross_hair5.png",
+        "client/ui/cross_hair6.png",
+        "client/ui/cross_hair7.png" }, 0.035f));
     
     _crossHair->setEffect("fire", CrossHairEffect({
-        "cross_hair0.png",
-        "cross_hair0.png",
-        "cross_hair0.png",
-        "cross_hair0.png",
-        "cross_hair0.png",
-        "cross_hair0.png",
-        "cross_hair0.png",
-        "cross_hair0.png" }, 0.035f));
+        "client/ui/cross_hair0.png",
+        "client/ui/cross_hair0.png",
+        "client/ui/cross_hair0.png",
+        "client/ui/cross_hair0.png",
+        "client/ui/cross_hair0.png",
+        "client/ui/cross_hair0.png",
+        "client/ui/cross_hair0.png",
+        "client/ui/cross_hair0.png" }, 0.035f));
     
     _inGameUiLayer->addChild(_crossHair);
     
     
-    _infoSystem = InfoSystem::create("SpecialElite.TTF");
+    _infoSystem = InfoSystem::create("fonts/SpecialElite.TTF");
     _infoSystem->setPosition(Vec2(0, -100.0f));
     _inGameUiLayer->addChild(_infoSystem);
     

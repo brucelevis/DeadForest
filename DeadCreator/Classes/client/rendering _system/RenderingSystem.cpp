@@ -50,7 +50,7 @@ bool RenderingSystem::init(GameResource* res)
     
     _gameScreenScale = Vec2(GAME_SCREEN_WIDTH / 1136, GAME_SCREEN_HEIGHT / 640);
     
-    _deferredRendering = DeferredRendering::create("normal_bg.png");
+    _deferredRendering = DeferredRendering::create("client/normal_bg.png");
     _deferredRendering->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2));
     addChild(_deferredRendering);
     

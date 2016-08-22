@@ -16,7 +16,7 @@ namespace realtrick
     //
     ParamLoader::ParamLoader()
     {
-        _fileName = "Params.ini";
+        _fileName = "client/Params.ini";
         cocos2d::FileUtils* fileUtils = cocos2d::FileUtils::getInstance();
         std::string fullPathFile = fileUtils->fullPathForFilename(_fileName);
         if ( fullPathFile.empty() )

@@ -161,7 +161,7 @@ bool EditScene::init()
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
             newAlpha = 0.2f;
         }
-        if ( ImGuiLayer::imageButton("new.png", 20, 20,
+        if ( ImGuiLayer::imageButton("editor/new.png", 20, 20,
                                      ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, newAlpha)) )
         {
             if ( isNew() ) doNewButton();
@@ -183,7 +183,7 @@ bool EditScene::init()
             openAlpha = 0.2f;
         }
         ImGui::SameLine();
-        if (ImGuiLayer::imageButton("open.png", 20, 20,
+        if (ImGuiLayer::imageButton("editor/open.png", 20, 20,
                                     ImVec2(0,0),
                                     ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, openAlpha)))
         {
@@ -206,7 +206,7 @@ bool EditScene::init()
             saveAlpha = 0.2f;
         }
         ImGui::SameLine();
-        if (ImGuiLayer::imageButton("save.png", 20, 20,
+        if (ImGuiLayer::imageButton("editor/save.png", 20, 20,
                                     ImVec2(0,0),
                                     ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, saveAlpha)) )
         {
@@ -229,7 +229,7 @@ bool EditScene::init()
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
             undoAlpha = 0.2f;
         }
-        if (ImGuiLayer::imageButton("undo.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, undoAlpha)))
+        if (ImGuiLayer::imageButton("editor/undo.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, undoAlpha)))
         {
             if ( isUndo() ) _layer->undo();
         }
@@ -250,7 +250,7 @@ bool EditScene::init()
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0, 0.0, 0.0, 0.0));
             redoAlpha = 0.2f;
         }
-        if (ImGuiLayer::imageButton("redo.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, redoAlpha)))
+        if (ImGuiLayer::imageButton("editor/redo.png", 20, 20, ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, redoAlpha)))
         {
             if ( isRedo() ) _layer->redo();
         }
@@ -272,7 +272,7 @@ bool EditScene::init()
         }
         
         ImGui::SameLine();
-        if (ImGuiLayer::imageButton("navi.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
+        if (ImGuiLayer::imageButton("editor/navi.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                     -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
             if ( _isEditMode )
@@ -284,7 +284,7 @@ bool EditScene::init()
         
         
         ImGui::SameLine();
-        if ( ImGuiLayer::imageButton("palette.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
+        if ( ImGuiLayer::imageButton("editor/palette.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                      -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, windowAlpha)))
         {
             if ( _isEditMode )
@@ -295,7 +295,7 @@ bool EditScene::init()
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("palette");
         
         ImGui::SameLine();
-        if (ImGuiLayer::imageButton("history.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
+        if (ImGuiLayer::imageButton("editor/history.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                     -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
             if ( _isEditMode )
@@ -306,7 +306,7 @@ bool EditScene::init()
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("history");
         
         ImGui::SameLine();
-        if ( ImGuiLayer::imageButton("trigger.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
+        if ( ImGuiLayer::imageButton("editor/trigger.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                      -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
             if ( _isEditMode )
@@ -317,7 +317,7 @@ bool EditScene::init()
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("trigger");
         
         ImGui::SameLine();
-        if ( ImGuiLayer::imageButton("play_btn.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
+        if ( ImGuiLayer::imageButton("editor/play_btn.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
                                      -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
             if ( _isEditMode )

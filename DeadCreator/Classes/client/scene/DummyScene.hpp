@@ -47,7 +47,7 @@ namespace realtrick
                 
                 _gameLayer = layer;
                 
-                auto spr = cocos2d::Sprite::create("HelloWorld.png");
+                auto spr = cocos2d::Sprite::create("editor/HelloWorld.png");
                 spr->setPosition( winSize / 2 );
                 spr->setOpacity(0);
                 addChild(spr);

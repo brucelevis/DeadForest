@@ -52,7 +52,7 @@ bool Inventory::init()
     if ( !Node::init() )
         return false;
     
-    _backgroundView = Sprite::create("inventory_background_view2.png");
+    _backgroundView = Sprite::create("client/ui/inventory_background_view2.png");
     _backgroundView->setVisible(false);
     addChild(_backgroundView);
     
@@ -63,7 +63,7 @@ bool Inventory::init()
         int x = i % _numOfSlotX;
         int y = i / _numOfSlotX;
         
-        ItemSlot* slot = ItemSlot::create(_game, this, "inventory_slot_n.png", "inventory_slot_s.png", ui::Widget::TextureResType::LOCAL);
+        ItemSlot* slot = ItemSlot::create(_game, this, "client/ui/inventory_slot_n.png", "client/ui/inventory_slot_s.png", ui::Widget::TextureResType::LOCAL);
         slot->setPosition(Vec2((INVENTORY_PAD * (x + 1)) + (x * _slotSize.width) + _slotSize.width / 2,
                                (INVENTORY_PAD * (y + 1)) + (y * _slotSize.height) + _slotSize.height / 2 + 30));
         slot->setSlotSize(_slotSize);

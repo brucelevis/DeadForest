@@ -454,7 +454,7 @@ void GMXLayer::updateCocosLogic()
     int selectedItem = _paletteLayer->getSelectedItem();
     if ( selectedItem == -1 )
     {
-        _selectedItem->setTexture("empty_image.png");
+        _selectedItem->setTexture("editor/empty_image.png");
         _selectedItemBoundingCircle->clear();
         for ( auto& ent : _entities ) ent.second->setBoundingCircle(false, Color4F(1.00, 0.00, 0.00, 0.50));
     }
@@ -472,10 +472,10 @@ void GMXLayer::updateCocosLogic()
         auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
         if ( selectedTile != TileType::INVALID )
         {
-            if ( selectedTile == TileType::DIRT ) _selectedItem->setTexture("1_1_1234.png");
-            else if ( selectedTile == TileType::GRASS ) _selectedItem->setTexture("selected_grass.png");
-            else if ( selectedTile == TileType::WATER ) _selectedItem->setTexture("3_1_1234.png");
-            else if ( selectedTile == TileType::HILL ) _selectedItem->setTexture("5_1_1234.png");
+            if ( selectedTile == TileType::DIRT ) _selectedItem->setTexture("editor/tiles/1_1_1234.png");
+            else if ( selectedTile == TileType::GRASS ) _selectedItem->setTexture("editor/selected_grass.png");
+            else if ( selectedTile == TileType::WATER ) _selectedItem->setTexture("editor/tiles/3_1_1234.png");
+            else if ( selectedTile == TileType::HILL ) _selectedItem->setTexture("editor/tiles/5_1_1234.png");
             
             if ( (ImGui::IsMouseDragging() || ImGui::GetIO().MouseClicked[0]) && ImGui::IsMouseHoveringWindow() && !GMXLayer::isTitleClicked() )
             {
@@ -730,7 +730,7 @@ void GMXLayer::setTile(int x, int y, const Tileset& tile, bool isExecCommand)
     if ( localX < 0 || localY < 0 || localX >= _viewX || localY >= _viewY )
         return ;
     
-    _tileImages[localY][localX]->setTexture(tile.getNumber() + ".png");
+    _tileImages[localY][localX]->setTexture("editor/tiles/" + tile.getNumber() + ".png");
 }
 
 void GMXLayer::updateChunk(const cocos2d::Vec2& pivot)
@@ -757,7 +757,7 @@ void GMXLayer::updateChunk(const cocos2d::Vec2& pivot)
             if ( x < 0 || x > _file.numOfTileX + DUMMY_TILE_SIZE * 2 - 1 ||
                 y < 0 || y > _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4- 1)
             {
-                fileName = "empty_image.png";
+                fileName = "editor/empty_image.png";
                 pos = Vec2::ZERO;
                 worldPos = Vec2::ZERO;
                 viewable = false;
@@ -769,7 +769,7 @@ void GMXLayer::updateChunk(const cocos2d::Vec2& pivot)
                 worldPos = _tiles[y][x].getPosition();
             }
             
-            _tileImages[i][j]->setTexture(fileName);
+            _tileImages[i][j]->setTexture("editor/tiles/" + fileName);
             _tileImages[i][j]->setPosition(pos);
             
             if ( viewable )

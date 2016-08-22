@@ -117,7 +117,7 @@ bool ConnectScene::init()
     _progressDots.resize(11);
     for(auto i = 0 ; i < _progressDots.size(); ++ i)
     {
-        _progressDots[i] = Sprite::create("dot.png");
+        _progressDots[i] = Sprite::create("client/ui/dot.png");
         _progressDots[i]->setScale(0.1f);
         _progressDots[i]->setOpacity(0);
         _progressDots[i]->setColor(Color3B::WHITE);
@@ -125,7 +125,7 @@ bool ConnectScene::init()
         addChild(_progressDots[i]);
     }
     
-    _retryButton = ui::Button::create("retry_n.png", "retry_s.png");
+    _retryButton = ui::Button::create("client/ui/retry_n.png", "client/ui/retry_s.png");
     _retryButton->setPosition(Vec2(_winSize / 2.0f));
     _retryButton->setVisible(false);
     _retryButton->setOpacity(0);

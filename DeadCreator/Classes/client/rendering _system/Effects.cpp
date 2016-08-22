@@ -95,7 +95,7 @@ void EffectNoise::setTarget(EffectSprite* sprite)
 //
 bool EffectDeferredRendering::init()
 {
-    initGLProgramState("shader_deferred.fsh");
+    initGLProgramState("client/shaders/shader_deferred.fsh");
     return true;
 }
 

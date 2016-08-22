@@ -132,7 +132,7 @@ void Game::update(float dt)
 
 void Game::loadBGM()
 {
-    _bgmID = experimental::AudioEngine::play2d("rainfall.mp3", true);
+    _bgmID = experimental::AudioEngine::play2d("client/sounds/rainfall.mp3", true);
     experimental::AudioEngine::setVolume(_bgmID, 0.3f);
 }
 

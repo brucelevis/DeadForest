@@ -63,10 +63,10 @@ namespace realtrick
                 
                 _defaultTile = static_cast<TileType>(_gmxLayer.getFile().defaultTile);
                 
-                if ( _defaultTile == TileType::DIRT ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_dirt.png")->getName();
-                else if ( _defaultTile == TileType::GRASS ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_grass.png")->getName();
-                else if ( _defaultTile == TileType::WATER ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_water.png")->getName();
-                else if ( _defaultTile == TileType::HILL ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("default_tile_hill.png")->getName();
+                if ( _defaultTile == TileType::DIRT ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("editor/default_tile_dirt.png")->getName();
+                else if ( _defaultTile == TileType::GRASS ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("editor/default_tile_grass.png")->getName();
+                else if ( _defaultTile == TileType::WATER ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("editor/default_tile_water.png")->getName();
+                else if ( _defaultTile == TileType::HILL ) _defaultTileTextureName = cocos2d::Director::getInstance()->getTextureCache()->addImage("editor/default_tile_hill.png")->getName();
                 
                 return true;
                 
@@ -159,7 +159,7 @@ namespace realtrick
                 for(auto &ent : _entityMarks)
                 {
                     auto entity = ent.second;
-                    std::string type = "player" + _to_string(static_cast<int>(entity->getPlayerType())) + ".png";
+                    std::string type = "editor/player" + _to_string(static_cast<int>(entity->getPlayerType())) + ".png";
                     auto texID = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage(type)->getName());
                     
                     ImVec2 param = ImVec2(entity->getPosition().x / worldSize.x, entity->getPosition().y / worldSize.y);
@@ -222,19 +222,19 @@ namespace realtrick
                 {
                     if ( tile.getTileType() == TileType::DIRT)
                     {
-                        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("dirt_mark.png")->getName());
+                        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("editor/dirt_mark.png")->getName());
                     }
                     else if ( tile.getTileType() == TileType::GRASS )
                     {
-                        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("grass_mark.png")->getName());
+                        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("editor/grass_mark.png")->getName());
                     }
                     else if ( tile.getTileType() == TileType::WATER )
                     {
-                        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("water_mark.png")->getName());
+                        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("editor/water_mark.png")->getName());
                     }
                     else if ( tile.getTileType() == TileType::HILL )
                     {
-                        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("hill_mark.png")->getName());
+                        _tileMarks[key] = reinterpret_cast<ImTextureID>(cocos2d::Director::getInstance()->getTextureCache()->addImage("editor/hill_mark.png")->getName());
                     }
                 }
             }

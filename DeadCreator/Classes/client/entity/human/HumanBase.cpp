@@ -235,7 +235,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
     {
         SoundSource* s =  static_cast<SoundSource*>(msg.extraInfo);
         float t = (1.0f - (s->position - _game->getCamera()->getCameraPos()).getLength() / s->soundRange) * s->volume;
-        experimental::AudioEngine::setVolume( experimental::AudioEngine::play2d(s->fileName), t);
+        experimental::AudioEngine::setVolume( experimental::AudioEngine::play2d("client/sounds/" + s->fileName), t);
         
         ret = true;
     }

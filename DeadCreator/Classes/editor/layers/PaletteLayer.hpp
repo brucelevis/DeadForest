@@ -100,27 +100,27 @@ namespace realtrick
                 
                 if ( static_cast<PaletteType>(_paletteType) == PaletteType::TILE)
                 {
-                    if ( ImGuiLayer::imageButton("1_1_1234.png", 50, 50) )
+                    if ( ImGuiLayer::imageButton("editor/tiles/1_1_1234.png", 50, 50) )
                     {
                         _selectedItem = static_cast<int>(TileType::DIRT);
                         itemSelected = true;
                     }
                     ImGui::SameLine();
                     
-                    if ( ImGuiLayer::imageButton("2_1_1234.png", 50, 50) )
+                    if ( ImGuiLayer::imageButton("editor/tiles/2_1_1234.png", 50, 50) )
                     {
                         _selectedItem = static_cast<int>(TileType::GRASS);
                         itemSelected = true;
                     }
                     ImGui::SameLine();
                     
-                    if ( ImGuiLayer::imageButton("3_1_1234.png", 50, 50) )
+                    if ( ImGuiLayer::imageButton("editor/tiles/3_1_1234.png", 50, 50) )
                     {
                         _selectedItem = static_cast<int>(TileType::WATER);
                         itemSelected = true;
                     }
                     
-                    if ( ImGuiLayer::imageButton("5_1_1234.png", 50, 50) )
+                    if ( ImGuiLayer::imageButton("editor/tiles/5_1_1234.png", 50, 50) )
                     {
                         _selectedItem = static_cast<int>(TileType::HILL);
                         itemSelected = true;

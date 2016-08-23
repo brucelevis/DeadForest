@@ -460,7 +460,7 @@ void GMXLayer::updateCocosLogic()
     int selectedItem = _paletteLayer->getSelectedItem();
     if ( selectedItem == -1 )
     {
-        _selectedItem->setTexture("editor/empty_image.png");
+        _selectedItem->setTexture("editor/tiles/empty_image.png");
         _selectedItemBoundingCircle->clear();
         for ( auto& ent : _entities ) ent.second->setBoundingCircle(false, Color4F(1.00, 0.00, 0.00, 0.50));
     }
@@ -763,7 +763,7 @@ void GMXLayer::updateChunk(const cocos2d::Vec2& pivot)
             if ( x < 0 || x > _file.numOfTileX + DUMMY_TILE_SIZE * 2 - 1 ||
                 y < 0 || y > _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4- 1)
             {
-                fileName = "editor/empty_image.png";
+                fileName = "empty_image.png";
                 pos = Vec2::ZERO;
                 worldPos = Vec2::ZERO;
                 viewable = false;

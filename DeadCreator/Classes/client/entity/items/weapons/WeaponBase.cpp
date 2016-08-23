@@ -84,13 +84,18 @@ void WeaponBase::reload()
         if ( ownedRound != 0 )
         {
             int offset = getReloadedBulletOnce(); // 재장전할 수 있는 총알의 수
-			if (offset > ownedRound) 
-			{
-				setReservecBullets(ownedRound);
-			} else 
-			{
-				setReservecBullets(offset);
-			}
+
+
+			//offset > ownedRound setReservecBullets(ownedRound );
+
+			//if (offset > ownedRound) 
+			//{
+				setReservecBullets(std::min(ownedRound, offset));
+			//} 
+		//	else 
+			//{
+			//	setReservecBullets(offset);
+			//}
             _owner->getWeaponStatus()->disableButton();
             _game->sendMessage(0.0, _owner, this, MessageType::RELOAD_WEAPON, nullptr);
             

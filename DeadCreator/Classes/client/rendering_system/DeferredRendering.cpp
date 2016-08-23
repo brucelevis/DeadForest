@@ -50,7 +50,6 @@ bool DeferredRendering::initWithFile(const std::string& basicTextureName)
     // reserved render targets
     _renderTargets.insert( {"u_staticTex", RenderTarget::create(getContentSize())} );
     _renderTargets.insert( {"u_dynamicTex", RenderTarget::create(getContentSize())} );
-    _renderTargets.insert( {"u_normalTex", RenderTarget::create(getContentSize())} );
     _renderTargets.insert( {"u_occlusionTex", RenderTarget::create(getContentSize())} );
     
     for( const auto& renderTarget : _renderTargets )
@@ -68,8 +67,15 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
     for ( const auto& target : _renderTargets )
     {
         target.second->transform(zoomScale, cameraPos);
-        getGLProgramState()->setUniformTexture(target.first, target.second->getTexture());
     }
+    
+    getGLProgramState()->setUniformTexture("u_staticTex", _renderTargets["u_staticTex"]->getTexture());
+    getGLProgramState()->setUniformTexture("u_dynamicTex", _renderTargets["u_dynamicTex"]->getTexture());
+    getGLProgramState()->setUniformTexture("u_occlusionTex", _renderTargets["u_occlusionTex"]->getTexture());
+    
+    /*_renderTargets["u_dynamicTex"]->enableNormal();
+    getGLProgramState()->setUniformTexture("u_normalTex", _renderTargets["u_dynamicTex"]->getTexture());
+    _renderTargets["u_dynamicTex"]->disableNormal();*/
 }
 
 
@@ -79,6 +85,9 @@ void DeferredRendering::addEntity(const std::string& renderTargetName, EntityBas
     if ( _renderTargets.count(renderTargetName) == 0 ) throw std::runtime_error("render target is not exist");
     _renderTargets[renderTargetName]->addChild(node, zOrder);
 }
+
+
+
 
 
 

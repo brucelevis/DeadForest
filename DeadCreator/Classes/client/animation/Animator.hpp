@@ -44,6 +44,9 @@ namespace realtrick
             void setRotation(float rotation);
             void setShadowVisible(bool visible) { _shadowSprite->setVisible(visible); }
             
+            void enableNormalMap();
+            void disableNormalMap();
+            
         private:
             
             std::string getFrameName() const;
@@ -58,6 +61,7 @@ namespace realtrick
             
             cocos2d::Sprite*                                        _baseSprite;
             cocos2d::Sprite*                                        _shadowSprite;
+            cocos2d::Sprite*                                        _normalSprite;
             
             std::string                                             _currFrameName;
             int                                                     _currFrame;

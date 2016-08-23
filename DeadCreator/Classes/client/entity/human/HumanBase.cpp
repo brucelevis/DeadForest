@@ -268,6 +268,15 @@ bool HumanBase::handleMessage(const Telegram& msg)
 }
 
 
+void HumanBase::enableNormal(bool enable)
+{
+    if ( !_animator ) return ;
+    
+    if ( enable ) _animator->enableNormalMap();
+    else _animator->disableNormalMap();
+}
+
+
 void HumanBase::setBrain(BrainBase* brain)
 {
     CC_SAFE_DELETE(_brain);

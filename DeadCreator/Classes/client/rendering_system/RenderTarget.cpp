@@ -64,6 +64,24 @@ cocos2d::Texture2D* RenderTarget::getTexture()
 }
 
 
+void RenderTarget::enableNormal()
+{
+    for ( const auto& entity : getChildren() )
+    {
+        static_cast<EntityBase*>(entity)->enableNormal(true);
+    }
+}
+
+
+void RenderTarget::disableNormal()
+{
+    for ( const auto& entity : getChildren() )
+    {
+        static_cast<EntityBase*>(entity)->enableNormal(false);
+    }
+}
+
+
 
 
 

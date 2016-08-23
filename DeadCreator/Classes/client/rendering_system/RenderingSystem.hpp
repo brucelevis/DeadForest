@@ -48,8 +48,6 @@ namespace realtrick
             void addEntity(EntityBase* entity, int zOrder = 0);
             void removeEntity(EntityBase* entity);
             void addUINode(cocos2d::Node* node);
-            
-			cocos2d::DrawNode* getDebugNode() const { return _tempDebugNode; }
 
         private:
             
@@ -62,8 +60,6 @@ namespace realtrick
      
             float _zoomScale;
             cocos2d::Vec2 _gameScreenScale;
-
-			cocos2d::DrawNode* _tempDebugNode;
             
         };
         

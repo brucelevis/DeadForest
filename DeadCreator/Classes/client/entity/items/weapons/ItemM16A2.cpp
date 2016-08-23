@@ -22,6 +22,7 @@ ItemM16A2::ItemM16A2(Game* game) : WeaponBase(game)
     setNumOfLeftRounds(0);
     setDelay(0.5f);
     setBulletType(EntityType::BULLET_556MM);
+    _spriteName = "M16A2.png";
 }
 
 

@@ -15,6 +15,7 @@ BulletShell::BulletShell(Game* game) : BulletBase(game)
 {
     setEntityType(BULLET_SHELL);
     setAmount(30);
+    _spriteName = "Shell.png";
 }
 
 

@@ -48,6 +48,8 @@ namespace realtrick
             virtual void discard() = 0;
             virtual void releaseWeapon() {}
             
+            virtual void enableNormal(bool enable) override;
+            
         protected:
             
             EntityPlayer*                           _owner;
@@ -56,8 +58,11 @@ namespace realtrick
             std::string                             _inSlotFrameName;
             cocos2d::Size                           _inSlotSpriteSize;
             
+            std::string                             _spriteName;
+            
             cocos2d::Sprite*                        _inGameImage_n;
             cocos2d::Sprite*                        _inGameImage_s;
+            cocos2d::Sprite*                        _normalMap;
             cocos2d::Sprite*                        _inSlotImage;
             
             cocos2d::ui::Widget::TextureResType     _texType;

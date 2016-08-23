@@ -81,21 +81,13 @@ void WeaponBase::reload()
 
 	int offset = getReloadedBulletOnce();
 	int ownedRound = _owner->getInventory()->getItemAmount(getBulletType());
-
 	int bulletNum = std::min(ownedRound, offset);
 
     if (leftRounds!=maxRounds)
     {
-        
         if (ownedRound!=0)
         {
-            //int offset = getReloadedBulletOnce(); // 재장전할 수 있는 총알의 수
-			
-			//m = std::min(ownedRound, offset);
-			//cocos2d::log("%d %d %d",offset, ownedRound, m);
-			
 			setReservecBullets(bulletNum);
-
             _owner->getWeaponStatus()->disableButton();
             _game->sendMessage(0.0, _owner, this, MessageType::RELOAD_WEAPON, nullptr);
             

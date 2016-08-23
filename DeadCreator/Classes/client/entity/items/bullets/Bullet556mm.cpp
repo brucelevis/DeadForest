@@ -15,6 +15,7 @@ Bullet556mm::Bullet556mm(Game* game) : BulletBase(game)
 {
     setEntityType(BULLET_556MM);
     setAmount(90);
+    _spriteName = "5.56mm.png";
 }
 
 

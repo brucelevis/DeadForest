@@ -83,11 +83,6 @@ bool Game::init()
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 
     _camera = new Camera2D();
-    
-    
-//    if ( Prm.getValueAsBool("useNetwork") ) _logicStream = new ServerStream(this);
-//    else _logicStream = new SingleStream(this);
-    
     _logicStream = new SingleStream(this);
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
@@ -115,10 +110,7 @@ void Game::update(float dt)
     
     // 2. set game camera position and chunk update (if cell space is changed)
     _camera->setCameraPos(_entityManager->getPlayerPtr()->getWorldPosition());
-    
-    if ( oldIndex != getFocusedTileIndex(_camera->getCameraPos(),
-                                         _gameResource->getTileWidth(),
-                                         _gameResource->getTileHeight(), DUMMY_TILE_SIZE) )
+    if ( oldIndex != getFocusedTileIndex(_camera->getCameraPos(), _gameResource->getTileWidth(), _gameResource->getTileHeight(), DUMMY_TILE_SIZE) )
     {
         _renderingSystem->updateChunk(_camera);
     }

@@ -33,7 +33,12 @@ _currFrame(0)
     _shadowSprite->setPosition(10.0f, -7.0f);
     _owner->addChild(_shadowSprite);
     
+    _normalSprite = Sprite::create();
+    _normalSprite->setVisible(false);
+    _owner->addChild(_normalSprite);
+    
     _baseSprite->setLocalZOrder(1);
+    _normalSprite->setLocalZOrder(2);
     _shadowSprite->setLocalZOrder(0);
 }
 
@@ -113,6 +118,7 @@ void Animator::processAnimation(float dt)
         _frameQueue.pop_front();
         
         _baseSprite->setSpriteFrame(_currFrameName + ".png");
+        _normalSprite->setSpriteFrame(_currFrameName + "_n.png");
         _shadowSprite->setSpriteFrame(_currFrameName + ".png");
         _shadowSprite->setColor(Color3B::BLACK);
     }
@@ -122,6 +128,7 @@ void Animator::processAnimation(float dt)
 void Animator::setRotation(float rotation)
 {
     _baseSprite->setRotation(rotation);
+    _normalSprite->setRotation(rotation);
     _shadowSprite->setRotation(rotation);
 }
 
@@ -141,6 +148,22 @@ int Animator::getFrameIndex() const
 void Animator::setVisible(bool enable)
 {
     _baseSprite->setVisible(enable);
+}
+
+
+void Animator::enableNormalMap()
+{
+    setVisible(false);
+    setShadowVisible(false);
+    _normalSprite->setVisible(true);
+}
+
+
+void Animator::disableNormalMap()
+{
+    setVisible(true);
+    setShadowVisible(true);
+    _normalSprite->setVisible(false);
 }
 
 

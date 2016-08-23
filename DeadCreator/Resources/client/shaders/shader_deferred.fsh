@@ -26,5 +26,5 @@ void main()
     resultColor += ((1.0 - dynamicColor.a) * staticColor);
     resultColor += dynamicColor;
     
-    gl_FragColor = resultColor;
+    gl_FragColor = normalColor;
 }

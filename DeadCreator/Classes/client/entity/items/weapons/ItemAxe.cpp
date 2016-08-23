@@ -23,6 +23,7 @@ ItemAxe::ItemAxe(Game* game) : WeaponBase(game)
     setRange(64.0f);
     setDelay(2.0f);
     setBulletType(BULLET_AXE);
+    _spriteName = "Axe.png";
 }
 
 

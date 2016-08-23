@@ -33,7 +33,6 @@ namespace realtrick
                                                 float deathTime,
                                                 cocos2d::ui::Widget::TextureResType type = cocos2d::ui::Widget::TextureResType::LOCAL);
             
-            void enableNormal(bool enable) override {}
             AnimatedFiniteEntity* clone() const { return new AnimatedFiniteEntity(*this); }
             void setInterval(float interval) { _interval = interval; }
             bool handleMessage(const Telegram& msg) override;

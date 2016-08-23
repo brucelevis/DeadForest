@@ -22,6 +22,7 @@ ItemGlock17::ItemGlock17(Game* game) : WeaponBase(game)
     setNumOfLeftRounds(0);
     setDelay(0.5f);
     setBulletType(EntityType::BULLET_9MM);
+    _spriteName = "Glock17.png";
 }
 
 

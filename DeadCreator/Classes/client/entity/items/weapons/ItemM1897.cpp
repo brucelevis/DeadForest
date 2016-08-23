@@ -23,6 +23,7 @@ ItemM1897::ItemM1897(Game* game) : WeaponBase(game)
     setDelay(1.5f);
     setNumOfShells(12);
     setBulletType(EntityType::BULLET_SHELL);
+    _spriteName = "M1897.png";
 }
 
 

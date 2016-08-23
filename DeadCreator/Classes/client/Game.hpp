@@ -21,6 +21,11 @@
 #include "SimpleReleasePool.hpp"
 #include "Physics.hpp"
 
+#include "SparseGraph.h"
+#include "GraphNodeTypes.h"
+#include "GraphEdgeTypes.h"
+
+
 #define Z_ORDER_GAME_MAP    0
 #define Z_ORDER_SHADOW      1
 #define Z_ORDER_LIGHT       2
@@ -50,7 +55,11 @@ namespace realtrick
         {
             
         public:
-            
+
+			typedef NavGraphNode							GraphNode;
+			typedef NavGraphEdge							GraphEdge;
+			typedef SparseGraph<GraphNode, GraphEdge>		Graph;
+
             Game();
             virtual ~Game();
             
@@ -135,6 +144,9 @@ namespace realtrick
             Camera2D* _camera;
             
             LogicStream* _logicStream;
+
+			// graph
+			Graph*		_graph;
             
             bool _isPaused;
             int _bgmID;

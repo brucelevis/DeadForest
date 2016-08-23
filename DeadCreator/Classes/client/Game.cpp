@@ -20,6 +20,8 @@
 #include "ServerStream.hpp"
 #include "GameResource.hpp"
 #include "EntityManager.hpp"
+#include "HandyGraphFunctions.h"
+#include "Tileset.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
@@ -48,6 +50,7 @@ void Game::clear()
 {
     CC_SAFE_DELETE(_logicStream);
     CC_SAFE_DELETE(_camera);
+	CC_SAFE_DELETE(_graph);
     experimental::AudioEngine::stop(_bgmID);
 }
 
@@ -92,6 +95,20 @@ bool Game::init()
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
+	_graph = new Graph();
+
+
+	generateIsometricGridGraph(
+		*_graph, 
+		getGameResource()->getCollisionData(),
+		getGameResource()->getNumOfTileX(),
+		getGameResource()->getNumOfTileY(),
+		getGameResource()->getTileWidth(), 
+		getGameResource()->getTileHeight(),
+		DUMMY_TILE_SIZE);
+
+	//renderGraph(*_graph, _renderingSystem->getDebugNode(), _camera->getCameraPos());
+
     return true;
 }
 

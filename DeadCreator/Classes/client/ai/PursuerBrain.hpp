@@ -37,7 +37,7 @@ namespace realtrick
             
             virtual void think() override
             {
-                if ( _owner->isAlive() ) _thinker->process();
+                _thinker->process();
             }
             
         private:

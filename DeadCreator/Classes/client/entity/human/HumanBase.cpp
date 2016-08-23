@@ -81,7 +81,7 @@ HumanBase* HumanBase::create(Game* game)
 
 void HumanBase::update(float dt)
 {
-    if ( _brain ) _brain->think();
+    if ( _brain && isAlive() ) _brain->think();
     if ( _FSM ) _FSM->update(dt);
     
     // move and rotate

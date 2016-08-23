@@ -56,7 +56,7 @@ bool RenderingSystem::init(GameResource* res)
     
     _terrain = Terrain::create(_game);
     _deferredRendering->addEntity("u_staticTex", _terrain);
-    
+
     return true;
 }
 

@@ -17,27 +17,40 @@ namespace realtrick
     namespace client
     {
         
+        class Game;
         class RenderTarget;
         class RenderingSystem;
         class EntityBase;
+        class OcculusionBaker;
         
         class DeferredRendering : public EffectSprite
         {
             
         public:
             
-            DeferredRendering();
+            explicit DeferredRendering(Game* game);
             virtual ~DeferredRendering();
             
-            static DeferredRendering* create(const std::string& basicTextureName);
+            static DeferredRendering* create(Game* game, const std::string& basicTextureName);
             virtual bool initWithFile(const std::string& basicTextureName) override;
             void prepareToRender(const cocos2d::Vec2& zoomScale, const cocos2d::Vec2& cameraPos);
             
-            void addEntity(const std::string& renderTargetName, EntityBase* node, int zOrder = 0);
+            void addDynamicEntity(EntityBase* node, int zOrder = 0);
+            void addStaticEntity(EntityBase* node, int zOrder = 0);
             
         private:
             
-            std::map<std::string, RenderTarget*> _renderTargets;
+            Game* _game;
+            
+            cocos2d::Node* _dynamicEntities;
+            cocos2d::Node* _staticEntities;
+            
+            cocos2d::RenderTexture* _dynamicTexture;
+            cocos2d::RenderTexture* _staticTexture;
+            cocos2d::RenderTexture* _normalTexture;
+            cocos2d::RenderTexture* _occlusionTexture;
+            
+            OcculusionBaker* _occulusionBaker;
             
         };
         

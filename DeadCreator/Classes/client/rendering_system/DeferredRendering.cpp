@@ -11,24 +11,33 @@
 #include "RenderingSystem.hpp"
 #include "Effects.hpp"
 #include "EntityBase.hpp"
+#include "OcculusionBaker.hpp"
+#include "Game.hpp"
+#include "GameResource.hpp"
+using namespace cocos2d;
 using namespace realtrick::client;
 
 
-DeferredRendering::DeferredRendering()
+DeferredRendering::DeferredRendering(Game* game) : _game(game)
 {
 }
 
 
 DeferredRendering::~DeferredRendering()
 {
-    for ( const auto& target: _renderTargets ) CC_SAFE_RELEASE(target.second);
-    _renderTargets.clear();
+    CC_SAFE_RELEASE_NULL(_dynamicEntities);
+    CC_SAFE_RELEASE_NULL(_staticEntities);
+    CC_SAFE_RELEASE_NULL(_dynamicTexture);
+    CC_SAFE_RELEASE_NULL(_staticTexture);
+    CC_SAFE_RELEASE_NULL(_normalTexture);
+    CC_SAFE_RELEASE_NULL(_occlusionTexture);
+    CC_SAFE_RELEASE_NULL(_occulusionBaker);
 }
 
 
-DeferredRendering* DeferredRendering::create(const std::string& basicTextureName)
+DeferredRendering* DeferredRendering::create(Game* game, const std::string& basicTextureName)
 {
-    auto ret = new (std::nothrow) DeferredRendering();
+    auto ret = new (std::nothrow) DeferredRendering(game);
     if ( ret && ret->initWithFile(basicTextureName) )
     {
         ret->autorelease();
@@ -47,16 +56,28 @@ bool DeferredRendering::initWithFile(const std::string& basicTextureName)
     setFlippedY(true);
     setEffect(EffectDeferredRendering::create());
     
-    // reserved render targets
-    _renderTargets.insert( {"u_staticTex", RenderTarget::create(getContentSize())} );
-    _renderTargets.insert( {"u_dynamicTex", RenderTarget::create(getContentSize())} );
-    _renderTargets.insert( {"u_occlusionTex", RenderTarget::create(getContentSize())} );
+    _dynamicEntities = Node::create();
+    _dynamicEntities->setPosition(getContentSize() / 2);
+    _dynamicEntities->retain();
     
-    for( const auto& renderTarget : _renderTargets )
-    {
-        renderTarget.second->setPosition(getContentSize() / 2);
-        renderTarget.second->retain();
-    }
+    _staticEntities = Node::create();
+    _staticEntities->setPosition(getContentSize() / 2);
+    _staticEntities->retain();
+    
+    _dynamicTexture = RenderTexture::create(getContentSize().width, getContentSize().height);
+    _dynamicTexture->retain();
+    
+    _staticTexture = RenderTexture::create(getContentSize().width, getContentSize().height);
+    _staticTexture->retain();
+    
+    _normalTexture = RenderTexture::create(getContentSize().width, getContentSize().height);
+    _normalTexture->retain();
+    
+    _occlusionTexture = RenderTexture::create(getContentSize().width, getContentSize().height);
+    _occlusionTexture->retain();
+    
+    _occulusionBaker = OcculusionBaker::create(getContentSize());
+    _occulusionBaker->retain();
     
     return true;
 }
@@ -64,26 +85,73 @@ bool DeferredRendering::initWithFile(const std::string& basicTextureName)
 
 void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const cocos2d::Vec2& cameraPos)
 {
-    for ( const auto& target : _renderTargets )
+    // dynamic entities transform
+    _dynamicEntities->setScale(zoomScale.x, zoomScale.y);
+    for( auto& entity : _dynamicEntities->getChildren() )
     {
-        target.second->transform(zoomScale, cameraPos);
+        auto ent = static_cast<EntityBase*>(entity);
+        ent->setPosition( ent->getWorldPosition() - cameraPos );
     }
     
-    getGLProgramState()->setUniformTexture("u_staticTex", _renderTargets["u_staticTex"]->getTexture());
-    getGLProgramState()->setUniformTexture("u_dynamicTex", _renderTargets["u_dynamicTex"]->getTexture());
-    getGLProgramState()->setUniformTexture("u_occlusionTex", _renderTargets["u_occlusionTex"]->getTexture());
+    // static entities transform
+    _staticEntities->setScale(zoomScale.x, zoomScale.y);
+    for( auto& entity : _staticEntities->getChildren() )
+    {
+        auto ent = static_cast<EntityBase*>(entity);
+        ent->setPosition( ent->getWorldPosition() - cameraPos );
+    }
     
-    /*_renderTargets["u_dynamicTex"]->enableNormal();
-    getGLProgramState()->setUniformTexture("u_normalTex", _renderTargets["u_dynamicTex"]->getTexture());
-    _renderTargets["u_dynamicTex"]->disableNormal();*/
+    // visits
+    _dynamicTexture->beginWithClear(0.0, 0.0, 0.0, 0.0);
+    _dynamicEntities->visit();
+    _dynamicTexture->end();
+    
+    _staticTexture->beginWithClear(0.0, 0.0, 0.0, 0.0);
+    _staticEntities->visit();
+    _staticTexture->end();
+    
+    // bake normal map
+    for ( auto& entity : _dynamicEntities->getChildren() )
+        static_cast<EntityBase*>(entity)->enableNormal(true);
+    
+    _normalTexture->beginWithClear(0.0, 0.0, 0.0, 0.0);
+    _dynamicEntities->visit();
+    _normalTexture->end();
+    
+    for ( auto& entity : _dynamicEntities->getChildren() )
+        static_cast<EntityBase*>(entity)->enableNormal(false);
+    
+    // bake occlusion texture
+    auto player = _game->getPlayerPtr();
+    OcculusionBaker::FieldOfView fov;
+    fov.aroundCircleRadius = 40.0f;
+    fov.aroundCircleSlice = 30;
+    fov.entryDegree = 110.0f;
+    fov.heading = player->getHeading();
+    fov.isEnable = false;
+    _occulusionBaker->bakeTexture(_occlusionTexture,
+                                  player->getWorldPosition(),
+                                  zoomScale,
+                                  _game->getNeighborWalls(player->getWorldPosition(), Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT)),
+                                  Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT), fov);
+    
+    getGLProgramState()->setUniformTexture("u_dynamicTex", _dynamicTexture->getSprite()->getTexture());
+    getGLProgramState()->setUniformTexture("u_staticTex", _staticTexture->getSprite()->getTexture());
+    getGLProgramState()->setUniformTexture("u_normalTex", _normalTexture->getSprite()->getTexture());
+    getGLProgramState()->setUniformTexture("u_normalTex", _normalTexture->getSprite()->getTexture());
+    getGLProgramState()->setUniformTexture("u_occlusionTex", _occlusionTexture->getSprite()->getTexture());
 }
 
 
-void DeferredRendering::addEntity(const std::string& renderTargetName, EntityBase* node, int zOrder)
+void DeferredRendering::addDynamicEntity(EntityBase* node, int zOrder)
 {
-    // exception!!
-    if ( _renderTargets.count(renderTargetName) == 0 ) throw std::runtime_error("render target is not exist");
-    _renderTargets[renderTargetName]->addChild(node, zOrder);
+    _dynamicEntities->addChild(node, zOrder);
+}
+
+
+void DeferredRendering::addStaticEntity(EntityBase* node, int zOrder)
+{
+    _staticEntities->addChild(node, zOrder);
 }
 
 

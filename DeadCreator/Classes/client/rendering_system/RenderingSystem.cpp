@@ -50,12 +50,12 @@ bool RenderingSystem::init(GameResource* res)
     
     _gameScreenScale = Vec2(GAME_SCREEN_WIDTH / 1136, GAME_SCREEN_HEIGHT / 640);
     
-    _deferredRendering = DeferredRendering::create("client/normal_bg.png");
+    _deferredRendering = DeferredRendering::create(_game, "client/normal_bg.png");
     _deferredRendering->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2));
     addChild(_deferredRendering);
     
     _terrain = Terrain::create(_game);
-    _deferredRendering->addEntity("u_staticTex", _terrain);
+    _deferredRendering->addStaticEntity(_terrain);
 
     return true;
 }
@@ -76,7 +76,7 @@ void RenderingSystem::updateChunk(Camera2D* camera)
 
 void RenderingSystem::addEntity(EntityBase* entity, int zOrder)
 {
-    _deferredRendering->addEntity("u_dynamicTex", entity, zOrder);
+    _deferredRendering->addDynamicEntity(entity, zOrder);
 }
 
 

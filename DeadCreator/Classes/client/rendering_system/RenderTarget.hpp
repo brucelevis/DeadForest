@@ -28,9 +28,6 @@ namespace realtrick
             void transform(const cocos2d::Vec2& scale, const cocos2d::Vec2& translate);
             cocos2d::Texture2D* getTexture();
             
-            void enableNormal();
-            void disableNormal();
-            
         private:
             
             cocos2d::RenderTexture* _renderTexture;

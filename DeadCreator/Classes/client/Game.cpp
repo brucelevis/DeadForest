@@ -99,24 +99,6 @@ bool Game::init()
 		getGameResource()->getTileWidth(), 
 		getGameResource()->getTileHeight(),
 		DUMMY_TILE_SIZE);
-
-	auto a = getFocusedTileIndex(
-		Vec2::ZERO,
-		getGameResource()->getTileWidth(),
-		getGameResource()->getTileHeight(),
-		DUMMY_TILE_SIZE);
-	auto b = getFocusedTileIndex(
-		Vec2(1000, 1000),
-		getGameResource()->getTileWidth(),
-		getGameResource()->getTileHeight(),
-		DUMMY_TILE_SIZE);
-
-	int numberA = indexToNumber(a.first, a.second, getGameResource()->getNumOfTileX(), DUMMY_TILE_SIZE);
-	int numberB = indexToNumber(b.first, b.second, getGameResource()->getNumOfTileX(), DUMMY_TILE_SIZE);
-
-	SearchAStar<typename Game::Graph, HeuristicEuclid> search(*_graph, 
-		numberA, numberB);
-	_tempPath = search.getPathAsPathEdges();
     
     return true;
 }

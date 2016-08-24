@@ -37,8 +37,8 @@ _currFrame(0)
     _normalSprite->setVisible(false);
     _owner->addChild(_normalSprite);
     
-    _baseSprite->setLocalZOrder(1);
-    _normalSprite->setLocalZOrder(2);
+    _baseSprite->setLocalZOrder(2);
+    _normalSprite->setLocalZOrder(1);
     _shadowSprite->setLocalZOrder(0);
 }
 

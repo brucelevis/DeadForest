@@ -22,6 +22,18 @@ void main()
     vec4 normalColor = texture2D(u_normalTex, v_texCoord);
     vec4 occlusionColor = texture2D(u_occlusionTex, v_texCoord);
     
+    vec4 visibleStaticColor = staticColor * occlusionColor.r;
+    vec4 unvisibleStaticColor = staticColor * (1.0 - occlusionColor.r);
+    float graySacledColor =
+    (unvisibleStaticColor.r * 0.2126) +
+    (unvisibleStaticColor.g * 0.7152) +
+    (unvisibleStaticColor.g * 0.0722);
+    graySacledColor *= 0.8;
+    unvisibleStaticColor = vec4(graySacledColor, graySacledColor, graySacledColor, 1.0);
+    
+    staticColor = visibleStaticColor + unvisibleStaticColor;
+    dynamicColor = dynamicColor * occlusionColor.r;
+    
     vec4 resultColor = vec4(0.0, 0.0, 0.0, 1.0);
     resultColor += ((1.0 - dynamicColor.a) * staticColor);
     resultColor += dynamicColor;

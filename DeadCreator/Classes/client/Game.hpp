@@ -119,6 +119,8 @@ namespace realtrick
             Camera2D* getCamera() const { return _camera; }
 			std::list<realtrick::PathEdge>& getTempEdges() { return _tempPath; }
 
+			void generateIsometricGridGraph(int numX, int numY, float tileX, float tileY, int numOfDummy);
+
         private:
             
             cocos2d::Size _winSize;

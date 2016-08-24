@@ -95,8 +95,6 @@ bool Game::init()
 
 
 	generateIsometricGridGraph(
-		*_graph, 
-		getGameResource()->getCollisionData(),
 		getGameResource()->getNumOfTileX(),
 		getGameResource()->getNumOfTileY(),
 		getGameResource()->getTileWidth(), 
@@ -483,7 +481,51 @@ void Game::displayText(const std::string& text)
 
 
 
+void Game::generateIsometricGridGraph(int numX, int numY, float tileX, float tileY, int numOfDummy)
+{
+	cocos2d::Vec2 pos;
+	int tileNumX = numX + numOfDummy * 2;
+	int tileNumY = numY * 2 + numOfDummy * 4;
+	for (int i = 0; i < tileNumY; i++)
+	{
+		for (int j = 0; j < tileNumX; j++)
+		{
+			pos = indexToPosition(j, i, tileX, tileY, numOfDummy);
+			_graph->addNode(NavGraphNode(_graph->getNextFreeNodeIndex(), pos));
+		}
+	}
 
+	for (auto n = std::begin(_graph->getNodes()); n != std::end(_graph->getNodes()); ++ n)
+	{
+		int from = n->getIndex();
+		auto idx_pair = numberToIndex(from, numX, numOfDummy);
+
+		if (!isValidIndex(idx_pair.first, idx_pair.second, numX, numY))
+			continue;
+
+		if (_gameResource->getTileData()[idx_pair.second][idx_pair.first].getTileType() == TileType::HILL)
+			continue;
+
+		auto adj = getNeighborTiles(idx_pair.first, idx_pair.second);
+
+		for (auto& e : adj)
+		{
+			int to_j = e.first;
+			int to_i = e.second;
+
+			if (!isValidIndex(to_j, to_i, numX, numY))
+				continue;
+
+			int to = indexToNumber(to_j, to_i, numX, numOfDummy);
+
+			if (_gameResource->getTileData()[to_i][to_j].getTileType() == TileType::HILL)
+				continue;
+
+			_graph->addEdge(realtrick::NavGraphEdge(from, to, _graph
+				->getNode(from).getPos().getDistance(_graph->getNode(to).getPos())));
+		}
+	}
+}
 
 
 

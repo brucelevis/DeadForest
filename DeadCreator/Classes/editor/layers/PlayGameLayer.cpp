@@ -224,8 +224,6 @@ void PlayGameLayer::showLayer(bool& opened)
 				}
 			}*/
 			auto& paths = game->getTempEdges();
-			game->addLog("path's size: " + _to_string(paths.size()));
-			int idx = 0;
 			for (const auto& path : paths)
 			{
 				Vec2 src = path.getSource();
@@ -233,7 +231,6 @@ void PlayGameLayer::showLayer(bool& opened)
 
 				Vec2 a = worldToLocal(origin, src);
 				Vec2 b = worldToLocal(origin, dst);
-				cocos2d::log("%d, src (%f, %f)  trans (%f, %f)", idx++, src.x, src.y, a.x, a.y);
 				drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 1.0, 0.5)));
 			}
 		}

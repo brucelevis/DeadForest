@@ -297,7 +297,7 @@ void HumanM1897In::execute(HumanBase* human)
         if ( static_cast<EntityPlayer*>(human)->getEquipedWeapon() == nullptr )
         {
             // 무기가 없으면 주먹 상태로
-            static_cast<EntityPlayer*>(human)->getFSM()->changeState(&HumanM1897Out::getInstance());
+            static_cast<EntityPlayer*>(human)->getFSM()->changeState(&HumanFistOut::getInstance());
         }
         else
         {

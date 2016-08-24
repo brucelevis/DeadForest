@@ -19,6 +19,7 @@ namespace realtrick
         
         class Game;
         class BrainBase;
+		class PathPlanner;
         
         class HumanBase : public EntityBase
         {
@@ -45,6 +46,7 @@ namespace realtrick
         
             Animator* getAnimator() const { return _animator; }
             StateMachine* getFSM() const { return _FSM; }
+			PathPlanner* getPathPlanner() const { return _pathPlanner; }
             
             cocos2d::Vec2 getHeading() const { return _heading; }
             
@@ -105,6 +107,8 @@ namespace realtrick
             Animator*                       _animator;
             StateMachine*                   _FSM;
             BrainBase*                      _brain;
+			PathPlanner*					_pathPlanner;
+
             
             cocos2d::Vec2                   _heading;
             cocos2d::Vec2                   _targetHeading;

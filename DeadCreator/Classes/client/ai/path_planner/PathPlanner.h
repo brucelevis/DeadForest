@@ -40,11 +40,19 @@ namespace realtrick
 
 			~PathPlanner() {}
 
+		
 			//called by an agent after it has been notified that a search has terminated
 			//successfully. The method extracts the path from _current_algorithm, adds
 			//additional edges appropriate to the search type and returns it as a list of
 			//PathEdges.
-			Path getPath(cocos2d::Vec2 source, cocos2d::Vec2 destination, int tileX, int tileY, int numOfDummy);
+			Path getPath(
+				cocos2d::Vec2 source,
+				cocos2d::Vec2 destination,
+				int numOfTileX,
+				int numOfTileY,
+				int tileWidth,
+				int tileHeight,
+				int numOfDummy);
 
 			// used to retrieve the position of a graph node from its index. 
 			// (takes into account the enumerations 'non_graph_source_node' and 'non_graph_target_node')

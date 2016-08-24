@@ -23,6 +23,8 @@
 #include "HandyGraphFunctions.h"
 #include "Tileset.hpp"
 #include "TileHelperFunctions.hpp"
+#include "PathPlanner.h"
+
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
@@ -89,35 +91,9 @@ bool Game::init()
     _camera = new Camera2D();
     _logicStream = new SingleStream(this);
     
+
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
-    
-	_graph = new Graph();
-
-	generateIsometricGridGraph(
-		getGameResource()->getNumOfTileX(),
-		getGameResource()->getNumOfTileY(),
-		getGameResource()->getTileWidth(), 
-		getGameResource()->getTileHeight(),
-		DUMMY_TILE_SIZE);
-
-	auto a = getFocusedTileIndex(
-		Vec2::ZERO,
-		getGameResource()->getTileWidth(),
-		getGameResource()->getTileHeight(),
-		DUMMY_TILE_SIZE);
-	auto b = getFocusedTileIndex(
-		Vec2(1000, 1000),
-		getGameResource()->getTileWidth(),
-		getGameResource()->getTileHeight(),
-		DUMMY_TILE_SIZE);
-
-	int numberA = indexToNumber(a.first, a.second, getGameResource()->getNumOfTileX(), DUMMY_TILE_SIZE);
-	int numberB = indexToNumber(b.first, b.second, getGameResource()->getNumOfTileX(), DUMMY_TILE_SIZE);
-
-	SearchAStar<typename Game::Graph, HeuristicEuclid> search(*_graph, 
-		numberA, numberB);
-	_tempPath = search.getPathAsPathEdges();
-    
+  
     return true;
 }
 
@@ -297,6 +273,14 @@ void Game::loadGameContents(PlayerType ownPlayer)
     _messenger = MessageDispatcher::create(this);
     _releasePool.addObject(_messenger);
     
+	_graph = new Graph();
+	generateIsometricGridGraph(
+		_gameResource->getNumOfTileX(),
+		_gameResource->getNumOfTileY(),
+		_gameResource->getTileWidth(),
+		_gameResource->getTileHeight(),
+		DUMMY_TILE_SIZE);
+
     _entityManager = EntityManager::createWithResouce(this, _gameResource, ownPlayer);
     _releasePool.addObject(_entityManager);
     

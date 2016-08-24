@@ -22,6 +22,7 @@
 #include "EntityManager.hpp"
 #include "HandyGraphFunctions.h"
 #include "Tileset.hpp"
+#include "TileHelperFunctions.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
@@ -101,6 +102,31 @@ bool Game::init()
 		getGameResource()->getTileWidth(), 
 		getGameResource()->getTileHeight(),
 		DUMMY_TILE_SIZE);
+
+
+	auto a = getFocusedTileIndex(
+		Vec2::ZERO,
+		getGameResource()->getTileWidth(),
+		getGameResource()->getTileHeight(),
+		DUMMY_TILE_SIZE);
+	auto b = getFocusedTileIndex(
+		Vec2(1000, 1000),
+		getGameResource()->getTileWidth(),
+		getGameResource()->getTileHeight(),
+		DUMMY_TILE_SIZE);
+
+	int numberA = indexToNumber(a.first, a.second, getGameResource()->getNumOfTileX(), DUMMY_TILE_SIZE);
+	int numberB = indexToNumber(b.first, b.second, getGameResource()->getNumOfTileX(), DUMMY_TILE_SIZE);
+
+	cocos2d::log("getTileWidth : %d", getGameResource()->getNumOfTileX());
+
+	cocos2d::log("sourceA : (%d %d)   numberA : %d", a.first, a.second, numberA);
+	cocos2d::log("destB : (%d %d)   numberB : %d", b.first, b.second, numberB);
+
+	SearchAStar<typename Game::Graph, HeuristicEuclid> search(*_graph, 
+		numberA, numberB);
+	//SearchDijkstra<typename GameMap::Graph> search(*_map->getGraph(), 0, 150);
+	_tempPath = search.getPathAsPathEdges();
 
 	//renderGraph(*_graph, _renderingSystem->getDebugNode(), _camera->getCameraPos());
 

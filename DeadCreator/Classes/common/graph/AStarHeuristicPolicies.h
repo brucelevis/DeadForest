@@ -49,7 +49,7 @@ namespace realtrick
 		static double calculate(const Graph& graph, int nd1, int nd2)
 		{
 			return (graph.getNode(nd1).getPos() - graph.getNode(nd2).getPos()).getLength()
-				* random(0.9f, 1.1f);
+            * cocos2d::random(0.9f, 1.1f);
 		}
 	};
 

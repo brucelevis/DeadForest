@@ -12,12 +12,15 @@
 //          with the SparseGraph class
 //-----------------------------------------------------------------------------
 #include <iostream>
+
 #include "GraphAlgorithms.h"
 #include "AStarHeuristicPolicies.h"
 #include "GraphNodeTypes.h"
 #include "GraphEdgeTypes.h"
 #include "PathEdge.h"
 #include "Physics.hpp"
+#include "TileHelperFunctions.hpp"
+#include "GraphEdgeTypes.h"
 
 namespace
 {
@@ -41,7 +44,7 @@ namespace
 	void generateIsometricGridGraph(
 		Graph& graph, const Obstacles& obs, int numX, int numY, float tileX, float tileY, int numOfDummy)
 	{
-		Vec2 pos;
+		cocos2d::Vec2 pos;
 		int tileNumX = numX + numOfDummy * 2;
 		int tileNumY = numY * 2 + numOfDummy * 4;
 		for (int i = 0; i < tileNumY; i++)
@@ -77,7 +80,7 @@ namespace
 				for (auto& e : obs)
 				{
 					realtrick::Segment seg(graph.getNode(from).getPos(), graph.getNode(to).getPos());
-					if (physics::intersect(e, seg))
+					if (realtrick::physics::intersect(e, seg))
 					{
 						collide = true;
 						break;
@@ -86,7 +89,7 @@ namespace
 
 				if(!collide)
 				{
-					graph.addEdge(NavGraphEdge(from, to, graph
+                    graph.addEdge(realtrick::NavGraphEdge(from, to, graph
 						.getNode(from).getPos().getDistance(graph.getNode(to).getPos())));
 				}
 			}

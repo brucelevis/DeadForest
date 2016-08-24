@@ -21,14 +21,14 @@
 namespace realtrick
 {
 
-	template <class Node, class Edge>
+	template <class NodeType, class EdgeType>
 	class SparseGraph
 	{
 	public:
 
 		//enable easy client access to the edge and node types used in the graph
-		typedef Edge					Edge;
-		typedef Node					Node;
+		typedef EdgeType					Edge;
+		typedef NodeType					Node;
 
 		//a couple more typedefs to save my fingers and to help with the formatting
 		//of the code on the printed page
@@ -141,7 +141,7 @@ namespace realtrick
 			_nodes[to].getIndex() != -1 &&
 			"<SparseGraph::getEdge>: invalid 'to' index");
 
-		for (EdgeList::const_iterator eg = _edges[from].begin(); eg != _edges[from].end(); ++eg)
+		for (typename EdgeList::const_iterator eg = _edges[from].begin(); eg != _edges[from].end(); ++eg)
 		{
 			if (eg->getTo() == to) return *eg;
 		}
@@ -161,7 +161,7 @@ namespace realtrick
 			_nodes[to].getIndex() != -1 &&
 			"<SparseGraph::getEdge>: invalid 'to' index");
 
-		for (EdgeList::iterator eg = _edges[from].begin(); eg != _edges[from].end(); ++eg)
+		for (typename EdgeList::iterator eg = _edges[from].begin(); eg != _edges[from].end(); ++eg)
 		{
 			if (eg->getTo() == to) return *eg;
 		}
@@ -225,7 +225,7 @@ namespace realtrick
 			"<SparseGraph::setEdgeCost>: invalid index");
 
 		//visit each neighbour and erase any edges leading to this node
-		for (EdgeList::iterator eg = _edges[from].begin(); eg != _edges[from].end(); ++eg)
+		for (typename EdgeList::iterator eg = _edges[from].begin(); eg != _edges[from].end(); ++eg)
 		{
 			if (eg->getTo() == to)
 			{

@@ -25,23 +25,32 @@ PathPlanner::PathPlanner(const Graph& graph, EntityBase* const owner)
 //-----------------------------------------------------------------------------
 
 
-typename PathPlanner::Path PathPlanner::getPath(cocos2d::Vec2 source, cocos2d::Vec2 destination, int tileX, int tileY, int numOfDummy)
+typename PathPlanner::Path PathPlanner::getPath(
+	cocos2d::Vec2 source,
+	cocos2d::Vec2 destination,
+	int numOfTileX,
+	int numOfTileY,
+	int tileWidth,
+	int tileHeight,
+	int numOfDummy)
 {
 	CCLOG("source vec2 %f %f", source.x, source.y);
 
-	std::pair<int, int> source_idx = getFocusedTileIndex(source, tileX, tileY, numOfDummy);
-	std::pair<int, int> destination_idx = getFocusedTileIndex(destination, tileX, tileY, numOfDummy);
+	std::pair<int, int> source_idx = getFocusedTileIndex(source, tileWidth, tileHeight, numOfDummy);
+	std::pair<int, int> desti_idx = getFocusedTileIndex(destination, tileWidth, tileHeight, numOfDummy);
+
+
 
 	CCLOG("source idx %d %d", source_idx.first, source_idx.second);
 
-	int source_node_num = indexToNumber(source_idx.first, source_idx.second, tileX, numOfDummy);
-	int destination_node_num = indexToNumber(destination_idx.first, destination_idx.second, tileX, numOfDummy);
+	int source_node_num = indexToNumber(source_idx.first, source_idx.second, numOfTileX, numOfDummy);
+	int desti_node_num = indexToNumber(desti_idx.first, desti_idx.second, numOfTileX, numOfDummy);
 
-	CCLOG("number %d %d", source_node_num, destination_node_num);
-	SearchAStar<Graph, HeuristicEuclid> search(_graph, source_node_num, destination_node_num);
+	CCLOG("number %d %d", source_node_num, desti_node_num);
+	SearchAStar<Graph, HeuristicEuclid> search(_graph, source_node_num, desti_node_num);
 
 	PathEdge source_to_path(source, _graph.getNode(source_node_num).getPos());
-	PathEdge path_to_destination(_graph.getNode(destination_node_num).getPos(), destination);
+	PathEdge path_to_destination(_graph.getNode(desti_node_num).getPos(), destination);
 
 	auto path = search.getPathAsPathEdges();
 	path.push_front(source_to_path);

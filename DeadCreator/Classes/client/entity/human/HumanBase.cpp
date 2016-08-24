@@ -13,6 +13,8 @@
 #include "RenderingSystem.hpp"
 #include "ZombieBrain.hpp"
 #include "AnimatedFiniteEntity.hpp"
+#include "GameResource.hpp"
+#include "PathPlanner.h"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -61,7 +63,24 @@ bool HumanBase::init()
     
     _animator = new Animator(this);
     setAlive();
+	
+	cocos2d::log("###############################");
+
+	_pathPlanner = new PathPlanner(*_game->getGraph(), this);
+	auto path =
+	_pathPlanner->getPath(
+		Vec2(245, 246), Vec2(1000, 1000),
+		_game->getGameResource()->getNumOfTileX(),
+		_game->getGameResource()->getNumOfTileY(),
+		_game->getGameResource()->getTileWidth(),
+		_game->getGameResource()->getTileHeight(),
+		DUMMY_TILE_SIZE);
     
+	for (auto e : path)
+	{
+		_game->getTempEdges().push_back(e);
+	}
+
     return true;
 }
 

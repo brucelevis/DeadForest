@@ -23,6 +23,8 @@
 #include "HandyGraphFunctions.h"
 #include "Tileset.hpp"
 #include "TileHelperFunctions.hpp"
+#include "PathPlanner.h"
+
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
@@ -90,15 +92,6 @@ bool Game::init()
     _logicStream = new SingleStream(this);
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
-    
-	_graph = new Graph();
-
-	generateIsometricGridGraph(
-		getGameResource()->getNumOfTileX(),
-		getGameResource()->getNumOfTileY(),
-		getGameResource()->getTileWidth(), 
-		getGameResource()->getTileHeight(),
-		DUMMY_TILE_SIZE);
     
     return true;
 }
@@ -279,6 +272,14 @@ void Game::loadGameContents(PlayerType ownPlayer)
     _messenger = MessageDispatcher::create(this);
     _releasePool.addObject(_messenger);
     
+	_graph = new Graph();
+	generateIsometricGridGraph(
+		_gameResource->getNumOfTileX(),
+		_gameResource->getNumOfTileY(),
+		_gameResource->getTileWidth(),
+		_gameResource->getTileHeight(),
+		DUMMY_TILE_SIZE);
+
     _entityManager = EntityManager::createWithResouce(this, _gameResource, ownPlayer);
     _releasePool.addObject(_entityManager);
     

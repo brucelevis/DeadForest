@@ -102,8 +102,6 @@ bool Game::init()
 		getGameResource()->getTileHeight(),
 		DUMMY_TILE_SIZE);
 
-	//renderGraph(*_graph, _renderingSystem->getDebugNode(), _camera->getCameraPos());
-
     return true;
 }
 

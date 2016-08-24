@@ -12,6 +12,7 @@
 using namespace realtrick::editor;
 
 #include "Game.hpp"
+#include "Camera2D.hpp"
 #include "GameResource.hpp"
 #include "RenderingSystem.hpp"
 using namespace realtrick::client;
@@ -22,10 +23,11 @@ void PlayGameLayer::showLayer(bool& opened)
 {
     static bool isStatusOn = true;
     static bool isPlayerInfo = true;
-    static bool isNavGraphOn = false;
+    static bool isGridOn = false;
     static bool isCellSpaceOn = false;
     static bool isPhysicsViewOn = false;
     static bool isLocationViewOn = false;
+	static bool isGraphNodeViewOn = false;
     
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2  - GAME_SCREEN_WIDTH / 2,
                                    ImGui::GetIO().DisplaySize.y / 2  - GAME_SCREEN_HEIGHT / 2), ImGuiSetCond_Once);
@@ -77,7 +79,7 @@ void PlayGameLayer::showLayer(bool& opened)
             ImGui::SetCursorScreenPos(before);
         }
         
-        if ( isNavGraphOn )
+        if ( isGridOn )
         {
             auto resource = game->getGameResource();
             
@@ -196,6 +198,42 @@ void PlayGameLayer::showLayer(bool& opened)
                 drawList->AddText(ImVec2(rectOrigin.x, rectOrigin.y), ImColor(ImVec4(1.0, 1.0, 0.0, 1.0)), name.c_str());
             }
         }
+
+		if ( isGraphNodeViewOn )
+		{
+			/*auto graph = game->getGraph();
+			for (const auto& node : graph->getNodes())
+			{
+				int currNodeIndex = node.getIndex();
+				for (const auto& edge : graph->getEdges(currNodeIndex))
+				{
+					int from = edge.getFrom();
+					int to = edge.getTo();
+
+					cocos2d::Vec2 fromPos = graph->getNode(from).getPos();
+					cocos2d::Vec2 toPos = graph->getNode(to).getPos();
+					
+					Vec2 a = worldToLocal(origin, fromPos);
+					Vec2 b = worldToLocal(origin, toPos);
+					auto cameraPos = game->getCamera()->getCameraPos();
+					if (fromPos.getDistance(cameraPos) < 3000.0f &&
+						toPos.getDistance(cameraPos) < 3000.0f)
+					{
+						drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 1.0, 0.5)));
+					}
+				}
+			}*/
+			auto& paths = game->getTempEdges();
+			for (const auto& path : paths)
+			{
+				Vec2 src = path.getSource();
+				Vec2 dst = path.getDestination();
+
+				Vec2 a = worldToLocal(origin, src);
+				Vec2 b = worldToLocal(origin, dst);
+				drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 1.0, 0.5)));
+			}
+		}
         
     }
     ImGui::End();
@@ -212,10 +250,11 @@ void PlayGameLayer::showLayer(bool& opened)
         {
             ImGui::Checkbox("status", &isStatusOn);
             ImGui::Checkbox("player info", &isPlayerInfo);
-            ImGui::Checkbox("graph", &isNavGraphOn);
+            ImGui::Checkbox("grid", &isGridOn);
             ImGui::Checkbox("cell", &isCellSpaceOn);
             ImGui::Checkbox("physics", &isPhysicsViewOn);
             ImGui::Checkbox("location", &isLocationViewOn);
+			ImGui::Checkbox("graph", &isGraphNodeViewOn);
             ImGui::TreePop();
         }
         if (ImGui::TreeNode("property"))

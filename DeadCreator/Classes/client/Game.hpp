@@ -25,6 +25,7 @@
 #include "GraphNodeTypes.h"
 #include "GraphEdgeTypes.h"
 
+#include "PathEdge.h"
 
 #define Z_ORDER_GAME_MAP    0
 #define Z_ORDER_SHADOW      1
@@ -75,6 +76,7 @@ namespace realtrick
             RenderingSystem* getRenderingSysetm() const { return _renderingSystem; }
             CellSpacePartition* getCellSpace() const { return _cellSpace; }
             TriggerSystem* getTriggerSystem() const { return _triggerSystem; }
+			Graph* getGraph() const { return _graph; }
             
             // entity helper
             void addEntity(EntityBase* ent, int zOrder = 0);
@@ -95,6 +97,8 @@ namespace realtrick
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const Segment& ray) const;
             
+			
+
             TileType getStepOnTileType(const cocos2d::Vec2& pos);
             
             void sendMessage(double delaySeconds, MessageNode* receiver, MessageNode* sender, MessageType type, void* extraInfo);
@@ -113,7 +117,8 @@ namespace realtrick
             void displayText(const std::string& text);
             
             Camera2D* getCamera() const { return _camera; }
-            
+			std::list<realtrick::PathEdge>& getTempEdges() { return _tempPath; }
+
         private:
             
             cocos2d::Size _winSize;
@@ -156,6 +161,8 @@ namespace realtrick
             std::string _logString;
             bool _isLogAdded = false;
             
+			std::list<PathEdge> _tempPath;
+
         };
         
     }

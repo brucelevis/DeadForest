@@ -39,6 +39,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     if(!glview)
     {
         glview = ImGuiGLViewImpl::createWithRect("Dead Creator v1.0.1", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+//        glview = GLViewImpl::createWithRect("Dead Creator v1.0.1", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
         director->setOpenGLView(glview);
     }
     

@@ -128,7 +128,7 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
     fov.aroundCircleSlice = 30;
     fov.entryDegree = 110.0f;
     fov.heading = player->getHeading();
-    fov.isEnable = false;
+    fov.isEnable = true;
     _occulusionBaker->bakeTexture(_occlusionTexture,
                                   player->getWorldPosition(),
                                   zoomScale,

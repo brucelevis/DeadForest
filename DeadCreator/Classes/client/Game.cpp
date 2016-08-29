@@ -490,7 +490,6 @@ void Game::generateIsometricGridGraph(int numX, int numY, float tileX, float til
 				continue;
 
 			int to = indexToNumber(to_j, to_i, numX, numOfDummy);
-
 			if (_gameResource->getTileData()[to_i][to_j].getTileType() == TileType::HILL)
 				continue;
 
@@ -499,6 +498,10 @@ void Game::generateIsometricGridGraph(int numX, int numY, float tileX, float til
 		}
 	}
 }
+
+
+
+
 
 
 

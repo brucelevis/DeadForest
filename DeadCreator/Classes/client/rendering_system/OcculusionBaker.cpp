@@ -12,6 +12,7 @@ using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
 
+
 OcculusionBaker::OcculusionBaker() :
 _dNode(nullptr),
 _boundary(cocos2d::Rect::ZERO),
@@ -130,7 +131,7 @@ void OcculusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
         if ( leftDir.cross(v3 - worldPos) < 0 && rightDir.cross(v3 - worldPos) > 0 ) belongPoints.push_back(v3);
         if ( leftDir.cross(v4 - worldPos) < 0 && rightDir.cross(v4 - worldPos) > 0 ) belongPoints.push_back(v4);
         
-        std::sort(std::begin(belongPoints), std::end(belongPoints), [&, this](const Vec2& v1, const Vec2& v2){
+        std::sort(std::begin(belongPoints), std::end(belongPoints), [&](const Vec2& v1, const Vec2& v2){
             
             Vec2 tempV1 = (v1 - _eyePos).getNormalized();
             Vec2 tempV2 = (v2 - _eyePos).getNormalized();

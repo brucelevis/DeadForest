@@ -704,6 +704,7 @@ void GMXLayer::updateCocosLogic()
                 loc->setSelected(false);
             }
             removeLocation(_grabbedLocation);
+            _grabbedLocation = nullptr;
         }
         
     }

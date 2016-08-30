@@ -145,20 +145,15 @@ void PlayGameLayer::showLayer(bool& opened)
         if ( isPhysicsViewOn )
         {
             auto cellSpace = game->getCellSpace();
-            auto cellIndices = cellSpace->getNeighborCells(game->getPlayerPtr()->getWorldPosition());
-            for ( const auto& idx : cellIndices )
+            auto cell = cellSpace->getCell(game->getPlayerPtr()->getWorldPosition());
+            for ( const auto& ent : cell.members )
             {
-                const Cell& currCell = cellSpace->getCell(idx);
-                for ( const auto& ent : currCell.members )
-                {
-                    if (ent->getEntityType() == EntityType::ENTITY_FINITE ||
-                        isMasked(ent->getFamilyMask(), FamilyMask::BULLET_BASE) )
-                        continue;
-                    
-                    auto rad = ent->getBoundingRadius() * game->getRenderingSysetm()->getZoomScale().x;
-                    auto center = worldToLocal(origin, ent->getWorldPosition());
-                    drawList->AddCircle(ImVec2(center.x, center.y), rad, ImColor(ImVec4(1.0, 0.0, 1.0, 0.7)), 20, 0.0f);
-                }
+                if (ent->getEntityType() == EntityType::ENTITY_FINITE )
+                    continue;
+                
+                auto rad = ent->getBoundingRadius() * game->getRenderingSysetm()->getZoomScale().x;
+                auto center = worldToLocal(origin, ent->getWorldPosition());
+                drawList->AddCircle(ImVec2(center.x, center.y), rad, ImColor(ImVec4(1.0, 0.0, 1.0, 0.7)), 20, 0.0f);
             }
             
             auto walls = game->getNeighborWalls(game->getPlayerPtr()->getWorldPosition(), 0.0f);
@@ -174,7 +169,6 @@ void PlayGameLayer::showLayer(bool& opened)
                 auto b = worldToLocal(origin, wall.vertices.front());
                 drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
             }
-            
         }
         
         if ( isLocationViewOn )

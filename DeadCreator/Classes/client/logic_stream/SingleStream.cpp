@@ -48,7 +48,8 @@ bool SingleStream::handleMessage(const Telegram& msg)
         HumanBase* human = _game->getPlayerPtr();
         human->setMoving(data->dir);
         
-        if ( data->type == JoystickEx::ClickEventType::BEGAN || data->type == JoystickEx::ClickEventType::MOVED )
+        if (data->type == JoystickEx::ClickEventType::BEGAN ||
+            data->type == JoystickEx::ClickEventType::MOVED )
         {
             InputMoveBegin inputCommand(human, data->dir);
             inputCommand.execute();

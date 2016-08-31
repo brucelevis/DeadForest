@@ -317,6 +317,7 @@ void Game::loadGameContents(PlayerType ownPlayer)
     }
     
     _uiLayer = UiLayer::create(this);
+    _uiLayer->setVisible(true);
     _renderingSystem->addUINode(_uiLayer);
 }
 

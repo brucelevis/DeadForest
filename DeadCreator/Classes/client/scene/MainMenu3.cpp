@@ -608,7 +608,7 @@ void MainMenu3::_showMultiMenu(float delay)
     _infoText_multi->runAction(FadeTo::create(delay, 255));
     addChild(_infoText_multi);
     
-    _searchButton_multi = ui::Button::create("client/ui/search_n.png", "client/ui/search_s.png");
+    _searchButton_multi = ui::Button::create("client/ui/play_n.png", "client/ui/search_s.png");
     _searchButton_multi->setPosition(Vec2(_winSize.width * 0.4f, _winSize.height * 0.15f));
     _searchButton_multi->setOpacity(0);
     _searchButton_multi->runAction(FadeTo::create(delay, 255));
@@ -840,7 +840,7 @@ void MainMenu3::_showCustomMenu(float delay)
     _infoText_custom->runAction(FadeTo::create(delay, 255));
     addChild(_infoText_custom);
     
-    _searchButton_custom = ui::Button::create("search_n.png", "search_s.png");
+    _searchButton_custom = ui::Button::create("client/ui/search_n.png", "client/ui/search_s.png");
     _searchButton_custom->setPosition(Vec2(_winSize.width * 0.4f, _winSize.height * 0.15f));
     _searchButton_custom->setOpacity(0);
     _searchButton_custom->runAction(FadeTo::create(delay, 255));

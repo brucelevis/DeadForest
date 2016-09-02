@@ -11,10 +11,8 @@
 #include "Game.hpp"
 #include "EntityPlayer.hpp"
 #include "MessageTypes.hpp"
-#include "Inventory.hpp"
 #include "Items.hpp"
 #include "Camera2D.hpp"
-#include "WeaponStatus.hpp"
 #include "CircularBezel.hpp"
 #include "HpBar.hpp"
 #include "InfoSystem.hpp"
@@ -23,6 +21,7 @@
 #include "InputCommands.hpp"
 #include "RenderingSystem.hpp"
 #include "CrossHair.hpp"
+#include "InventoryView.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -125,19 +124,14 @@ bool UiLayer::init()
         
         if ( localPos.x > 0.0f && localPos.x < GAME_SCREEN_WIDTH && localPos.y > 0.0f && localPos.y < GAME_SCREEN_HEIGHT )
         {
-            const auto& inventoryAABB = _inventorySwitch->getBoundingBox();
-            const cocos2d::Rect reloadButtonAABB = cocos2d::Rect(_weaponStatus->getPosition() - Vec2(40,40), Size(80, 80));
-            
-            if ( !inventoryAABB.containsPoint(localPos) && !reloadButtonAABB.containsPoint(localPos) )
-            {
                 AttJoystickData data;
                 data.ref = this;
                 data.type = ui::Widget::TouchEventType::BEGAN;
                 _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
-            }
         }
         
     };
+    
     mouse->onMouseUp = [this](Event* event){
         
         AttJoystickData data;
@@ -146,6 +140,7 @@ bool UiLayer::init()
         _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
         
     };
+    
     mouse->onMouseMove = [this](Event* event) {
         
         EventMouse* e = static_cast<EventMouse*>(event);
@@ -159,8 +154,8 @@ bool UiLayer::init()
         }
         
     };
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(mouse, this);
     
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(mouse, this);
     
     auto keyboard = EventListenerKeyboard::create();
     keyboard->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) {
@@ -179,6 +174,7 @@ bool UiLayer::init()
         if ( oldMask != _inputMask ) _isInputMaskDirty = true;
         
     };
+    
     keyboard->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) {
         
         auto oldMask = _inputMask;
@@ -192,59 +188,10 @@ bool UiLayer::init()
         if ( oldMask != _inputMask ) _isInputMaskDirty = true;
         
     };
+    
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboard, this);
     
-#endif
-    
-    auto player = _game->getPlayerPtr();
-    if ( player )
-    {
-        _weaponStatus = player->getWeaponStatus();
-        _weaponStatus->setPosition(Vec2(_winSize.width * 0.9f, _winSize.height * 0.9f));
-        addChild(_weaponStatus, Z_ORDER_UI - 1);
-        
-        _inventory = player->getInventory();
-        _inventory->setPosition(Vec2(_winSize / 2));
-        addChild(_inventory, Z_ORDER_UI);
-    }
-    
-    _inventorySwitch = ui::CheckBox::create("client/ui/inventory_n.png", "client/ui/inventory_s.png");
-    _inventorySwitch->setPosition(Vec2(_winSize.width / 2.0f, 50.0f));
-    _inventorySwitch->setScale(1.3f);
-    _inventorySwitch->addEventListener([this](Ref* ref, ui::CheckBox::EventType type)
-                                       {
-                                           if ( type == ui::CheckBox::EventType::SELECTED )
-                                           {
-                                               // 인벤토리를 열면 모든 조이스틱을 비활성화 시킨다.
-                                               
-                                               _inventory->open();
-                                               _weaponStatus->disableButton();
-                                               
-                                               EntityPlayer* player = _game->getPlayerPtr();
-                                               player->setInventoryOpened(true);
-                                               
-                                               MoveJoystickData data1;
-                                               data1.ref = ref;
-                                               data1.dir = player->getMoving();
-                                               data1.type = JoystickEx::ClickEventType::ENDED;
-                                               _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data1);
-                                               
-                                               AttJoystickData data2;
-                                               data2.ref = ref;
-                                               data2.type = ui::Widget::TouchEventType::ENDED;
-                                               _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data2);
-                                           }
-                                           else
-                                           {
-                                               _inventory->close();
-                                               
-                                               EntityPlayer* player = _game->getPlayerPtr();
-                                               player->setInventoryOpened(false);
-                                               _weaponStatus->enableButton();
-                                           }
-                                       });
-    addChild(_inventorySwitch, Z_ORDER_UI);
-    
+#endif    
     
     _inGameUiLayer = Node::create();
     _inGameUiLayer->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
@@ -297,6 +244,11 @@ bool UiLayer::init()
     _hpBar = HpBar::create(_game);
     _hpBar->setPosition(Vec2(_winSize.width * 0.03f, _winSize.height * 0.9f));
     addChild(_hpBar);
+    
+    _inventoryView = InventoryView::create();
+    _inventoryView->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2));
+    addChild(_inventoryView);
+
     
     return true;
 }

@@ -127,15 +127,15 @@ void WeaponStatus::setWeaponStatus(WeaponBase* weapon)
 
 void WeaponStatus::setEntryBullet(WeaponBase* weapon)
 {
-    int ownedBullet = _game->getPlayerPtr()->getInventory()->getItemAmount(weapon->getBulletType());
-    _setEntryBulletNumber(ownedBullet);
+//    int ownedBullet = _game->getPlayerPtr()->getInventory()->getItemAmount(weapon->getBulletType());
+//    _setEntryBulletNumber(ownedBullet);
 }
 
 
 void WeaponStatus::setEntryBullet(EntityType bulletType)
 {
-    int ownedBullet = _game->getPlayerPtr()->getInventory()->getItemAmount(bulletType);
-    _setEntryBulletNumber(ownedBullet);
+//    int ownedBullet = _game->getPlayerPtr()->getInventory()->getItemAmount(bulletType);
+//    _setEntryBulletNumber(ownedBullet);
 }
 
 

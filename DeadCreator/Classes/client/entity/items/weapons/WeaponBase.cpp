@@ -80,7 +80,7 @@ void WeaponBase::reload()
     int maxRounds = getMaxRounds();
 
 	int offset = getReloadedBulletOnce();
-	int ownedRound = _owner->getInventory()->getItemAmount(getBulletType());
+    int ownedRound = 0; //_owner->getInventory()->getItemAmount(getBulletType());
 	int bulletNum = std::min(ownedRound, offset);
 
     if (leftRounds!=maxRounds)
@@ -88,7 +88,7 @@ void WeaponBase::reload()
         if (ownedRound!=0)
         {
 			setReservecBullets(bulletNum);
-            _owner->getWeaponStatus()->disableButton();
+            //_owner->getWeaponStatus()->disableButton();
             _game->sendMessage(0.0, _owner, this, MessageType::RELOAD_WEAPON, nullptr);
             
             double animatedTime = _owner->getAnimator()->getCurrAnimation()->getMaxFrame() * _owner->getAnimator()->getCurrAnimation()->getFrameSwapTime();

@@ -16,7 +16,7 @@ namespace realtrick
     {
         
         class WeaponBase;
-        class Inventory;
+        class InventoryData;
         class WeaponStatus;
         
         class EntityPlayer : public HumanBase
@@ -36,9 +36,6 @@ namespace realtrick
             WeaponBase* getEquipedWeapon() const { return _equipedWeapon; }
             void setEquipedWeapon(WeaponBase* newWeapon) { _equipedWeapon = newWeapon; }
             
-            Inventory* getInventory() const { return _inventory; }
-            WeaponStatus* getWeaponStatus() const { return _weaponStatus; }
-            
             void setUserNickName(const std::string& name) { _userNickName = name; }
             std::string getUserNickName() const { return _userNickName; }
             
@@ -47,12 +44,12 @@ namespace realtrick
             virtual void update(float dt) override;
             virtual void suicide() override;
             
+            bool addItem(ItemBase* item);
+            
         protected:
             
+            InventoryData*                  _inventoryData;
             WeaponBase*                     _equipedWeapon;
-            WeaponStatus*                   _weaponStatus;
-            Inventory*                      _inventory;
-            
             std::string                     _userNickName;
             
         };

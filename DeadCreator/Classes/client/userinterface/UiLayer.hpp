@@ -19,14 +19,13 @@ namespace realtrick
     namespace client
     {
         
+        class Game;
+        class HpBar;
         class JoystickEx;
         class CircularBezel;
-        class Game;
-        class Inventory;
-        class WeaponStatus;
-        class HpBar;
         class InfoSystem;
         class CrossHair;
+        class InventoryView;
         
         class UiLayer : public cocos2d::Node
         {
@@ -40,9 +39,6 @@ namespace realtrick
             virtual void update(float dt) override;
             static UiLayer* create(Game* game);
             
-            Inventory* getInventory() const { return _inventory; }
-            WeaponStatus* getWeaponStatus() const { return _weaponStatus; }
-            
             void runCrossHairEffect(const std::string& name);
             void displayText(const std::string& text);
             
@@ -51,13 +47,11 @@ namespace realtrick
             Game* _game;
             cocos2d::Size _winSize;
         
-            Inventory* _inventory;
-            cocos2d::ui::CheckBox* _inventorySwitch;
-            WeaponStatus* _weaponStatus;
             cocos2d::Node* _inGameUiLayer;
             CrossHair* _crossHair;
             HpBar* _hpBar;
             InfoSystem* _infoSystem;
+            InventoryView* _inventoryView;
             
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
             

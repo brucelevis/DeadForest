@@ -224,7 +224,7 @@ bool HumanM16A2Attack::onMessage(HumanBase* human, const Telegram& msg)
         {
             static_cast<EntityPlayer*>(human)->getEquipedWeapon()->attack();
             static_cast<EntityPlayer*>(human)->getEquipedWeapon()->setNumOfLeftRounds( static_cast<EntityPlayer*>(human)->getEquipedWeapon()->getNumOfLeftRounds() - 1);
-            static_cast<EntityPlayer*>(human)->getWeaponStatus()->setWeaponStatus(static_cast<EntityPlayer*>(human)->getEquipedWeapon());
+//            static_cast<EntityPlayer*>(human)->getWeaponStatus()->setWeaponStatus(static_cast<EntityPlayer*>(human)->getEquipedWeapon());
         }
         
         return true;

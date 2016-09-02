@@ -433,7 +433,7 @@ void HumanM1897AttackAction::enter(HumanBase* human)
     
     static_cast<EntityPlayer*>(human)->getEquipedWeapon()->attack();
     static_cast<EntityPlayer*>(human)->getEquipedWeapon()->setNumOfLeftRounds( static_cast<EntityPlayer*>(human)->getEquipedWeapon()->getNumOfLeftRounds() - 1);
-    static_cast<EntityPlayer*>(human)->getWeaponStatus()->setWeaponStatus(static_cast<EntityPlayer*>(human)->getEquipedWeapon());
+//    static_cast<EntityPlayer*>(human)->getWeaponStatus()->setWeaponStatus(static_cast<EntityPlayer*>(human)->getEquipedWeapon());
 }
 
 void HumanM1897AttackAction::execute(HumanBase* human)

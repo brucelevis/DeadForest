@@ -6,14 +6,12 @@ varying vec4 v_fragmentColor;
 varying vec2 v_texCoord;
 
 //uniform vec2 resolution;
-//uniform float blurRadius;
-//uniform float sampleNum;
-
 uniform sampler2D u_staticTex;
 uniform sampler2D u_dynamicTex;
 uniform sampler2D u_normalTex;
 uniform sampler2D u_occlusionTex;
 
+// lights
 vec3 calcAmbient(in vec4 color, in vec3 lightColor, in float intensity)
 {
     return vec3(color.rgb * lightColor * intensity);
@@ -41,6 +39,7 @@ vec3 calcSpecular(in vec4 color,
     return vec3(color.rgb * lightColor * intensity * s);
 }
 
+// blur
 vec4 blur(sampler2D tex, vec2 p, float blurRadius, float sampleNum)
 {
     vec4 col = vec4(0);
@@ -70,7 +69,7 @@ void main()
     vec4 normalColor = texture2D(u_normalTex, v_texCoord);
     vec4 occlusionColor = blur(u_occlusionTex, v_texCoord, 15.0 , 3.0);
     
-    vec4 visibleStaticColor = staticColor * occlusionColor.r;
+    vec4 visibleStaticColor = staticColor * occlusionColor.r * (1.0 - dynamicColor.a);
     vec4 unvisibleStaticColor = staticColor * (1.0 - occlusionColor.r);
     float graySacledColor =
     (unvisibleStaticColor.r * 0.2126) +
@@ -79,28 +78,29 @@ void main()
     unvisibleStaticColor = vec4(graySacledColor, graySacledColor, graySacledColor, 1.0);
     
     staticColor = visibleStaticColor + unvisibleStaticColor;
-    dynamicColor = dynamicColor * occlusionColor.r;
-    
-    vec4 resultColor = vec4(0.0, 0.0, 0.0, 1.0);
-    resultColor += ((1.0 - dynamicColor.a) * staticColor);
-    resultColor += dynamicColor;
     
     vec3 lightPos = vec3(568.0, 320.0, 100.0);
     vec3 pixelPos = vec3(v_texCoord.x * 1136.0, (1.0 - v_texCoord.y) * 640.0, 0.0);
     vec3 lightColor = vec3(1.0);
-    float intensity = 1.0;
-    float lightRange = 600.0;
+    float intensity = 0.6;
+    float lightRange = 1000.0;
     
     float dist = length(lightPos - pixelPos);
     float t = min(dist / lightRange, 1.0);
     float identity = 1.0 - t;
-    
-    vec3 lightDir = normalize(pixelPos - lightPos);
-    vec3 ambient = calcAmbient(resultColor, lightColor, intensity);
-    vec3 diffuse = calcDiffuse(resultColor, lightColor, intensity, normalColor, lightDir);
-    vec3 specular = calcSpecular(resultColor, lightColor, intensity, normalColor, lightDir, lightPos, pixelPos);
 
-    resultColor.rgb += (ambient + diffuse + specular) * identity * occlusionColor.r;
+    vec3 lightDir = normalize(pixelPos - lightPos);
+    vec3 ambient = calcAmbient(dynamicColor, lightColor, intensity);
+    vec3 diffuse = calcDiffuse(dynamicColor, lightColor, intensity, normalColor, lightDir);
+    vec3 specular = calcSpecular(dynamicColor, lightColor, intensity, normalColor, lightDir, lightPos, pixelPos);
+    
+    vec3 lightedDynamicColor = (ambient + diffuse + specular);
+    dynamicColor.rgb += lightedDynamicColor;
+    dynamicColor *= occlusionColor.r;
+
+    vec4 resultColor = vec4(0.0, 0.0, 0.0, 1.0);
+    resultColor += staticColor;
+    resultColor += dynamicColor;
     
     gl_FragColor = resultColor * identity;
 }

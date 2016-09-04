@@ -44,6 +44,7 @@ namespace realtrick
             WeaponStatus* getWeaponStatus() const { return _weaponStatus; }
             
             void runCrossHairEffect(const std::string& name);
+            void setVisibleCrossHair(bool visible);
             void displayText(const std::string& text);
             
         private:

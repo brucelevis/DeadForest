@@ -109,7 +109,6 @@ namespace realtrick
             BrainBase*                      _brain;
 			PathPlanner*					_pathPlanner;
 
-            
             cocos2d::Vec2                   _heading;
             cocos2d::Vec2                   _targetHeading;
             cocos2d::Vec2                   _moving;

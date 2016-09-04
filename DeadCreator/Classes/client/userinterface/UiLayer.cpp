@@ -377,6 +377,12 @@ void UiLayer::displayText(const std::string& text)
 }
 
 
+void UiLayer::setVisibleCrossHair(bool visible)
+{
+    _crossHair->setVisible(visible);
+}
+
+
 
 
 

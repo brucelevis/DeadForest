@@ -112,6 +112,7 @@ namespace realtrick
             bool& isLogAdded() { return _isLogAdded; }
             
             void runCrossHairEffect(const std::string& name);
+            void setVisibleCrossHair(bool visible);
             void displayText(const std::string& text);
             
             Camera2D* getCamera() const { return _camera; }

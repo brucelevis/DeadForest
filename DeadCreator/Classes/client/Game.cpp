@@ -114,7 +114,7 @@ void Game::update(float dt)
     
     if ( !getPlayerPtr()->isAlive() )
     {
-        Director::getInstance()->replaceScene(RewardScene::createScene());
+//        Director::getInstance()->replaceScene(RewardScene::createScene());
     }
     
     // 1. update entities
@@ -451,6 +451,12 @@ void Game::clearLogs()
 void Game::runCrossHairEffect(const std::string& name)
 {
     _uiLayer->runCrossHairEffect(name);
+}
+
+
+void Game::setVisibleCrossHair(bool visible)
+{
+    _uiLayer->setVisibleCrossHair(visible);
 }
 
 

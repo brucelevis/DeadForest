@@ -67,6 +67,8 @@ table PlaySound
    file_name : string;
 }
 table PreserveTrigger{}
+table Victory{}
+table Defeat{}
 table MoveLocation
 {
    dest_location_name : string;
@@ -97,7 +99,9 @@ union ActionBase
    KillEntityAtLocation,
    MoveLocation,
    PlaySoundAtLocation,
-   PlaySound
+   PlaySound,
+   Victory,
+   Defeat
 }
 
 table Condition 

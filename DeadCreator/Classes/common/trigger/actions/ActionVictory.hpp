@@ -1,8 +1,8 @@
 //
-//  ActionPreserveTrigger.hpp
+//  ActionVictory.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 8. 4..
+//  Created by mac on 2016. 9. 5..
 //
 //
 
@@ -16,29 +16,29 @@ namespace realtrick
     namespace editor
     {
         
-        class ActionPreserveTrigger : public ActionBase
+        class ActionVictory : public ActionBase
         {
             
         public:
             
-            ActionPreserveTrigger() { name() = "Preserve Trigger"; }
-            ActionPreserveTrigger(const ActionPreserveTrigger& rhs) : ActionBase(rhs) { copyFrom(rhs); }
-            ActionPreserveTrigger& operator=(const ActionPreserveTrigger& rhs)
+            ActionVictory() { name() = "Victory"; }
+            ActionVictory(const ActionVictory& rhs) : ActionBase(rhs) { copyFrom(rhs); }
+            ActionVictory& operator=(const ActionVictory& rhs)
             {
                 if ( &rhs != this ) copyFrom(rhs);
                 return *this;
             }
             
-            void copyFrom(const ActionPreserveTrigger& rhs)
+            void copyFrom(const ActionVictory& rhs)
             {
                 ActionBase::copyFrom(rhs);
             }
             
-            virtual ~ActionPreserveTrigger() = default;
+            virtual ~ActionVictory() = default;
             virtual bool drawEditMode(void* opt) override
             {
                 ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
-                ImGui::TextUnformatted("Preserve trigger.");
+                ImGui::TextUnformatted("End scenario in victory for current player.");
                 ImGui::EndChild();
                 
                 return true;
@@ -46,17 +46,17 @@ namespace realtrick
             
             virtual std::string getSummaryString() const override
             {
-                std::string ret = "Preserve trigger.";
+                std::string ret = "End scenario in victory for current player.";
                 return ret;
             }
             
             virtual void reset() override { }
-            virtual ActionPreserveTrigger* clone() const override { return new ActionPreserveTrigger(*this); }
+            virtual ActionVictory* clone() const override { return new ActionVictory(*this); }
             
             virtual flatbuffers::Offset<DeadCreator::Action> getActionObject(flatbuffers::FlatBufferBuilder& builder) override
             {
-                auto obj = DeadCreator::CreatePreserveTrigger(builder);
-                return DeadCreator::CreateAction(builder, DeadCreator::ActionBase_PreserveTrigger, obj.Union());
+                auto obj = DeadCreator::CreateVictory(builder);
+                return DeadCreator::CreateAction(builder, DeadCreator::ActionBase_Victory, obj.Union());
             }
             
         };
@@ -66,24 +66,24 @@ namespace realtrick
     namespace client
     {
         
-        struct ActionPreserveTriggerData: public TriggerDataBase
+        struct ActionVictoryData: public TriggerDataBase
         {
-            ActionPreserveTriggerData() { type = TriggerComponentType::ACTION_PRESERVE_TRIGGER; }
+            ActionVictoryData() { type = TriggerComponentType::ACTION_VICTORY; }
         };
         
-        class ActionPreserveTrigger : public ActionBase
+        class ActionVictory : public ActionBase
         {
             
         public:
             
-            explicit ActionPreserveTrigger(Game* game) : ActionBase(game)
+            explicit ActionVictory(Game* game) : ActionBase(game)
             {}
             
-            virtual ~ActionPreserveTrigger() = default;
+            virtual ~ActionVictory() = default;
             
-            static ActionPreserveTrigger* create(Game* game)
+            static ActionVictory* create(Game* game)
             {
-                auto ret = new (std::nothrow) ActionPreserveTrigger(game);
+                auto ret = new (std::nothrow) ActionVictory(game);
                 if ( ret && ret->init() )
                 {
                     ret->autorelease();
@@ -95,11 +95,11 @@ namespace realtrick
             
             bool init() { return true; }
             
-            virtual void doAction() { _owner->setPreserveTrigger(true); }
+            virtual void doAction() { cocos2d::log("victory"); }
             
         private:
             
-            ActionPreserveTriggerData _params;
+            ActionVictoryData _params;
             
         };
         

@@ -70,12 +70,14 @@ bool TriggerEditLayer::init()
     _conditionList.push_back(new ConditionBring());
     _conditionList.push_back(new ConditionNever());
     
+    _actionList.push_back(new ActionDefeat());
     _actionList.push_back(new ActionDisplayText());
     _actionList.push_back(new ActionKillEntityAtLocation());
     _actionList.push_back(new ActionMoveLocation());
     _actionList.push_back(new ActionPlaySound());
     _actionList.push_back(new ActionPlaySoundAtLocation());
     _actionList.push_back(new ActionPreserveTrigger());
+    _actionList.push_back(new ActionVictory());
     
     return true;
 }

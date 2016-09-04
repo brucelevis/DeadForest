@@ -41,7 +41,17 @@ namespace realtrick
                 
                 auto winSize = cocos2d::Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
                 
-                auto spr = cocos2d::Sprite::create("client/sample/HelloWorld.png");
+                std::string fileName;
+                if ( cocos2d::UserDefault::getInstance()->getBoolForKey("isVictory", false) )
+                {
+                    fileName = "client/ui/you_win.png";
+                }
+                else
+                {
+                    fileName = "client/ui/you_lose.png";
+                }
+                
+                auto spr = cocos2d::Sprite::create(fileName);
                 spr->setPosition(winSize / 2.0f);
                 addChild(spr);
                 

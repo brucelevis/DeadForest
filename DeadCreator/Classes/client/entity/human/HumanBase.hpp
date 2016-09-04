@@ -98,6 +98,8 @@ namespace realtrick
             
             void setBrain(BrainBase* brain);
             
+            void hittedByWeapon(EntityType type, int damage);
+            
         private:
         
             void setHeading(const cocos2d::Vec2 heading) { _heading = heading; _heading.normalize(); }

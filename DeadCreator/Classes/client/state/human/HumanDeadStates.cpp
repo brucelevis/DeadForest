@@ -15,6 +15,7 @@
 #include "HumanOwnedAnimations.hpp"
 using namespace realtrick::client;
 
+
 void HumanBackDeadState::enter(HumanBase* human)
 {
     human->setLocalZOrder(Z_ORDER_HUMAN - 1);
@@ -48,7 +49,6 @@ bool HumanBackDeadState::onMessage(HumanBase* human, const Telegram& msg)
     if ( msg.msg == MessageType::DIE )
     {
 //        human->getGame()->removeEntity(human);
-        
         return true;
     }
     

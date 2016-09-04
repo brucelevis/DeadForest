@@ -383,6 +383,12 @@ void UiLayer::setVisibleCrossHair(bool visible)
 }
 
 
+void UiLayer::setHitPoint(float h)
+{
+    _hpBar->setHitPoint(h);
+}
+
+
 
 
 

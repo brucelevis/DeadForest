@@ -1,8 +1,8 @@
 //
-//  ActionPreserveTrigger.hpp
+//  ActionDefeat.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 8. 4..
+//  Created by mac on 2016. 9. 5..
 //
 //
 
@@ -16,29 +16,29 @@ namespace realtrick
     namespace editor
     {
         
-        class ActionPreserveTrigger : public ActionBase
+        class ActionDefeat : public ActionBase
         {
             
         public:
             
-            ActionPreserveTrigger() { name() = "Preserve Trigger"; }
-            ActionPreserveTrigger(const ActionPreserveTrigger& rhs) : ActionBase(rhs) { copyFrom(rhs); }
-            ActionPreserveTrigger& operator=(const ActionPreserveTrigger& rhs)
+            ActionDefeat() { name() = "Defeat"; }
+            ActionDefeat(const ActionDefeat& rhs) : ActionBase(rhs) { copyFrom(rhs); }
+            ActionDefeat& operator=(const ActionDefeat& rhs)
             {
                 if ( &rhs != this ) copyFrom(rhs);
                 return *this;
             }
             
-            void copyFrom(const ActionPreserveTrigger& rhs)
+            void copyFrom(const ActionDefeat& rhs)
             {
                 ActionBase::copyFrom(rhs);
             }
             
-            virtual ~ActionPreserveTrigger() = default;
+            virtual ~ActionDefeat() = default;
             virtual bool drawEditMode(void* opt) override
             {
                 ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
-                ImGui::TextUnformatted("Preserve trigger.");
+                ImGui::TextUnformatted("End scenario in defeat for current player.");
                 ImGui::EndChild();
                 
                 return true;
@@ -46,17 +46,17 @@ namespace realtrick
             
             virtual std::string getSummaryString() const override
             {
-                std::string ret = "Preserve trigger.";
+                std::string ret = "End scenario in defeat for current player.";
                 return ret;
             }
             
             virtual void reset() override { }
-            virtual ActionPreserveTrigger* clone() const override { return new ActionPreserveTrigger(*this); }
+            virtual ActionDefeat* clone() const override { return new ActionDefeat(*this); }
             
             virtual flatbuffers::Offset<DeadCreator::Action> getActionObject(flatbuffers::FlatBufferBuilder& builder) override
             {
-                auto obj = DeadCreator::CreatePreserveTrigger(builder);
-                return DeadCreator::CreateAction(builder, DeadCreator::ActionBase_PreserveTrigger, obj.Union());
+                auto obj = DeadCreator::CreateDefeat(builder);
+                return DeadCreator::CreateAction(builder, DeadCreator::ActionBase_Defeat, obj.Union());
             }
             
         };
@@ -66,24 +66,24 @@ namespace realtrick
     namespace client
     {
         
-        struct ActionPreserveTriggerData: public TriggerDataBase
+        struct ActionDefeatData: public TriggerDataBase
         {
-            ActionPreserveTriggerData() { type = TriggerComponentType::ACTION_PRESERVE_TRIGGER; }
+            ActionDefeatData() { type = TriggerComponentType::ACTION_DEFEAT; }
         };
         
-        class ActionPreserveTrigger : public ActionBase
+        class ActionDefeat : public ActionBase
         {
             
         public:
             
-            explicit ActionPreserveTrigger(Game* game) : ActionBase(game)
+            explicit ActionDefeat(Game* game) : ActionBase(game)
             {}
             
-            virtual ~ActionPreserveTrigger() = default;
+            virtual ~ActionDefeat() = default;
             
-            static ActionPreserveTrigger* create(Game* game)
+            static ActionDefeat* create(Game* game)
             {
-                auto ret = new (std::nothrow) ActionPreserveTrigger(game);
+                auto ret = new (std::nothrow) ActionDefeat(game);
                 if ( ret && ret->init() )
                 {
                     ret->autorelease();
@@ -95,11 +95,11 @@ namespace realtrick
             
             bool init() { return true; }
             
-            virtual void doAction() { _owner->setPreserveTrigger(true); }
+            virtual void doAction() { cocos2d::log("defeat"); }
             
         private:
             
-            ActionPreserveTriggerData _params;
+            ActionDefeatData _params;
             
         };
         

@@ -31,7 +31,7 @@ namespace realtrick
             
             virtual void inWeapon() override;
             virtual void outWeapon() override;
-            virtual void attack() override;
+
             virtual void discard() override;
             virtual int getReloadedBulletOnce() override { return getMaxRounds() - getNumOfLeftRounds(); }
             

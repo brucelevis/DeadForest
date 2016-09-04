@@ -39,13 +39,13 @@ namespace realtrick
             void setReservecBullets(int num) { _reservedBullet = num; }
             virtual int getReloadedBulletOnce() { return 0; }
             
+            virtual void attack() final;
             virtual void reload() final;
             virtual void use() override final;
             virtual void releaseWeapon() override final;
             
             virtual void inWeapon() = 0;
             virtual void outWeapon() = 0;
-            virtual void attack() = 0;
             virtual ItemBase* clone() const override = 0;
             virtual void discard() override = 0;
             

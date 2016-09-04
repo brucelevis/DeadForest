@@ -43,6 +43,7 @@ namespace realtrick
             Inventory* getInventory() const { return _inventory; }
             WeaponStatus* getWeaponStatus() const { return _weaponStatus; }
             
+            void setHitPoint(float h);
             void runCrossHairEffect(const std::string& name);
             void setVisibleCrossHair(bool visible);
             void displayText(const std::string& text);

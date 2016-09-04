@@ -466,6 +466,11 @@ void Game::displayText(const std::string& text)
 }
 
 
+void Game::setHitPoint(float h)
+{
+    _uiLayer->setHitPoint(h);
+}
+
 
 void Game::generateIsometricGridGraph(int numX, int numY, float tileX, float tileY, int numOfDummy)
 {

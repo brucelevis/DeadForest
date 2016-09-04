@@ -178,6 +178,20 @@ bool GameResource::initWithBinary(const char* buffer)
                     
                     break;
                 }
+                case DeadCreator::ActionBase_Victory:
+                {
+                    auto action = new ActionVictoryData();
+                    data.actions.push_back(action);
+                    
+                    break;
+                }
+                case DeadCreator::ActionBase_Defeat:
+                {
+                    auto action = new ActionDefeatData();
+                    data.actions.push_back(action);
+                    
+                    break;
+                }
                 case DeadCreator::ActionBase_MoveLocation:
                 {
                     auto actionObject = static_cast<const DeadCreator::MoveLocation*>(act->action());

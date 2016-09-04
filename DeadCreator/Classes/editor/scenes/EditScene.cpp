@@ -606,6 +606,20 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         
                         break;
                     }
+                    case DeadCreator::ActionBase_Victory:
+                    {
+                        auto action = new ActionVictory();
+                        newTrigger->addAction(action);
+                        
+                        break;
+                    }
+                    case DeadCreator::ActionBase_Defeat:
+                    {
+                        auto action = new ActionDefeat();
+                        newTrigger->addAction(action);
+                        
+                        break;
+                    }
                     case DeadCreator::ActionBase_KillEntityAtLocation:
                     {
                         auto actionObject = static_cast<const DeadCreator::KillEntityAtLocation*>(act->action());
@@ -668,6 +682,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         
                         break;
                     }
+                        
                     default: { cocos2d::log("invalid action type"); break;}
                 }
             }

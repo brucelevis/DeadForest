@@ -69,6 +69,10 @@ namespace realtrick
             
         private:
             
+            const std::string modeName1 = "battle royal";
+            const std::string modeName2 = "game 1";
+            const std::string modeName3 = "game 2";
+            
             cocos2d::Size _winSize;
             cocos2d::Sprite* _gameTitle;
             cocos2d::Label* _userName;

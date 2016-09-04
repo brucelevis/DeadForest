@@ -91,7 +91,6 @@ bool EntityPlayer::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityB
             data.owner = this;
             data.item = static_cast<ItemBase*>(other);
             _game->pushLogic(0.0, MessageType::PUSH_ITEM_TO_INVENTORY, &data);
-            _game->removeEntity(other);
         }
     }
     

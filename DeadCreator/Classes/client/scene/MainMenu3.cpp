@@ -79,6 +79,7 @@ void MainMenu3::update(float dt)
                 _roomID = obj->roomId();
                 log("<MainMenu3::update> success serch game. room id: [%d]", _roomID);
                 
+                UserDefault::getInstance()->setBoolForKey("useNetwork", true);
                 Director::getInstance()->replaceScene(Game::createScene());
                 
                 break;
@@ -106,6 +107,8 @@ bool MainMenu3::init()
 {
     if ( !Layer::init() )
         return false;
+    
+    Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
     
     _gameTitle = Sprite::create("client/ui/game_title.png");
     _gameTitle->setPosition(Vec2(_winSize.width / 2.0f, _winSize.height * 0.8f));
@@ -160,7 +163,11 @@ void MainMenu3::_showMainMenu(float delay)
     _playButton->addTouchEventListener([this, delay](Ref* ref, Widget::TouchEventType type) {
         if ( type == Widget::TouchEventType::ENDED )
         {
-            _hideMainMenuAndShowPlayMenu(delay);
+            //            _hideMainMenuAndShowPlayMenu(delay);
+            runAction(Sequence::create(CallFunc::create([this, delay] { _hideMainMenu(delay); }),
+                                       DelayTime::create(delay),
+                                       CallFunc::create([this, delay] { _showCustomMenu(delay); }),
+                                       nullptr));
         }
     });
     addChild(_playButton);
@@ -186,8 +193,8 @@ void MainMenu3::_showMainMenu(float delay)
     _exitButton->addTouchEventListener([this](Ref* ref, Widget::TouchEventType type) {
         if ( type == Widget::TouchEventType::ENDED )
         {
-//            Director::getInstance()->end();
-//            exit(-1);
+            //            Director::getInstance()->end();
+            //            exit(-1);
         }
     });
     addChild(_exitButton);
@@ -257,6 +264,8 @@ void MainMenu3::_showPlayMenu(float delay)
 
 void MainMenu3::_showSingleMenu(float delay)
 {
+    UserDefault::getInstance()->setBoolForKey("useNetwork", false);
+    
     auto scene = Game::createScene();
     Director::getInstance()->replaceScene(scene);
 }
@@ -711,7 +720,7 @@ void MainMenu3::_showCustomMenu(float delay)
                                                                   nullptr));
                     
                     _menuCenterIndex_custom = 2;
-
+                    _infoText_custom->setString(modeName1);
                     break;
                 }
                 case 3:
@@ -729,25 +738,25 @@ void MainMenu3::_showCustomMenu(float delay)
                     _teamSurvivalMode->runAction(MoveTo::create(delay, MENU_POSITION_5));
                     
                     _menuCenterIndex_custom = 2;
-                    
+                    _infoText_custom->setString(modeName1);
                     break;
                 }
                 case 4:
                 {
                     _battleRoyalMode->runAction(Spawn::create(FadeTo::create(delay, 255),
-                                                           ScaleTo::create(delay, 0.9f),
-                                                           MoveTo::create(delay, MENU_POSITION_3),
-                                                           nullptr));
+                                                              ScaleTo::create(delay, 0.9f),
+                                                              MoveTo::create(delay, MENU_POSITION_3),
+                                                              nullptr));
                     
                     _teamSurvivalMode->runAction(Spawn::create(FadeTo::create(delay, 80),
-                                                              ScaleTo::create(delay, 0.8f),
-                                                              MoveTo::create(delay, MENU_POSITION_4),
-                                                              nullptr));
+                                                               ScaleTo::create(delay, 0.8f),
+                                                               MoveTo::create(delay, MENU_POSITION_4),
+                                                               nullptr));
                     
                     _survivalMode->runAction(MoveTo::create(delay, MENU_POSITION_2));
                     
                     _menuCenterIndex_custom = 3;
-                    
+                    _infoText_custom->setString(modeName2);
                     break;
                 }
             }
@@ -773,27 +782,27 @@ void MainMenu3::_showCustomMenu(float delay)
                 case 2:
                 {
                     _battleRoyalMode->runAction(Spawn::create(FadeTo::create(delay, 255),
-                                                               ScaleTo::create(delay, 0.9f),
-                                                               MoveTo::create(delay, MENU_POSITION_3),
-                                                               nullptr));
+                                                              ScaleTo::create(delay, 0.9f),
+                                                              MoveTo::create(delay, MENU_POSITION_3),
+                                                              nullptr));
                     
                     _survivalMode->runAction(Spawn::create(FadeTo::create(delay, 80),
-                                                              ScaleTo::create(delay, 0.8f),
-                                                              MoveTo::create(delay, MENU_POSITION_2),
-                                                              nullptr));
+                                                           ScaleTo::create(delay, 0.8f),
+                                                           MoveTo::create(delay, MENU_POSITION_2),
+                                                           nullptr));
                     
                     _teamSurvivalMode->runAction(MoveTo::create(delay, MENU_POSITION_4));
                     
                     _menuCenterIndex_custom = 3;
-                    
+                    _infoText_custom->setString(modeName2);
                     break;
                 }
                 case 3:
                 {
                     _teamSurvivalMode->runAction(Spawn::create(FadeTo::create(delay, 255),
-                                                           ScaleTo::create(delay, 0.9f),
-                                                           MoveTo::create(delay, MENU_POSITION_3),
-                                                           nullptr));
+                                                               ScaleTo::create(delay, 0.9f),
+                                                               MoveTo::create(delay, MENU_POSITION_3),
+                                                               nullptr));
                     
                     _battleRoyalMode->runAction(Spawn::create(FadeTo::create(delay, 80),
                                                               ScaleTo::create(delay, 0.8f),
@@ -803,6 +812,7 @@ void MainMenu3::_showCustomMenu(float delay)
                     _survivalMode->runAction(MoveTo::create(delay, MENU_POSITION_1));
                     
                     _menuCenterIndex_custom = 4;
+                    _infoText_custom->setString(modeName3);
                     
                     break;
                 }
@@ -825,7 +835,7 @@ void MainMenu3::_showCustomMenu(float delay)
                                                                   nullptr));
                     
                     _menuCenterIndex_custom = 4;
-                    
+                    _infoText_custom->setString(modeName3);
                     break;
                 }
             }
@@ -834,7 +844,7 @@ void MainMenu3::_showCustomMenu(float delay)
     });
     addChild(_rightButton_custom);
     
-    _infoText_custom = Text::create("introduce about this mode.", "fonts/SpecialElite.TTF", 30);
+    _infoText_custom = Text::create(modeName2, "fonts/SpecialElite.TTF", 30);
     _infoText_custom->setPosition(Vec2(_winSize.width * 0.5f, _winSize.height * 0.25f));
     _infoText_custom->setOpacity(0);
     _infoText_custom->runAction(FadeTo::create(delay, 255));
@@ -848,17 +858,29 @@ void MainMenu3::_showCustomMenu(float delay)
         
         if ( type == Widget::TouchEventType::ENDED )
         {
-            // 방에 들어간다
+            // 방에 들어간다 (2일 때만)
             
-            flatbuffers::FlatBufferBuilder builder;
-            auto obj = fpacket::CreatePacketDoSearchGame(builder, _menuCenterIndex_custom);
-            builder.Finish(obj);
+            if ( _menuCenterIndex_custom == 2 )
+            {
+                flatbuffers::FlatBufferBuilder builder;
+                auto obj = fpacket::CreatePacketDoSearchGame(builder, _menuCenterIndex_custom);
+                builder.Finish(obj);
+                
+                Packet* packet = new Packet();
+                packet->encode(builder.GetBufferPointer(), builder.GetSize(), PacketType::DO_SEARCH_GAME);
+                GameServer::getInstance().write(packet);
+                
+                _hideCustomMenuAndShowCustomSearchMenu(delay);
+            }
+            else if ( _menuCenterIndex_custom == 3 )
+            {
+                _showSingleMenu(0.0f);
+            }
+            else if ( _menuCenterIndex_custom == 4 )
+            {
+                _showSingleMenu(0.0f);
+            }
             
-            Packet* packet = new Packet();
-            packet->encode(builder.GetBufferPointer(), builder.GetSize(), PacketType::DO_SEARCH_GAME);
-            GameServer::getInstance().write(packet);
-            
-            _hideCustomMenuAndShowCustomSearchMenu(delay);
         }
         
     });
@@ -872,7 +894,12 @@ void MainMenu3::_showCustomMenu(float delay)
         
         if ( type == Widget::TouchEventType::ENDED )
         {
-            _hideCustomMenuAndShowPlayMenu(delay);
+            //            _hideCustomMenuAndShowPlayMenu(delay);
+            runAction(Sequence::create(CallFunc::create([this, delay] { _hideCustomMenu(delay); }),
+                                       DelayTime::create(delay),
+                                       CallFunc::create([this, delay] { _showMainMenu(delay); }),
+                                       nullptr));
+            
         }
         
     });
@@ -928,12 +955,12 @@ void MainMenu3::_showCustomSearchMenu(float delay)
         _progressDots_custom[i]->setColor(Color3B::WHITE);
         _progressDots_custom[i]->setPosition(Vec2(_winSize.width / 2.0f - 100.0f + i * 20.0f, _winSize.height * 0.45f));
         _progressDots_custom[i]->runAction(RepeatForever::create(Spawn::create(FadeTo::create(delay, 255),
-                                                                              Sequence::create(DelayTime::create(i * 0.1f),
-                                                                                               ScaleTo::create(0.4f, 0.2f),
-                                                                                               ScaleTo::create(0.4f, 0.1f),
-                                                                                               DelayTime::create(1.0f - (i * 0.1f)),
-                                                                                               nullptr),
-                                                                              nullptr)));
+                                                                               Sequence::create(DelayTime::create(i * 0.1f),
+                                                                                                ScaleTo::create(0.4f, 0.2f),
+                                                                                                ScaleTo::create(0.4f, 0.1f),
+                                                                                                DelayTime::create(1.0f - (i * 0.1f)),
+                                                                                                nullptr),
+                                                                               nullptr)));
         addChild(_progressDots_custom[i]);
     }
     
@@ -1066,7 +1093,7 @@ void MainMenu3::_hideCustomSearchMenu(float delay)
     _cancelButton_customSearch->stopAllActions();
     _cancelButton_customSearch->setTouchEnabled(false);
     _cancelButton_customSearch->runAction(Sequence::create(FadeTo::create(delay, 0), RemoveSelf::create(), nullptr));
-
+    
 }
 
 

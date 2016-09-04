@@ -64,8 +64,6 @@ bool HumanBase::init()
     _animator = new Animator(this);
     setAlive();
 	
-	cocos2d::log("###############################");
-
 	_pathPlanner = new PathPlanner(*_game->getGraph(), this);
 	auto path =
 	_pathPlanner->getPath(

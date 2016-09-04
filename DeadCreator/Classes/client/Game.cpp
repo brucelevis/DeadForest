@@ -24,14 +24,14 @@
 #include "Tileset.hpp"
 #include "TileHelperFunctions.hpp"
 #include "PathPlanner.h"
-
+#include "MainMenu3.hpp"
+#include "RewardScene.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
 
 #include "GMXFile_generated.h"
 #include "util.h"
-
 
 Game::Game() :
 _winSize(Size::ZERO),
@@ -87,9 +87,10 @@ bool Game::init()
     
     this->scheduleUpdate();
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-
+    
     _camera = new Camera2D();
-    _logicStream = new SingleStream(this);
+    if ( UserDefault::getInstance()->getBoolForKey("useNetwork", false) ) _logicStream = new ServerStream(this);
+    else _logicStream = new SingleStream(this);
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
@@ -110,6 +111,11 @@ void Game::update(float dt)
     pair<int, int> oldIndex = getFocusedTileIndex(_camera->getCameraPos(),
                                                   _gameResource->getTileWidth(),
                                                   _gameResource->getTileHeight(), DUMMY_TILE_SIZE);
+    
+    if ( !getPlayerPtr()->isAlive() )
+    {
+        Director::getInstance()->replaceScene(RewardScene::createScene());
+    }
     
     // 1. update entities
     _entityManager->update(dt);

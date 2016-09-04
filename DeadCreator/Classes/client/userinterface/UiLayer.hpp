@@ -67,10 +67,11 @@ namespace realtrick
             
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
             
-            enum InputMask { UP = 0, DOWN, LEFT, RIGHT, RUNNING };
+            enum InputMask { UP = 0, DOWN, LEFT, RIGHT };
             std::bitset<5> _inputMask;
-            cocos2d::Vec2 _mouseDirection = cocos2d::Vec2::UNIT_X;
-            bool _isInputMaskDirty = false;
+            
+            bool _isMoveMaskDirty = false;
+            bool _isRightButtonPressed = false;
             
 #endif
             

@@ -322,9 +322,10 @@ void Game::loadGameContents(PlayerType ownPlayer)
         _renderingSystem->addEntity(entity.second, zOrder);
     }
     
-    _uiLayer = UiLayer::create(this);
-    _uiLayer->setVisible(true);
-    _renderingSystem->addUINode(_uiLayer);
+    UiLayer* uiLayer = UiLayer::create(this);
+    _renderingSystem->addUINode(uiLayer);
+    
+    _entityManager->getPlayerPtr()->setUiLayer(uiLayer);
 }
 
 
@@ -408,6 +409,12 @@ EntityPlayer* Game::getPlayerPtr() const
 }
 
 
+EntityPlayer* Game::getPlayerPtr(PlayerType type) const
+{
+    return _entityManager->getPlayerPtr(type);
+}
+
+
 EntityBase* Game::getEntityFromID(int id) const
 {
     return _entityManager->getEntityFromID(id);
@@ -445,30 +452,6 @@ void Game::clearLogs()
     _logs.clear();
     _logString.clear();
     _isLogAdded = false;
-}
-
-
-void Game::runCrossHairEffect(const std::string& name)
-{
-    _uiLayer->runCrossHairEffect(name);
-}
-
-
-void Game::setVisibleCrossHair(bool visible)
-{
-    _uiLayer->setVisibleCrossHair(visible);
-}
-
-
-void Game::displayText(const std::string& text)
-{
-    _uiLayer->displayText(text);
-}
-
-
-void Game::setHitPoint(float h)
-{
-    _uiLayer->setHitPoint(h);
 }
 
 

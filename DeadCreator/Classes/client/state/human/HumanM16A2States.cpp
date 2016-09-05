@@ -47,10 +47,10 @@ void HumanM16A2IdleLoop::execute(HumanBase* human)
         human->setVelocity( moving * human->getWalkSpeed() );
         
         // 공격준비가 되었을때
-        if ( static_cast<EntityPlayer*>(human)->getEquipedWeapon()->isReadyToAttack() )
+        if ( human->getEquipedWeapon()->isReadyToAttack() )
         {
             // 1. 남아있는 총알이 있음.
-            if ( static_cast<EntityPlayer*>(human)->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
+            if ( human->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
             {
                 // 공격 상태로 전환
                 human->getFSM()->changeState(&HumanM16A2Attack::getInstance());
@@ -65,10 +65,10 @@ void HumanM16A2IdleLoop::execute(HumanBase* human)
                 human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
             }
             
-            WeaponBase* weapon = static_cast<EntityPlayer*>(human)->getEquipedWeapon();
+            WeaponBase* weapon = human->getEquipedWeapon();
             human->getGame()->sendMessage(weapon->getDelay(), human, human, MessageType::WEAPON_READY, reinterpret_cast<void*>(weapon));
             
-            static_cast<EntityPlayer*>(human)->getEquipedWeapon()->enableReadyToAttack(false);
+            human->getEquipedWeapon()->enableReadyToAttack(false);
         }
     }
     
@@ -220,11 +220,11 @@ bool HumanM16A2Attack::onMessage(HumanBase* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::M16A2_SHOOT )
     {
-        if ( static_cast<EntityPlayer*>(human)->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
+        if ( human->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
         {
-            static_cast<EntityPlayer*>(human)->getEquipedWeapon()->attack();
-            static_cast<EntityPlayer*>(human)->getEquipedWeapon()->setNumOfLeftRounds( static_cast<EntityPlayer*>(human)->getEquipedWeapon()->getNumOfLeftRounds() - 1);
-            static_cast<EntityPlayer*>(human)->getWeaponStatus()->setWeaponStatus(static_cast<EntityPlayer*>(human)->getEquipedWeapon());
+            human->getEquipedWeapon()->attack();
+            human->getEquipedWeapon()->setNumOfLeftRounds( human->getEquipedWeapon()->getNumOfLeftRounds() - 1);
+//            human->getWeaponStatus()->setWeaponStatus(human->getEquipedWeapon());
         }
         
         return true;
@@ -356,7 +356,7 @@ void HumanM16A2In::execute(HumanBase* human)
     
     if(human->getAnimator()->isQueueEmpty())
     {
-        if ( static_cast<EntityPlayer*>(human)->getEquipedWeapon() == nullptr )
+        if ( human->getEquipedWeapon() == nullptr )
         {
             // 무기가 없으면 주먹 상태로
             human->getFSM()->changeState(&HumanFistOut::getInstance());
@@ -364,7 +364,7 @@ void HumanM16A2In::execute(HumanBase* human)
         else
         {
             // 있으면 해당무기를 꺼냄.
-            static_cast<EntityPlayer*>(human)->getEquipedWeapon()->outWeapon();
+            human->getEquipedWeapon()->outWeapon();
         }
     }
 }

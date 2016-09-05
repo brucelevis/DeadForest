@@ -82,6 +82,7 @@ namespace realtrick
             void addEntity(EntityBase* ent, int zOrder = 0);
             void removeEntity(EntityBase* ent);
             EntityPlayer* getPlayerPtr() const;
+            EntityPlayer* getPlayerPtr(PlayerType type) const;
             EntityBase* getEntityFromID(int id) const;
             
             void killEntity(EntityBase* ent);
@@ -110,11 +111,6 @@ namespace realtrick
             void clearLogs();
             const std::string& getLogString() const { return _logString; }
             bool& isLogAdded() { return _isLogAdded; }
-            
-            void runCrossHairEffect(const std::string& name);
-            void setVisibleCrossHair(bool visible);
-            void setHitPoint(float h);
-            void displayText(const std::string& text);
             
             Camera2D* getCamera() const { return _camera; }
 			std::list<realtrick::PathEdge>& getTempEdges() { return _tempPath; }
@@ -151,7 +147,7 @@ namespace realtrick
             // message system
             MessageDispatcher* _messenger;
             
-            // ui
+            // ui layer
             UiLayer* _uiLayer;
             
             // camera

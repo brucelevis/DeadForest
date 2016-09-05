@@ -15,11 +15,19 @@
 #include "AnimatedFiniteEntity.hpp"
 #include "GameResource.hpp"
 #include "PathPlanner.h"
+#include "InventoryData.hpp"
+#include "UiLayer.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
 
 HumanBase::HumanBase(Game* game) : EntityBase(game),
+_animator(nullptr),
+_FSM(nullptr),
+_brain(nullptr),
+_uiLayer(nullptr),
+_equipedWeapon(nullptr),
+_inventoryData(nullptr),
 _heading(Vec2::UNIT_X),
 _targetHeading(Vec2::UNIT_X),
 _moving(Vec2::UNIT_X),
@@ -28,8 +36,6 @@ _right(Vec2::ZERO),
 _velocity(Vec2::ZERO),
 _turnSpeed(0.0f),
 _speed(0.0f),
-_animator(nullptr),
-_brain(nullptr),
 _inputMask(0),
 _blood(0),
 _maxBlood(0),
@@ -41,6 +47,7 @@ _walkSpeed(0.0f),
 _runSpeed(0.0f),
 _footGauge(0.0f),
 _rotation(0.0f),
+_userNickName(""),
 _stateName("idle")
 {
     ADD_FAMILY_MASK(_familyMask, HUMAN_BASE);
@@ -52,6 +59,7 @@ _stateName("idle")
 HumanBase::~HumanBase()
 {
     CC_SAFE_DELETE(_animator);
+    CC_SAFE_DELETE(_inventoryData);
     CC_SAFE_DELETE(_brain);
 }
 
@@ -62,6 +70,8 @@ bool HumanBase::init()
         return false;
     
     _animator = new Animator(this);
+    _inventoryData = new InventoryData(this);
+    
     setAlive();
 	
 	_pathPlanner = new PathPlanner(*_game->getGraph(), this);
@@ -318,7 +328,22 @@ void HumanBase::hittedByWeapon(EntityType type, int damage)
 }
 
 
+void HumanBase::reload()
+{
+    if ( _equipedWeapon ) _equipedWeapon->reload();
+}
 
+
+int HumanBase::addItem(ItemBase* item)
+{
+    int slot = _inventoryData->addItem(item);
+    // 인벤토리 뷰에 추가함.
+    if ( _uiLayer && slot != -1 )
+    {
+        _uiLayer->syncItemView(_inventoryData);
+    }
+    return slot;
+}
 
 
 

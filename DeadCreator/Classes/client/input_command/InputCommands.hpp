@@ -15,3 +15,4 @@
 #include "InputBezelBegin.hpp"
 #include "InputBezelEnd.hpp"
 #include "InputReload.hpp"
+#include "InputPressInventoryButton.hpp"

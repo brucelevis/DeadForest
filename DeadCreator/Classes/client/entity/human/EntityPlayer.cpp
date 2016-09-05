@@ -10,19 +10,16 @@
 #include "HumanOwnedAnimations.hpp"
 #include "HumanOwnedStates.hpp"
 #include "Game.hpp"
-#include "Inventory.hpp"
-#include "WeaponStatus.hpp"
 #include "AnimatedFiniteEntity.hpp"
 #include "RenderingSystem.hpp"
 #include "PursuerBrain.hpp"
+#include "InventoryData.hpp"
+#include "UiLayer.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
 
-EntityPlayer::EntityPlayer(Game* game) : HumanBase(game),
-_equipedWeapon(nullptr),
-_weaponStatus(nullptr),
-_inventory(nullptr)
+EntityPlayer::EntityPlayer(Game* game) : HumanBase(game)
 {
     setEntityType(EntityType::ENTITY_PLAYER);
     setRunSpeed(150.0f);
@@ -35,8 +32,7 @@ _inventory(nullptr)
 EntityPlayer::~EntityPlayer()
 {
     CC_SAFE_DELETE(_FSM);
-    CC_SAFE_RELEASE_NULL(_weaponStatus);
-    CC_SAFE_RELEASE_NULL(_inventory);
+    CC_SAFE_DELETE(_inventoryData);
 }
 
 
@@ -48,12 +44,6 @@ bool EntityPlayer::init()
     _FSM = new StateMachine(this);
     _FSM->setCurrState(&HumanFistIdleLoop::getInstance());
     _FSM->changeState(&HumanFistIdleLoop::getInstance());
-    
-    _weaponStatus = WeaponStatus::create(_game);
-    _weaponStatus->retain();
-    
-    _inventory = Inventory::create(_game);
-    _inventory->retain();
     
     return true;
 }
@@ -118,22 +108,40 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         if ( _blood > 0 ) _blood -= s->damage;
         if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&HumanBackDeadState::getInstance());
         
-        if ( static_cast<EntityPlayer*>(msg.receiver)->getTag() == _game->getPlayerPtr()->getTag() )
+        // only apply to player
+        if ( _uiLayer )
         {
             float h = _blood / static_cast<float>(_maxBlood);
             h = cocos2d::clampf(h, 0.0f, 1.0f);
-            _game->setHitPoint(h);
+            _uiLayer->setHitPoint(h);
         }
     }
     
     else if ( msg.msg == MessageType::HIT )
     {
-        _game->runCrossHairEffect("hit");
+        // only apply to player
+        if ( _uiLayer ) _uiLayer->runCrossHairEffect("hit");
+        
         ret = true;
     }
+    
     else if ( msg.msg == MessageType::NO_HIT )
     {
-        _game->runCrossHairEffect("fire");
+        // only apply to player
+        if ( _uiLayer ) _uiLayer->runCrossHairEffect("fire");
+        
+        ret = true;
+    }
+    
+    else if ( msg.msg == MessageType::DISPLAY_TEXT )
+    {
+        // only apply to player
+        if ( _uiLayer )
+        {
+            auto text = *static_cast<std::string*>(msg.extraInfo);
+            _uiLayer->displayText(text);
+        }
+        
         ret = true;
     }
     
@@ -144,12 +152,6 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
 void EntityPlayer::suicide()
 {
     if ( _FSM ) _FSM->changeState(&HumanBackDeadState::getInstance());
-}
-
-
-void EntityPlayer::reload()
-{
-    if ( _equipedWeapon ) _equipedWeapon->reload();
 }
 
 

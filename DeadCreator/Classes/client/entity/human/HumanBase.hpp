@@ -20,6 +20,9 @@ namespace realtrick
         class Game;
         class BrainBase;
 		class PathPlanner;
+        class WeaponBase;
+        class InventoryData;
+        class UiLayer;
         
         class HumanBase : public EntityBase
         {
@@ -96,9 +99,20 @@ namespace realtrick
             void setInventoryOpened(bool enable) { _isInventoryOpened = enable; }
             bool isInventoryOpened() const { return _isInventoryOpened; }
             
+            WeaponBase* getEquipedWeapon() const { return _equipedWeapon; }
+            void setEquipedWeapon(WeaponBase* newWeapon) { _equipedWeapon = newWeapon; }
+            
+            void setUserNickName(const std::string& name) { _userNickName = name; }
+            std::string getUserNickName() const { return _userNickName; }
+            
+            int addItem(ItemBase* item);
+            void setUiLayer(UiLayer* uiLayer) { _uiLayer = uiLayer; }
+            
             void setBrain(BrainBase* brain);
             
             void hittedByWeapon(EntityType type, int damage);
+            
+            void reload();
             
         private:
         
@@ -110,6 +124,10 @@ namespace realtrick
             StateMachine*                   _FSM;
             BrainBase*                      _brain;
 			PathPlanner*					_pathPlanner;
+            
+            UiLayer*                        _uiLayer;
+            WeaponBase*                     _equipedWeapon;
+            InventoryData*                  _inventoryData;
 
             cocos2d::Vec2                   _heading;
             cocos2d::Vec2                   _targetHeading;
@@ -135,6 +153,7 @@ namespace realtrick
             float                           _footGauge;
             float                           _rotation;
         
+            std::string                     _userNickName;
             std::string                     _stateName;
             
         };

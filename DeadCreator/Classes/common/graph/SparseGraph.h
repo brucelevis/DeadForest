@@ -69,7 +69,7 @@ namespace realtrick
 		//direction will be automatically added.
 		void addEdge(Edge edge);
 
-		size_t numNodes() const { return _nodes.size(); }
+		int numNodes() const { return static_cast<int>(_nodes.size()); }
 
 		//sets the cost of an edge
 		void setEdgeCost(int from, int to, double cost);

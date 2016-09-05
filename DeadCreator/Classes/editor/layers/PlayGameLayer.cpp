@@ -49,8 +49,10 @@ void PlayGameLayer::showLayer(bool& opened)
     if ( _isGameStarted )
     {
         auto game = _gameLayer->getGame();
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
         if ( !game->isGameEnded() )
         {
+#endif
             ImGui::SetCursorScreenPos(ImVec2(origin.x, origin.y));
             auto drawList = ImGui::GetWindowDrawList();
             
@@ -207,25 +209,31 @@ void PlayGameLayer::showLayer(bool& opened)
                     drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 1.0, 0.5)));
                 }
             }
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
         }
+#endif
     }
     ImGui::End();
     
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     if ( _isGameStarted )
     {
         auto game = _gameLayer->getGame();
         if ( game->isGameEnded() )
             opened = false;
     }
+#endif
     
     if ( !opened ) closeLayer();
     
     // setting layer
     if ( _isGameStarted )
     {
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
         auto game = _gameLayer->getGame();
         if ( !game->isGameEnded() )
         {
+#endif
             ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
             ImGui::Begin("setting", NULL, ImGuiWindowFlags_ShowBorders);
             
@@ -247,8 +255,9 @@ void PlayGameLayer::showLayer(bool& opened)
             }
             
             ImGui::End();
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
         }
-        
+#endif
         // logger
         if ( _isGameStarted )
         {

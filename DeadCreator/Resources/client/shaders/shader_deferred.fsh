@@ -12,19 +12,18 @@ uniform sampler2D u_normalTex;
 uniform sampler2D u_occlusionTex;
 
 // lights
-vec3 calcAmbient(in vec4 color, in vec3 lightColor, in float intensity)
+vec3 calcAmbient(in vec3 lightColor, in float intensity)
 {
-    return vec3(color.rgb * lightColor * intensity);
+    return vec3(lightColor * intensity);
 }
 
-vec3 calcDiffuse(in vec4 color, in vec3 lightColor, in float intensity, in vec4 normalMap,  in vec3 lightDir)
+vec3 calcDiffuse(in vec3 lightColor, in float intensity, in vec4 normalMap,  in vec3 lightDir)
 {
     float d = max(dot(-lightDir, normalMap.rgb), 0.0);
-    return vec3(color.rgb * lightColor * intensity * d);
+    return vec3(lightColor * intensity * d);
 }
 
-vec3 calcSpecular(in vec4 color,
-                  in vec3 lightColor,
+vec3 calcSpecular(in vec3 lightColor,
                   in float intensity,
                   in vec4 normalMap,
                   in vec3 lightDir,
@@ -36,7 +35,7 @@ vec3 calcSpecular(in vec4 color,
     float s = pow(max(dot(normalMap.rgb, h), 0.0), 8.0);
     float d = max(dot(-lightDir, normalMap.rgb), 0.0);
     if ( d <= 0.0) s = 0.0;
-    return vec3(color.rgb * lightColor * intensity * s);
+    return vec3(lightColor * intensity * s);
 }
 
 // blur
@@ -80,22 +79,22 @@ void main()
     staticColor = visibleStaticColor + unvisibleStaticColor;
     
     vec3 lightPos = vec3(568.0, 320.0, 100.0);
-    vec3 pixelPos = vec3(v_texCoord.x * 1136.0, (1.0 - v_texCoord.y) * 640.0, 0.0);
-    vec3 lightColor = vec3(1.0);
-    float intensity = 0.6;
-    float lightRange = 1000.0;
+    vec3 pixelPos = vec3(v_texCoord.x * 1136.0, v_texCoord.y * 640.0, 0.0);
+    float lightRange = 600.0;
     
     float dist = length(lightPos - pixelPos);
     float t = min(dist / lightRange, 1.0);
     float identity = 1.0 - t;
 
+    vec3 lightColor = vec3(1.0);
+    float intensity = 1.0;
     vec3 lightDir = normalize(pixelPos - lightPos);
-    vec3 ambient = calcAmbient(dynamicColor, lightColor, intensity);
-    vec3 diffuse = calcDiffuse(dynamicColor, lightColor, intensity, normalColor, lightDir);
-    vec3 specular = calcSpecular(dynamicColor, lightColor, intensity, normalColor, lightDir, lightPos, pixelPos);
+    vec3 ambient = calcAmbient(lightColor, intensity);
+    vec3 diffuse = calcDiffuse(lightColor, intensity, normalColor, lightDir);
+    vec3 specular = calcSpecular(lightColor, intensity, normalColor, lightDir, lightPos, pixelPos);
     
-    vec3 lightedDynamicColor = (ambient + diffuse + specular);
-    dynamicColor.rgb += lightedDynamicColor;
+    vec3 lightFactor = ambient + diffuse + specular;
+    dynamicColor.rgb *= lightFactor;
     dynamicColor *= occlusionColor.r;
 
     vec4 resultColor = vec4(0.0, 0.0, 0.0, 1.0);

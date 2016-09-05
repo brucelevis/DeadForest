@@ -51,6 +51,7 @@ namespace realtrick
             NO_HIT = 20,
             HIT = 21,
             ATTACK_BY_WEAPON = 22,
+            DISPLAY_TEXT = 23,
         };
         
         enum HumanBehaviorType

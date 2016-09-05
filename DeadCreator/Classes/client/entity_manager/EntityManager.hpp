@@ -68,6 +68,7 @@ namespace realtrick
             int getNextValidID();
             
             EntityPlayer* getPlayerPtr() const { return _player; }
+            EntityPlayer* getPlayerPtr(PlayerType type);
             
             void update(float dt);
             

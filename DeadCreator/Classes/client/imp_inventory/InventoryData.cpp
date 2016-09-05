@@ -11,7 +11,7 @@
 using namespace realtrick::client;
 
 
-InventoryData::InventoryData(EntityPlayer* owner) :
+InventoryData::InventoryData(HumanBase* owner) :
 _owner(owner),
 _maxItems(12)
 {
@@ -19,14 +19,14 @@ _maxItems(12)
 }
 
 
-bool InventoryData::addItem(ItemBase* item)
+int InventoryData::addItem(ItemBase* item)
 {
     // cocos2d::Node를 상속받은 item 객체는 사라질것이기 때문에
     // 데이터만을 가지고있는 복사본을 활용한다.
     auto clonedItem = item->clone();
     
     int slot = getClosestSlot();
-    if ( slot == -1 ) return false;
+    if ( slot == -1 ) return -1;
     
     if ( isMasked(item->getFamilyMask(), FamilyMask::WEAPON_BASE) )
     {
@@ -49,7 +49,7 @@ bool InventoryData::addItem(ItemBase* item)
         }
     }
 
-    return true;
+    return slot;
 }
 
 

@@ -182,7 +182,7 @@ void HumanFistIn::execute(HumanBase* human)
     
     if(human->getAnimator()->isQueueEmpty())
     {
-        static_cast<EntityPlayer*>(human)->getEquipedWeapon()->outWeapon();
+        human->getEquipedWeapon()->outWeapon();
     }
 }
 

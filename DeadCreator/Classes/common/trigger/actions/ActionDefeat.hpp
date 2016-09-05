@@ -95,7 +95,14 @@ namespace realtrick
             
             bool init() { return true; }
             
-            virtual void doAction() { _game->replaceDefeatScene(3.0f); }
+            virtual void doAction()
+            {
+                auto players = _owner->getPlayers();
+                if ( players.test(static_cast<int>(_game->getPlayerPtr()->getPlayerType())) )
+                {
+                    _game->replaceDefeatScene(3.0f);
+                }
+            }
             
         private:
             

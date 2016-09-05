@@ -26,6 +26,7 @@ namespace realtrick
         class InfoSystem;
         class CrossHair;
         class InventoryView;
+        class InventoryData;
         
         class UiLayer : public cocos2d::Node
         {
@@ -44,6 +45,7 @@ namespace realtrick
             void runCrossHairEffect(const std::string& name);
             void setVisibleCrossHair(bool visible);
             void displayText(const std::string& text);
+            void syncItemView(InventoryData* data);
             
         private:
             

@@ -16,18 +16,21 @@ namespace realtrick
     {
         
         class ItemBase;
-        class EntityPlayer;
+        class HumanBase;
         
         class InventoryData
         {
             
         public:
             
-            explicit InventoryData(EntityPlayer* owner);
+            explicit InventoryData(HumanBase* owner);
             virtual ~InventoryData() = default;
             
-            bool addItem(ItemBase* item);
+            int addItem(ItemBase* item);
             void eraseItem(int index);
+            
+            int getMaxItemSlot() const { return _maxItems; }
+            ItemBase* getItem(int slot) { return _items[slot]; }
             
         private:
             
@@ -36,7 +39,7 @@ namespace realtrick
             
         private:
             
-            EntityPlayer* _owner;
+            HumanBase* _owner;
             std::vector<ItemBase*> _items;
             
             int _maxItems;

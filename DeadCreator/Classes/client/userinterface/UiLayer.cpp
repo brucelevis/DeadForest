@@ -22,6 +22,7 @@
 #include "RenderingSystem.hpp"
 #include "CrossHair.hpp"
 #include "InventoryView.hpp"
+#include "InventoryData.hpp"
 #include "EntityPlayer.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
@@ -192,10 +193,15 @@ bool UiLayer::init()
         else if ( keyCode == EventKeyboard::KeyCode::KEY_S ) _inputMask.set(InputMask::DOWN);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_A ) _inputMask.set(InputMask::LEFT);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_D ) _inputMask.set(InputMask::RIGHT);
-		else if (keyCode == EventKeyboard::KeyCode::KEY_R)
+		else if ( keyCode == EventKeyboard::KeyCode::KEY_R )
 		{
 			_game->pushLogic(0.0, MessageType::PRESS_RELOAD_BUTTON, nullptr);
 		}
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_I ) 
+        {
+            InputPressInventoryButton command(_inventoryView);
+            command.execute();
+        }
         
         if ( mask != _inputMask ) _isMoveMaskDirty = true;
         
@@ -209,8 +215,9 @@ bool UiLayer::init()
         else if ( keyCode == EventKeyboard::KeyCode::KEY_S ) _inputMask.reset(InputMask::DOWN);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_A ) _inputMask.reset(InputMask::LEFT);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_D ) _inputMask.reset(InputMask::RIGHT);
-      
-         if ( mask != _inputMask ) _isMoveMaskDirty = true;
+        
+        if ( mask != _inputMask ) _isMoveMaskDirty = true;
+
         
     };
     
@@ -272,8 +279,21 @@ bool UiLayer::init()
     
     _inventoryView = InventoryView::create();
     _inventoryView->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2));
+    _inventoryView->setVisible(false);
     addChild(_inventoryView);
 
+    auto inventoryButton = ui::Button::create("client/ui/inventory_switch_n.png", "client/ui/inventory_switch_s.png");
+    inventoryButton->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, 50.0f));
+    inventoryButton->addTouchEventListener([this](Ref* ref, ui::Widget::TouchEventType type){
+        
+        if ( type == ui::Widget::TouchEventType::ENDED ) {
+            InputPressInventoryButton command(_inventoryView);
+            command.execute();
+        }
+        
+    });
+    addChild(inventoryButton);
+    
     
     return true;
 }
@@ -338,6 +358,12 @@ void UiLayer::setVisibleCrossHair(bool visible)
 void UiLayer::setHitPoint(float h)
 {
     _hpBar->setHitPoint(h);
+}
+
+
+void UiLayer::syncItemView(InventoryData* data)
+{
+    _inventoryView->syncItemView(data);
 }
 
 

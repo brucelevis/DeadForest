@@ -17,6 +17,9 @@ namespace realtrick
     namespace client
     {
         
+        class ItemBase;
+        class InventoryData;
+        
         class InventoryView : public cocos2d::Node
         {
             
@@ -25,12 +28,13 @@ namespace realtrick
             static InventoryView* create();
             virtual bool init() override;
             
+            void syncItemView(InventoryData* data);
+            
         private:
             
             cocos2d::Sprite* _background;
             std::vector<cocos2d::ui::Button*> _slots;
             cocos2d::Sprite* _infoView;
-            cocos2d::ui::Button* _closeButton;
             
         };
         

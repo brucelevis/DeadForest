@@ -82,6 +82,7 @@ namespace realtrick
             void addEntity(EntityBase* ent, int zOrder = 0);
             void removeEntity(EntityBase* ent);
             EntityPlayer* getPlayerPtr() const;
+            EntityPlayer* getPlayerPtr(PlayerType type) const;
             EntityBase* getEntityFromID(int id) const;
             
             void killEntity(EntityBase* ent);

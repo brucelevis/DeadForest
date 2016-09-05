@@ -409,6 +409,12 @@ EntityPlayer* Game::getPlayerPtr() const
 }
 
 
+EntityPlayer* Game::getPlayerPtr(PlayerType type) const
+{
+    return _entityManager->getPlayerPtr(type);
+}
+
+
 EntityBase* Game::getEntityFromID(int id) const
 {
     return _entityManager->getEntityFromID(id);

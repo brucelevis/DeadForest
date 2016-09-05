@@ -19,10 +19,7 @@ using namespace cocos2d;
 using namespace realtrick::client;
 
 
-EntityPlayer::EntityPlayer(Game* game) : HumanBase(game),
-_uiLayer(nullptr),
-_equipedWeapon(nullptr),
-_userNickName("")
+EntityPlayer::EntityPlayer(Game* game) : HumanBase(game)
 {
     setEntityType(EntityType::ENTITY_PLAYER);
     setRunSpeed(150.0f);
@@ -47,8 +44,6 @@ bool EntityPlayer::init()
     _FSM = new StateMachine(this);
     _FSM->setCurrState(&HumanFistIdleLoop::getInstance());
     _FSM->changeState(&HumanFistIdleLoop::getInstance());
-    
-    _inventoryData = new InventoryData(this);
     
     return true;
 }
@@ -159,17 +154,6 @@ void EntityPlayer::suicide()
     if ( _FSM ) _FSM->changeState(&HumanBackDeadState::getInstance());
 }
 
-
-void EntityPlayer::reload()
-{
-    if ( _equipedWeapon ) _equipedWeapon->reload();
-}
-
-
-bool EntityPlayer::addItem(ItemBase* item)
-{
-    return _inventoryData->addItem(item);
-}
 
 
 

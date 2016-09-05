@@ -130,10 +130,12 @@ bool SingleStream::handleMessage(const Telegram& msg)
         
         ItemAndOwner* data = static_cast<ItemAndOwner*>(msg.extraInfo);
         data->item->setOwner(data->owner);
-        
-        if ( player->addItem(data->item) )
+
+        int slot = player->addItem(data->item);
+        if ( slot != -1 )
         {
-            // 인벤토리에 공간이 있을 경우, 아이템을 넣고 화면에서 지운다.
+            // 인벤토리에 공간이 있을 경우, 화면에서 지우고 소리를 출력한다.
+            _game->removeEntity(data->item);
             
             if ( data->item->getEntityType() == EntityType::ITEM_AXE )
             {
@@ -152,27 +154,24 @@ bool SingleStream::handleMessage(const Telegram& msg)
                 _game->sendMessage(0.0, player, player, MessageType::PLAY_SOUND, &s);
             }
             
-            if ( isMasked(data->item->getFamilyMask(), FamilyMask::BULLET_BASE) )
-            {
-                // 내가 장착하고 있는 총알 종류를 먹었으면 무기정보를 업데이트한다.
-                WeaponBase* equipedWeapon = player->getEquipedWeapon();
-                if ( equipedWeapon != nullptr )
-                {
-                    // 주먹이 아니고 무기에 맞는 총알을 먹었으면 업데이트한다.
-                    EntityType bulletType = static_cast<EntityType>(data->item->getEntityType());
-                    if ( equipedWeapon->getBulletType() == bulletType )
-                    {
-                        // player->getWeaponStatus()->setEntryBullet(bulletType);
-                    }
-                }
-            }
-            
-            _game->removeEntity(data->item);
+//            if ( isMasked(data->item->getFamilyMask(), FamilyMask::BULLET_BASE) )
+//            {
+//                // 내가 장착하고 있는 총알 종류를 먹었으면 무기정보를 업데이트한다.
+//                WeaponBase* equipedWeapon = player->getEquipedWeapon();
+//                if ( equipedWeapon != nullptr )
+//                {
+//                    // 주먹이 아니고 무기에 맞는 총알을 먹었으면 업데이트한다.
+//                    EntityType bulletType = static_cast<EntityType>(data->item->getEntityType());
+//                    if ( equipedWeapon->getBulletType() == bulletType )
+//                    {
+//                        player->getWeaponStatus()->setEntryBullet(bulletType);
+//                    }
+//                }
+//            }
         }
         else
         {
             // 아이템창이 부족함
-            
         }
         
         return true;

@@ -27,7 +27,7 @@ void PlayGameLayer::showLayer(bool& opened)
     static bool isCellSpaceOn = false;
     static bool isPhysicsViewOn = false;
     static bool isLocationViewOn = false;
-	static bool isGraphNodeViewOn = false;
+    static bool isGraphNodeViewOn = false;
     
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2  - GAME_SCREEN_WIDTH / 2,
                                    ImGui::GetIO().DisplaySize.y / 2  - GAME_SCREEN_HEIGHT / 2), ImGuiSetCond_Once);
@@ -48,240 +48,239 @@ void PlayGameLayer::showLayer(bool& opened)
     // game layer
     if ( _isGameStarted )
     {
-        ImGui::SetCursorScreenPos(ImVec2(origin.x, origin.y));
-        
         auto game = _gameLayer->getGame();
-        auto drawList = ImGui::GetWindowDrawList();
-        
-        if ( isStatusOn )
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+        if ( !game->isGameEnded() )
         {
-            static auto renderer = Director::getInstance()->getRenderer();
+#endif
+            ImGui::SetCursorScreenPos(ImVec2(origin.x, origin.y));
+            auto drawList = ImGui::GetWindowDrawList();
             
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 1.00, 1.00));
-            ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
-            ImGui::Text("Vertices: %d", static_cast<int>(renderer->getDrawnVertices()));
-            ImGui::Text("Batches: %d", static_cast<int>(renderer->getDrawnBatches()));
-            ImGui::PopStyleColor();
-        }
-        
-        if ( isPlayerInfo )
-        {
-            ImVec2 before = ImGui::GetCursorScreenPos();
-            ImGui::SetCursorScreenPos(ImVec2(origin.x, origin.y + GAME_SCREEN_HEIGHT - 80));
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 1.00, 1.00));
-            
-            auto player = game->getPlayerPtr();
-            ImGui::Text("x: %.0f, y: %.0f", player->getWorldPosition().x, player->getWorldPosition().y);
-            ImGui::Text("hp: %d", player->getBlood());
-            ImGui::Text("state: %s", player->getStateName().c_str());
-            
-            ImGui::PopStyleColor();
-            ImGui::SetCursorScreenPos(before);
-        }
-        
-        if ( isGridOn )
-        {
-            auto resource = game->getGameResource();
-            
-            // rectangle lines
-            for(int i = 0 ; i < resource->getWorldHeight() ; i = i + resource->getTileHeight() / 4 )
+            if ( isStatusOn )
             {
-                auto a = worldToLocal(origin, Vec2(0, i));
-                auto b = worldToLocal(origin, Vec2(resource->getWorldWidth(), i));
-                drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
+                static auto renderer = Director::getInstance()->getRenderer();
+                
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 1.00, 1.00));
+                ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
+                ImGui::Text("Vertices: %d", static_cast<int>(renderer->getDrawnVertices()));
+                ImGui::Text("Batches: %d", static_cast<int>(renderer->getDrawnBatches()));
+                ImGui::PopStyleColor();
             }
             
-            for(int i = 0 ; i < resource->getWorldWidth() ; i = i + resource->getTileWidth() / 4 )
+            if ( isPlayerInfo )
             {
-                auto a = worldToLocal(origin, Vec2(i, 0));
-                auto b = worldToLocal(origin, Vec2(i, resource->getWorldHeight()));
-                drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
+                ImVec2 before = ImGui::GetCursorScreenPos();
+                ImGui::SetCursorScreenPos(ImVec2(origin.x, origin.y + GAME_SCREEN_HEIGHT - 80));
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 1.00, 1.00));
+                
+                auto player = game->getPlayerPtr();
+                ImGui::Text("x: %.0f, y: %.0f", player->getWorldPosition().x, player->getWorldPosition().y);
+                ImGui::Text("hp: %d", player->getBlood());
+                ImGui::Text("state: %s", player->getStateName().c_str());
+                
+                ImGui::PopStyleColor();
+                ImGui::SetCursorScreenPos(before);
             }
             
-            // center recet
-            auto indices = getFocusedTileIndex(game->getPlayerPtr()->getWorldPosition(), 128, 128, 4);
-            const auto& tiles = resource->getTileData();
-            for( int i = indices.second - Prm.getValueAsInt("numOfViewableTileY") / 2 ;
-                i < indices.second + Prm.getValueAsInt("numOfViewableTileY") / 2 ; ++ i)
+            if ( isGridOn )
             {
-                for(int j = indices.first - Prm.getValueAsInt("numOfViewableTileX") / 2 ;
-                    j < indices.first + Prm.getValueAsInt("numOfViewableTileX") / 2 ; ++ j)
+                auto resource = game->getGameResource();
+                
+                // rectangle lines
+                for(int i = 0 ; i < resource->getWorldHeight() ; i = i + resource->getTileHeight() / 4 )
                 {
-                    if ( j < 0 || i < 0 || i >= resource->getNumOfTileY() || j >= resource->getNumOfTileX() ) continue;
-                    
-                    auto left = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(-64, 0));
-                    auto bottom = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(0, -64));
-                    auto right = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(64, 0));
-                    
-                    drawList->AddLine(ImVec2(right.x, right.y), ImVec2(bottom.x, bottom.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
-                    drawList->AddLine(ImVec2(bottom.x, bottom.y), ImVec2(left.x, left.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
+                    auto a = worldToLocal(origin, Vec2(0, i));
+                    auto b = worldToLocal(origin, Vec2(resource->getWorldWidth(), i));
+                    drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
+                }
+                
+                for(int i = 0 ; i < resource->getWorldWidth() ; i = i + resource->getTileWidth() / 4 )
+                {
+                    auto a = worldToLocal(origin, Vec2(i, 0));
+                    auto b = worldToLocal(origin, Vec2(i, resource->getWorldHeight()));
+                    drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
+                }
+                
+                // center recet
+                auto indices = getFocusedTileIndex(game->getPlayerPtr()->getWorldPosition(), 128, 128, 4);
+                const auto& tiles = resource->getTileData();
+                for( int i = indices.second - Prm.getValueAsInt("numOfViewableTileY") / 2 ;
+                    i < indices.second + Prm.getValueAsInt("numOfViewableTileY") / 2 ; ++ i)
+                {
+                    for(int j = indices.first - Prm.getValueAsInt("numOfViewableTileX") / 2 ;
+                        j < indices.first + Prm.getValueAsInt("numOfViewableTileX") / 2 ; ++ j)
+                    {
+                        if ( j < 0 || i < 0 || i >= resource->getNumOfTileY() || j >= resource->getNumOfTileX() ) continue;
+                        
+                        auto left = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(-64, 0));
+                        auto bottom = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(0, -64));
+                        auto right = worldToLocal(origin, tiles[i][j].getPosition() + Vec2(64, 0));
+                        
+                        drawList->AddLine(ImVec2(right.x, right.y), ImVec2(bottom.x, bottom.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
+                        drawList->AddLine(ImVec2(bottom.x, bottom.y), ImVec2(left.x, left.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
+                    }
                 }
             }
-        }
-        
-        if ( isCellSpaceOn )
-        {
-            auto cellSpace = game->getCellSpace();
             
-            auto currCellIndex = cellSpace->positionToIndex(game->getPlayerPtr()->getWorldPosition());
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 0.00, 1.00));
-            ImGui::Text(std::string("current cell: " + _to_string(currCellIndex)).c_str(), NULL);
-            ImGui::PopStyleColor();
-
-            const auto& cells = cellSpace->getCells();
-            for (const auto& cell : cells )
+            if ( isCellSpaceOn )
             {
-                const auto& cellSize = cell.boundingBox.size;
+                auto cellSpace = game->getCellSpace();
                 
-                const auto cellOrigin = worldToLocal(origin, cell.boundingBox.origin);
-                const auto top = worldToLocal(origin, cell.boundingBox.origin + Vec2(0, cellSize.height));
-                const auto right = worldToLocal(origin, cell.boundingBox.origin + Vec2(cellSize.width , 0));
+                auto currCellIndex = cellSpace->positionToIndex(game->getPlayerPtr()->getWorldPosition());
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 0.00, 1.00));
+                ImGui::Text(std::string("current cell: " + _to_string(currCellIndex)).c_str(), NULL);
+                ImGui::PopStyleColor();
                 
-                drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(top.x, top.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
-                drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(right.x, right.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
-            }
-        }
-        
-        if ( isPhysicsViewOn )
-        {
-            auto cellSpace = game->getCellSpace();
-            auto cell = cellSpace->getCell(game->getPlayerPtr()->getWorldPosition());
-            for ( const auto& ent : cell.members )
-            {
-                if (ent->getEntityType() == EntityType::ENTITY_FINITE )
-                    continue;
-                
-                auto rad = ent->getBoundingRadius() * game->getRenderingSysetm()->getZoomScale().x;
-                auto center = worldToLocal(origin, ent->getWorldPosition());
-                drawList->AddCircle(ImVec2(center.x, center.y), rad, ImColor(ImVec4(1.0, 0.0, 1.0, 0.7)), 20, 0.0f);
-            }
-            
-            auto walls = game->getNeighborWalls(game->getPlayerPtr()->getWorldPosition(), 0.0f);
-            for( const auto& wall : walls )
-            {
-                for( int i = 0 ; i < wall.vertices.size() - 1; ++ i)
+                const auto& cells = cellSpace->getCells();
+                for (const auto& cell : cells )
                 {
-                    auto a = worldToLocal(origin, wall.vertices[i]);
-                    auto b = worldToLocal(origin, wall.vertices[i + 1]);
+                    const auto& cellSize = cell.boundingBox.size;
+                    
+                    const auto cellOrigin = worldToLocal(origin, cell.boundingBox.origin);
+                    const auto top = worldToLocal(origin, cell.boundingBox.origin + Vec2(0, cellSize.height));
+                    const auto right = worldToLocal(origin, cell.boundingBox.origin + Vec2(cellSize.width , 0));
+                    
+                    drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(top.x, top.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
+                    drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(right.x, right.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
+                }
+            }
+            
+            if ( isPhysicsViewOn )
+            {
+                auto cellSpace = game->getCellSpace();
+                auto cell = cellSpace->getCell(game->getPlayerPtr()->getWorldPosition());
+                for ( const auto& ent : cell.members )
+                {
+                    if (ent->getEntityType() == EntityType::ENTITY_FINITE )
+                        continue;
+                    
+                    auto rad = ent->getBoundingRadius() * game->getRenderingSysetm()->getZoomScale().x;
+                    auto center = worldToLocal(origin, ent->getWorldPosition());
+                    drawList->AddCircle(ImVec2(center.x, center.y), rad, ImColor(ImVec4(1.0, 0.0, 1.0, 0.7)), 20, 0.0f);
+                }
+                
+                auto walls = game->getNeighborWalls(game->getPlayerPtr()->getWorldPosition(), 0.0f);
+                for( const auto& wall : walls )
+                {
+                    for( int i = 0 ; i < wall.vertices.size() - 1; ++ i)
+                    {
+                        auto a = worldToLocal(origin, wall.vertices[i]);
+                        auto b = worldToLocal(origin, wall.vertices[i + 1]);
+                        drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
+                    }
+                    auto a = worldToLocal(origin, wall.vertices.back());
+                    auto b = worldToLocal(origin, wall.vertices.front());
                     drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
                 }
-                auto a = worldToLocal(origin, wall.vertices.back());
-                auto b = worldToLocal(origin, wall.vertices.front());
-                drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
             }
-        }
-        
-        if ( isLocationViewOn )
-        {
-            const auto& locations = game->getGameResource()->getLocations();
-            for( const auto& location : locations )
+            
+            if ( isLocationViewOn )
             {
-                const auto& name = location.first;
-                const auto& rect = location.second;
-                
-                Vec2 rectOrigin = worldToLocal(origin, rect.origin);
-                Vec2 rectDest = worldToLocal(origin, rect.origin + rect.size);
-                
-                drawList->AddRect(ImVec2(rectOrigin.x, rectOrigin.y),
-                                  ImVec2(rectDest.x, rectDest.y),
-                                  ImColor(ImVec4(1.0, 1.0, 1.0, 0.6)));
-                drawList->AddRectFilled(ImVec2(rectOrigin.x, rectOrigin.y),
-                                        ImVec2(rectDest.x, rectDest.y),
-                                        ImColor(ImVec4(0.2, 0.2, 0.8, 0.2)));
-                
-                drawList->AddText(ImVec2(rectOrigin.x, rectOrigin.y), ImColor(ImVec4(1.0, 1.0, 0.0, 1.0)), name.c_str());
+                const auto& locations = game->getGameResource()->getLocations();
+                for( const auto& location : locations )
+                {
+                    const auto& name = location.first;
+                    const auto& rect = location.second;
+                    
+                    Vec2 rectOrigin = worldToLocal(origin, rect.origin);
+                    Vec2 rectDest = worldToLocal(origin, rect.origin + rect.size);
+                    
+                    drawList->AddRect(ImVec2(rectOrigin.x, rectOrigin.y),
+                                      ImVec2(rectDest.x, rectDest.y),
+                                      ImColor(ImVec4(1.0, 1.0, 1.0, 0.6)));
+                    drawList->AddRectFilled(ImVec2(rectOrigin.x, rectOrigin.y),
+                                            ImVec2(rectDest.x, rectDest.y),
+                                            ImColor(ImVec4(0.2, 0.2, 0.8, 0.2)));
+                    
+                    drawList->AddText(ImVec2(rectOrigin.x, rectOrigin.y), ImColor(ImVec4(1.0, 1.0, 0.0, 1.0)), name.c_str());
+                }
             }
+            
+            if ( isGraphNodeViewOn )
+            {
+                auto& paths = game->getTempEdges();
+                for (const auto& path : paths)
+                {
+                    Vec2 src = path.getSource();
+                    Vec2 dst = path.getDestination();
+                    
+                    Vec2 a = worldToLocal(origin, src);
+                    Vec2 b = worldToLocal(origin, dst);
+                    drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 1.0, 0.5)));
+                }
+            }
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
         }
-
-		if ( isGraphNodeViewOn )
-		{
-			/*auto graph = game->getGraph();
-			for (const auto& node : graph->getNodes())
-			{
-				int currNodeIndex = node.getIndex();
-				for (const auto& edge : graph->getEdges(currNodeIndex))
-				{
-					int from = edge.getFrom();
-					int to = edge.getTo();
-
-					cocos2d::Vec2 fromPos = graph->getNode(from).getPos();
-					cocos2d::Vec2 toPos = graph->getNode(to).getPos();
-					
-					Vec2 a = worldToLocal(origin, fromPos);
-					Vec2 b = worldToLocal(origin, toPos);
-					auto cameraPos = game->getCamera()->getCameraPos();
-					if (fromPos.getDistance(cameraPos) < 3000.0f &&
-						toPos.getDistance(cameraPos) < 3000.0f)
-					{
-						drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 1.0, 0.5)));
-					}
-				}
-			}*/
-			auto& paths = game->getTempEdges();
-			for (const auto& path : paths)
-			{
-				Vec2 src = path.getSource();
-				Vec2 dst = path.getDestination();
-
-				Vec2 a = worldToLocal(origin, src);
-				Vec2 b = worldToLocal(origin, dst);
-				drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 1.0, 0.5)));
-			}
-		}
-        
+#endif
     }
     ImGui::End();
+    
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+    if ( _isGameStarted )
+    {
+        auto game = _gameLayer->getGame();
+        if ( game->isGameEnded() )
+            opened = false;
+    }
+#endif
     
     if ( !opened ) closeLayer();
     
     // setting layer
     if ( _isGameStarted )
     {
-        ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
-        ImGui::Begin("setting", NULL, ImGuiWindowFlags_ShowBorders);
-        
-        if (ImGui::TreeNode("debug"))
-        {
-            ImGui::Checkbox("status", &isStatusOn);
-            ImGui::Checkbox("player info", &isPlayerInfo);
-            ImGui::Checkbox("grid", &isGridOn);
-            ImGui::Checkbox("cell", &isCellSpaceOn);
-            ImGui::Checkbox("physics", &isPhysicsViewOn);
-            ImGui::Checkbox("location", &isLocationViewOn);
-			ImGui::Checkbox("graph", &isGraphNodeViewOn);
-            ImGui::TreePop();
-        }
-        if (ImGui::TreeNode("property"))
-        {
-            ImGui::Text("can not use yet.");
-            ImGui::TreePop();
-        }
-        
-        ImGui::End();
-    }
-    
-    // logger
-    if ( _isGameStarted )
-    {
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
         auto game = _gameLayer->getGame();
-        
-        ImGui::SetNextWindowSize(ImVec2(1000, 150), ImGuiSetCond_Once);
-        ImGui::SetNextWindowPos(ImVec2(100, ImGui::GetIO().DisplaySize.y - 200), ImGuiSetCond_Once);
-        ImGui::Begin("Console Log", NULL, ImGuiWindowFlags_ShowBorders);
-        
-        if (ImGui::Button("Clear")) game->clearLogs();
-        ImGui::SameLine(); bool copy = ImGui::Button("Copy");
-        ImGui::Separator();
-        
-        ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
-        
-        if (copy)  ImGui::LogToClipboard();
-        ImGui::TextUnformatted(game->getLogString().c_str());
-        if ( game->isLogAdded() ) ImGui::SetScrollHere(1.0f);
-        game->isLogAdded() = false;
-        
-        ImGui::EndChild();
-        ImGui::End();
+        if ( !game->isGameEnded() )
+        {
+#endif
+            ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
+            ImGui::Begin("setting", NULL, ImGuiWindowFlags_ShowBorders);
+            
+            if (ImGui::TreeNode("debug"))
+            {
+                ImGui::Checkbox("status", &isStatusOn);
+                ImGui::Checkbox("player info", &isPlayerInfo);
+                ImGui::Checkbox("grid", &isGridOn);
+                ImGui::Checkbox("cell", &isCellSpaceOn);
+                ImGui::Checkbox("physics", &isPhysicsViewOn);
+                ImGui::Checkbox("location", &isLocationViewOn);
+                ImGui::Checkbox("graph", &isGraphNodeViewOn);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("property"))
+            {
+                ImGui::Text("can not use yet.");
+                ImGui::TreePop();
+            }
+            
+            ImGui::End();
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+        }
+#endif
+        // logger
+        if ( _isGameStarted )
+        {
+            auto game = _gameLayer->getGame();
+            
+            ImGui::SetNextWindowSize(ImVec2(1000, 150), ImGuiSetCond_Once);
+            ImGui::SetNextWindowPos(ImVec2(100, ImGui::GetIO().DisplaySize.y - 200), ImGuiSetCond_Once);
+            ImGui::Begin("Console Log", NULL, ImGuiWindowFlags_ShowBorders);
+            
+            if (ImGui::Button("Clear")) game->clearLogs();
+            ImGui::SameLine(); bool copy = ImGui::Button("Copy");
+            ImGui::Separator();
+            
+            ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+            
+            if (copy)  ImGui::LogToClipboard();
+            ImGui::TextUnformatted(game->getLogString().c_str());
+            if ( game->isLogAdded() ) ImGui::SetScrollHere(1.0f);
+            game->isLogAdded() = false;
+            
+            ImGui::EndChild();
+            ImGui::End();
+        }
     }
 }
 

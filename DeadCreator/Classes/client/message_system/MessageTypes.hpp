@@ -24,6 +24,7 @@ namespace realtrick
         class ItemBase;
         class WeaponBase;
         class ItemSlot;
+        class HumanBase;
         
         enum MessageType : int
         {
@@ -49,6 +50,7 @@ namespace realtrick
             ADD_OBJECT_TO_RENDER = 19,
             NO_HIT = 20,
             HIT = 21,
+            ATTACK_BY_WEAPON = 22,
         };
         
         enum HumanBehaviorType
@@ -61,8 +63,8 @@ namespace realtrick
         
         struct ReceiverSenderDamage
         {
-            int receiverID;
-            int senderID;
+            HumanBase* receiver;
+            HumanBase* sender;
             int damage;
         };
         

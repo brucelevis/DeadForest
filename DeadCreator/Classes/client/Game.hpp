@@ -97,7 +97,6 @@ namespace realtrick
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const Segment& ray) const;
             
-        
             TileType getStepOnTileType(const cocos2d::Vec2& pos);
             
             void sendMessage(double delaySeconds, MessageNode* receiver, MessageNode* sender, MessageType type, void* extraInfo);
@@ -113,13 +112,22 @@ namespace realtrick
             bool& isLogAdded() { return _isLogAdded; }
             
             void runCrossHairEffect(const std::string& name);
+            void setVisibleCrossHair(bool visible);
+            void setHitPoint(float h);
             void displayText(const std::string& text);
             
             Camera2D* getCamera() const { return _camera; }
 			std::list<realtrick::PathEdge>& getTempEdges() { return _tempPath; }
 
 			void generateIsometricGridGraph(int numX, int numY, float tileX, float tileY, int numOfDummy);
+            
+            void replaceVictoryScene(float delay);
+            void replaceDefeatScene(float delay);
 
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+            bool isGameEnded() const { return _isGameEnded; }
+#endif
+            
         private:
             
             cocos2d::Size _winSize;
@@ -161,6 +169,10 @@ namespace realtrick
             std::vector<std::pair<std::string, int>> _logs;
             std::string _logString;
             bool _isLogAdded = false;
+            
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+            bool _isGameEnded = false;
+#endif
             
 			std::list<PathEdge> _tempPath;
 

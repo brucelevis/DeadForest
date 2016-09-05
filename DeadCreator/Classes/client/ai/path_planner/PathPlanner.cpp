@@ -34,19 +34,12 @@ typename PathPlanner::Path PathPlanner::getPath(
 	int tileHeight,
 	int numOfDummy)
 {
-	CCLOG("source vec2 %f %f", source.x, source.y);
-
 	std::pair<int, int> source_idx = getFocusedTileIndex(source, tileWidth, tileHeight, numOfDummy);
 	std::pair<int, int> desti_idx = getFocusedTileIndex(destination, tileWidth, tileHeight, numOfDummy);
-
-
-
-	CCLOG("source idx %d %d", source_idx.first, source_idx.second);
 
 	int source_node_num = indexToNumber(source_idx.first, source_idx.second, numOfTileX, numOfDummy);
 	int desti_node_num = indexToNumber(desti_idx.first, desti_idx.second, numOfTileX, numOfDummy);
 
-	CCLOG("number %d %d", source_node_num, desti_node_num);
 	SearchAStar<Graph, HeuristicEuclid> search(_graph, source_node_num, desti_node_num);
 
 	PathEdge source_to_path(source, _graph.getNode(source_node_num).getPos());
@@ -56,8 +49,7 @@ typename PathPlanner::Path PathPlanner::getPath(
 	path.push_front(source_to_path);
 	path.push_back(path_to_destination);
 
-	if (path.size() == 0)
-		CCLOG("path is zero");
+    if (path.size() == 0) cocos2d::log("path is zero");
 
 	//smooth paths if required
 	if (false)

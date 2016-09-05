@@ -37,15 +37,17 @@ namespace realtrick
             EntityType getBulletType() const { return _bulletType; }
             int getReservedBullets() const { return _reservedBullet; }
             void setReservecBullets(int num) { _reservedBullet = num; }
-            virtual int getReloadedBulletOnce() { return 0; }
             
+            virtual int getReloadedBulletOnce() { return 0; }
+            virtual void dropCartiridges() {}
+            
+            virtual void attack() final;
             virtual void reload() final;
             virtual void use() override final;
             virtual void releaseWeapon() override final;
             
             virtual void inWeapon() = 0;
             virtual void outWeapon() = 0;
-            virtual void attack() = 0;
             virtual ItemBase* clone() const override = 0;
             virtual void discard() override = 0;
             

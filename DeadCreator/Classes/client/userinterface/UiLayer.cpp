@@ -122,22 +122,42 @@ bool UiLayer::init()
         Vec2 screenPos = Vec2(e->getCursorX(), e->getCursorY());
         Vec2 localPos = getParent()->convertToNodeSpace(screenPos);
         
-        if ( localPos.x > 0.0f && localPos.x < GAME_SCREEN_WIDTH && localPos.y > 0.0f && localPos.y < GAME_SCREEN_HEIGHT )
+        if ( e->getMouseButton() == 0 )
         {
-                AttJoystickData data;
-                data.ref = this;
-                data.type = ui::Widget::TouchEventType::BEGAN;
-                _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
+            AttJoystickData data;
+            data.ref = this;
+            data.type = ui::Widget::TouchEventType::BEGAN;
+            _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
+            
+        }
+        else if ( e->getMouseButton() == 1 )
+        {
+            _isRightButtonPressed = true;
         }
         
     };
     
     mouse->onMouseUp = [this](Event* event){
+    
+        EventMouse* e = static_cast<EventMouse*>(event);
         
-        AttJoystickData data;
-        data.ref = this;
-        data.type = ui::Widget::TouchEventType::ENDED;
-        _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
+        if ( e->getMouseButton() == 0 ) // left
+        {
+            AttJoystickData data;
+            data.ref = this;
+            data.type = ui::Widget::TouchEventType::ENDED;
+            _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
+        }
+        else if ( e->getMouseButton() == 1 )
+        {
+            BezelDirectionTriggerData data;
+            data.ref = nullptr;
+            data.dir = Vec2::ZERO;
+            data.type = ui::Widget::TouchEventType::ENDED;
+            _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
+            
+            _isRightButtonPressed = false;
+        }
         
     };
     
@@ -147,10 +167,14 @@ bool UiLayer::init()
         Vec2 screenPos = Vec2(e->getCursorX(), e->getCursorY());
         Vec2 localPos = getParent()->convertToNodeSpace(screenPos);
         
-        if ( localPos.x > 0.0f && localPos.x < GAME_SCREEN_WIDTH && localPos.y > 0.0f && localPos.y < GAME_SCREEN_HEIGHT )
+        if ( _isRightButtonPressed &&
+            localPos.x > 0.0f && localPos.x < GAME_SCREEN_WIDTH && localPos.y > 0.0f && localPos.y < GAME_SCREEN_HEIGHT )
         {
-            _mouseDirection = Vec2(localPos.x - GAME_SCREEN_WIDTH / 2, localPos.y - GAME_SCREEN_HEIGHT / 2).getNormalized();
-            _isInputMaskDirty = true;
+            BezelDirectionTriggerData data;
+            data.ref = nullptr;
+            data.dir = Vec2(localPos.x - GAME_SCREEN_WIDTH / 2, localPos.y - GAME_SCREEN_HEIGHT / 2).getNormalized();
+            data.type = ui::Widget::TouchEventType::BEGAN;
+            _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
         }
         
     };
@@ -160,32 +184,31 @@ bool UiLayer::init()
     auto keyboard = EventListenerKeyboard::create();
     keyboard->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) {
         
-        auto oldMask = _inputMask;
+        auto mask = _inputMask;
         
         if ( keyCode == EventKeyboard::KeyCode::KEY_W ) _inputMask.set(InputMask::UP);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_S ) _inputMask.set(InputMask::DOWN);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_A ) _inputMask.set(InputMask::LEFT);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_D ) _inputMask.set(InputMask::RIGHT);
-        else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT ) _inputMask.set(InputMask::RUNNING);
 		else if (keyCode == EventKeyboard::KeyCode::KEY_R)
 		{
 			_game->pushLogic(0.0, MessageType::PRESS_RELOAD_BUTTON, nullptr);
 		}
-        if ( oldMask != _inputMask ) _isInputMaskDirty = true;
+        
+        if ( mask != _inputMask ) _isMoveMaskDirty = true;
         
     };
     
     keyboard->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) {
-        
-        auto oldMask = _inputMask;
+    
+        auto mask = _inputMask;
         
         if ( keyCode == EventKeyboard::KeyCode::KEY_W ) _inputMask.reset(InputMask::UP);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_S ) _inputMask.reset(InputMask::DOWN);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_A ) _inputMask.reset(InputMask::LEFT);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_D ) _inputMask.reset(InputMask::RIGHT);
-        else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT ) _inputMask.reset(InputMask::RUNNING);
-        
-        if ( oldMask != _inputMask ) _isInputMaskDirty = true;
+      
+         if ( mask != _inputMask ) _isMoveMaskDirty = true;
         
     };
     
@@ -259,30 +282,14 @@ void UiLayer::update(float dt)
     _crossHair->setRotation(-physics::getAngleFromZero(_game->getPlayerPtr()->getHeading()));
     
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
-    if ( _isInputMaskDirty )
+    
+    if ( _isMoveMaskDirty )
     {
         Vec2 moveDirection(Vec2::ZERO);
         if ( _inputMask.test(InputMask::UP) ) moveDirection += Vec2::UNIT_Y;
         if ( _inputMask.test(InputMask::DOWN) ) moveDirection -= Vec2::UNIT_Y;
         if ( _inputMask.test(InputMask::LEFT) ) moveDirection -= Vec2::UNIT_X;
         if ( _inputMask.test(InputMask::RIGHT) ) moveDirection += Vec2::UNIT_X;
-        
-        if ( _inputMask.test(InputMask::RUNNING) )
-        {
-            BezelDirectionTriggerData data;
-            data.ref = this;
-            data.dir = Vec2::ZERO;
-            data.type = ui::Widget::TouchEventType::ENDED;
-            _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
-        }
-        else
-        {
-            BezelDirectionTriggerData data;
-            data.ref = this;
-            data.dir = _mouseDirection;
-            data.type = ui::Widget::TouchEventType::MOVED;
-            _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
-        }
         
         if ( !moveDirection.isZero() )
         {
@@ -301,8 +308,9 @@ void UiLayer::update(float dt)
             _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data);
         }
         
-        _isInputMaskDirty = false;
+        _isMoveMaskDirty = false;
     }
+    
 #endif
 }
 
@@ -316,6 +324,18 @@ void UiLayer::runCrossHairEffect(const std::string& name)
 void UiLayer::displayText(const std::string& text)
 {
     _infoSystem->pushMessage(text);
+}
+
+
+void UiLayer::setVisibleCrossHair(bool visible)
+{
+    _crossHair->setVisible(visible);
+}
+
+
+void UiLayer::setHitPoint(float h)
+{
+    _hpBar->setHitPoint(h);
 }
 
 

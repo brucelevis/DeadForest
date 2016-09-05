@@ -24,14 +24,14 @@
 #include "Tileset.hpp"
 #include "TileHelperFunctions.hpp"
 #include "PathPlanner.h"
-
+#include "MainMenu3.hpp"
+#include "RewardScene.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
 
 #include "GMXFile_generated.h"
 #include "util.h"
-
 
 Game::Game() :
 _winSize(Size::ZERO),
@@ -87,9 +87,10 @@ bool Game::init()
     
     this->scheduleUpdate();
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-
+    
     _camera = new Camera2D();
-    _logicStream = new SingleStream(this);
+    if ( UserDefault::getInstance()->getBoolForKey("useNetwork", false) ) _logicStream = new ServerStream(this);
+    else _logicStream = new SingleStream(this);
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
@@ -110,6 +111,11 @@ void Game::update(float dt)
     pair<int, int> oldIndex = getFocusedTileIndex(_camera->getCameraPos(),
                                                   _gameResource->getTileWidth(),
                                                   _gameResource->getTileHeight(), DUMMY_TILE_SIZE);
+    
+    if ( !getPlayerPtr()->isAlive() )
+    {
+//        Director::getInstance()->replaceScene(RewardScene::createScene());
+    }
     
     // 1. update entities
     _entityManager->update(dt);
@@ -448,11 +454,22 @@ void Game::runCrossHairEffect(const std::string& name)
 }
 
 
+void Game::setVisibleCrossHair(bool visible)
+{
+    _uiLayer->setVisibleCrossHair(visible);
+}
+
+
 void Game::displayText(const std::string& text)
 {
     _uiLayer->displayText(text);
 }
 
+
+void Game::setHitPoint(float h)
+{
+    _uiLayer->setHitPoint(h);
+}
 
 
 void Game::generateIsometricGridGraph(int numX, int numY, float tileX, float tileY, int numOfDummy)
@@ -498,6 +515,54 @@ void Game::generateIsometricGridGraph(int numX, int numY, float tileX, float til
 				->getNode(from).getPos().getDistance(_graph->getNode(to).getPos())));
 		}
 	}
+}
+
+
+void Game::replaceVictoryScene(float delay)
+{
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+    _isGameEnded = true;
+#endif
+    
+    auto coroutineNode = Sprite::create("client/ui/black_bg.png");
+    coroutineNode->setOpacity(0);
+    coroutineNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
+    coroutineNode->runAction(Spawn::create(FadeTo::create(delay, 255),
+                                           Sequence::create(DelayTime::create(delay),
+                                                            CallFunc::create([this]{
+                                            
+                                               UserDefault::getInstance()->setBoolForKey("isVictory", true);
+                                               Director::getInstance()->replaceScene(RewardScene::createScene());
+                                               
+                                           }),
+                                                            RemoveSelf::create(),
+                                                            nullptr),
+                                           nullptr));
+    addChild(coroutineNode);
+}
+
+
+void Game::replaceDefeatScene(float delay)
+{
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+    _isGameEnded = true;
+#endif
+    
+    auto coroutineNode = Sprite::create("client/ui/black_bg.png");
+    coroutineNode->setOpacity(0);
+    coroutineNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
+    coroutineNode->runAction(Spawn::create(FadeTo::create(delay, 255),
+                                           Sequence::create(DelayTime::create(delay),
+                                                            CallFunc::create([this]{
+                                               
+                                               UserDefault::getInstance()->setBoolForKey("isVictory", false);
+                                               Director::getInstance()->replaceScene(RewardScene::createScene());
+                                               
+                                           }),
+                                                            RemoveSelf::create(),
+                                                            nullptr),
+                                           nullptr));
+    addChild(coroutineNode);
 }
 
 

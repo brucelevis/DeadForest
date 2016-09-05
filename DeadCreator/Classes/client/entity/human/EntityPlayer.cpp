@@ -109,6 +109,13 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         ReceiverSenderDamage* s = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
         if ( _blood > 0 ) _blood -= s->damage;
         if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&HumanBackDeadState::getInstance());
+        
+        if ( static_cast<EntityPlayer*>(msg.receiver)->getTag() == _game->getPlayerPtr()->getTag() )
+        {
+            float h = _blood / static_cast<float>(_maxBlood);
+            h = cocos2d::clampf(h, 0.0f, 1.0f);
+            _game->setHitPoint(h);
+        }
     }
     
     else if ( msg.msg == MessageType::HIT )

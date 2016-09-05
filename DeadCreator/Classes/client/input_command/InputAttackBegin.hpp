@@ -31,7 +31,9 @@ namespace realtrick
             
             virtual void execute() override
             {
-                if ( !_human->isInventoryOpened() ) _human->addInputMask(HumanBehaviorType::ATTACK);
+                if ( _human->isInventoryOpened() || !_human->isAlive() ) return ;
+                
+                _human->addInputMask(HumanBehaviorType::ATTACK);
             }
             
         private:

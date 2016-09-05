@@ -16,6 +16,7 @@
 #include "HumanOwnedAnimations.hpp"
 #include "Items.hpp"
 #include "InputCommands.hpp"
+#include "AnimatedFiniteEntity.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -24,8 +25,11 @@ bool SingleStream::handleMessage(const Telegram& msg)
     // loading methods
     if ( msg.msg == MessageType::LOAD_GAME_PLAYER)
     {
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
         _game->loadGMXFileFromPath("temp_game_map");
-//        _game->loadGMXFileFromPath(FileUtils::getInstance()->fullPathForFilename("client/final_client2.gmx").c_str());
+#elif ( CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
+        _game->loadGMXFileFromPath(FileUtils::getInstance()->fullPathForFilename("client/final_client2.gmx").c_str());
+#endif
         _game->loadGameContents(PlayerType::PLAYER1);
         _game->pushLogic(0.0, MessageType::LOAD_GAME_COMPLETE, nullptr);
         
@@ -231,6 +235,310 @@ bool SingleStream::handleMessage(const Telegram& msg)
 //        WeaponStatus* weaponStatus = _game->getPlayerPtr()->getWeaponStatus();
 //        weaponStatus->setWeaponStatus(equipedWeapon);
 //        weaponStatus->enableButton();
+        
+        return true;
+    }
+    
+    else if ( msg.msg == MessageType::ATTACK_BY_WEAPON )
+    {
+        ItemAndOwner itemowner = *static_cast<ItemAndOwner*>(msg.extraInfo);
+        EntityType type = static_cast<EntityType>(itemowner.item->getEntityType());
+        EntityPlayer* owner = itemowner.owner;
+        WeaponBase* weapon = static_cast<WeaponBase*>(itemowner.item);
+        
+        if ( type == EntityType::ITEM_AXE )
+        {
+            _game->addLog("<ItemAxe:attack> attack!");
+            Vec2 worldPos = owner->getWorldPosition();
+            
+            // 엔티티들과의 충돌처리
+            bool isHit = false;
+            Vec2 shootAt = owner->getHeading();
+            const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, weapon->getRange());
+            for (const auto &d : members)
+            {
+                if ( d == owner ) continue;
+                
+                if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+                {
+                    HumanBase* human = static_cast<HumanBase*>(d);
+                    if( human->isAlive() && physics::intersect(Segment(worldPos,
+                                                                       worldPos + owner->getHeading() * weapon->getRange()),
+                                                               Circle(d->getWorldPosition(), human->getBoundingRadius())) )
+                    {
+                        ReceiverSenderDamage s;
+                        s.damage = weapon->getDamage();
+                        s.receiver = human;
+                        s.sender = owner;
+                        _game->sendMessage(0.0, human, owner, MessageType::HITTED_BY_AXE, &s);
+                        
+                        isHit = true;
+                    }
+                }
+            }
+            
+            if ( isHit )
+            {
+                SoundSource s;
+                s.fileName = "AxeHit" + _to_string(random(0,2)) + ".mp3";
+                s.position = worldPos;
+                s.soundRange = 200.0f;
+                _game->sendMessage(0.0, owner, owner, MessageType::PLAY_SOUND, &s);
+                _game->sendMessage(0.0, owner, owner, MessageType::HIT, nullptr);
+            }
+            else
+            {
+                SoundSource s;
+                s.fileName = "AxeSwing" + _to_string(random(0,2)) + ".mp3";
+                s.position = worldPos;
+                s.soundRange = 200.0f;
+                _game->sendMessage(0.0, owner, owner, MessageType::PLAY_SOUND, &s);
+                _game->sendMessage(0.0, owner, owner, MessageType::NO_HIT, nullptr);
+            }
+        }
+        else if ( type == EntityType::ITEM_M16A2 )
+        {
+            _game->addLog("<ItemM16A2:attack> attack!");
+            std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
+            Vec2 worldPos = owner->getWorldPosition();
+            
+            // 엔티티들과의 충돌처리
+            Mat3 rotMat;
+            rotMat.rotate(MATH_DEG_TO_RAD(random(-3.0f, 3.0f)));
+            Vec2 shootAt = rotMat.getTransformedVector(owner->getHeading());
+            Segment bulletRay = Segment(worldPos, worldPos + shootAt * weapon->getRange());
+            
+            const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, weapon->getRange());
+            for (const auto &d : members)
+            {
+                if ( d == owner ) continue;
+                
+                if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+                {
+                    HumanBase* human = static_cast<HumanBase*>(d);
+                    if( human->isAlive() && physics::intersect(Segment(worldPos,
+                                                                       worldPos + owner->getHeading() * weapon->getRange()), Circle(d->getWorldPosition(), 20.0f)) )
+                    {
+                        closestIntersectPoint.push_back(std::make_pair(worldPos.distance(d->getWorldPosition()), d));
+                    }
+                }
+            }
+            
+            // 벽과의 충돌처리
+            const std::vector<Polygon> walls = _game->getNeighborWalls(owner->getWorldPosition(), bulletRay);
+            float dist;
+            for( const auto& wall : walls )
+            {
+                for( int i = 0 ; i < wall.vertices.size() - 1 ; ++i)
+                {
+                    if ( physics::intersectGet(bulletRay, Segment(wall.vertices[i], wall.vertices[i + 1]), dist) )
+                    {
+                        closestIntersectPoint.push_back(std::make_pair(dist, nullptr));
+                    }
+                }
+                if ( physics::intersectGet(bulletRay, Segment(wall.vertices.back(), wall.vertices.front()),dist) )
+                {
+                    closestIntersectPoint.push_back(std::make_pair(dist, nullptr));
+                }
+            }
+            
+            if ( closestIntersectPoint.empty() == false )
+            {
+                auto collider = *(min_element(std::begin(closestIntersectPoint), std::end(closestIntersectPoint), [](const std::pair<float, EntityBase*>& p1, const std::pair<float, EntityBase*>& p2) {
+                    return p1.first < p2.first;
+                }));
+                
+                // 최소거리에 충돌된 충돌체가 사람이면 처리. (벽일수도있음)
+                if ( collider.second != nullptr )
+                {
+                    ReceiverSenderDamage d;
+                    d.receiver = static_cast<HumanBase*>(collider.second);
+                    d.sender = owner;
+                    d.damage = weapon->getDamage();
+                    _game->sendMessage(0.0, collider.second, owner, MessageType::HITTED_BY_GUN, &d);
+                    
+                    SoundSource s;
+                    s.fileName = "GunShotAt" + _to_string(random(0, 1)) + ".mp3";
+                    s.position = worldPos + shootAt * collider.first;
+                    s.soundRange = 2000.0f;
+                    _game->sendMessage(0.0, owner, owner, MessageType::PLAY_SOUND, &s);
+                    
+                    _game->sendMessage(0.0, owner, owner, MessageType::HIT, nullptr);
+                }
+                else
+                {
+                    _game->sendMessage(0.0, owner, owner, MessageType::NO_HIT, nullptr);
+                }
+            }
+            else
+            {
+                _game->sendMessage(0.0, owner, owner, MessageType::NO_HIT, nullptr);
+            }
+        }
+        else if ( type == EntityType::ITEM_M1897 )
+        {
+            int numOfShells = static_cast<ItemM1897*>(weapon)->getNumOfShells();
+            
+            _game->addLog("<ItemM1897:attack> attack!");
+            vector<vector<pair<float, EntityBase*>>> closestIntersectPoint(numOfShells);
+            Vec2 worldPos = owner->getWorldPosition();
+            
+            // 엔티티들과의 충돌처리
+            Vec2 typicalHeading = owner->getHeading();
+            Segment bulletRay = Segment(worldPos, worldPos + typicalHeading * weapon->getRange());
+            vector<pair<float, Vec2>> shootAts(numOfShells);
+            for(int i = 0 ; i < numOfShells ; ++ i)
+            {
+                Mat3 randomRotation;
+                randomRotation.rotate(MATH_DEG_TO_RAD(random(-15.0f, 15.0f)));
+                shootAts[i].first = random(weapon->getRange() / 3.0f, weapon->getRange());
+                shootAts[i].second = randomRotation.getTransformedVector(typicalHeading);
+            }
+            
+            const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, typicalHeading, weapon->getRange());
+            for (const auto &d : members)
+            {
+                if ( d == owner ) continue;
+                
+                if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+                {
+                    for(int s = 0 ; s < shootAts.size() ; ++ s)
+                    {
+                        HumanBase* human = static_cast<HumanBase*>(d);
+                        if( human->isAlive() && physics::intersect(Segment(worldPos, worldPos + shootAts[s].second * shootAts[s].first), Circle(d->getWorldPosition(), human->getBoundingRadius())) )
+                        {
+                            closestIntersectPoint[s].push_back(std::make_pair(worldPos.distance(d->getWorldPosition()), d));
+                        }
+                    }
+                }
+            }
+            
+            // 벽과의 충돌처리
+            const std::vector<Polygon> walls = _game->getNeighborWalls(owner->getWorldPosition(), bulletRay);
+            float dist;
+            for( const auto& wall : walls )
+            {
+                for(int s  = 0 ; s < shootAts.size() ; ++ s)
+                {
+                    for( int i = 0 ; i < wall.vertices.size() - 1 ; ++i)
+                    {
+                        if ( physics::intersectGet(bulletRay, Segment(wall.vertices[i], wall.vertices[i + 1]), dist) )
+                        {
+                            closestIntersectPoint[s].push_back(std::make_pair(dist, nullptr));
+                        }
+                    }
+                    if ( physics::intersectGet(bulletRay, Segment(wall.vertices.back(), wall.vertices.front()),dist) )
+                    {
+                        closestIntersectPoint[s].push_back(std::make_pair(dist, nullptr));
+                    }
+                }
+            }
+            
+            bool isHit = false;
+            for(int s = 0 ; s < shootAts.size() ; ++ s)
+            {
+                if ( closestIntersectPoint[s].empty() == false )
+                {
+                    auto collider = *(min_element(std::begin(closestIntersectPoint[s]), std::end(closestIntersectPoint[s]), [](const std::pair<float, EntityBase*>& p1, const std::pair<float, EntityBase*>& p2) {
+                        return p1.first < p2.first;
+                    }));
+                    
+                    // 최소거리에 충돌된 충돌체가 사람이면 처리. (벽일수도있음)
+                    if ( collider.second != nullptr )
+                    {
+                        ReceiverSenderDamage s;
+                        s.receiver = static_cast<HumanBase*>(collider.second);
+                        s.sender = owner;
+                        s.damage = weapon->getDamage();
+                        _game->sendMessage(0.0, collider.second, owner, MessageType::HITTED_BY_GUN, &s);
+                        
+                        isHit = true;
+                    }
+                }
+            }
+            
+            if ( isHit ) _game->sendMessage(0.0, owner, owner, MessageType::HIT, nullptr);
+            else _game->sendMessage(0.0, owner, owner, MessageType::NO_HIT, nullptr);
+        }
+        else if ( type == EntityType::ITEM_GLOCK17 )
+        {
+            _game->addLog("<ItemGlock17:attack> attack!");
+            std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
+            Vec2 worldPos = owner->getWorldPosition();
+            
+            // 엔티티들과의 충돌처리
+            Mat3 rotMat;
+            rotMat.rotate(MATH_DEG_TO_RAD(random(-3.0f, 3.0f)));
+            Vec2 shootAt = rotMat.getTransformedVector(owner->getHeading());
+            Segment bulletRay = Segment(worldPos, worldPos + shootAt * weapon->getRange());
+            
+            const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, weapon->getRange());
+            for (const auto &d : members)
+            {
+                if ( d == owner ) continue;
+                
+                if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+                {
+                    HumanBase* human = static_cast<HumanBase*>(d);
+                    if( human->isAlive() && physics::intersect(Segment(worldPos,
+                                                                       worldPos + owner->getHeading() * weapon->getRange()), Circle(d->getWorldPosition(), 20.0f)) )
+                    {
+                        closestIntersectPoint.push_back(std::make_pair(worldPos.distance(d->getWorldPosition()), d));
+                    }
+                }
+            }
+            
+            // 벽과의 충돌처리
+            const std::vector<Polygon> walls = _game->getNeighborWalls(owner->getWorldPosition(), bulletRay);
+            float dist;
+            for( const auto& wall : walls )
+            {
+                for( int i = 0 ; i < wall.vertices.size() - 1 ; ++i)
+                {
+                    if ( physics::intersectGet(bulletRay, Segment(wall.vertices[i], wall.vertices[i + 1]), dist) )
+                    {
+                        closestIntersectPoint.push_back(std::make_pair(dist, nullptr));
+                    }
+                }
+                if ( physics::intersectGet(bulletRay, Segment(wall.vertices.back(), wall.vertices.front()),dist) )
+                {
+                    closestIntersectPoint.push_back(std::make_pair(dist, nullptr));
+                }
+            }
+            
+            if ( closestIntersectPoint.empty() == false )
+            {
+                auto collider = *(min_element(std::begin(closestIntersectPoint), std::end(closestIntersectPoint), [](const std::pair<float, EntityBase*>& p1, const std::pair<float, EntityBase*>& p2) {
+                    return p1.first < p2.first;
+                }));
+                
+                // 최소거리에 충돌된 충돌체가 사람이면 처리. (벽일수도있음)
+                if ( collider.second != nullptr )
+                {
+                    ReceiverSenderDamage d;
+                    d.receiver = static_cast<HumanBase*>(collider.second);
+                    d.sender = owner;
+                    d.damage = weapon->getDamage();
+                    _game->sendMessage(0.0, collider.second, owner, MessageType::HITTED_BY_GUN, &d);
+                    
+                    SoundSource s;
+                    s.fileName = "GunShotAt" + _to_string(random(0, 1)) + ".mp3";
+                    s.position = worldPos + shootAt * collider.first;
+                    s.soundRange = 2000.0f;
+                    _game->sendMessage(0.0, owner, owner, MessageType::PLAY_SOUND, &s);
+                    
+                    _game->sendMessage(0.0, owner, owner, MessageType::HIT, nullptr);
+                }
+                else
+                {
+                    _game->sendMessage(0.0, owner, owner, MessageType::NO_HIT, nullptr);
+                }
+            }
+            else
+            {
+                _game->sendMessage(0.0, owner, owner, MessageType::NO_HIT, nullptr);
+            }
+        }
         
         return true;
     }

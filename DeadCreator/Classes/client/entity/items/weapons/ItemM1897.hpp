@@ -31,9 +31,9 @@ namespace realtrick
             virtual ItemBase* clone() const override;
             virtual void inWeapon() override;
             virtual void outWeapon() override;
-            virtual void attack() override;
             virtual void discard() override;
             virtual int getReloadedBulletOnce() override { return 1; }
+            virtual void dropCartiridges() override;
             
         private:
             

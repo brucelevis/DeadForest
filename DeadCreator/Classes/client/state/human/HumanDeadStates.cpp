@@ -15,6 +15,7 @@
 #include "HumanOwnedAnimations.hpp"
 using namespace realtrick::client;
 
+
 void HumanBackDeadState::enter(HumanBase* human)
 {
     human->setLocalZOrder(Z_ORDER_HUMAN - 1);
@@ -27,6 +28,8 @@ void HumanBackDeadState::enter(HumanBase* human)
     human->getAnimator()->pushAnimationFrames(&AnimHumanBackDead::getInstance());
     human->setVelocity( cocos2d::Vec2::ZERO );
     human->setStateName("dead");
+    
+    if ( human->getTag() == human->getGame()->getPlayerPtr()->getTag() ) human->getGame()->setVisibleCrossHair(false);
 }
 
 
@@ -45,8 +48,7 @@ bool HumanBackDeadState::onMessage(HumanBase* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::DIE )
     {
-        human->getGame()->removeEntity(human);
-        
+//        human->getGame()->removeEntity(human);
         return true;
     }
     

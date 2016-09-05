@@ -50,7 +50,7 @@ bool HpBar::init()
 
 void HpBar::setHitPoint(float h)
 {
-
+    _bar->setScale(h, 1.0f);
 }
 
 

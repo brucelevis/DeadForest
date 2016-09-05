@@ -66,6 +66,18 @@ bool TriggerSystem::initWithResource(GameResource* res)
                 newTrigger->addAction(action);
             }
             
+            else if ( (*act)->type == TriggerComponentType::ACTION_VICTORY)
+            {
+                auto action = ActionVictory::create(_game);
+                newTrigger->addAction(action);
+            }
+            
+            else if ( (*act)->type == TriggerComponentType::ACTION_DEFEAT)
+            {
+                auto action = ActionDefeat::create(_game);
+                newTrigger->addAction(action);
+            }
+            
             else if ( (*act)->type == TriggerComponentType::ACTION_MOVE_LOCATION )
             {
                 auto data = static_cast<ActionMoveLocationData*>(*act);

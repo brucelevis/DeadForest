@@ -64,8 +64,6 @@ bool HumanBase::init()
     _animator = new Animator(this);
     setAlive();
 	
-	cocos2d::log("###############################");
-
 	_pathPlanner = new PathPlanner(*_game->getGraph(), this);
 	auto path =
 	_pathPlanner->getPath(
@@ -195,7 +193,7 @@ void HumanBase::moveEntity()
 
 void HumanBase::rotateEntity()
 {
-    if ( _heading.dot(_targetHeading) < 0.995f )
+    if ( _heading.dot(_targetHeading) < 0.982546f )
     {
         float dt = Director::getInstance()->getDeltaTime();
         
@@ -300,6 +298,23 @@ void HumanBase::setBrain(BrainBase* brain)
 {
     CC_SAFE_DELETE(_brain);
     _brain = brain;
+}
+
+
+void HumanBase::hittedByWeapon(EntityType type, int damage)
+{
+    if ( type == EntityType::ITEM_M16A2 || type == EntityType::ITEM_M1897 || type == EntityType::ITEM_GLOCK17 )
+    {
+        ReceiverSenderDamage d;
+        d.damage = damage;
+        _game->sendMessage(0.0, this, nullptr, MessageType::HITTED_BY_GUN, &d);
+    }
+    else if ( type == EntityType::ITEM_AXE )
+    {
+        ReceiverSenderDamage d;
+        d.damage = damage;
+        _game->sendMessage(0.0, this, nullptr, MessageType::HITTED_BY_AXE, &d);
+    }
 }
 
 

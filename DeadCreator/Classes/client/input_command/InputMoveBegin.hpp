@@ -30,11 +30,11 @@ namespace realtrick
             
             virtual void execute() override
             {
-                if ( !_human->isInventoryOpened() )
-                {
-                    _human->addInputMask(HumanBehaviorType::MOVE);
-                    _human->setMoving(_moveDir);
-                }
+                if ( _human->isInventoryOpened() || !_human->isAlive() ) return ;
+                
+                _human->addInputMask(HumanBehaviorType::MOVE);
+                _human->setMoving(_moveDir);
+                
             }
             
         private:

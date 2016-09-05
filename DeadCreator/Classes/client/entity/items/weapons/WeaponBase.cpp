@@ -108,6 +108,18 @@ void WeaponBase::reload()
 }
 
 
+void WeaponBase::attack()
+{
+    dropCartiridges();
+    
+    // 충돌처리 부분 흐름분리
+    ItemAndOwner item_owner;
+    item_owner.item = this;
+    item_owner.owner = _owner;
+    _game->pushLogic(0.0, MessageType::ATTACK_BY_WEAPON, &item_owner);
+}
+
+
 
 
 

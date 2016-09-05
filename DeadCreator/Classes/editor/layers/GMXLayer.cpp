@@ -414,7 +414,7 @@ void GMXLayer::updateCocosLogic()
                     
                     auto location = LocationNode::create(*this);
                     location->setPositionFromWorldPosition(_mousePosInWorld);
-                    location->setLocationZOrder(_locations.size());
+                    location->setLocationZOrder(static_cast<int>(_locations.size()));
                     location->setSelected(true);
                     int number = 0;
                     while ( isOverlappedLocationName(std::string("Location") + _to_string(number)) )

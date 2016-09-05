@@ -18,6 +18,7 @@ namespace realtrick
         class WeaponBase;
         class InventoryData;
         class WeaponStatus;
+        class UiLayer;
         
         class EntityPlayer : public HumanBase
         {
@@ -46,8 +47,11 @@ namespace realtrick
             
             bool addItem(ItemBase* item);
             
+            void setUiLayer(UiLayer* uiLayer) { _uiLayer = uiLayer; }
+            
         protected:
             
+            UiLayer*                        _uiLayer;
             InventoryData*                  _inventoryData;
             WeaponBase*                     _equipedWeapon;
             std::string                     _userNickName;

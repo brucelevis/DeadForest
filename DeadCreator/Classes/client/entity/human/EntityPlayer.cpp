@@ -14,12 +14,15 @@
 #include "RenderingSystem.hpp"
 #include "PursuerBrain.hpp"
 #include "InventoryData.hpp"
+#include "UiLayer.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
 
 EntityPlayer::EntityPlayer(Game* game) : HumanBase(game),
-_equipedWeapon(nullptr)
+_uiLayer(nullptr),
+_equipedWeapon(nullptr),
+_userNickName("")
 {
     setEntityType(EntityType::ENTITY_PLAYER);
     setRunSpeed(150.0f);
@@ -110,22 +113,40 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         if ( _blood > 0 ) _blood -= s->damage;
         if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&HumanBackDeadState::getInstance());
         
-        if ( static_cast<EntityPlayer*>(msg.receiver)->getTag() == _game->getPlayerPtr()->getTag() )
+        // only apply to player
+        if ( _uiLayer )
         {
             float h = _blood / static_cast<float>(_maxBlood);
             h = cocos2d::clampf(h, 0.0f, 1.0f);
-            _game->setHitPoint(h);
+            _uiLayer->setHitPoint(h);
         }
     }
     
     else if ( msg.msg == MessageType::HIT )
     {
-        _game->runCrossHairEffect("hit");
+        // only apply to player
+        if ( _uiLayer ) _uiLayer->runCrossHairEffect("hit");
+        
         ret = true;
     }
+    
     else if ( msg.msg == MessageType::NO_HIT )
     {
-        _game->runCrossHairEffect("fire");
+        // only apply to player
+        if ( _uiLayer ) _uiLayer->runCrossHairEffect("fire");
+        
+        ret = true;
+    }
+    
+    else if ( msg.msg == MessageType::DISPLAY_TEXT )
+    {
+        // only apply to player
+        if ( _uiLayer )
+        {
+            auto text = *static_cast<std::string*>(msg.extraInfo);
+            _uiLayer->displayText(text);
+        }
+        
         ret = true;
     }
     
@@ -149,7 +170,6 @@ bool EntityPlayer::addItem(ItemBase* item)
 {
     return _inventoryData->addItem(item);
 }
-
 
 
 

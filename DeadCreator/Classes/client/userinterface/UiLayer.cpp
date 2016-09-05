@@ -22,11 +22,13 @@
 #include "RenderingSystem.hpp"
 #include "CrossHair.hpp"
 #include "InventoryView.hpp"
+#include "EntityPlayer.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
 
-UiLayer::UiLayer(Game* game) : _game(game)
+UiLayer::UiLayer(Game* game) :
+_game(game)
 {
 }
 

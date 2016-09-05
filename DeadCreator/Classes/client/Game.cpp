@@ -518,6 +518,54 @@ void Game::generateIsometricGridGraph(int numX, int numY, float tileX, float til
 }
 
 
+void Game::replaceVictoryScene(float delay)
+{
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+    _isGameEnded = true;
+#endif
+    
+    auto coroutineNode = Sprite::create("client/ui/black_bg.png");
+    coroutineNode->setOpacity(0);
+    coroutineNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
+    coroutineNode->runAction(Spawn::create(FadeTo::create(delay, 255),
+                                           Sequence::create(DelayTime::create(delay),
+                                                            CallFunc::create([this]{
+                                            
+                                               UserDefault::getInstance()->setBoolForKey("isVictory", true);
+                                               Director::getInstance()->replaceScene(RewardScene::createScene());
+                                               
+                                           }),
+                                                            RemoveSelf::create(),
+                                                            nullptr),
+                                           nullptr));
+    addChild(coroutineNode);
+}
+
+
+void Game::replaceDefeatScene(float delay)
+{
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+    _isGameEnded = true;
+#endif
+    
+    auto coroutineNode = Sprite::create("client/ui/black_bg.png");
+    coroutineNode->setOpacity(0);
+    coroutineNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
+    coroutineNode->runAction(Spawn::create(FadeTo::create(delay, 255),
+                                           Sequence::create(DelayTime::create(delay),
+                                                            CallFunc::create([this]{
+                                               
+                                               UserDefault::getInstance()->setBoolForKey("isVictory", false);
+                                               Director::getInstance()->replaceScene(RewardScene::createScene());
+                                               
+                                           }),
+                                                            RemoveSelf::create(),
+                                                            nullptr),
+                                           nullptr));
+    addChild(coroutineNode);
+}
+
+
 
 
 

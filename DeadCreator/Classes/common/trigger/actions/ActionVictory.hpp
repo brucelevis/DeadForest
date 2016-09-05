@@ -95,7 +95,7 @@ namespace realtrick
             
             bool init() { return true; }
             
-            virtual void doAction() { cocos2d::log("victory"); }
+            virtual void doAction() { _game->replaceVictoryScene(3.0f); }
             
         private:
             

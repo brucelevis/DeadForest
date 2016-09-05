@@ -37,7 +37,9 @@ namespace realtrick
             EntityType getBulletType() const { return _bulletType; }
             int getReservedBullets() const { return _reservedBullet; }
             void setReservecBullets(int num) { _reservedBullet = num; }
+            
             virtual int getReloadedBulletOnce() { return 0; }
+            virtual void dropCartiridges() {}
             
             virtual void attack() final;
             virtual void reload() final;

@@ -291,12 +291,6 @@ bool SingleStream::handleMessage(const Telegram& msg)
             std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
             Vec2 worldPos = owner->getWorldPosition();
             
-            AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_game, {"es0.png", "es1.png", "es2.png", "es3.png", "es4.png" },
-                                                                    5.0f, ui::Widget::TextureResType::PLIST);
-            es->setWorldPosition(worldPos + owner->getHeading() * random(-30.0f, 30.0f) + owner->getRight() * random(20.0f, 40.0f));
-            es->setRotation(owner->getRotationZ());
-            _game->addEntity(es);
-            
             // 엔티티들과의 충돌처리
             Mat3 rotMat;
             rotMat.rotate(MATH_DEG_TO_RAD(random(-3.0f, 3.0f)));
@@ -377,18 +371,6 @@ bool SingleStream::handleMessage(const Telegram& msg)
             _game->addLog("<ItemM1897:attack> attack!");
             vector<vector<pair<float, EntityBase*>>> closestIntersectPoint(numOfShells);
             Vec2 worldPos = owner->getWorldPosition();
-            
-            AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_game, {"ess0.png",
-                                                                            "ess1.png",
-                                                                            "ess2.png",
-                                                                            "ess3.png",
-                                                                            "ess4.png" },
-                                                                    5.0f, ui::Widget::TextureResType::PLIST);
-            es->setWorldPosition(worldPos + owner->getHeading() * random(-30.0f, 30.0f) + owner->getRight() * random(20.0f, 40.0f));
-            es->setScale(0.7f);
-            es->setRotation(owner->getRotationZ());
-            _game->addEntity(es);
-            
             
             // 엔티티들과의 충돌처리
             Vec2 typicalHeading = owner->getHeading();
@@ -472,11 +454,6 @@ bool SingleStream::handleMessage(const Telegram& msg)
             _game->addLog("<ItemGlock17:attack> attack!");
             std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
             Vec2 worldPos = owner->getWorldPosition();
-            
-            AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_game, {"es0.png", "es1.png", "es2.png", "es3.png", "es4.png" }, 5.0f, ui::Widget::TextureResType::PLIST);
-            es->setWorldPosition(worldPos + owner->getHeading() * random(-30.0f, 30.0f) + owner->getRight() * random(20.0f, 40.0f));
-            es->setRotation(owner->getRotationZ());
-            _game->addEntity(es);
             
             // 엔티티들과의 충돌처리
             Mat3 rotMat;

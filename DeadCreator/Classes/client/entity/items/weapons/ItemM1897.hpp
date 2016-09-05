@@ -33,6 +33,7 @@ namespace realtrick
             virtual void outWeapon() override;
             virtual void discard() override;
             virtual int getReloadedBulletOnce() override { return 1; }
+            virtual void dropCartiridges() override;
             
         private:
             

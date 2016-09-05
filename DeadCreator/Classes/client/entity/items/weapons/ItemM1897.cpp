@@ -66,6 +66,21 @@ void ItemM1897::discard()
 }
 
 
+void ItemM1897::dropCartiridges()
+{
+    Vec2 worldPos = _owner->getWorldPosition();
+    
+    AnimatedFiniteEntity* es = AnimatedFiniteEntity::create(_game, {"ess0.png",
+        "ess1.png",
+        "ess2.png",
+        "ess3.png",
+        "ess4.png" },
+                                                            5.0f, ui::Widget::TextureResType::PLIST);
+    es->setWorldPosition(worldPos + _owner->getHeading() * random(-30.0f, 30.0f) + _owner->getRight() * random(20.0f, 40.0f));
+    es->setScale(0.7f);
+    es->setRotation(_owner->getRotationZ());
+    _game->addEntity(es);
+}
 
 
 

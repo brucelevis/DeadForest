@@ -17,6 +17,7 @@
 #include "Game.hpp"
 #include "GameResource.hpp"
 #include "EntityBase.hpp"
+#include "Types.hpp"
 
 namespace realtrick
 {
@@ -215,11 +216,25 @@ namespace realtrick
                     auto entity = ent.second;
                     int player = static_cast<int>(entity->getPlayerType());
                     
-                    if ( _maskedPlayer.test(player) &&
-                        _params.entity == entity->getEntityType() &&
-                        locations.at(_params.location).intersectsCircle(entity->getWorldPosition(), entity->getBoundingRadius()) )
+                    if ( _maskedPlayer.test(player) && _params.entity == entity->getEntityType())
                     {
-                        numberOfReadyEntities++;
+                        bool intersect = false;
+                        if ( isMasked(ent.second->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+                        {
+                            HumanBase* human = static_cast<HumanBase*>(ent.second);
+                            intersect = (human->isAlive() &&
+                                         locations.at(_params.location).intersectsCircle(entity->getWorldPosition(), entity->getBoundingRadius()));
+                            
+                        }
+                        else
+                        {
+                            intersect = locations.at(_params.location).intersectsCircle(entity->getWorldPosition(), entity->getBoundingRadius());
+                        }
+                        
+                        if ( intersect )
+                        {
+                            numberOfReadyEntities++;
+                        }
                     }
                 }
                 

@@ -120,7 +120,9 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         
         if ( static_cast<EntityPlayer*>(msg.receiver)->getTag() == _game->getPlayerPtr()->getTag() )
         {
-            _game->setHitPoint(_blood / _maxBlood);
+            float h = _blood / static_cast<float>(_maxBlood);
+            h = cocos2d::clampf(h, 0.0f, 1.0f);
+            _game->setHitPoint(h);
         }
     }
     

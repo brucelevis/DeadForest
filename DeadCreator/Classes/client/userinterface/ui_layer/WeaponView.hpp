@@ -21,7 +21,7 @@ namespace realtrick
         class ItemBase;
         class InventoryData;
         
-        class WeaponView : public cocos2d::Node
+        class WeaponView : public cocos2d::ui::Button
         {
             
         public:
@@ -37,7 +37,6 @@ namespace realtrick
         private:
             
             Game* _game;
-            cocos2d::ui::Button* _view;
             cocos2d::ui::Text* _numOfBullets;
             
         };

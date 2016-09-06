@@ -38,22 +38,21 @@ WeaponView* WeaponView::create(Game* game)
 
 bool WeaponView::init()
 {
-    if ( !Node::init() )
+    if ( !ui::Widget::init() )
         return false;
     
-    _view = ui::Button::create("client/ui/punch_reload_n.png", "client/ui/punch_reload_n.png");
-    _view->setPosition(Vec2(0.0f, 50.0f));
-    _view->addTouchEventListener([this](Ref* ref, cocos2d::ui::Widget::TouchEventType type){
+    this->loadTextures("client/ui/punch_reload_n.png", "client/ui/punch_reload_n.png");
+    
+    addTouchEventListener([this](Ref* ref, cocos2d::ui::Widget::TouchEventType type){
         
         if ( type == ui::Widget::TouchEventType::ENDED ) {
             _game->pushLogic(0.0, MessageType::PRESS_RELOAD_BUTTON, nullptr);
         }
           
     });
-    addChild(_view);
     
     _numOfBullets = ui::Text::create("", "fonts/SpecialElite.TTF", 20);
-    _numOfBullets->setPosition(Vec2(0.0f, -30.0f));
+    _numOfBullets->setPosition(Vec2(getContentSize().width / 2.0f, -30.0f));
     addChild(_numOfBullets);
     
     return true;
@@ -82,27 +81,29 @@ void WeaponView::syncWeaponView(InventoryData* data)
             int weaponType = equipedWeapon->getEntityType();
             if ( weaponType == EntityType::ITEM_GLOCK17 )
             {
-                _view->loadTextures("client/ui/glock_reload_n.png", "client/ui/glock_reload_s.png");
+                loadTextures("client/ui/glock_reload_n.png", "client/ui/glock_reload_s.png");
             }
             else if ( weaponType == EntityType::ITEM_M16A2 )
             {
-                _view->loadTextures("client/ui/m16a2_reload_n.png", "client/ui/m16a2_reload_s.png");
+                loadTextures("client/ui/m16a2_reload_n.png", "client/ui/m16a2_reload_s.png");
             }
             else if ( weaponType == EntityType::ITEM_AXE )
             {
-                _view->loadTextures("client/ui/axe_reload_n.png", "client/ui/axe_reload_n.png");
+                loadTextures("client/ui/axe_reload_n.png", "client/ui/axe_reload_n.png");
                 _numOfBullets->setString("");
             }
             else if ( weaponType == EntityType::ITEM_M1897 )
             {
-                _view->loadTextures("client/ui/m1897_reload_n.png", "client/ui/m1897_reload_s.png");
+                loadTextures("client/ui/m1897_reload_n.png", "client/ui/m1897_reload_s.png");
             }
         }
         else
         {
-            _view->loadTextures("client/ui/punch_reload_n.png", "client/ui/punch_reload_n.png");
+            loadTextures("client/ui/punch_reload_n.png", "client/ui/punch_reload_n.png");
             _numOfBullets->setString("");
         }
+        
+        _numOfBullets->setPosition(Vec2(getContentSize().width / 2.0f, -10.0f));
     }
 }
 

@@ -51,6 +51,11 @@ namespace realtrick
             
         private:
             
+            bool isContainsUiLayer(const cocos2d::Vec2& p);
+            bool isContainsScreenRect(const cocos2d::Vec2& p);
+            
+        private:
+            
             Game* _game;
             cocos2d::Size _winSize;
         
@@ -60,6 +65,7 @@ namespace realtrick
             InfoSystem* _infoSystem;
             InventoryView* _inventoryView;
             WeaponView* _weaponView;
+            cocos2d::ui::Button* _inventoryButton;
             
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
             
@@ -73,7 +79,7 @@ namespace realtrick
             std::bitset<5> _inputMask;
             
             bool _isMoveMaskDirty = false;
-            bool _isRightButtonPressed = false;
+            bool _isShiftButtonPressed = false;
             
 #endif
             

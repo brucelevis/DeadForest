@@ -10,7 +10,6 @@
 #include "WeaponBase.hpp"
 #include "Game.hpp"
 #include "UiLayer.hpp"
-#include "Inventory.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;

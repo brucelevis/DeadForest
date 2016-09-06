@@ -36,7 +36,7 @@ namespace realtrick
             void enableReadyToAttack(bool enable) { _isReadyToAttack = enable; }
             EntityType getBulletType() const { return _bulletType; }
             int getReservedBullets() const { return _reservedBullet; }
-            void setReservecBullets(int num) { _reservedBullet = num; }
+            void setReservedBullets(int num) { _reservedBullet = num; }
             
             virtual int getReloadedBulletOnce() { return 0; }
             virtual void dropCartiridges() {}
@@ -44,7 +44,6 @@ namespace realtrick
             virtual void attack() final;
             virtual void reload() final;
             virtual void use() override final;
-            virtual void releaseWeapon() override final;
             
             virtual void inWeapon() = 0;
             virtual void outWeapon() = 0;

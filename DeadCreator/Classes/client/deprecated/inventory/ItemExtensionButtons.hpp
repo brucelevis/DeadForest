@@ -40,8 +40,9 @@ namespace realtrick
             explicit ItemExtensionButtons(Game* game);
             virtual ~ItemExtensionButtons();
             
-            bool init(ItemSlot* slot);
             static ItemExtensionButtons* create(Game* game, ItemSlot* slot);
+            
+            bool init(ItemSlot* slot);
             
             void showButtons();
             void hideButtons();

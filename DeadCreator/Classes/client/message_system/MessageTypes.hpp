@@ -52,6 +52,8 @@ namespace realtrick
             HIT = 21,
             ATTACK_BY_WEAPON = 22,
             DISPLAY_TEXT = 23,
+            USE_ITEM_FROM_INVENTORY = 24,
+            SYNC_INVENTORY_WEAPON_VIEW = 25,
         };
         
         enum HumanBehaviorType
@@ -84,7 +86,7 @@ namespace realtrick
         
         struct ItemAndOwner
         {
-            EntityPlayer* owner;
+            HumanBase* owner;
             ItemBase* item;
         };
         

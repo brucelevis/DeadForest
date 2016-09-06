@@ -43,12 +43,12 @@ namespace realtrick
     {
         
         class EntityBase;
-        class EntityPlayer;
         class TriggerSystem;
         class RenderingSystem;
         class LogicStream;
         class GameResource;
         class EntityManager;
+        class HumanBase;
         class UiLayer;
         class Camera2D;
         
@@ -81,8 +81,8 @@ namespace realtrick
             // entity helper
             void addEntity(EntityBase* ent, int zOrder = 0);
             void removeEntity(EntityBase* ent);
-            EntityPlayer* getPlayerPtr() const;
-            EntityPlayer* getPlayerPtr(PlayerType type) const;
+            HumanBase* getPlayerPtr() const;
+            HumanBase* getPlayerPtr(PlayerType type) const;
             EntityBase* getEntityFromID(int id) const;
             
             void killEntity(EntityBase* ent);

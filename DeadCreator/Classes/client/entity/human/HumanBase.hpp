@@ -106,6 +106,8 @@ namespace realtrick
             std::string getUserNickName() const { return _userNickName; }
             
             int addItem(ItemBase* item);
+            void useItem(int slot);
+            
             void setUiLayer(UiLayer* uiLayer) { _uiLayer = uiLayer; }
             
             void setBrain(BrainBase* brain);
@@ -113,6 +115,8 @@ namespace realtrick
             void hittedByWeapon(EntityType type, int damage);
             
             void reload();
+            
+            InventoryData* getInventoryData() const { return _inventoryData; }
             
         private:
         

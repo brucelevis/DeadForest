@@ -1,8 +1,8 @@
 //
-//  InventoryView.hpp
+//  WeaponView.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 9. 2..
+//  Created by mac on 2016. 9. 6..
 //
 //
 
@@ -21,26 +21,24 @@ namespace realtrick
         class ItemBase;
         class InventoryData;
         
-        class InventoryView : public cocos2d::Node
+        class WeaponView : public cocos2d::Node
         {
             
         public:
             
-            explicit InventoryView(Game* game);
-            virtual ~InventoryView();
+            explicit WeaponView(Game* game);
+            virtual ~WeaponView();
             
-            static InventoryView* create(Game* game);
+            static WeaponView* create(Game* game);
             virtual bool init() override;
             
-            void syncItemView(InventoryData* data);
+            void syncWeaponView(InventoryData* data);
             
         private:
             
             Game* _game;
-            
-            cocos2d::Sprite* _background;
-            std::vector<cocos2d::ui::Button*> _slots;
-            cocos2d::Sprite* _infoView;
+            cocos2d::ui::Button* _view;
+            cocos2d::ui::Text* _numOfBullets;
             
         };
         

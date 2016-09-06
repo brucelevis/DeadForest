@@ -8,6 +8,7 @@
 
 #include "InventoryView.hpp"
 #include "InventoryData.hpp"
+#include "Game.hpp"
 #include "ItemBase.hpp"
 #include "StringHelper.hpp"
 using namespace realtrick::client;
@@ -18,9 +19,20 @@ const Vec2 ORIGIN(40.0f, 30.0f);
 const float PAD = 30.0f;
 const int SLOT_SIZE = 12;
 
-InventoryView* InventoryView::create()
+InventoryView::InventoryView(Game* game):
+_game(game)
 {
-    auto ret = new (std::nothrow) InventoryView();
+}
+
+
+InventoryView::~InventoryView()
+{
+}
+
+
+InventoryView* InventoryView::create(Game* game)
+{
+    auto ret = new (std::nothrow) InventoryView(game);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -40,14 +52,25 @@ bool InventoryView::init()
     addChild(_background);
     
     _slots.resize(SLOT_SIZE);
-    for(int i = 0 ; i < 12 ; ++ i)
+    for(int i = 0 ; i < SLOT_SIZE ; ++ i)
     {
         int x = i % 4;
         int y = i / 4;
         
-        _slots[i] = ui::Button::create("client/ui/inventory_view_slot.png", "client/ui/inventory_view_slot.png");
+        _slots[i] = ui::Button::create("client/ui/inventory_view_slot_n.png", "client/ui/inventory_view_slot_s.png");
+        _slots[i]->setZoomScale(0.0f);
         _slots[i]->setAnchorPoint(Vec2::ZERO);
+        _slots[i]->setTag(i);
         _slots[i]->setPosition(Vec2(ORIGIN.x + (100.0f + PAD) * x, ORIGIN.y + (100.0f + PAD) * y));
+        _slots[i]->addTouchEventListener([this](Ref* ref, ui::Widget::TouchEventType type){
+            
+            auto self = static_cast<ui::Button*>(ref);
+            if ( type == ui::Widget::TouchEventType::ENDED ) {
+                int slot = self->getTag();
+                _game->pushLogic(0.0, MessageType::USE_ITEM_FROM_INVENTORY, &slot);
+            }
+            
+        });
         _background->addChild(_slots[i]);
     }
     
@@ -64,27 +87,23 @@ void InventoryView::syncItemView(InventoryData* data)
 {
     for(int slot = 0 ; slot < data->getMaxItemSlot() ; ++ slot)
     {
-        if ( _background->getChildByTag(slot) ) _background->removeChildByTag(slot);
+        _slots[slot]->removeAllChildren();
         
         auto item = data->getItem(slot);
         if ( item )
         {
-            int x = slot % 4;
-            int y = slot / 4;
-            
             auto spr = Sprite::createWithSpriteFrameName(item->getInSlotFrameName());
-            spr->setAnchorPoint(Vec2::ZERO);
-            spr->setPosition(Vec2(ORIGIN.x + (100.0f + PAD) * x, ORIGIN.y + (100.0f + PAD) * y));
-            spr->setTag(slot);
-            _background->addChild(spr);
+            spr->setPosition(Vec2(64.0f, 64.0f));
+            spr->setScale(2.0f);
+            _slots[slot]->addChild(spr);
             
             int amount = item->getAmount();
             if ( amount > 1 )
             {
                 auto numberLabel = ui::Text::create(_to_string(item->getAmount()), "fonts/SpecialElite.TTF", 20);
-                numberLabel->setPosition(Vec2(0.0f, 15.0f));
+                numberLabel->setPosition(Vec2(64.0f, 30.0f));
                 numberLabel->setTextColor(Color4B::BLACK);
-                spr->addChild(numberLabel);
+                _slots[slot]->addChild(numberLabel);
             }
         }
     }

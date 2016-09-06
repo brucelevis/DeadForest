@@ -20,6 +20,7 @@ namespace realtrick
         class GameResource;
         class EntityBase;
         class EntityPlayer;
+        class HumanBase;
         
         class EntityManager : public cocos2d::Ref
         {
@@ -67,8 +68,8 @@ namespace realtrick
             const std::map<int, EntityBase*>& getEntities() const { return _entities; }
             int getNextValidID();
             
-            EntityPlayer* getPlayerPtr() const { return _player; }
-            EntityPlayer* getPlayerPtr(PlayerType type);
+            HumanBase* getPlayerPtr() const { return _player; }
+            HumanBase* getPlayerPtr(PlayerType type);
             
             void update(float dt);
             
@@ -76,7 +77,7 @@ namespace realtrick
             
             Game* _game;
             std::map<int, EntityBase*> _entities;
-            EntityPlayer* _player;
+            HumanBase* _player;
             realtrick::PlayerType _playerType;
             
         };

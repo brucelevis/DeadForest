@@ -10,6 +10,8 @@
 
 #include <map>
 
+#include "Types.hpp"
+
 namespace realtrick
 {
     namespace client
@@ -31,6 +33,10 @@ namespace realtrick
             
             int getMaxItemSlot() const { return _maxItems; }
             ItemBase* getItem(int slot) { return _items[slot]; }
+            ItemBase* getItemType(EntityType type);
+            
+            void setItemAmount(EntityType type, int amount);
+            int getItemAmount(EntityType type);
             
         private:
             

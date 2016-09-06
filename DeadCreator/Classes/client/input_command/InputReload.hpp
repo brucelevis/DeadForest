@@ -24,7 +24,7 @@ namespace realtrick
             
         public:
             
-            InputReload(EntityPlayer* player) :
+            InputReload(HumanBase* player) :
             _player(player)
             {
                 
@@ -44,7 +44,7 @@ namespace realtrick
             
         private:
             
-            EntityPlayer* _player;
+            HumanBase* _player;
             
         };
         

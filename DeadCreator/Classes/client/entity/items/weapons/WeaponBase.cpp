@@ -9,9 +9,8 @@
 #include "WeaponBase.hpp"
 #include "HumanBase.hpp"
 #include "Game.hpp"
-#include "Inventory.hpp"
 #include "HumanOwnedAnimations.hpp"
-#include "WeaponStatus.hpp"
+#include "InventoryData.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -50,11 +49,18 @@ WeaponBase::WeaponBase(const WeaponBase& rhs) : ItemBase(rhs)
 
 void WeaponBase::use()
 {
-    if( _owner->getEquipedWeapon() == nullptr )
+    auto equipedWeapon = _owner->getEquipedWeapon();
+    if( equipedWeapon == nullptr )
     {
         // 주먹일 때, 주먹을 집어넣고 무기를 세팅한다.
         _owner->getFSM()->changeState(&HumanFistIn::getInstance());
         _owner->setEquipedWeapon(this);
+    }
+    else if ( equipedWeapon == this )
+    {
+        // 장착 무기를 nullptr(맨손)으로 만들고 무기를 집어넣음;
+        _owner->setEquipedWeapon(nullptr);
+        this->inWeapon();
     }
     else
     {
@@ -65,30 +71,22 @@ void WeaponBase::use()
 }
 
 
-void WeaponBase::releaseWeapon()
-{
-    // 장착 무기를 nullptr(맨손)으로 만든다.
-    _owner->setEquipedWeapon(nullptr);
-    // 무기를 집어넣는다.
-    inWeapon();
-}
-
-
 void WeaponBase::reload()
 {
     int leftRounds = getNumOfLeftRounds();
     int maxRounds = getMaxRounds();
 
 	int offset = getReloadedBulletOnce();
-    int ownedRound = 0; //_owner->getInventory()->getItemAmount(getBulletType());
+    int ownedRound = 0;
+    auto item = _owner->getInventoryData()->getItemType(getBulletType());
+    if ( item ) ownedRound = item->getAmount();
 	int bulletNum = std::min(ownedRound, offset);
 
-    if (leftRounds!=maxRounds)
+    if ( leftRounds != maxRounds )
     {
-        if (ownedRound!=0)
+        if ( ownedRound != 0 )
         {
-			setReservecBullets(bulletNum);
-            //_owner->getWeaponStatus()->disableButton();
+			setReservedBullets(bulletNum);
             _game->sendMessage(0.0, _owner, this, MessageType::RELOAD_WEAPON, nullptr);
             
             double animatedTime = _owner->getAnimator()->getCurrAnimation()->getMaxFrame() * _owner->getAnimator()->getCurrAnimation()->getFrameSwapTime();
@@ -112,7 +110,7 @@ void WeaponBase::attack()
 {
     dropCartiridges();
     
-    // 충돌처리 부분 흐름분리
+    // 공격 흐름 분리
     ItemAndOwner item_owner;
     item_owner.item = this;
     item_owner.owner = _owner;

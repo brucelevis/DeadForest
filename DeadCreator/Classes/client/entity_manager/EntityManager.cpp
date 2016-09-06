@@ -174,16 +174,15 @@ int EntityManager::getNextValidID()
 }
 
 
-EntityPlayer* EntityManager::getPlayerPtr(PlayerType type)
+HumanBase* EntityManager::getPlayerPtr(PlayerType type)
 {
     for ( const auto& entity : _entities )
     {
         auto currEntity = entity.second;
         
-        if (currEntity->getEntityType() == EntityType::ENTITY_PLAYER &&
-            currEntity->getPlayerType() == type )
+        if ( currEntity->getPlayerType() == type )
         {
-            return static_cast<EntityPlayer*>(currEntity);
+            return static_cast<HumanBase*>(currEntity);
         }
     }
     return nullptr;

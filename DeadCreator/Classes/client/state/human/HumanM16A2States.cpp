@@ -15,9 +15,7 @@
 #include "Game.hpp"
 #include "WeaponBase.hpp"
 #include "UiLayer.hpp"
-#include "Inventory.hpp"
 #include "Items.hpp"
-#include "WeaponStatus.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -182,7 +180,7 @@ void HumanM16A2Attack::enter(HumanBase* human)
     s.soundRange = 2000.0f;
     human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
     
-    human->getGame()->sendMessage(0.12, human, human, MessageType::M16A2_SHOOT, nullptr);
+    human->getGame()->sendMessage(0.0, human, human, MessageType::M16A2_SHOOT, nullptr);
     human->getGame()->sendMessage(0.12, human, human, MessageType::M16A2_SHOOT, nullptr);
     human->getGame()->sendMessage(0.24, human, human, MessageType::M16A2_SHOOT, nullptr);
     
@@ -223,8 +221,6 @@ bool HumanM16A2Attack::onMessage(HumanBase* human, const Telegram& msg)
         if ( human->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
         {
             human->getEquipedWeapon()->attack();
-            human->getEquipedWeapon()->setNumOfLeftRounds( human->getEquipedWeapon()->getNumOfLeftRounds() - 1);
-//            human->getWeaponStatus()->setWeaponStatus(human->getEquipedWeapon());
         }
         
         return true;

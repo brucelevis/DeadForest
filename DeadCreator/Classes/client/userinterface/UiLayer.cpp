@@ -22,6 +22,7 @@
 #include "RenderingSystem.hpp"
 #include "CrossHair.hpp"
 #include "InventoryView.hpp"
+#include "WeaponView.hpp"
 #include "InventoryData.hpp"
 #include "EntityPlayer.hpp"
 using namespace realtrick::client;
@@ -277,10 +278,14 @@ bool UiLayer::init()
     _hpBar->setPosition(Vec2(_winSize.width * 0.03f, _winSize.height * 0.9f));
     addChild(_hpBar);
     
-    _inventoryView = InventoryView::create();
+    _inventoryView = InventoryView::create(_game);
     _inventoryView->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2));
     _inventoryView->setVisible(false);
     addChild(_inventoryView);
+    
+    _weaponView = WeaponView::create(_game);
+    _weaponView->setPosition(Vec2(GAME_SCREEN_WIDTH - 100, GAME_SCREEN_HEIGHT - 120));
+    addChild(_weaponView);
 
     auto inventoryButton = ui::Button::create("client/ui/inventory_switch_n.png", "client/ui/inventory_switch_s.png");
     inventoryButton->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, 50.0f));
@@ -364,6 +369,12 @@ void UiLayer::setHitPoint(float h)
 void UiLayer::syncItemView(InventoryData* data)
 {
     _inventoryView->syncItemView(data);
+}
+
+
+void UiLayer::syncWeaponView(InventoryData* data)
+{
+    _weaponView->syncWeaponView(data);
 }
 
 

@@ -112,11 +112,6 @@ void Game::update(float dt)
                                                   _gameResource->getTileWidth(),
                                                   _gameResource->getTileHeight(), DUMMY_TILE_SIZE);
     
-    if ( !getPlayerPtr()->isAlive() )
-    {
-//        Director::getInstance()->replaceScene(RewardScene::createScene());
-    }
-    
     // 1. update entities
     _entityManager->update(dt);
     
@@ -403,13 +398,13 @@ TileType Game::getStepOnTileType(const cocos2d::Vec2& pos)
 }
 
 
-EntityPlayer* Game::getPlayerPtr() const
+HumanBase* Game::getPlayerPtr() const
 {
     return _entityManager->getPlayerPtr();
 }
 
 
-EntityPlayer* Game::getPlayerPtr(PlayerType type) const
+HumanBase* Game::getPlayerPtr(PlayerType type) const
 {
     return _entityManager->getPlayerPtr(type);
 }

@@ -239,7 +239,7 @@ void HumanBase::setFootGauge(float g)
         s.soundRange = 1000.0f;
         s.volume = 0.2f;
         
-        if ( onTile == TileType::DIRT ) s.fileName = "Dirt" + _to_string(random(1, 4)) + ".mp3";
+        if ( onTile == TileType::DIRT || onTile == TileType::HILL ) s.fileName = "Dirt" + _to_string(random(1, 4)) + ".mp3";
         else if ( onTile == TileType::GRASS ) s.fileName = "Grass" + _to_string(random(1, 4)) + ".mp3";
         else if ( onTile == TileType::WATER ) s.fileName = "Water" + _to_string(random(1, 4)) + ".mp3";
         
@@ -289,6 +289,15 @@ bool HumanBase::handleMessage(const Telegram& msg)
         _game->addEntity(blood);
         
         ret = true;
+    }
+    
+    if ( msg.msg == MessageType::SYNC_INVENTORY_WEAPON_VIEW )
+    {
+        if ( _uiLayer )
+        {
+            _uiLayer->syncItemView(_inventoryData);
+            _uiLayer->syncWeaponView(_inventoryData);
+        }
     }
     
     return ret;
@@ -341,9 +350,20 @@ int HumanBase::addItem(ItemBase* item)
     if ( _uiLayer && slot != -1 )
     {
         _uiLayer->syncItemView(_inventoryData);
+        _uiLayer->syncWeaponView(_inventoryData);
     }
     return slot;
 }
+
+
+void HumanBase::useItem(int slot)
+{
+    auto item = _inventoryData->getItem(slot);
+    if ( item ) item->use();
+}
+
+
+
 
 
 

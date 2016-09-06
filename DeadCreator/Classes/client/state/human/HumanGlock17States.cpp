@@ -15,9 +15,7 @@
 #include "Game.hpp"
 #include "WeaponBase.hpp"
 #include "UiLayer.hpp"
-#include "Inventory.hpp"
 #include "Items.hpp"
-#include "WeaponStatus.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -183,9 +181,6 @@ void HumanGlock17Attack::enter(HumanBase* human)
     human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
     
     human->getEquipedWeapon()->attack();
-    human->getEquipedWeapon()->setNumOfLeftRounds( human->getEquipedWeapon()->getNumOfLeftRounds() - 1);
-//    human->getWeaponStatus()->setWeaponStatus(human->getEquipedWeapon());
-    
     human->setStateName("attack");
 }
 

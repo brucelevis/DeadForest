@@ -26,6 +26,7 @@ namespace realtrick
         class InfoSystem;
         class CrossHair;
         class InventoryView;
+        class WeaponView;
         class InventoryData;
         
         class UiLayer : public cocos2d::Node
@@ -46,6 +47,7 @@ namespace realtrick
             void setVisibleCrossHair(bool visible);
             void displayText(const std::string& text);
             void syncItemView(InventoryData* data);
+            void syncWeaponView(InventoryData* data);
             
         private:
             
@@ -57,6 +59,7 @@ namespace realtrick
             HpBar* _hpBar;
             InfoSystem* _infoSystem;
             InventoryView* _inventoryView;
+            WeaponView* _weaponView;
             
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
             

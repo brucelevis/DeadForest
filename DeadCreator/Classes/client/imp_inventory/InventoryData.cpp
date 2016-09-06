@@ -90,6 +90,36 @@ int InventoryData::getSameItemSlot(int type) const
 }
 
 
+ItemBase* InventoryData::getItemType(EntityType type)
+{
+    for(const auto& item : _items)
+    {
+        if ( item && item->getEntityType() == type ) return item;
+    }
+    return nullptr;
+}
+
+
+void InventoryData::setItemAmount(EntityType type, int amount)
+{
+    auto item = getItemType(type);
+    if ( item )
+    {
+        int slot = getSameItemSlot(type);
+        if ( amount == 0 ) eraseItem(slot);
+        else item->setAmount(amount);
+    }
+}
+
+
+int InventoryData::getItemAmount(EntityType type)
+{
+    auto item = getItemType(type);
+    if ( item ) return item->getAmount();
+    return -1;
+}
+
+
 
 
 

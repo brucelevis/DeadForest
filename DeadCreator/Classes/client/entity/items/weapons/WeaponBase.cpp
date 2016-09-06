@@ -86,11 +86,7 @@ void WeaponBase::reload()
     {
         if ( ownedRound != 0 )
         {
-			setReservedBullets(bulletNum);
-            _game->sendMessage(0.0, _owner, this, MessageType::RELOAD_WEAPON, nullptr);
-            
-            double animatedTime = _owner->getAnimator()->getCurrAnimation()->getMaxFrame() * _owner->getAnimator()->getCurrAnimation()->getFrameSwapTime();
-            _game->pushLogic(animatedTime, MessageType::RELOAD_COMPLETE, nullptr);
+            _game->sendMessage(0.0, _owner, this, MessageType::RELOAD_WEAPON, &bulletNum);
         }
         else
         {

@@ -33,6 +33,7 @@ namespace realtrick
             virtual bool init() override;
             
             void syncItemView(InventoryData* data);
+            Game* getGame() const { return _game; }
             
         private:
             

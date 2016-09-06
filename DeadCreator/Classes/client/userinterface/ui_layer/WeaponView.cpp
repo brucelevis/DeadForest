@@ -41,11 +41,18 @@ bool WeaponView::init()
     if ( !Node::init() )
         return false;
     
-    _view = ui::Button::create("client/ui/glock_reload_n.png", "client/ui/glock_reload_s.png");
+    _view = ui::Button::create("client/ui/punch_reload_n.png", "client/ui/punch_reload_n.png");
     _view->setPosition(Vec2(0.0f, 50.0f));
+    _view->addTouchEventListener([this](Ref* ref, cocos2d::ui::Widget::TouchEventType type){
+        
+        if ( type == ui::Widget::TouchEventType::ENDED ) {
+            _game->pushLogic(0.0, MessageType::PRESS_RELOAD_BUTTON, nullptr);
+        }
+          
+    });
     addChild(_view);
     
-    _numOfBullets = ui::Text::create("17 / 51", "fonts/SpecialElite.TTF", 20);
+    _numOfBullets = ui::Text::create("", "fonts/SpecialElite.TTF", 20);
     _numOfBullets->setPosition(Vec2(0.0f, -30.0f));
     addChild(_numOfBullets);
     

@@ -39,7 +39,6 @@ void HumanGlock17IdleLoop::execute(HumanBase* human)
         human->getAnimator()->pushAnimationFrames(&AnimHumanGlock17IdleLoop::getInstance());
     }
     
-    
     if ( isMasked(inputMask, HumanBehaviorType::ATTACK) )
     {
         human->setVelocity( moving * human->getWalkSpeed() );
@@ -95,7 +94,14 @@ bool HumanGlock17IdleLoop::onMessage(HumanBase* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::RELOAD_WEAPON )
     {
+        int bulletNum = *static_cast<int*>(msg.extraInfo);
+        human->getEquipedWeapon()->setReservedBullets(bulletNum);
+        
+        double animatedTime = AnimHumanGlock17Reload::getInstance().getMaxFrame() * AnimHumanGlock17Reload::getInstance().getFrameSwapTime();
+        human->getGame()->sendMessage(animatedTime, human, human, MessageType::RELOAD_COMPLETE, nullptr);
+        
         human->getFSM()->changeState(&HumanGlock17Reload::getInstance());
+        
         return true;
     }
     
@@ -152,16 +158,24 @@ void HumanGlock17MoveLoop::execute(HumanBase* human)
 void HumanGlock17MoveLoop::exit(HumanBase* human)
 {
     human->setRunStats(false);
-    human->getAnimator()->clearFrameQueue();    }
+    human->getAnimator()->clearFrameQueue();
+}
 
 bool HumanGlock17MoveLoop::onMessage(HumanBase* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::RELOAD_WEAPON )
     {
+        int bulletNum = *static_cast<int*>(msg.extraInfo);
+        human->getEquipedWeapon()->setReservedBullets(bulletNum);
+        
+        double animatedTime = AnimHumanGlock17Reload::getInstance().getMaxFrame() * AnimHumanGlock17Reload::getInstance().getFrameSwapTime();
+        human->getGame()->sendMessage(animatedTime, human, human, MessageType::RELOAD_COMPLETE, nullptr);
+        
         human->getFSM()->changeState(&HumanGlock17Reload::getInstance());
         
         return true;
     }
+    
     return false;
 }
 

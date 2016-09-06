@@ -106,15 +106,10 @@ bool SingleStream::handleMessage(const Telegram& msg)
     
     else if ( msg.msg == MessageType::PRESS_RELOAD_BUTTON )
     {
-        /*
-         
-         TODO:
-         1. 재장전 중일때 무기를 못 바꾼다.
-         2. 재장전 중일때 프로그래스바 생성한다.
-         3. 재장전 중일때 재장전버튼을 못누른다.
-         
-        */
-        
+        // TODO:
+        // 1. 재장전 중일때 무기를 못 바꾼다.
+        // 2. 재장전 중일때 프로그래스바 생성한다.
+        // 3. 재장전 중일때 재장전버튼을 못누른다.
         InputReload inputCommand(_game->getPlayerPtr());
         inputCommand.execute();
         
@@ -171,26 +166,6 @@ bool SingleStream::handleMessage(const Telegram& msg)
         player->useItem(slot);
         
         // 무기정보UI의 무기를 갱신한다.
-        _game->sendMessage(0.0, player, nullptr, MessageType::SYNC_INVENTORY_WEAPON_VIEW, nullptr);
-        
-        return true;
-    }
-    
-    else if ( msg.msg == MessageType::RELOAD_COMPLETE )
-    {
-        HumanBase* player = _game->getPlayerPtr();
-        WeaponBase* equipedWeapon = player->getEquipedWeapon();
-        
-        // 인벤토리에있는 총알아이템을 소모한다.
-        InventoryData* inventory = player->getInventoryData();
-        EntityType bulletType = equipedWeapon->getBulletType();
-        inventory->setItemAmount( bulletType, inventory->getItemAmount(bulletType) - equipedWeapon->getReservedBullets());
-        
-        // 무기의 탄창을 채운다.
-        equipedWeapon->setNumOfLeftRounds(equipedWeapon->getNumOfLeftRounds() +  equipedWeapon->getReservedBullets());
-        equipedWeapon->setReservedBullets(0);
-        
-        // ui 갱신
         _game->sendMessage(0.0, player, nullptr, MessageType::SYNC_INVENTORY_WEAPON_VIEW, nullptr);
         
         return true;

@@ -95,7 +95,14 @@ bool HumanM16A2IdleLoop::onMessage(HumanBase* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::RELOAD_WEAPON )
     {
+        int bulletNum = *static_cast<int*>(msg.extraInfo);
+        human->getEquipedWeapon()->setReservedBullets(bulletNum);
+        
+        double animatedTime = AnimHumanM16A2Reload::getInstance().getMaxFrame() * AnimHumanM16A2Reload::getInstance().getFrameSwapTime();
+        human->getGame()->sendMessage(animatedTime, human, human, MessageType::RELOAD_COMPLETE, nullptr);
+        
         human->getFSM()->changeState(&HumanM16A2Reload::getInstance());
+        
         return true;
     }
     
@@ -160,10 +167,17 @@ bool HumanM16A2MoveLoop::onMessage(HumanBase* human, const Telegram& msg)
 {
     if ( msg.msg == MessageType::RELOAD_WEAPON )
     {
+        int bulletNum = *static_cast<int*>(msg.extraInfo);
+        human->getEquipedWeapon()->setReservedBullets(bulletNum);
+        
+        double animatedTime = AnimHumanM16A2Reload::getInstance().getMaxFrame() * AnimHumanM16A2Reload::getInstance().getFrameSwapTime();
+        human->getGame()->sendMessage(animatedTime, human, human, MessageType::RELOAD_COMPLETE, nullptr);
+        
         human->getFSM()->changeState(&HumanM16A2Reload::getInstance());
         
         return true;
     }
+    
     return false;
 }
 

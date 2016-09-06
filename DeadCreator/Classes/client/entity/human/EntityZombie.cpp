@@ -12,6 +12,7 @@
 #include "Game.hpp"
 #include "AnimatedFiniteEntity.hpp"
 #include "ZombieBrain.hpp"
+#include "UiLayer.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -76,6 +77,14 @@ bool EntityZombie::handleMessage(const Telegram& msg)
         ReceiverSenderDamage* s = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
         if ( _blood > 0 ) _blood -= s->damage;
         if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&ZombieDead::getInstance());
+        
+        // only apply to player
+        if ( _uiLayer )
+        {
+            float h = _blood / static_cast<float>(_maxBlood);
+            h = cocos2d::clampf(h, 0.0f, 1.0f);
+            _uiLayer->setHitPoint(h);
+        }
     }
     
     return ret;

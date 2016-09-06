@@ -267,7 +267,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
         ret = true;
     }
     
-    if ( msg.msg  == MessageType::HITTED_BY_GUN )
+    else if ( msg.msg  == MessageType::HITTED_BY_GUN )
     {
         AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1, 5)) + ".png"},
                                                                    random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
@@ -279,7 +279,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
         ret = true;
     }
     
-    if ( msg.msg == MessageType::HITTED_BY_AXE )
+    else if ( msg.msg == MessageType::HITTED_BY_AXE )
     {
         AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"big_blood.PNG"},
                                                                    random(5.0f, 10.0f), cocos2d::ui::Widget::TextureResType::PLIST);
@@ -291,13 +291,34 @@ bool HumanBase::handleMessage(const Telegram& msg)
         ret = true;
     }
     
-    if ( msg.msg == MessageType::SYNC_INVENTORY_WEAPON_VIEW )
+    else if ( msg.msg == MessageType::SYNC_INVENTORY_WEAPON_VIEW )
     {
         if ( _uiLayer )
         {
             _uiLayer->syncItemView(_inventoryData);
             _uiLayer->syncWeaponView(_inventoryData);
         }
+        
+        ret = true;
+    }
+    
+    else if ( msg.msg == MessageType::RELOAD_COMPLETE )
+    {
+        WeaponBase* equipedWeapon = getEquipedWeapon();
+        
+        // 인벤토리에있는 총알아이템을 소모한다.
+        InventoryData* inventory = getInventoryData();
+        EntityType bulletType = equipedWeapon->getBulletType();
+        inventory->setItemAmount( bulletType, inventory->getItemAmount(bulletType) - equipedWeapon->getReservedBullets());
+        
+        // 무기의 탄창을 채운다.
+        equipedWeapon->setNumOfLeftRounds(equipedWeapon->getNumOfLeftRounds() +  equipedWeapon->getReservedBullets());
+        equipedWeapon->setReservedBullets(0);
+        
+        // ui 갱신
+        _game->sendMessage(0.0, this, nullptr, MessageType::SYNC_INVENTORY_WEAPON_VIEW, nullptr);
+        
+        ret = true;
     }
     
     return ret;
@@ -334,6 +355,7 @@ void HumanBase::hittedByWeapon(EntityType type, int damage)
         d.damage = damage;
         _game->sendMessage(0.0, this, nullptr, MessageType::HITTED_BY_AXE, &d);
     }
+    
 }
 
 

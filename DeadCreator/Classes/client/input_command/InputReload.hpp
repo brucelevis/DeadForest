@@ -26,9 +26,7 @@ namespace realtrick
             
             InputReload(HumanBase* player) :
             _player(player)
-            {
-                
-            }
+            {}
             virtual ~InputReload() = default;
             
             virtual void execute() override

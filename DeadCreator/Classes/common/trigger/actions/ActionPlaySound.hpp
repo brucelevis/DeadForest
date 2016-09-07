@@ -128,9 +128,8 @@ namespace realtrick
             
             virtual void doAction()
             {
-                _maskedPlayer = _owner->getPlayers();
-                
-                if ( _maskedPlayer.test(static_cast<int>(_game->getPlayerPtr()->getPlayerType())) )
+                auto players = _owner->getPlayers();
+                if ( players.test(static_cast<int>(_game->getPlayerPtr()->getPlayerType())) )
                 {
                     SoundSource s;
                     s.fileName = _params.fileName;
@@ -146,7 +145,6 @@ namespace realtrick
         private:
             
             ActionPlaySoundData _params;
-            std::bitset<30> _maskedPlayer;
             
         };
         

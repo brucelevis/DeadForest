@@ -43,12 +43,12 @@ namespace realtrick
     {
         
         class EntityBase;
-        class EntityPlayer;
         class TriggerSystem;
         class RenderingSystem;
         class LogicStream;
         class GameResource;
         class EntityManager;
+        class HumanBase;
         class UiLayer;
         class Camera2D;
         
@@ -81,7 +81,8 @@ namespace realtrick
             // entity helper
             void addEntity(EntityBase* ent, int zOrder = 0);
             void removeEntity(EntityBase* ent);
-            EntityPlayer* getPlayerPtr() const;
+            HumanBase* getPlayerPtr() const;
+            HumanBase* getPlayerPtr(PlayerType type) const;
             EntityBase* getEntityFromID(int id) const;
             
             void killEntity(EntityBase* ent);
@@ -97,7 +98,6 @@ namespace realtrick
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const Segment& ray) const;
             
-        
             TileType getStepOnTileType(const cocos2d::Vec2& pos);
             
             void sendMessage(double delaySeconds, MessageNode* receiver, MessageNode* sender, MessageType type, void* extraInfo);
@@ -112,9 +112,6 @@ namespace realtrick
             const std::string& getLogString() const { return _logString; }
             bool& isLogAdded() { return _isLogAdded; }
             
-            void runCrossHairEffect(const std::string& name);
-            void displayText(const std::string& text);
-            
             Camera2D* getCamera() const { return _camera; }
 
 			void generateIsometricGridGraph(
@@ -125,7 +122,14 @@ namespace realtrick
 				int numOfDummy);
 
 			bool isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const;
+   
+            void replaceVictoryScene(float delay);
+            void replaceDefeatScene(float delay);
 
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+            bool isGameEnded() const { return _isGameEnded; }
+#endif
+            
         private:
             
             cocos2d::Size _winSize;
@@ -149,7 +153,7 @@ namespace realtrick
             // message system
             MessageDispatcher* _messenger;
             
-            // ui
+            // ui layer
             UiLayer* _uiLayer;
             
             // camera
@@ -167,6 +171,12 @@ namespace realtrick
             std::vector<std::pair<std::string, int>> _logs;
             std::string _logString;
             bool _isLogAdded = false;
+      
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+            bool _isGameEnded = false;
+#endif
+            
+			std::list<PathEdge> _tempPath;
 
         };
         

@@ -2,16 +2,21 @@
 #include "EditScene.hpp"
 #include "MainMenu3.hpp"
 #include "DummyScene.hpp"
+
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 #include "ImGuiGLViewImpl.h"
 #include "ImGuiLayer.h"
-#include "ShaderTestScene.hpp"
+#endif
 
 #include "SizeProtocol.h"
 
 USING_NS_CC;
 
-//static cocos2d::Size designResolutionSize = cocos2d::Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 static cocos2d::Size designResolutionSize = cocos2d::Size(SCREEN_WIDTH, SCREEN_HEIGHT);
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
+static cocos2d::Size designResolutionSize = cocos2d::Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+#endif
 
 AppDelegate::AppDelegate() {
     
@@ -38,7 +43,11 @@ bool AppDelegate::applicationDidFinishLaunching()
     auto glview = director->getOpenGLView();
     if(!glview)
     {
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
         glview = ImGuiGLViewImpl::createWithRect("Dead Creator v1.0.1", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
+        glview = GLViewImpl::createWithRect("Dead Creator v1.0.1", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+#endif
         director->setOpenGLView(glview);
     }
     
@@ -50,9 +59,11 @@ bool AppDelegate::applicationDidFinishLaunching()
     
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images.plist");
     
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     auto scene = realtrick::editor::EditScene::createScene();
-//    auto scene = realtrick::client::Game::createScene();
-//    auto scene = realtrick::client::ShaderTestScene::createScene();
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
+    auto scene = realtrick::client::Game::createScene();
+#endif
     director->runWithScene(scene);
     
     return true;

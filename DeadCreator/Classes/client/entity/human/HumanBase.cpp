@@ -17,11 +17,20 @@
 #include "PathPlanner.h"
 #include "SensoryMemory.h"
 #include "AbstTargetingSystem.h"
+#include "InventoryData.hpp"
+#include "UiLayer.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
+using namespace realtrick;
 
 
 HumanBase::HumanBase(Game* game) : EntityBase(game),
+_animator(nullptr),
+_FSM(nullptr),
+_brain(nullptr),
+_uiLayer(nullptr),
+_equipedWeapon(nullptr),
+_inventoryData(nullptr),
 _heading(Vec2::UNIT_X),
 _targetHeading(Vec2::UNIT_X),
 _moving(Vec2::UNIT_X),
@@ -30,8 +39,6 @@ _right(Vec2::ZERO),
 _velocity(Vec2::ZERO),
 _turnSpeed(0.0f),
 _speed(0.0f),
-_animator(nullptr),
-_brain(nullptr),
 _inputMask(0),
 _blood(0),
 _maxBlood(0),
@@ -43,6 +50,7 @@ _walkSpeed(0.0f),
 _runSpeed(0.0f),
 _footGauge(0.0f),
 _rotation(0.0f),
+_userNickName(""),
 _stateName("idle")
 {
     ADD_FAMILY_MASK(_familyMask, HUMAN_BASE);
@@ -54,6 +62,7 @@ _stateName("idle")
 HumanBase::~HumanBase()
 {
     CC_SAFE_DELETE(_animator);
+    CC_SAFE_DELETE(_inventoryData);
     CC_SAFE_DELETE(_brain);
 }
 
@@ -64,6 +73,8 @@ bool HumanBase::init()
         return false;
     
     _animator = new Animator(this);
+    _inventoryData = new InventoryData(this);
+    
     setAlive();
 
 	_pathPlanner = new PathPlanner(*_game->getGraph(), this);
@@ -196,7 +207,7 @@ void HumanBase::moveEntity()
 
 void HumanBase::rotateEntity()
 {
-    if ( _heading.dot(_targetHeading) < 0.995f )
+    if ( _heading.dot(_targetHeading) < 0.982546f )
     {
         float dt = Director::getInstance()->getDeltaTime();
         
@@ -232,7 +243,7 @@ void HumanBase::setFootGauge(float g)
         s.soundRange = 1000.0f;
         s.volume = 0.2f;
         
-        if ( onTile == TileType::DIRT ) s.fileName = "Dirt" + _to_string(random(1, 4)) + ".mp3";
+        if ( onTile == TileType::DIRT || onTile == TileType::HILL ) s.fileName = "Dirt" + _to_string(random(1, 4)) + ".mp3";
         else if ( onTile == TileType::GRASS ) s.fileName = "Grass" + _to_string(random(1, 4)) + ".mp3";
         else if ( onTile == TileType::WATER ) s.fileName = "Water" + _to_string(random(1, 4)) + ".mp3";
         
@@ -260,7 +271,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
         ret = true;
     }
     
-    if ( msg.msg  == MessageType::HITTED_BY_GUN )
+    else if ( msg.msg  == MessageType::HITTED_BY_GUN )
     {
         AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1, 5)) + ".png"},
                                                                    random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
@@ -272,7 +283,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
         ret = true;
     }
     
-    if ( msg.msg == MessageType::HITTED_BY_AXE )
+    else if ( msg.msg == MessageType::HITTED_BY_AXE )
     {
         AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"big_blood.PNG"},
                                                                    random(5.0f, 10.0f), cocos2d::ui::Widget::TextureResType::PLIST);
@@ -280,6 +291,36 @@ bool HumanBase::handleMessage(const Telegram& msg)
         blood->setWorldPosition(getWorldPosition());
         blood->setScale(0.5f);
         _game->addEntity(blood);
+        
+        ret = true;
+    }
+    
+    else if ( msg.msg == MessageType::SYNC_INVENTORY_WEAPON_VIEW )
+    {
+        if ( _uiLayer )
+        {
+            _uiLayer->syncItemView(_inventoryData);
+            _uiLayer->syncWeaponView(_inventoryData);
+        }
+        
+        ret = true;
+    }
+    
+    else if ( msg.msg == MessageType::RELOAD_COMPLETE )
+    {
+        WeaponBase* equipedWeapon = getEquipedWeapon();
+        
+        // 인벤토리에있는 총알아이템을 소모한다.
+        InventoryData* inventory = getInventoryData();
+        EntityType bulletType = equipedWeapon->getBulletType();
+        inventory->setItemAmount( bulletType, inventory->getItemAmount(bulletType) - equipedWeapon->getReservedBullets());
+        
+        // 무기의 탄창을 채운다.
+        equipedWeapon->setNumOfLeftRounds(equipedWeapon->getNumOfLeftRounds() +  equipedWeapon->getReservedBullets());
+        equipedWeapon->setReservedBullets(0);
+        
+        // ui 갱신
+        _game->sendMessage(0.0, this, nullptr, MessageType::SYNC_INVENTORY_WEAPON_VIEW, nullptr);
         
         ret = true;
     }
@@ -301,6 +342,50 @@ void HumanBase::setBrain(BrainBase* brain)
 {
     CC_SAFE_DELETE(_brain);
     _brain = brain;
+}
+
+
+void HumanBase::hittedByWeapon(EntityType type, int damage)
+{
+    if ( type == EntityType::ITEM_M16A2 || type == EntityType::ITEM_M1897 || type == EntityType::ITEM_GLOCK17 )
+    {
+        ReceiverSenderDamage d;
+        d.damage = damage;
+        _game->sendMessage(0.0, this, nullptr, MessageType::HITTED_BY_GUN, &d);
+    }
+    else if ( type == EntityType::ITEM_AXE )
+    {
+        ReceiverSenderDamage d;
+        d.damage = damage;
+        _game->sendMessage(0.0, this, nullptr, MessageType::HITTED_BY_AXE, &d);
+    }
+    
+}
+
+
+void HumanBase::reload()
+{
+    if ( _equipedWeapon ) _equipedWeapon->reload();
+}
+
+
+int HumanBase::addItem(ItemBase* item)
+{
+    int slot = _inventoryData->addItem(item);
+    // 인벤토리 뷰에 추가함.
+    if ( _uiLayer && slot != -1 )
+    {
+        _uiLayer->syncItemView(_inventoryData);
+        _uiLayer->syncWeaponView(_inventoryData);
+    }
+    return slot;
+}
+
+
+void HumanBase::useItem(int slot)
+{
+    auto item = _inventoryData->getItem(slot);
+    if ( item ) item->use();
 }
 
 

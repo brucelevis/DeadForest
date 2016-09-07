@@ -10,7 +10,6 @@
 #include "WeaponBase.hpp"
 #include "Game.hpp"
 #include "UiLayer.hpp"
-#include "Inventory.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
@@ -127,15 +126,15 @@ void WeaponStatus::setWeaponStatus(WeaponBase* weapon)
 
 void WeaponStatus::setEntryBullet(WeaponBase* weapon)
 {
-    int ownedBullet = _game->getPlayerPtr()->getInventory()->getItemAmount(weapon->getBulletType());
-    _setEntryBulletNumber(ownedBullet);
+//    int ownedBullet = _game->getPlayerPtr()->getInventory()->getItemAmount(weapon->getBulletType());
+//    _setEntryBulletNumber(ownedBullet);
 }
 
 
 void WeaponStatus::setEntryBullet(EntityType bulletType)
 {
-    int ownedBullet = _game->getPlayerPtr()->getInventory()->getItemAmount(bulletType);
-    _setEntryBulletNumber(ownedBullet);
+//    int ownedBullet = _game->getPlayerPtr()->getInventory()->getItemAmount(bulletType);
+//    _setEntryBulletNumber(ownedBullet);
 }
 
 

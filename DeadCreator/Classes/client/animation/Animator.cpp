@@ -17,7 +17,7 @@ using namespace cocos2d;
 using namespace realtrick::client;
 
 
-Animator::Animator(Node* owner) :
+Animator::Animator(HumanBase* owner) :
 _owner(owner),
 _currAnimation(nullptr),
 _accumulatedTime(0.0f),
@@ -154,7 +154,7 @@ void Animator::setVisible(bool enable)
 void Animator::enableNormalMap()
 {
     setVisible(false);
-    setShadowVisible(false);
+    if ( _owner->isAlive() ) setShadowVisible(false);
     _normalSprite->setVisible(true);
 }
 
@@ -162,7 +162,7 @@ void Animator::enableNormalMap()
 void Animator::disableNormalMap()
 {
     setVisible(true);
-    setShadowVisible(true);
+    if ( _owner->isAlive() ) setShadowVisible(true);
     _normalSprite->setVisible(false);
 }
 

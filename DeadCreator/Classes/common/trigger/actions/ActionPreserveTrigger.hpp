@@ -59,8 +59,6 @@ namespace realtrick
                 return DeadCreator::CreateAction(builder, DeadCreator::ActionBase_PreserveTrigger, obj.Union());
             }
             
-            
-            
         };
         
     }

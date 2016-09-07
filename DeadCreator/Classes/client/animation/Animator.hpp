@@ -20,13 +20,14 @@ namespace realtrick
     {
         
         class AnimationBase;
+        class HumanBase;
         
         class Animator
         {
             
         public:
             
-            explicit Animator(cocos2d::Node* owner);
+            explicit Animator(HumanBase* owner);
             
             void pushAnimationFrames(AnimationBase* animation);
             void pushFramesAtoB(AnimationBase* anim,int startIndex, int endIndex);
@@ -55,7 +56,7 @@ namespace realtrick
             
         private:
             
-            cocos2d::Node*                                          _owner;
+            HumanBase*                                              _owner;
             AnimationBase*                                          _currAnimation;
             
             std::deque<std::pair<std::string, int>>                 _frameQueue;

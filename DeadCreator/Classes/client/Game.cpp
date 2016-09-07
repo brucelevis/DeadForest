@@ -23,14 +23,14 @@
 #include "Tileset.hpp"
 #include "TileHelperFunctions.hpp"
 #include "PathPlanner.h"
-
+#include "MainMenu3.hpp"
+#include "RewardScene.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
 
 #include "GMXFile_generated.h"
 #include "util.h"
-
 
 Game::Game() :
 _winSize(Size::ZERO),
@@ -86,9 +86,10 @@ bool Game::init()
     
     this->scheduleUpdate();
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-
+    
     _camera = new Camera2D();
-    _logicStream = new SingleStream(this);
+    if ( UserDefault::getInstance()->getBoolForKey("useNetwork", false) ) _logicStream = new ServerStream(this);
+    else _logicStream = new SingleStream(this);
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
@@ -315,8 +316,10 @@ void Game::loadGameContents(PlayerType ownPlayer)
         _renderingSystem->addEntity(entity.second, zOrder);
     }
     
-    _uiLayer = UiLayer::create(this);
-    _renderingSystem->addUINode(_uiLayer);
+    UiLayer* uiLayer = UiLayer::create(this);
+    _renderingSystem->addUINode(uiLayer);
+    
+    _entityManager->getPlayerPtr()->setUiLayer(uiLayer);
 }
 
 
@@ -394,9 +397,15 @@ TileType Game::getStepOnTileType(const cocos2d::Vec2& pos)
 }
 
 
-EntityPlayer* Game::getPlayerPtr() const
+HumanBase* Game::getPlayerPtr() const
 {
     return _entityManager->getPlayerPtr();
+}
+
+
+HumanBase* Game::getPlayerPtr(PlayerType type) const
+{
+    return _entityManager->getPlayerPtr(type);
 }
 
 
@@ -440,17 +449,6 @@ void Game::clearLogs()
 }
 
 
-void Game::runCrossHairEffect(const std::string& name)
-{
-    _uiLayer->runCrossHairEffect(name);
-}
-
-
-void Game::displayText(const std::string& text)
-{
-    _uiLayer->displayText(text);
-}
-
 void Game::generateIsometricGridGraph(
 	int numOfTileX,
 	int numOfTileY,
@@ -493,6 +491,7 @@ void Game::generateIsometricGridGraph(
 
 			int to = indexToNumber(to_j, to_i, numOfTileX, numOfDummy);
 
+
 			if (_gameResource->getTileData()[to_i][to_j].getTileType() == TileType::HILL)
 				continue;
 
@@ -501,6 +500,58 @@ void Game::generateIsometricGridGraph(
 		}
 	}
 }
+
+
+void Game::replaceVictoryScene(float delay)
+{
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+    _isGameEnded = true;
+#endif
+    
+    auto coroutineNode = Sprite::create("client/ui/black_bg.png");
+    coroutineNode->setOpacity(0);
+    coroutineNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
+    coroutineNode->runAction(Spawn::create(FadeTo::create(delay, 255),
+                                           Sequence::create(DelayTime::create(delay),
+                                                            CallFunc::create([this]{
+                                            
+                                               UserDefault::getInstance()->setBoolForKey("isVictory", true);
+                                               Director::getInstance()->replaceScene(RewardScene::createScene());
+                                               
+                                           }),
+                                                            RemoveSelf::create(),
+                                                            nullptr),
+                                           nullptr));
+    addChild(coroutineNode);
+}
+
+
+void Game::replaceDefeatScene(float delay)
+{
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
+    _isGameEnded = true;
+#endif
+    
+    auto coroutineNode = Sprite::create("client/ui/black_bg.png");
+    coroutineNode->setOpacity(0);
+    coroutineNode->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
+    coroutineNode->runAction(Spawn::create(FadeTo::create(delay, 255),
+                                           Sequence::create(DelayTime::create(delay),
+                                                            CallFunc::create([this]{
+                                               
+                                               UserDefault::getInstance()->setBoolForKey("isVictory", false);
+                                               Director::getInstance()->replaceScene(RewardScene::createScene());
+                                               
+                                           }),
+                                                            RemoveSelf::create(),
+                                                            nullptr),
+                                           nullptr));
+    addChild(coroutineNode);
+}
+
+
+
+
 
 
 

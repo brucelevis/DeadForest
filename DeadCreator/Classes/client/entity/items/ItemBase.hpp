@@ -29,8 +29,8 @@ namespace realtrick
             
             virtual ~ItemBase();
             
-            void setOwner(EntityPlayer* owner) { _owner=  owner; }
-            EntityPlayer* getOwner() const { return _owner; }
+            void setOwner(HumanBase* owner) { _owner=  owner; }
+            HumanBase* getOwner() const { return _owner; }
             
             void setAmount(int amount) { _amount = amount; }
             int getAmount() const { return _amount; }
@@ -52,7 +52,7 @@ namespace realtrick
             
         protected:
             
-            EntityPlayer*                           _owner;
+            HumanBase*                              _owner;
             int                                     _amount;
             
             std::string                             _inSlotFrameName;

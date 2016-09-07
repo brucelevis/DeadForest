@@ -194,7 +194,7 @@ void HumanAxeIn::execute(HumanBase* human)
     
     if(human->getAnimator()->isQueueEmpty())
     {
-        if ( static_cast<EntityPlayer*>(human)->getEquipedWeapon() == nullptr )
+        if ( human->getEquipedWeapon() == nullptr )
         {
             // 무기가 없으면 주먹 상태로
             human->getFSM()->changeState(&HumanFistOut::getInstance());
@@ -202,7 +202,7 @@ void HumanAxeIn::execute(HumanBase* human)
         else
         {
             // 있으면 해당무기를 꺼냄.
-            static_cast<EntityPlayer*>(human)->getEquipedWeapon()->outWeapon();
+            human->getEquipedWeapon()->outWeapon();
         }
     }
 }
@@ -326,7 +326,7 @@ void HumanAxeAttackAction::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanAxeAttackAction::getInstance());
     human->setStateName("attack");
-    static_cast<EntityPlayer*>(human)->getEquipedWeapon()->attack();
+    human->getEquipedWeapon()->attack();
 }
 
 void HumanAxeAttackAction::execute(HumanBase* human)

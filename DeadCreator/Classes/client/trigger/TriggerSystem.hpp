@@ -33,7 +33,7 @@ namespace realtrick
             _game(game),
             _isRemoveListDirty(false),
             _lastTriggerExecutedTime(std::chrono::system_clock::now().time_since_epoch()),
-            _triggerExecuteTime(0.33)
+            _triggerExecuteTime(0.16)
             {}
             virtual ~TriggerSystem() = default;
             

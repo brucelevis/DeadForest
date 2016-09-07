@@ -14,3 +14,5 @@
 #include "ActionMoveLocation.hpp"
 #include "ActionPlaySound.hpp"
 #include "ActionPlaySoundAtLocation.hpp"
+#include "ActionVictory.hpp"
+#include "ActionDefeat.hpp"

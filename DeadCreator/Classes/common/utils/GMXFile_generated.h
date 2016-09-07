@@ -35,6 +35,10 @@ namespace DeadCreator {
     
     struct PreserveTrigger;
     
+    struct Victory;
+    
+    struct Defeat;
+    
     struct MoveLocation;
     
     struct KillEntityAtLocation;
@@ -111,12 +115,14 @@ namespace DeadCreator {
         ActionBase_MoveLocation = 4,
         ActionBase_PlaySoundAtLocation = 5,
         ActionBase_PlaySound = 6,
+        ActionBase_Victory = 7,
+        ActionBase_Defeat = 8,
         ActionBase_MIN = ActionBase_NONE,
-        ActionBase_MAX = ActionBase_PlaySound
+        ActionBase_MAX = ActionBase_Defeat
     };
     
     inline const char **EnumNamesActionBase() {
-        static const char *names[] = { "NONE", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", nullptr };
+        static const char *names[] = { "NONE", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", "Victory", "Defeat", nullptr };
         return names;
     }
     
@@ -540,6 +546,52 @@ namespace DeadCreator {
     
     inline flatbuffers::Offset<PreserveTrigger> CreatePreserveTrigger(flatbuffers::FlatBufferBuilder &_fbb) {
         PreserveTriggerBuilder builder_(_fbb);
+        return builder_.Finish();
+    }
+    
+    struct Victory FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct VictoryBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        VictoryBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        VictoryBuilder &operator=(const VictoryBuilder &);
+        flatbuffers::Offset<Victory> Finish() {
+            auto o = flatbuffers::Offset<Victory>(fbb_.EndTable(start_, 0));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<Victory> CreateVictory(flatbuffers::FlatBufferBuilder &_fbb) {
+        VictoryBuilder builder_(_fbb);
+        return builder_.Finish();
+    }
+    
+    struct Defeat FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct DefeatBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        DefeatBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        DefeatBuilder &operator=(const DefeatBuilder &);
+        flatbuffers::Offset<Defeat> Finish() {
+            auto o = flatbuffers::Offset<Defeat>(fbb_.EndTable(start_, 0));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<Defeat> CreateDefeat(flatbuffers::FlatBufferBuilder &_fbb) {
+        DefeatBuilder builder_(_fbb);
         return builder_.Finish();
     }
     
@@ -1023,6 +1075,8 @@ namespace DeadCreator {
             case ActionBase_MoveLocation: return verifier.VerifyTable(reinterpret_cast<const MoveLocation *>(union_obj));
             case ActionBase_PlaySoundAtLocation: return verifier.VerifyTable(reinterpret_cast<const PlaySoundAtLocation *>(union_obj));
             case ActionBase_PlaySound: return verifier.VerifyTable(reinterpret_cast<const PlaySound *>(union_obj));
+            case ActionBase_Victory: return verifier.VerifyTable(reinterpret_cast<const Victory *>(union_obj));
+            case ActionBase_Defeat: return verifier.VerifyTable(reinterpret_cast<const Defeat *>(union_obj));
             default: return false;
         }
     }

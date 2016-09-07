@@ -11,10 +11,8 @@
 #include "Game.hpp"
 #include "EntityPlayer.hpp"
 #include "MessageTypes.hpp"
-#include "Inventory.hpp"
 #include "Items.hpp"
 #include "Camera2D.hpp"
-#include "WeaponStatus.hpp"
 #include "CircularBezel.hpp"
 #include "HpBar.hpp"
 #include "InfoSystem.hpp"
@@ -23,11 +21,16 @@
 #include "InputCommands.hpp"
 #include "RenderingSystem.hpp"
 #include "CrossHair.hpp"
+#include "InventoryView.hpp"
+#include "WeaponView.hpp"
+#include "InventoryData.hpp"
+#include "EntityPlayer.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
 
-UiLayer::UiLayer(Game* game) : _game(game)
+UiLayer::UiLayer(Game* game) :
+_game(game)
 {
 }
 
@@ -123,128 +126,108 @@ bool UiLayer::init()
         Vec2 screenPos = Vec2(e->getCursorX(), e->getCursorY());
         Vec2 localPos = getParent()->convertToNodeSpace(screenPos);
         
-        if ( localPos.x > 0.0f && localPos.x < GAME_SCREEN_WIDTH && localPos.y > 0.0f && localPos.y < GAME_SCREEN_HEIGHT )
+        if ( e->getMouseButton() == 0 && isContainsScreenRect(localPos) && !isContainsUiLayer(localPos) )
         {
-            const auto& inventoryAABB = _inventorySwitch->getBoundingBox();
-            const cocos2d::Rect reloadButtonAABB = cocos2d::Rect(_weaponStatus->getPosition() - Vec2(40,40), Size(80, 80));
-            
-            if ( !inventoryAABB.containsPoint(localPos) && !reloadButtonAABB.containsPoint(localPos) )
-            {
-                AttJoystickData data;
-                data.ref = this;
-                data.type = ui::Widget::TouchEventType::BEGAN;
-                _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
-            }
+            AttJoystickData data;
+            data.ref = this;
+            data.type = ui::Widget::TouchEventType::BEGAN;
+            _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
         }
         
     };
+    
     mouse->onMouseUp = [this](Event* event){
-        
-        AttJoystickData data;
-        data.ref = this;
-        data.type = ui::Widget::TouchEventType::ENDED;
-        _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
+    
+        EventMouse* e = static_cast<EventMouse*>(event);
+
+        if ( e->getMouseButton() == 0 ) // left
+        {
+            AttJoystickData data;
+            data.ref = this;
+            data.type = ui::Widget::TouchEventType::ENDED;
+            _game->pushLogic(0.0, MessageType::ATTACK_JOYSTICK_INPUT, &data);
+        }
         
     };
+    
     mouse->onMouseMove = [this](Event* event) {
         
         EventMouse* e = static_cast<EventMouse*>(event);
         Vec2 screenPos = Vec2(e->getCursorX(), e->getCursorY());
         Vec2 localPos = getParent()->convertToNodeSpace(screenPos);
         
-        if ( localPos.x > 0.0f && localPos.x < GAME_SCREEN_WIDTH && localPos.y > 0.0f && localPos.y < GAME_SCREEN_HEIGHT )
+        if ( !_isShiftButtonPressed && isContainsScreenRect(localPos) && !isContainsUiLayer(localPos) )
         {
-            _mouseDirection = Vec2(localPos.x - GAME_SCREEN_WIDTH / 2, localPos.y - GAME_SCREEN_HEIGHT / 2).getNormalized();
-            _isInputMaskDirty = true;
+            BezelDirectionTriggerData data;
+            data.ref = nullptr;
+            data.dir = Vec2(localPos.x - GAME_SCREEN_WIDTH / 2, localPos.y - GAME_SCREEN_HEIGHT / 2).getNormalized();
+            data.type = ui::Widget::TouchEventType::BEGAN;
+            _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
         }
         
     };
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(mouse, this);
     
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(mouse, this);
     
     auto keyboard = EventListenerKeyboard::create();
     keyboard->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) {
         
-        auto oldMask = _inputMask;
+        auto mask = _inputMask;
         
         if ( keyCode == EventKeyboard::KeyCode::KEY_W ) _inputMask.set(InputMask::UP);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_S ) _inputMask.set(InputMask::DOWN);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_A ) _inputMask.set(InputMask::LEFT);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_D ) _inputMask.set(InputMask::RIGHT);
-        else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT ) _inputMask.set(InputMask::RUNNING);
-		else if (keyCode == EventKeyboard::KeyCode::KEY_R)
-		{
-			_game->pushLogic(0.0, MessageType::PRESS_RELOAD_BUTTON, nullptr);
-		}
-        if ( oldMask != _inputMask ) _isInputMaskDirty = true;
+		else if ( keyCode == EventKeyboard::KeyCode::KEY_R ) _game->pushLogic(0.0, MessageType::PRESS_RELOAD_BUTTON, nullptr);
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT )
+        {
+            BezelDirectionTriggerData data;
+            data.ref = nullptr;
+            data.dir = Vec2::ZERO;
+            data.type = ui::Widget::TouchEventType::ENDED;
+            _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
+            
+            _isShiftButtonPressed = true;
+        }
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_I )
+        {
+            InputPressInventoryButton command(_inventoryView);
+            command.execute();
+        }
+        
+        if ( mask != _inputMask ) _isMoveMaskDirty = true;
         
     };
+    
     keyboard->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) {
-        
-        auto oldMask = _inputMask;
+    
+        auto mask = _inputMask;
         
         if ( keyCode == EventKeyboard::KeyCode::KEY_W ) _inputMask.reset(InputMask::UP);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_S ) _inputMask.reset(InputMask::DOWN);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_A ) _inputMask.reset(InputMask::LEFT);
         else if ( keyCode == EventKeyboard::KeyCode::KEY_D ) _inputMask.reset(InputMask::RIGHT);
-        else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT ) _inputMask.reset(InputMask::RUNNING);
+        else if ( keyCode == EventKeyboard::KeyCode::KEY_SHIFT )
+        {
+            auto player = _game->getPlayerPtr();
+            
+            BezelDirectionTriggerData data;
+            data.ref = nullptr;
+            data.dir = player->getHeading();
+            data.type = ui::Widget::TouchEventType::BEGAN;
+            _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
+            
+            _isShiftButtonPressed = false;
+        }
         
-        if ( oldMask != _inputMask ) _isInputMaskDirty = true;
+        if ( mask != _inputMask ) _isMoveMaskDirty = true;
+
         
     };
+    
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboard, this);
     
-#endif
-    
-    auto player = _game->getPlayerPtr();
-    if ( player )
-    {
-        _weaponStatus = player->getWeaponStatus();
-        _weaponStatus->setPosition(Vec2(_winSize.width * 0.9f, _winSize.height * 0.9f));
-        addChild(_weaponStatus, Z_ORDER_UI - 1);
-        
-        _inventory = player->getInventory();
-        _inventory->setPosition(Vec2(_winSize / 2));
-        addChild(_inventory, Z_ORDER_UI);
-    }
-    
-    _inventorySwitch = ui::CheckBox::create("client/ui/inventory_n.png", "client/ui/inventory_s.png");
-    _inventorySwitch->setPosition(Vec2(_winSize.width / 2.0f, 50.0f));
-    _inventorySwitch->setScale(1.3f);
-    _inventorySwitch->addEventListener([this](Ref* ref, ui::CheckBox::EventType type)
-                                       {
-                                           if ( type == ui::CheckBox::EventType::SELECTED )
-                                           {
-                                               // 인벤토리를 열면 모든 조이스틱을 비활성화 시킨다.
-                                               
-                                               _inventory->open();
-                                               _weaponStatus->disableButton();
-                                               
-                                               EntityPlayer* player = _game->getPlayerPtr();
-                                               player->setInventoryOpened(true);
-                                               
-                                               MoveJoystickData data1;
-                                               data1.ref = ref;
-                                               data1.dir = player->getMoving();
-                                               data1.type = JoystickEx::ClickEventType::ENDED;
-                                               _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data1);
-                                               
-                                               AttJoystickData data2;
-                                               data2.ref = ref;
-                                               data2.type = ui::Widget::TouchEventType::ENDED;
-                                               _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data2);
-                                           }
-                                           else
-                                           {
-                                               _inventory->close();
-                                               
-                                               EntityPlayer* player = _game->getPlayerPtr();
-                                               player->setInventoryOpened(false);
-                                               _weaponStatus->enableButton();
-                                           }
-                                       });
-    addChild(_inventorySwitch, Z_ORDER_UI);
-    
+#endif    
     
     _inGameUiLayer = Node::create();
     _inGameUiLayer->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
@@ -298,6 +281,28 @@ bool UiLayer::init()
     _hpBar->setPosition(Vec2(_winSize.width * 0.03f, _winSize.height * 0.9f));
     addChild(_hpBar);
     
+    _inventoryView = InventoryView::create(_game);
+    _inventoryView->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2));
+    _inventoryView->setVisible(false);
+    addChild(_inventoryView);
+    
+    _weaponView = WeaponView::create(_game);
+    _weaponView->setPosition(Vec2(GAME_SCREEN_WIDTH - 100, GAME_SCREEN_HEIGHT - 120));
+    addChild(_weaponView);
+
+    _inventoryButton = ui::Button::create("client/ui/inventory_switch_n.png", "client/ui/inventory_switch_s.png");
+    _inventoryButton->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, 50.0f));
+    _inventoryButton->addTouchEventListener([this](Ref* ref, ui::Widget::TouchEventType type){
+        
+        if ( type == ui::Widget::TouchEventType::ENDED ) {
+            InputPressInventoryButton command(_inventoryView);
+            command.execute();
+        }
+        
+    });
+    addChild(_inventoryButton);
+    
+    
     return true;
 }
 
@@ -307,30 +312,14 @@ void UiLayer::update(float dt)
     _crossHair->setRotation(-physics::getAngleFromZero(_game->getPlayerPtr()->getHeading()));
     
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
-    if ( _isInputMaskDirty )
+    
+    if ( _isMoveMaskDirty )
     {
         Vec2 moveDirection(Vec2::ZERO);
         if ( _inputMask.test(InputMask::UP) ) moveDirection += Vec2::UNIT_Y;
         if ( _inputMask.test(InputMask::DOWN) ) moveDirection -= Vec2::UNIT_Y;
         if ( _inputMask.test(InputMask::LEFT) ) moveDirection -= Vec2::UNIT_X;
         if ( _inputMask.test(InputMask::RIGHT) ) moveDirection += Vec2::UNIT_X;
-        
-        if ( _inputMask.test(InputMask::RUNNING) )
-        {
-            BezelDirectionTriggerData data;
-            data.ref = this;
-            data.dir = Vec2::ZERO;
-            data.type = ui::Widget::TouchEventType::ENDED;
-            _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
-        }
-        else
-        {
-            BezelDirectionTriggerData data;
-            data.ref = this;
-            data.dir = _mouseDirection;
-            data.type = ui::Widget::TouchEventType::MOVED;
-            _game->pushLogic(0.0, MessageType::BEZEL_DIRECTION_TRIGGERED, &data);
-        }
         
         if ( !moveDirection.isZero() )
         {
@@ -349,9 +338,27 @@ void UiLayer::update(float dt)
             _game->pushLogic(0.0, MessageType::MOVE_JOYSTICK_INPUT, &data);
         }
         
-        _isInputMaskDirty = false;
+        _isMoveMaskDirty = false;
     }
+    
 #endif
+}
+
+
+bool UiLayer::isContainsUiLayer(const cocos2d::Vec2& p)
+{
+    cocos2d::Rect weaponViewRect(_weaponView->getPosition() - _weaponView->getContentSize() / 2, _weaponView->getContentSize());
+    cocos2d::Rect inventoryButtonRect(_inventoryButton->getPosition() - _inventoryButton->getContentSize() / 2, _inventoryButton->getContentSize());
+    
+    return (weaponViewRect.containsPoint(p) || inventoryButtonRect.containsPoint(p));
+}
+
+
+bool UiLayer::isContainsScreenRect(const cocos2d::Vec2& p)
+{
+    cocos2d::Rect screenRect(Vec2::ZERO, Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
+    
+    return screenRect.containsPoint(p);
 }
 
 
@@ -364,6 +371,30 @@ void UiLayer::runCrossHairEffect(const std::string& name)
 void UiLayer::displayText(const std::string& text)
 {
     _infoSystem->pushMessage(text);
+}
+
+
+void UiLayer::setVisibleCrossHair(bool visible)
+{
+    _crossHair->setVisible(visible);
+}
+
+
+void UiLayer::setHitPoint(float h)
+{
+    _hpBar->setHitPoint(h);
+}
+
+
+void UiLayer::syncItemView(InventoryData* data)
+{
+    _inventoryView->syncItemView(data);
+}
+
+
+void UiLayer::syncWeaponView(InventoryData* data)
+{
+    _weaponView->syncWeaponView(data);
 }
 
 

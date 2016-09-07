@@ -87,6 +87,8 @@ namespace realtrick
         ACTION_PLAY_SOUND_AT_LOCATION,
         ACTION_PLAY_SOUND,
         ACTION_PRESERVE_TRIGGER,
+        ACTION_VICTORY,
+        ACTION_DEFEAT,
     };
         
     struct EntityData

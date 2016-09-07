@@ -24,28 +24,25 @@ namespace realtrick
             
         public:
             
-            InputReload(EntityPlayer* player) :
+            InputReload(HumanBase* player) :
             _player(player)
-            {
-                
-            }
+            {}
             virtual ~InputReload() = default;
             
             virtual void execute() override
             {
-                if ( !_player->isInventoryOpened() )
+                if ( _player->isInventoryOpened() || !_player->isAlive() ) return ;
+                
+                WeaponBase* equipedWeapon = _player->getEquipedWeapon();
+                if ( equipedWeapon && equipedWeapon->getEntityType() != EntityType::ITEM_AXE )
                 {
-                    WeaponBase* equipedWeapon = _player->getEquipedWeapon();
-                    if ( equipedWeapon && equipedWeapon->getEntityType() != EntityType::ITEM_AXE )
-                    {
-                        _player->reload();
-                    }
+                    _player->reload();
                 }
             }
             
         private:
             
-            EntityPlayer* _player;
+            HumanBase* _player;
             
         };
         

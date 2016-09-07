@@ -29,7 +29,8 @@ namespace realtrick
             virtual ~AnimatedButton();
             
             bool init(const char* normal, const char* selected, cocos2d::ui::Widget::TextureResType type);
-            static AnimatedButton* create(const char* normal, const char* selected, cocos2d::ui::Widget::TextureResType type = cocos2d::ui::Widget::TextureResType::LOCAL);
+            static AnimatedButton* create(const char* normal, const char* selected,
+                                          cocos2d::ui::Widget::TextureResType type = cocos2d::ui::Widget::TextureResType::LOCAL);
             
             void setAnimationFrameNames(const std::vector<std::string>& frameNames) { _animationFrameNames = frameNames; }
             const std::vector<std::string>& getAnimationFrameNames() const { return _animationFrameNames; }

@@ -11,6 +11,7 @@
 #include "StateMachine.hpp"
 #include "Animator.hpp"
 #include "Physics.hpp"
+#include "Types.hpp"
 
 namespace realtrick
 {
@@ -22,6 +23,9 @@ namespace realtrick
 		class PathPlanner;
 		class SensoryMemory;
 		class AbstTargetingSystem;
+        class WeaponBase;
+        class InventoryData;
+        class UiLayer;
         
 		class HumanBase : public EntityBase
 		{
@@ -100,7 +104,24 @@ namespace realtrick
             void setInventoryOpened(bool enable) { _isInventoryOpened = enable; }
             bool isInventoryOpened() const { return _isInventoryOpened; }
             
+            WeaponBase* getEquipedWeapon() const { return _equipedWeapon; }
+            void setEquipedWeapon(WeaponBase* newWeapon) { _equipedWeapon = newWeapon; }
+            
+            void setUserNickName(const std::string& name) { _userNickName = name; }
+            std::string getUserNickName() const { return _userNickName; }
+            
+            int addItem(ItemBase* item);
+            void useItem(int slot);
+            
+            void setUiLayer(UiLayer* uiLayer) { _uiLayer = uiLayer; }
+            
             void setBrain(BrainBase* brain);
+            
+            void hittedByWeapon(EntityType type, int damage);
+            
+            void reload();
+            
+            InventoryData* getInventoryData() const { return _inventoryData; }
             
         private:
         
@@ -115,7 +136,10 @@ namespace realtrick
 			SensoryMemory*					_sensory;
 			AbstTargetingSystem*			_target_system;
 
-            
+            UiLayer*                        _uiLayer;
+            WeaponBase*                     _equipedWeapon;
+            InventoryData*                  _inventoryData;
+
             cocos2d::Vec2                   _heading;
             cocos2d::Vec2                   _targetHeading;
             cocos2d::Vec2                   _moving;
@@ -140,6 +164,7 @@ namespace realtrick
             float                           _footGauge;
             float                           _rotation;
         
+            std::string                     _userNickName;
             std::string                     _stateName;
             
         };

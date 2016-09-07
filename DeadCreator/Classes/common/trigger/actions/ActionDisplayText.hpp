@@ -10,6 +10,7 @@
 
 #include "ActionBase.hpp"
 #include "TriggerParameters.hpp"
+#include "EntityPlayer.hpp"
 
 namespace realtrick
 {
@@ -113,13 +114,17 @@ namespace realtrick
             
             virtual void doAction()
             {
-                _game->displayText(_params.text);
+                auto players = _owner->getPlayers();
+                auto player = _game->getPlayerPtr();
+                if ( players.test(static_cast<int>(player->getPlayerType())) )
+                {
+                    _game->sendMessage(0.0, player, nullptr, MessageType::DISPLAY_TEXT, &_params.text);
+                }
             }
             
         private:
             
             ActionDisplayTextData _params;
-            std::bitset<9> _maskedPlayer;
             
         };
         

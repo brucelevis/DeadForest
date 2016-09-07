@@ -13,7 +13,6 @@
 #include "Items.hpp"
 #include "Brains.hpp"
 #include "Types.hpp"
-#include "WeaponStatus.hpp"
 using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
@@ -178,6 +177,20 @@ int EntityManager::getNextValidID()
     return -1;
 }
 
+
+HumanBase* EntityManager::getPlayerPtr(PlayerType type)
+{
+    for ( const auto& entity : _entities )
+    {
+        auto currEntity = entity.second;
+        
+        if ( currEntity->getPlayerType() == type )
+        {
+            return static_cast<HumanBase*>(currEntity);
+        }
+    }
+    return nullptr;
+}
 
 
 

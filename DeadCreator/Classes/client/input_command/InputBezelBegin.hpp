@@ -32,11 +32,11 @@ namespace realtrick
             
             virtual void execute() override
             {
-                if ( !_human->isInventoryOpened() )
-                {
-                    _human->setTargetHeading(_rotateDir);
-                    _human->addInputMask(HumanBehaviorType::TURN);
-                }
+                if ( _human->isInventoryOpened() || !_human->isAlive() ) return ;
+            
+                _human->setTargetHeading(_rotateDir);
+                _human->addInputMask(HumanBehaviorType::TURN);
+                
             }
             
         private:

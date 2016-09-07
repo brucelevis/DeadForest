@@ -22,9 +22,7 @@ Architecture of a game is largely has three configurations. **Editor**, **Client
 
 ![Editor2](http://i.imgur.com/oLbEKhg.png)
 
-![Editor3](http://i.imgur.com/8SU7Xjb.png)
-
-![Editor3](http://i.imgur.com/C7c2Nct.png)
+![Editor3](http://i.imgur.com/LRVqhhA.png)
 
 You can test and play with real-time.
 

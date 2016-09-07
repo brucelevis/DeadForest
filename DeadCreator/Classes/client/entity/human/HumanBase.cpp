@@ -382,9 +382,9 @@ int HumanBase::addItem(ItemBase* item)
 }
 
 
-void HumanBase::useItem(int slot)
+void HumanBase::useItem(EntityType type)
 {
-    auto item = _inventoryData->getItem(slot);
+    auto item = _inventoryData->getItemType(type);
     if ( item ) item->use();
 }
 

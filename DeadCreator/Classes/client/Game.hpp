@@ -114,12 +114,7 @@ namespace realtrick
             
             Camera2D* getCamera() const { return _camera; }
 
-			void generateIsometricGridGraph(
-				int numOfTileX,
-				int numOfTileY,
-				float tileWidth,
-				float tileHeight,
-				int numOfDummy);
+			void generateIsometricGridGraph(int numOfTileX, int numOfTileY, float tileWidth, float tileHeight, int numOfDummy);
 
 			bool isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const;
    

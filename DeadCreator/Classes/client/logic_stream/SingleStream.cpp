@@ -119,11 +119,11 @@ bool SingleStream::handleMessage(const Telegram& msg)
     // callback funcs
     else if ( msg.msg == MessageType::PUSH_ITEM_TO_INVENTORY )
     {
-        HumanBase* player = _game->getPlayerPtr();
-        
         ItemAndOwner* data = static_cast<ItemAndOwner*>(msg.extraInfo);
         data->item->setOwner(data->owner);
 
+        HumanBase* player = data->owner;
+        
         int slot = player->addItem(data->item);
         if ( slot != -1 )
         {
@@ -163,7 +163,8 @@ bool SingleStream::handleMessage(const Telegram& msg)
         int slot = *static_cast<int*>(msg.extraInfo);
         
         HumanBase* player = _game->getPlayerPtr();
-        player->useItem(slot);
+        auto item = player->getInventoryData()->getItem(slot);
+        player->useItem(static_cast<EntityType>(item->getEntityType()));
         
         // 무기정보UI의 무기를 갱신한다.
         _game->sendMessage(0.0, player, nullptr, MessageType::SYNC_INVENTORY_WEAPON_VIEW, nullptr);

@@ -111,7 +111,7 @@ namespace realtrick
             std::string getUserNickName() const { return _userNickName; }
             
             int addItem(ItemBase* item);
-            void useItem(int slot);
+            void useItem(EntityType type);
             
             void setUiLayer(UiLayer* uiLayer) { _uiLayer = uiLayer; }
             

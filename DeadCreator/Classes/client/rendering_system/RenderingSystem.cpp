@@ -63,7 +63,7 @@ bool RenderingSystem::init(GameResource* res)
 
 void RenderingSystem::visit(cocos2d::Renderer* renderer, const cocos2d::Mat4& transform, uint32_t flags)
 {
-     _deferredRendering->prepareToRender(getZoomScale(), getCameraPosition());
+    _deferredRendering->prepareToRender(getZoomScale(), getCameraPosition());
     ClippingRectangleNode::visit(renderer, transform, flags);
 }
 

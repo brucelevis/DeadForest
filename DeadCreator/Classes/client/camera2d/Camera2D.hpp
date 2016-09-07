@@ -18,7 +18,7 @@ namespace realtrick
         
         class Game;
         
-        class Camera2D
+        class Camera2D : public cocos2d::Node
         {
             
         public:
@@ -26,12 +26,10 @@ namespace realtrick
             Camera2D() = default;
             virtual ~Camera2D() = default;
             
-            void setCameraPos(const cocos2d::Vec2& pos) { _cameraPosition = pos; }
-            cocos2d::Vec2 getCameraPos() const { return _cameraPosition; }
+            CREATE_FUNC(Camera2D);
             
-        private:
-            
-            cocos2d::Vec2                       _cameraPosition;
+            void setCameraPos(const cocos2d::Vec2& pos) { this->setPosition(pos); }
+            cocos2d::Vec2 getCameraPos() const { return getPosition(); }
             
         };
         

@@ -51,7 +51,6 @@ Game::~Game()
 void Game::clear()
 {
     CC_SAFE_DELETE(_logicStream);
-    CC_SAFE_DELETE(_camera);
 	CC_SAFE_DELETE(_graph);
     experimental::AudioEngine::stop(_bgmID);
 }
@@ -87,7 +86,9 @@ bool Game::init()
     this->scheduleUpdate();
     _winSize = Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     
-    _camera = new Camera2D();
+    _camera = Camera2D::create();
+    addChild(_camera);
+    
     if ( UserDefault::getInstance()->getBoolForKey("useNetwork", false) ) _logicStream = new ServerStream(this);
     else _logicStream = new SingleStream(this);
     
@@ -115,7 +116,7 @@ void Game::update(float dt)
     _entityManager->update(dt);
     
     // 2. set game camera position and chunk update (if cell space is changed)
-    _camera->setCameraPos(_entityManager->getPlayerPtr()->getWorldPosition());
+    _camera->setCameraPos(_entityManager->getPlayerPtr()->getBalancePosition());
     if ( oldIndex != getFocusedTileIndex(_camera->getCameraPos(), _gameResource->getTileWidth(), _gameResource->getTileHeight(), DUMMY_TILE_SIZE) )
     {
         _renderingSystem->updateChunk(_camera);
@@ -573,4 +574,12 @@ bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const
 
 	return !collide;
 }
+
+
+
+
+
+
+
+
 

@@ -41,7 +41,6 @@ namespace realtrick
             virtual void update(float dt) override;
             static UiLayer* create(Game* game);
             
-
             void setHitPoint(float h);
             void runCrossHairEffect(const std::string& name);
             void setVisibleCrossHair(bool visible);

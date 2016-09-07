@@ -11,11 +11,12 @@
 #include "Camera2D.hpp"
 using namespace realtrick::client;
 
-EntityBase::EntityBase(Game* game) :
-_game(game),
-_familyMask(0),
-_entityType(0),
-_boundingRadius(0.0f)
+EntityBase::EntityBase(Game* game) 
+	:
+	_game(game),
+	_familyMask(0),
+	_entityType(0),
+	_boundingRadius(0.0f)
 {
     ADD_FAMILY_MASK(_familyMask, ENTITY_BASE);
 }

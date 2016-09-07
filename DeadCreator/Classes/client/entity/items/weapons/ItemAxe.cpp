@@ -62,6 +62,7 @@ void ItemAxe::outWeapon()
 }
 
 
+
 void ItemAxe::discard()
 {
 }

@@ -31,7 +31,7 @@ namespace realtrick
             std::string getFileName() const             { return _fileName; }
             float getFrameSwapTime() const              { return _frameSwapTime; }
             bool isReversePlay() const                  { return _isReversePlay; }
-            
+
         protected:
             
             int                 _startFrame;

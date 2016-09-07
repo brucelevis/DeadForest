@@ -20,7 +20,6 @@
 #include "ServerStream.hpp"
 #include "GameResource.hpp"
 #include "EntityManager.hpp"
-#include "HandyGraphFunctions.h"
 #include "Tileset.hpp"
 #include "TileHelperFunctions.hpp"
 #include "PathPlanner.h"
@@ -450,16 +449,21 @@ void Game::clearLogs()
 }
 
 
-void Game::generateIsometricGridGraph(int numX, int numY, float tileX, float tileY, int numOfDummy)
+void Game::generateIsometricGridGraph(
+	int numOfTileX,
+	int numOfTileY,
+	float tileWidth,
+	float tileHeight,
+	int numOfDummy)
 {
 	cocos2d::Vec2 pos;
-	int tileNumX = numX + numOfDummy * 2;
-	int tileNumY = numY * 2 + numOfDummy * 4;
+	int tileNumX = numOfTileX + numOfDummy * 2;
+	int tileNumY = numOfTileY * 2 + numOfDummy * 4;
 	for (int i = 0; i < tileNumY; i++)
 	{
 		for (int j = 0; j < tileNumX; j++)
 		{
-			pos = indexToPosition(j, i, tileX, tileY, numOfDummy);
+			pos = indexToPosition(j, i, tileWidth, tileHeight, numOfDummy);
 			_graph->addNode(NavGraphNode(_graph->getNextFreeNodeIndex(), pos));
 		}
 	}
@@ -467,9 +471,9 @@ void Game::generateIsometricGridGraph(int numX, int numY, float tileX, float til
 	for (auto n = std::begin(_graph->getNodes()); n != std::end(_graph->getNodes()); ++ n)
 	{
 		int from = n->getIndex();
-		auto idx_pair = numberToIndex(from, numX, numOfDummy);
+		auto idx_pair = numberToIndex(from, numOfTileX, numOfDummy);
 
-		if (!isValidIndex(idx_pair.first, idx_pair.second, numX, numY))
+		if (!isValidIndex(idx_pair.first, idx_pair.second, numOfTileX, numOfTileY))
 			continue;
 
 		if (_gameResource->getTileData()[idx_pair.second][idx_pair.first].getTileType() == TileType::HILL)
@@ -482,10 +486,12 @@ void Game::generateIsometricGridGraph(int numX, int numY, float tileX, float til
 			int to_j = e.first;
 			int to_i = e.second;
 
-			if (!isValidIndex(to_j, to_i, numX, numY))
+			if (!isValidIndex(to_j, to_i, numOfTileX, numOfTileY))
 				continue;
 
-			int to = indexToNumber(to_j, to_i, numX, numOfDummy);
+			int to = indexToNumber(to_j, to_i, numOfTileX, numOfDummy);
+
+
 			if (_gameResource->getTileData()[to_i][to_j].getTileType() == TileType::HILL)
 				continue;
 
@@ -549,5 +555,22 @@ void Game::replaceDefeatScene(float delay)
 
 
 
+//---------------------------- isLOSOkay --------------------------------------
+//
+//  returns true if the ray between A and B is unobstructed.
+//------------------------------------------------------------------------------
+bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const
+{
+	bool collide = false;
+	for (auto col : _gameResource->getCollisionData())
+	{
+		if (physics::intersect(col, Segment(A, B)))
+		{
+			collide = true;
+			break;
+		}
+	}
 
+	return !collide;
+}
 

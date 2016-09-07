@@ -9,6 +9,7 @@
 #include "InventoryData.hpp"
 #include "ItemBase.hpp"
 using namespace realtrick::client;
+using namespace realtrick;
 
 
 InventoryData::InventoryData(HumanBase* owner) :

@@ -36,9 +36,13 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             human->setForce(res->_playerInfos[static_cast<int>(playerType)].force);
             addEntity(human, id);
             
-            if ( res->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
-                human->setBrain(new PursuerBrain(human));
-            
+			if (res->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER)
+			{
+				human->setBrain(new PursuerBrain(human));
+				human->getFSM()->setCurrState(&HumanFistIdleLoop::getInstance());
+				human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
+				human->setEquipedWeapon(nullptr);
+			}
             if ( playerType == ownPlayer ) _player = human;
         }
         

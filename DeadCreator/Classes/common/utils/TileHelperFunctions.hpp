@@ -136,7 +136,11 @@ namespace
     {
         return cocos2d::Vec2(x * tileWidth / 4, y * tileHeight / 4);
     }
-    
+
+	bool isValidIndex(int j, int i, int numOfTileX, int numOfTileY)
+	{
+		return 0 <= j && j < numOfTileX && 0 <= i && i < numOfTileY;
+	}
 }
 
 

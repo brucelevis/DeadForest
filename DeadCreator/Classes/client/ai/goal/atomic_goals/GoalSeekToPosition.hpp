@@ -15,30 +15,27 @@ namespace realtrick
 {
     namespace client
     {
-        class GoalTraverseEdge : public GoalBase
+        
+        class GoalSeekToPosition : public GoalBase
         {
             
         public:
 			
-            GoalTraverseEdge(HumanBase* owner, realtrick::PathEdge edge, bool last_edge);
-            virtual ~GoalTraverseEdge();
-            
+			GoalSeekToPosition(HumanBase* owner, cocos2d::Vec2 target);
+			virtual ~GoalSeekToPosition() override
+			{}
+
             virtual void activate() override;
             virtual GoalStatus process() override;
             virtual void terminate() override;
-            
-			realtrick::PathEdge getEdge() const;
 
         private:
         
 			//returns true if the bot gets stuck
 			bool		isStuck() const;
 
-			//the edge the bot will follow
-			realtrick::PathEdge	_edge;
-
-			//true if _edge is the last in the path.
-			bool		_last_edge_in_path;
+			//the position the bot is moving to
+			cocos2d::Vec2	_position;
 
 			std::chrono::duration<double>	_start;
 

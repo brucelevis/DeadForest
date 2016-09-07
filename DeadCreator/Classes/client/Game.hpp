@@ -113,10 +113,16 @@ namespace realtrick
             bool& isLogAdded() { return _isLogAdded; }
             
             Camera2D* getCamera() const { return _camera; }
-			std::list<realtrick::PathEdge>& getTempEdges() { return _tempPath; }
 
-			void generateIsometricGridGraph(int numX, int numY, float tileX, float tileY, int numOfDummy);
-            
+			void generateIsometricGridGraph(
+				int numOfTileX,
+				int numOfTileY,
+				float tileWidth,
+				float tileHeight,
+				int numOfDummy);
+
+			bool isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const;
+   
             void replaceVictoryScene(float delay);
             void replaceDefeatScene(float delay);
 
@@ -165,7 +171,7 @@ namespace realtrick
             std::vector<std::pair<std::string, int>> _logs;
             std::string _logString;
             bool _isLogAdded = false;
-            
+      
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
             bool _isGameEnded = false;
 #endif

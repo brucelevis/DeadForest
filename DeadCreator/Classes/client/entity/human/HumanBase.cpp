@@ -15,10 +15,13 @@
 #include "AnimatedFiniteEntity.hpp"
 #include "GameResource.hpp"
 #include "PathPlanner.h"
+#include "SensoryMemory.h"
+#include "AbstTargetingSystem.h"
 #include "InventoryData.hpp"
 #include "UiLayer.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
+using namespace realtrick;
 
 
 HumanBase::HumanBase(Game* game) : EntityBase(game),
@@ -73,21 +76,18 @@ bool HumanBase::init()
     _inventoryData = new InventoryData(this);
     
     setAlive();
-	
+
 	_pathPlanner = new PathPlanner(*_game->getGraph(), this);
-	auto path =
-	_pathPlanner->getPath(
+	_sensory = new SensoryMemory(this, 5);
+	_target_system = new AbstTargetingSystem(this);
+
+	/*_pathPlanner->generatePath(
 		Vec2(245, 246), Vec2(1000, 1000),
 		_game->getGameResource()->getNumOfTileX(),
 		_game->getGameResource()->getNumOfTileY(),
 		_game->getGameResource()->getTileWidth(),
 		_game->getGameResource()->getTileHeight(),
-		DUMMY_TILE_SIZE);
-    
-	for (auto e : path)
-	{
-		_game->getTempEdges().push_back(e);
-	}
+		DUMMY_TILE_SIZE);*/
 
     return true;
 }
@@ -110,7 +110,11 @@ void HumanBase::update(float dt)
 {
     if ( _brain && isAlive() ) _brain->think();
     if ( _FSM ) _FSM->update(dt);
-    
+	
+	_sensory->updateVision();
+	_target_system->update();
+	
+
     // move and rotate
     this->moveEntity();
     this->rotateEntity();

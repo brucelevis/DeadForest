@@ -23,7 +23,7 @@ namespace realtrick
 {
 	namespace client
 	{
-		class EntityBase;
+		class HumanBase;
 
 		class PathPlanner
 		{
@@ -36,7 +36,7 @@ namespace realtrick
 
 		public:
 
-			PathPlanner(const Graph& graph, EntityBase* const owner);
+			PathPlanner(const Graph& graph, HumanBase* const owner);
 
 			~PathPlanner() {}
 
@@ -45,7 +45,7 @@ namespace realtrick
 			//successfully. The method extracts the path from _current_algorithm, adds
 			//additional edges appropriate to the search type and returns it as a list of
 			//PathEdges.
-			Path getPath(
+			void generatePath(
 				cocos2d::Vec2 source,
 				cocos2d::Vec2 destination,
 				int numOfTileX,
@@ -58,6 +58,14 @@ namespace realtrick
 			// (takes into account the enumerations 'non_graph_source_node' and 'non_graph_target_node')
 			cocos2d::Vec2	getNodePosition(int idx) const { return _graph.getNode(idx).getPos(); }
 
+
+			double calculateTimeToReachPosition(cocos2d::Vec2 pos)const;
+
+			int getClosestNodeToPosition(cocos2d::Vec2 pos)const;
+			
+			bool requestPathToPosition(cocos2d::Vec2 targetPos);
+
+			Path getPath() { return _path; }
 
 		private:
 
@@ -73,10 +81,12 @@ namespace realtrick
 			enum { NO_CLOSEST_NODE_FOUND = -1 };
 
 			//A pointer to the owner of this class, only references.
-			EntityBase* const					_owner;
+			HumanBase* const					_owner;
 
 			//a reference to the navgraph
 			const Graph&						_graph;
+
+			Path	_path;
 		};
 
 	}

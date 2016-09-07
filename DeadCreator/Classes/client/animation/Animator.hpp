@@ -46,6 +46,8 @@ namespace realtrick
             
             void enableNormalMap();
             void disableNormalMap();
+
+			float getTimeToReachMaxFrame() const;
             
         private:
             

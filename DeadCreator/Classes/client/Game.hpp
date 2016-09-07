@@ -116,9 +116,15 @@ namespace realtrick
             void displayText(const std::string& text);
             
             Camera2D* getCamera() const { return _camera; }
-			std::list<realtrick::PathEdge>& getTempEdges() { return _tempPath; }
 
-			void generateIsometricGridGraph(int numX, int numY, float tileX, float tileY, int numOfDummy);
+			void generateIsometricGridGraph(
+				int numOfTileX,
+				int numOfTileY,
+				float tileWidth,
+				float tileHeight,
+				int numOfDummy);
+
+			bool isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const;
 
         private:
             
@@ -161,8 +167,6 @@ namespace realtrick
             std::vector<std::pair<std::string, int>> _logs;
             std::string _logString;
             bool _isLogAdded = false;
-            
-			std::list<PathEdge> _tempPath;
 
         };
         

@@ -15,28 +15,21 @@ namespace realtrick
 {
     namespace client
     {
-        class GoalFollowPath : public GoalCompositeBase
+        class GoalAttackTarget : public GoalCompositeBase
         {
             
         public:
-			GoalFollowPath(
-				HumanBase* const bot,
-				std::list<realtrick::PathEdge> path);
+			explicit GoalAttackTarget(HumanBase* const owner);
 
-			virtual ~GoalFollowPath() override
+			virtual ~GoalAttackTarget() override
 			{}
 
             virtual void activate() override;
             virtual GoalStatus process() override;
-            virtual void terminate() override;
-
-        private:
-        
-			//a local copy of the path returned by the path planner
-			std::list<realtrick::PathEdge>  _path;
+			virtual void terminate() override
+			{}
         };
     }
 }
-
 
 

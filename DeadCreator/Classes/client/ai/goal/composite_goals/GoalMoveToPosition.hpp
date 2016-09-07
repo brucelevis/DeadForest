@@ -15,28 +15,27 @@ namespace realtrick
 {
     namespace client
     {
-        class GoalFollowPath : public GoalCompositeBase
+        class GoalMoveToPosition : public GoalCompositeBase
         {
             
         public:
-			GoalFollowPath(
-				HumanBase* const bot,
-				std::list<realtrick::PathEdge> path);
+			GoalMoveToPosition(
+				HumanBase* const owner,
+				cocos2d::Vec2 pos);
 
-			virtual ~GoalFollowPath() override
+			virtual ~GoalMoveToPosition() override
 			{}
 
             virtual void activate() override;
             virtual GoalStatus process() override;
-            virtual void terminate() override;
+			virtual void terminate() override;
 
         private:
         
-			//a local copy of the path returned by the path planner
-			std::list<realtrick::PathEdge>  _path;
+			//the position the bot wants to reach
+			cocos2d::Vec2 _destination;
         };
     }
 }
-
 
 

@@ -19,10 +19,12 @@ using namespace cocos2d;
 using namespace realtrick::client;
 
 
-EntityPlayer::EntityPlayer(Game* game) : HumanBase(game),
-_equipedWeapon(nullptr),
-_weaponStatus(nullptr),
-_inventory(nullptr)
+EntityPlayer::EntityPlayer(Game* game) 
+	:
+	HumanBase(game),
+	_equipedWeapon(nullptr),
+	_weaponStatus(nullptr),
+	_inventory(nullptr)
 {
     setEntityType(EntityType::ENTITY_PLAYER);
     setRunSpeed(150.0f);

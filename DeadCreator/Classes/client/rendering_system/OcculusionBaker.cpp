@@ -59,14 +59,14 @@ bool OcculusionBaker::init(const Size& visibleSize)
 void OcculusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
                                   const cocos2d::Vec2& worldPos,
                                   const cocos2d::Vec2& scaleFactor,
-                                  const std::vector<Polygon>& polygons,
+                                  const std::vector<realtrick::Polygon>& polygons,
                                   const cocos2d::Size& boundarySize,
                                   const FieldOfView& fov)
 {
     _eyePos = worldPos;
     
     // 경계면 정점을 만든다.
-    Polygon clipBoundary;
+    realtrick::Polygon clipBoundary;
     
     //
     // (v2)               (v3)
@@ -187,7 +187,7 @@ void OcculusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
     
     
     // 폴리곤을 클리핑 한다. ( CCW )
-    vector<Polygon> clippedPloygon = clipping::getClippedPolygons(polygons, clipBoundary);
+    vector<realtrick::Polygon> clippedPloygon = clipping::getClippedPolygons(polygons, clipBoundary);
     vector<Segment> visibleWalls;
     vector<Vec2> storedVert;
     
@@ -195,7 +195,7 @@ void OcculusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
     // 클리핑된 도형에 대해 벽을 생성한다.
     for(const auto& polygon : clippedPloygon)
     {
-        Polygon p = polygon;
+        realtrick::Polygon p = polygon;
         p.pushVertex(p.vertices.front());
         for(int i = 0 ; i < p.vertices.size() - 1 ; ++ i)
         {

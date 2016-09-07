@@ -81,7 +81,6 @@ void ItemAxe::attack()
             if( human->isAlive() && physics::intersect(Segment(worldPos, worldPos + _owner->getHeading() * getRange()),
                                                        Circle(d->getWorldPosition(), human->getBoundingRadius())) )
             {
-                
                 ReceiverSenderDamage s;
                 s.damage = getDamage();
                 s.receiverID = d->getTag();

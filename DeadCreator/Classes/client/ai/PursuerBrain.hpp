@@ -8,37 +8,23 @@
 
 #include "BrainBase.hpp"
 #include "Goals.hpp"
+#include "Regulator.h"
 
 namespace realtrick
 {
     namespace client
     {
-        
+		class GoalAttackTarget;
         class PursuerBrain : public BrainBase
         {
             
         public:
             
-            explicit PursuerBrain(HumanBase* owner) : BrainBase(owner)
-            {
-                _thinker = new GoalThink(owner);
-                
-                GoalHuntTarget* huntTarget = new GoalHuntTarget(_owner);
-                huntTarget->setEvaluator([this](HumanBase* owner) { return 1; });
-                
-                _thinker->addGoalEntry(huntTarget);
-            }
+			explicit PursuerBrain(HumanBase* owner);
             
-            virtual ~PursuerBrain()
-            {
-                delete _thinker;
-                _thinker = nullptr;
-            }
+			virtual ~PursuerBrain();
             
-            virtual void think() override
-            {
-                _thinker->process();
-            }
+			virtual void think() override;
             
         private:
             

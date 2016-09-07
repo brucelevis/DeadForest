@@ -1,7 +1,10 @@
 #include "PathPlanner.h"
-#include "EntityBase.hpp"
-#include "HandyGraphFunctions.h"
+#include "HumanBase.hpp"
 #include "TileHelperFunctions.hpp"
+#include "AStarHeuristicPolicies.h"
+#include "Game.hpp"
+#include "GameResource.hpp"
+#include "Tileset.hpp"
 
 using namespace realtrick;
 using namespace client;
@@ -9,14 +12,14 @@ using namespace client;
 
 //------------------------------ ctor -----------------------------------------
 //-----------------------------------------------------------------------------
-PathPlanner::PathPlanner(const Graph& graph, EntityBase* const owner)
+PathPlanner::PathPlanner(const Graph& graph, HumanBase* const owner)
 	:
 	_owner(owner),
 	_graph(graph)
 {}
 
 
-//----------------------------- getPath ------------------------------------
+//----------------------------- generatePath ------------------------------------
 //
 //  called by an agent after it has been notified that a search has terminated
 //  successfully. The method extracts the path from _current_algorithm, adds
@@ -25,7 +28,7 @@ PathPlanner::PathPlanner(const Graph& graph, EntityBase* const owner)
 //-----------------------------------------------------------------------------
 
 
-typename PathPlanner::Path PathPlanner::getPath(
+void PathPlanner::generatePath(
 	cocos2d::Vec2 source,
 	cocos2d::Vec2 destination,
 	int numOfTileX,
@@ -52,27 +55,24 @@ typename PathPlanner::Path PathPlanner::getPath(
 	PathEdge source_to_path(source, _graph.getNode(source_node_num).getPos());
 	PathEdge path_to_destination(_graph.getNode(desti_node_num).getPos(), destination);
 
-	auto path = search.getPathAsPathEdges();
-	path.push_front(source_to_path);
-	path.push_back(path_to_destination);
+	_path = search.getPathAsPathEdges();
+	_path.push_front(source_to_path);
+	_path.push_back(path_to_destination);
 
-	if (path.size() == 0)
+	if (_path.size() == 0)
 		CCLOG("path is zero");
 
 	//smooth paths if required
 	if (false)
 	{
-		smoothPathEdgesQuick(path);
+		smoothPathEdgesQuick(_path);
 	}
 
 	if (false)
 	{
-		smoothPathEdgesPrecise(path);
+		smoothPathEdgesPrecise(_path);
 	}
-
-	return path;
 }
-
 
 //--------------------------- smoothPathEdgesQuick ----------------------------
 //
@@ -159,4 +159,83 @@ void PathPlanner::smoothPathEdgesPrecise(Path& path)
 
 		++e1;
 	}
+}
+
+double PathPlanner::calculateTimeToReachPosition(cocos2d::Vec2 pos) const
+{
+	return (_owner->getWorldPosition() - pos).getLengthSq() / (_owner->getRunSpeed() * 100);
+}
+
+//------------------------ getClosestNodeToPosition ---------------------------
+//
+//  returns the index of the closest visible graph node to the given position
+//-----------------------------------------------------------------------------
+int PathPlanner::getClosestNodeToPosition(cocos2d::Vec2 pos) const
+{
+	int numOfTileX = _owner->getGame()->getGameResource()->getNumOfTileX();
+	int numOfTileY = _owner->getGame()->getGameResource()->getNumOfTileY();
+	float tileWidth = _owner->getGame()->getGameResource()->getTileWidth();
+	float tileHeight = _owner->getGame()->getGameResource()->getTileHeight();
+	int numOfDummy = DUMMY_TILE_SIZE;
+
+	std::pair<int, int> idx_pair =  getFocusedTileIndex(
+		pos,
+		tileWidth,
+		tileHeight,
+		numOfDummy);
+
+	if (_owner->getGame()->getGameResource()->getTileData()[idx_pair.second][idx_pair.first]
+		.getTileType() != TileType::HILL)
+		return indexToNumber(idx_pair.first, idx_pair.second, numOfTileX, numOfDummy);
+
+	auto adj = getNeighborTiles(idx_pair.first, idx_pair.second);
+
+	for (auto& e : adj)
+	{
+		int toJ = e.first;
+		int toI = e.second;
+
+		if (!isValidIndex(toJ, toI, numOfTileX, numOfTileY))
+			continue;
+
+		int to = indexToNumber(toJ, toI, numOfTileX, numOfDummy);
+
+		if (_owner->getGame()->getGameResource()->getTileData()[toI][toJ]
+			.getTileType() != TileType::HILL)
+			return indexToNumber(toJ, toI, numOfTileX, numOfDummy);
+	}
+	return NO_CLOSEST_NODE_FOUND;
+}
+
+
+//--------------------------- requestPathToPosition ------------------------------
+//
+//  Given a target, this method first determines if nodes can be reached from 
+//  the  bot's current position and the target position. If either end point
+//  is unreachable the method returns false. 
+//
+//  If nodes are reachable from both positions then an instance of the time-
+//  sliced A* search is created and registered with the search manager. the
+//  method then returns true.
+//        
+//-----------------------------------------------------------------------------
+bool PathPlanner::requestPathToPosition(cocos2d::Vec2 targetPos)
+{
+	//if the target is walkable from the bot's position a path does not need to
+	//be calculated, the bot can go straight to the position by ARRIVING at
+	//the current waypoint
+	if (_owner->getGame()->isLOSOkay(_owner->getWorldPosition(), targetPos))
+	{
+		return false;
+	}
+
+	generatePath(
+		_owner->getWorldPosition(), targetPos,
+		_owner->getGame()->getGameResource()->getNumOfTileX(),
+		_owner->getGame()->getGameResource()->getNumOfTileY(),
+		_owner->getGame()->getGameResource()->getTileWidth(),
+		_owner->getGame()->getGameResource()->getTileHeight(),
+		DUMMY_TILE_SIZE);
+
+	return true;
 }

@@ -20,33 +20,37 @@ namespace realtrick
         class Game;
         class BrainBase;
 		class PathPlanner;
+		class SensoryMemory;
+		class AbstTargetingSystem;
         
-        class HumanBase : public EntityBase
-        {
-            
-        public:
-            
-            explicit HumanBase(Game* game);
-            virtual ~HumanBase();
-            
-            virtual bool init() override;
-            static HumanBase* create(Game* game);
-            
-            void setFootGauge(float g);
-            
-            virtual void update(float dt) override;
-            virtual void enableNormal(bool enable) override;
-            virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other);
-            virtual bool isIntersectWall(const cocos2d::Vec2& futurePosition, const realtrick::Polygon& wall);
-            virtual void rotateEntity();
-            virtual void moveEntity();
-            virtual void suicide() {}
+		class HumanBase : public EntityBase
+		{
 
-            virtual bool handleMessage(const Telegram& msg) override;
-        
-            Animator* getAnimator() const { return _animator; }
-            StateMachine* getFSM() const { return _FSM; }
+		public:
+
+			explicit HumanBase(Game* game);
+			virtual ~HumanBase();
+
+			virtual bool init() override;
+			static HumanBase* create(Game* game);
+
+			void setFootGauge(float g);
+
+			virtual void update(float dt) override;
+			virtual void enableNormal(bool enable) override;
+			virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other);
+			virtual bool isIntersectWall(const cocos2d::Vec2& futurePosition, const realtrick::Polygon& wall);
+			virtual void rotateEntity();
+			virtual void moveEntity();
+			virtual void suicide() {}
+
+			virtual bool handleMessage(const Telegram& msg) override;
+
+			Animator* getAnimator() const { return _animator; }
+			StateMachine* getFSM() const { return _FSM; }
 			PathPlanner* getPathPlanner() const { return _pathPlanner; }
+			SensoryMemory* getSensoryMemory() const { return _sensory; }
+			AbstTargetingSystem* getTargetSys() const { return _target_system; }
             
             cocos2d::Vec2 getHeading() const { return _heading; }
             
@@ -108,6 +112,8 @@ namespace realtrick
             StateMachine*                   _FSM;
             BrainBase*                      _brain;
 			PathPlanner*					_pathPlanner;
+			SensoryMemory*					_sensory;
+			AbstTargetingSystem*			_target_system;
 
             
             cocos2d::Vec2                   _heading;

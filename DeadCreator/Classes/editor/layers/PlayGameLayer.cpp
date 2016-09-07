@@ -223,7 +223,7 @@ void PlayGameLayer::showLayer(bool& opened)
 					}
 				}
 			}*/
-			auto& paths = game->getTempEdges();
+			auto& paths = std::list<PathEdge>();
 			for (const auto& path : paths)
 			{
 				Vec2 src = path.getSource();

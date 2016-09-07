@@ -166,7 +166,11 @@ void Animator::disableNormalMap()
     _normalSprite->setVisible(false);
 }
 
-
+float Animator::getTimeToReachMaxFrame() const
+{
+	auto animation = getCurrAnimation();
+	return (float)(animation->getMaxFrame() - _currFrame + 1) * animation->getFrameSwapTime();
+}
 
 
 

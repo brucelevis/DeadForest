@@ -21,7 +21,7 @@ namespace realtrick
             
         public:
             
-            explicit ZombieBrain(HumanBase* owner) : BrainBase(owner, new Regulator(5))
+            explicit ZombieBrain(HumanBase* owner) : BrainBase(owner)
             {
                 _thinker = new GoalThink(owner);
                 
@@ -60,7 +60,7 @@ namespace realtrick
             
             virtual void think() override
             {
-				if(_regulator->isReady())
+				if(_regulator.isReady())
 					_thinker->process();
             }
             

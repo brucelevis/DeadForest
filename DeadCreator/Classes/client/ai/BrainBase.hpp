@@ -22,8 +22,11 @@ namespace realtrick
             
         public:
             
-            explicit BrainBase(HumanBase* owner, Regulator* regulator) 
-				: _owner(owner), _regulator(regulator) {}
+            explicit BrainBase(HumanBase* owner) 
+				: 
+				_owner(owner),
+				_regulator(0.1f) {}
+
             virtual ~BrainBase() = default;
             
             virtual void think() = 0;
@@ -31,8 +34,7 @@ namespace realtrick
         protected:
             
             HumanBase* _owner;
-			std::unique_ptr<Regulator> _regulator;
-			
+			Regulator _regulator;
             
         };
         

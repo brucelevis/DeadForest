@@ -6,7 +6,7 @@ using namespace realtrick::client;
 
 PursuerBrain::PursuerBrain(HumanBase* owner) 
 	:
-BrainBase(owner, new Regulator(5))
+BrainBase(owner)
 {
 	_thinker = new GoalThink(owner);
 
@@ -27,6 +27,6 @@ PursuerBrain::~PursuerBrain()
 
 void PursuerBrain::think()
 {
-	if (_regulator->isReady())
+	if (_regulator.isReady())
 		_thinker->process();
 }

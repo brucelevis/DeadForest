@@ -38,6 +38,8 @@ namespace realtrick
             void setItemAmount(EntityType type, int amount);
             int getItemAmount(EntityType type);
             
+			const std::vector<ItemBase*>& getItemLists() const { return _items; }
+
         private:
             
             int getClosestSlot() const;

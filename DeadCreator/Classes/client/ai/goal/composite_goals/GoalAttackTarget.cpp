@@ -16,6 +16,7 @@
 #include "AbstTargetingSystem.h"
 #include "GoalMainAttack.h"
 #include "GoalHuntTarget.hpp"
+#include "GoalReadyToFight.hpp"
 
 
 using namespace realtrick;
@@ -34,6 +35,7 @@ GoalAttackTarget::GoalAttackTarget(HumanBase* const owner)
 //-----------------------------------------------------------------------------
 void GoalAttackTarget::activate()
 {
+	cocos2d::log("GoalAttackTarget::activate()");
 	setGoalStatus(GoalStatus::ACTIVE);
 
 	//if this goal is reactivated then there may be some existing subgoals that
@@ -47,6 +49,8 @@ void GoalAttackTarget::activate()
 		setGoalStatus(GoalStatus::COMPLETED);
 		return;
 	}
+
+	addSubgoal(new GoalReadyToFight(_owner));
 
 	//if the bot is able to shoot the target (there is LOS between bot and target),
 	//then select a tactic to follow while shooting

@@ -119,10 +119,9 @@ bool SingleStream::handleMessage(const Telegram& msg)
     // callback funcs
     else if ( msg.msg == MessageType::PUSH_ITEM_TO_INVENTORY )
     {
-        HumanBase* player = _game->getPlayerPtr();
-        
         ItemAndOwner* data = static_cast<ItemAndOwner*>(msg.extraInfo);
         data->item->setOwner(data->owner);
+        HumanBase* player = data->owner;
 
         int slot = player->addItem(data->item);
         if ( slot != -1 )

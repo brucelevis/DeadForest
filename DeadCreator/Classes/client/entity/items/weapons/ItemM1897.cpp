@@ -20,7 +20,7 @@ ItemM1897::ItemM1897(Game* game) : WeaponBase(game)
     setDamage(20);
     setMaxRounds(5);
     setNumOfLeftRounds(0);
-    setDelay(1.5f);
+    setDelay(1.1f);
     setNumOfShells(12);
     setBulletType(EntityType::BULLET_SHELL);
     _spriteName = "M1897.png";

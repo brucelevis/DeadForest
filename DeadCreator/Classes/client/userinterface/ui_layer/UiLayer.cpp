@@ -265,9 +265,8 @@ bool UiLayer::init()
     _infoSystem->setPosition(Vec2(0, -100.0f));
     _inGameUiLayer->addChild(_infoSystem);
     
-    //
+    
     // Rain Effect
-    //
     for(int i = 0 ;i < 3 ; ++ i)
     {
         auto rain = ParticleRain::create();
@@ -276,6 +275,7 @@ bool UiLayer::init()
         rain->setSpeed(300 + random(0,30));
         addChild(rain, Z_ORDER_UI - 2);
     }
+    
     
     _hpBar = HpBar::create(_game);
     _hpBar->setPosition(Vec2(_winSize.width * 0.03f, _winSize.height * 0.9f));
@@ -301,7 +301,7 @@ bool UiLayer::init()
         
     });
     addChild(_inventoryButton);
-    
+
     
     return true;
 }

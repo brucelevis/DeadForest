@@ -51,7 +51,7 @@ void HumanM1897IdleLoop::execute(HumanBase* human)
             if ( human->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
             {
                 // 공격 상태로 전환
-                human->getFSM()->changeState(&HumanM1897AttackReady::getInstance());
+                human->getFSM()->changeState(&HumanM1897AttackAction::getInstance());
             }
             // 2. 남아있는 총알이 없음.
             else

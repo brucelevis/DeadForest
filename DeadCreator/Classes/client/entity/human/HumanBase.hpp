@@ -112,6 +112,7 @@ namespace realtrick
             
             int addItem(ItemBase* item);
             void useItem(EntityType type);
+            void releaseWeapon(EntityType type);
             
             void setUiLayer(UiLayer* uiLayer) { _uiLayer = uiLayer; }
             

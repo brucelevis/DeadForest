@@ -389,6 +389,19 @@ void HumanBase::useItem(EntityType type)
 }
 
 
+void HumanBase::releaseWeapon(EntityType type)
+{
+    auto item = _inventoryData->getItemType(type);
+    if ( item && isMasked(item->getFamilyMask(), FamilyMask::WEAPON_BASE) )
+    {
+        if ( _equipedWeapon && _equipedWeapon->getEntityType() == type )
+        {
+            _equipedWeapon->use();
+        }
+    }
+}
+
+
 
 
 

@@ -342,14 +342,7 @@ void HumanM1897AttackReady::execute(HumanBase* human)
     
     if ( human->getAnimator()->isQueueEmpty() )
     {
-        if ( isMasked(inputMask, HumanBehaviorType::ATTACK ) )
-        {
-            human->getFSM()->changeState(&HumanM1897AttackHover::getInstance());
-        }
-        else
-        {
-            human->getFSM()->changeState(&HumanM1897AttackRelease::getInstance());
-        }
+        human->getFSM()->changeState(&HumanM1897AttackAction::getInstance());
     }
     
     if( isMasked(inputMask, (int)HumanBehaviorType::MOVE) ) human->setVelocity( moving * human->getWalkSpeed() );

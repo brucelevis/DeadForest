@@ -231,14 +231,7 @@ void HumanAxeAttackReady::execute(HumanBase* human)
     
     if ( human->getAnimator()->isQueueEmpty() )
     {
-        if ( isMasked(inputMask, HumanBehaviorType::ATTACK ) )
-        {
-            human->getFSM()->changeState(&HumanAxeAttackHover::getInstance());
-        }
-        else
-        {
-            human->getFSM()->changeState(&HumanAxeAttackRelease::getInstance());
-        }
+        human->getFSM()->changeState(&HumanAxeAttackAction::getInstance());
     }
     
     if( isMasked(inputMask, (int)HumanBehaviorType::MOVE) ) human->setVelocity( moving * human->getWalkSpeed() );

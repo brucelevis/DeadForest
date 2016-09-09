@@ -85,9 +85,6 @@ void GoalMainAttack::terminate()
 	InputBezelEnd bezelEnd(_owner);
 	bezelEnd.execute();
 
-	InputAttackEnd attackEnd(_owner);
-	attackEnd.execute();
-
 	setGoalStatus(GoalStatus::COMPLETED);
 }
 

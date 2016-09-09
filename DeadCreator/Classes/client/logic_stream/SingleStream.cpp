@@ -123,7 +123,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
         data->item->setOwner(data->owner);
 
         HumanBase* player = data->owner;
-        
+
         int slot = player->addItem(data->item);
         if ( slot != -1 )
         {

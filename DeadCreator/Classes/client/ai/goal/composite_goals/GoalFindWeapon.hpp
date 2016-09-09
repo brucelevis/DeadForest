@@ -9,6 +9,7 @@
 #pragma once
 
 #include "GoalCompositeBase.hpp"
+#include "Types.hpp"
 
 namespace realtrick
 {
@@ -29,7 +30,7 @@ namespace realtrick
             
         private:
             
-            
+			EntityType _findWeapon;
             
         };
         

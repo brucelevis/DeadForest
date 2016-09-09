@@ -101,6 +101,8 @@ namespace realtrick
 
 			~SensoryMemory();
 
+			void setAttackRange(int range) { _attackRange = range; }
+
 			//this removes a bot's record from memory
 			void	removeBotFromMemory(HumanBase* const bot);
 

@@ -14,7 +14,6 @@ namespace realtrick
 {
     namespace client
     {
-        
         class HumanBase;
         
         class BrainBase

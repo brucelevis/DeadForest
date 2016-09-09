@@ -28,11 +28,7 @@ namespace realtrick
             virtual void activate() override;
             virtual GoalStatus process() override;
             virtual void terminate() override;
-            
-        private:
-            
-            GoalFindWeapon* _goalFindWeapon;
-            
+                   
         };
         
     }

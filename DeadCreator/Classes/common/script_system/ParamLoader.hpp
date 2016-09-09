@@ -38,6 +38,7 @@ namespace realtrick
         
         void                        _parse();
         void                        _removeCommentFromLine(std::string& line);
+		void                        _removeEndlineFromLine(std::string& line);
         ParamLoader();
         
     private:

@@ -39,6 +39,7 @@ namespace realtrick
             std::string::size_type end = _fileData.find_first_of('\n', _pointer);
             std::string line = _fileData.substr(_pointer, end - _pointer);
             _removeCommentFromLine(line);
+			_removeEndlineFromLine(line);
             if ( line.empty() )
             {
                 const std::string::size_type interval = end - _pointer;
@@ -48,8 +49,8 @@ namespace realtrick
             
             std::string::size_type begIdx;
             std::string::size_type endIdx;
-            const std::string delims(" \\;=,");
-            
+            const std::string delims(" ;=,");
+
             // find key
             begIdx = line.find_first_not_of(delims);
             if(begIdx != std::string::npos)
@@ -96,6 +97,15 @@ namespace realtrick
         }
     }
     
+	void ParamLoader::_removeEndlineFromLine(std::string& line)
+	{
+		std::string::size_type idx = line.find_first_of("\r\n");
+
+		if (idx != std::string::npos)
+		{
+			line = line.substr(0, idx);
+		}
+	}
 }
 
 

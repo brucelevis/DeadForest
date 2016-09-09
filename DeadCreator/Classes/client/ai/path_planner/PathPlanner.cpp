@@ -192,8 +192,6 @@ int PathPlanner::getClosestNodeToPosition(cocos2d::Vec2 pos) const
 		if (!isValidIndex(toJ, toI, numOfTileX, numOfTileY))
 			continue;
 
-		int to = indexToNumber(toJ, toI, numOfTileX, numOfDummy);
-
 		if (_owner->getGame()->getGameResource()->getTileData()[toI][toJ]
 			.getTileType() != TileType::HILL)
 			return indexToNumber(toJ, toI, numOfTileX, numOfDummy);

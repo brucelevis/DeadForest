@@ -34,7 +34,6 @@ GoalFindWeapon::~GoalFindWeapon()
 
 void GoalFindWeapon::activate()
 {
-	cocos2d::log("GoalFindWeapon::activate()");
     setGoalStatus(GoalStatus::ACTIVE);
 
 	const float bigf = std::numeric_limits<float>::max();
@@ -75,7 +74,6 @@ GoalStatus GoalFindWeapon::process()
     auto subGoalStatus = processSubgoals();
     if ( subGoalStatus == GoalStatus::FAILED )
     {
-		cocos2d::log("Failed in GoalFindWeapon::process()");
         activate();
     }
 
@@ -85,7 +83,6 @@ GoalStatus GoalFindWeapon::process()
 
 void GoalFindWeapon::terminate()
 {
-	cocos2d::log("GoalFindWeapon::terminate()");
 	removeAllSubgoals();
 }
 

@@ -46,7 +46,7 @@ void GoalSeekToPosition::activate()
 	_time_expected = std::chrono::duration<double>(
 		_owner->getPathPlanner()->calculateTimeToReachPosition(_position));
 
-		//factor in a margin of error for any reactive behavior
+	//factor in a margin of error for any reactive behavior
 	std::chrono::duration<double> margin_of_error(0.02);
 
 	_time_expected += margin_of_error;
@@ -77,7 +77,6 @@ GoalStatus GoalSeekToPosition::process()
 	{
 		if (Circle(_owner->getWorldPosition(), _owner->getBoundingRadius()).containPoint(_position))
 		{
-			cocos2d::log("GoalSeekToPosition in COMPLETE");
 			setGoalStatus(GoalStatus::COMPLETED);
 		}
 	}
@@ -102,7 +101,6 @@ void GoalSeekToPosition::terminate()
 //-----------------------------------------------------------------------------
 bool GoalSeekToPosition::isStuck()const
 {
-
 	auto TimeTaken = std::chrono::system_clock::now().time_since_epoch() - _start;
 
 	if (TimeTaken > _time_expected)

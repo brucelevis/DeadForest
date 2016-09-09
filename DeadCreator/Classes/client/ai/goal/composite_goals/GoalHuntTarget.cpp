@@ -71,7 +71,6 @@ GoalStatus GoalHuntTarget::process()
 	setGoalStatus(subGoalStatus);
 
 	//if target is in view this goal is satisfied
-	//if (_owner->getTargetSys()->isTargetWithinFOV())
 	if (_owner->getTargetSys()->isTargetAttackable())
 	{
 		setGoalStatus(GoalStatus::COMPLETED);
@@ -84,6 +83,5 @@ GoalStatus GoalHuntTarget::process()
 void GoalHuntTarget::terminate()
 {
 	removeAllSubgoals();
-	cocos2d::log("GoalHuntTarget::terminate()");
 }
 

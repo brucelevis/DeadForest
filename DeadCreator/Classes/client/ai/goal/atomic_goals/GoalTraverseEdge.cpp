@@ -41,13 +41,11 @@ void GoalTraverseEdge::activate()
 	{
 		case NavGraphEdge::SWIM:
 		{
-			//_owner->setMaxSpeed(_owner->getMaxSpeed() * 0.2);
 		}
 		break;
 
 	case NavGraphEdge::CRAWL:
 		{
-			//_owner->setMaxSpeed(_owner->getMaxSpeed() * 0.6);
 		}
 		break;
 	}
@@ -101,7 +99,6 @@ GoalStatus GoalTraverseEdge::process()
 
 void GoalTraverseEdge::terminate()
 {
-	cocos2d::log("GoalTraverseEdge::terminate()");
 	InputMoveEnd moveEnd(_owner);
 	moveEnd.execute();
 }

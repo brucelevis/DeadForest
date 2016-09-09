@@ -73,5 +73,4 @@ GoalStatus GoalMoveToPosition::process()
 void GoalMoveToPosition::terminate()
 {
 	removeAllSubgoals();
-	cocos2d::log("GoalMoveToPosition::terminate()");
 }

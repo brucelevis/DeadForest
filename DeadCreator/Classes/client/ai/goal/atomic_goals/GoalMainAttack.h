@@ -15,7 +15,7 @@ namespace realtrick
 
 		public:
 
-			GoalMainAttack(HumanBase* owner, cocos2d::Vec2 target);
+			GoalMainAttack(HumanBase* owner, const cocos2d::Vec2& target);
 			virtual ~GoalMainAttack() override
 			{}
 

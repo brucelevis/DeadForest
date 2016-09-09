@@ -28,7 +28,6 @@ GoalReadyToFight::~GoalReadyToFight()
 
 void GoalReadyToFight::activate()
 {
-	cocos2d::log("GoalReadyToFight::activate()");
     setGoalStatus(GoalStatus::ACTIVE);
     
 	// Make best choice
@@ -49,10 +48,6 @@ void GoalReadyToFight::activate()
 		addSubgoal(new GoalEquipWeapon(_owner, bestItem));
 	else
 		addSubgoal(new GoalFindWeapon(_owner));
-	
-	//_owner->useItem(EntityType::ITEM_AXE);
-	//if(_owner->getEquipedWeapon() != nullptr)
-	//	_owner->getSensoryMemory()->setAttackRange(_owner->getEquipedWeapon()->getRange() - 10);
 }
 
 
@@ -77,7 +72,6 @@ GoalStatus GoalReadyToFight::process()
 
 void GoalReadyToFight::terminate()
 {
-	cocos2d::log("GoalReadyToFight::terminate()");
 	removeAllSubgoals();
 }
 

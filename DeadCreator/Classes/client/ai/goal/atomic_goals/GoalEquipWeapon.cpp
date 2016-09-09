@@ -1,6 +1,7 @@
 #include "GoalEquipWeapon.h"
 #include "InventoryData.hpp"
 #include "HumanBase.hpp"
+#include "SensoryMemory.h"
 
 using namespace realtrick::client;
 using namespace realtrick;
@@ -21,12 +22,16 @@ GoalEquipWeapon::GoalEquipWeapon(HumanBase* owner, EntityType weaponType)
 //-----------------------------------------------------------------------------  
 void GoalEquipWeapon::activate()
 {
-	cocos2d::log("GoalEquipWeapon::activate()");
 	setGoalStatus(GoalStatus::ACTIVE);
 
 	_startTime = std::chrono::system_clock::now().time_since_epoch();
 
 	_owner->useItem(_weaponType);
+
+	if (_owner->getEquipedWeapon() != nullptr)
+		_owner->getSensoryMemory()->setAttackRange(_owner->getEquipedWeapon()->getRange() - 10);
+	else
+		_owner->getSensoryMemory()->setAttackRange(50);
 }
 
 
@@ -55,7 +60,6 @@ GoalStatus GoalEquipWeapon::process()
 //-----------------------------------------------------------------------------
 void GoalEquipWeapon::terminate()
 {
-	cocos2d::log("GoalEquipWeapon::terminate()");
 	setGoalStatus(GoalStatus::COMPLETED);
 }
 

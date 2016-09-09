@@ -130,13 +130,12 @@ SensoryMemory::getListOfRecentlySensedOpponents()const
 
 	std::chrono::duration<double> current_time = std::chrono::system_clock::now().time_since_epoch();
 
-	MemoryMap::const_iterator rec = _memory_map.begin();
-	for (rec; rec != _memory_map.end(); ++rec)
+	for(auto& rec : _memory_map)
 	{
 		//if this bot has been updated in the memory recently, add to list
-		if ((current_time - rec->second.time_last_sensed) <= _memory_span)
+		if ((current_time - rec.second.time_last_sensed) <= _memory_span)
 		{
-			opponents.push_back(rec->first);
+			opponents.push_back(rec.first);
 		}
 	}
 
@@ -255,11 +254,10 @@ std::chrono::duration<double> SensoryMemory::getTimeSinceLastSensed(HumanBase* c
 
 bool SensoryMemory::isUnderAttack() const
 {
-	MemoryMap::const_iterator rec = _memory_map.begin();
-	for (rec; rec != _memory_map.end(); ++rec)
+	for (auto& rec : _memory_map)
 	{
 		//if this bot has hit us, return true
-		if ((*rec).second.recent_damage > 0)
+		if (rec.second.recent_damage > 0)
 			return true;
 	}
 	return false;

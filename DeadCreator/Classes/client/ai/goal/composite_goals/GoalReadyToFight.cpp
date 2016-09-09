@@ -7,9 +7,12 @@
 //
 
 #include "GoalReadyToFight.hpp"
+#include "GoalEquipWeapon.h"
 #include "Goals.hpp"
 #include "HumanBase.hpp"
 #include "InventoryData.hpp"
+#include "SensoryMemory.h"
+#include <map>
 using namespace realtrick::client;
 
 
@@ -20,9 +23,7 @@ GoalReadyToFight::GoalReadyToFight(HumanBase* owner) : GoalCompositeBase(owner)
 
 
 GoalReadyToFight::~GoalReadyToFight()
-{
-    CC_SAFE_DELETE(_goalFindWeapon);
-}
+{}
 
 
 void GoalReadyToFight::activate()
@@ -30,33 +31,54 @@ void GoalReadyToFight::activate()
 	cocos2d::log("GoalReadyToFight::activate()");
     setGoalStatus(GoalStatus::ACTIVE);
     
-	// use item
+	// Make best choice
+	EntityType bestItem = EntityType::DEFAULT;
+
 	auto inventory = _owner->getInventoryData();
 	const auto& items = inventory->getItemLists();
 	for (const auto& item : items)
 	{
 		if ( item && EntityType::ITEM_AXE == item->getEntityType() )
 		{
-			item->use();
-			break;
+			bestItem = EntityType::ITEM_AXE;
+			return;
 		}
 	}
+
+	if(bestItem != EntityType::DEFAULT)
+		addSubgoal(new GoalEquipWeapon(_owner, bestItem));
+	else
+		addSubgoal(new GoalFindWeapon(_owner));
+	
+	//_owner->useItem(EntityType::ITEM_AXE);
+	//if(_owner->getEquipedWeapon() != nullptr)
+	//	_owner->getSensoryMemory()->setAttackRange(_owner->getEquipedWeapon()->getRange() - 10);
 }
 
 
 GoalStatus GoalReadyToFight::process()
 {
-	cocos2d::log("GoalReadyToFight::process()");
 	if (isInactive())
 		activate();
 
-	setGoalStatus(GoalStatus::COMPLETED);
+	//process the subgoals
+	_goalStatus = processSubgoals();
+
+	//if any of the subgoals have FAILED then this goal re-plans
+	if (_goalStatus == GoalStatus::FAILED)
+	{
+		cocos2d::log("failed in GoalReadyToFight::process()");
+		setGoalStatus(GoalStatus::INACTIVE);
+	}
+
     return getGoalStatus();
 }
 
 
 void GoalReadyToFight::terminate()
 {
+	cocos2d::log("GoalReadyToFight::terminate()");
+	removeAllSubgoals();
 }
 
 

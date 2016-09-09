@@ -50,8 +50,6 @@ void GoalAttackTarget::activate()
 		return;
 	}
 
-	addSubgoal(new GoalReadyToFight(_owner));
-
 	//if the bot is able to shoot the target (there is LOS between bot and target),
 	//then select a tactic to follow while shooting
 	if (_owner->getTargetSys()->isTargetAttackable())

@@ -30,7 +30,7 @@ SensoryMemory::SensoryMemory(
 	_memory_span(memory_span)
 {
 	_viewRange = 200;
-	_attackRange = 100;
+	_attackRange = 60;
 }
 
 SensoryMemory::~SensoryMemory()

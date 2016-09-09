@@ -120,7 +120,7 @@ namespace realtrick
    
             void replaceVictoryScene(float delay);
             void replaceDefeatScene(float delay);
-
+            
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
             bool isGameEnded() const { return _isGameEnded; }
 #endif

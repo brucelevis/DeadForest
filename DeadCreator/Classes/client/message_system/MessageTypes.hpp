@@ -54,6 +54,7 @@ namespace realtrick
             DISPLAY_TEXT = 23,
             USE_ITEM_FROM_INVENTORY = 24,
             SYNC_INVENTORY_WEAPON_VIEW = 25,
+            MOVE_BALANCE = 26,
         };
         
         enum HumanBehaviorType

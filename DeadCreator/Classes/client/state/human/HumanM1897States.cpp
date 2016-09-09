@@ -51,7 +51,7 @@ void HumanM1897IdleLoop::execute(HumanBase* human)
             if ( human->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
             {
                 // 공격 상태로 전환
-                human->getFSM()->changeState(&HumanM1897AttackReady::getInstance());
+                human->getFSM()->changeState(&HumanM1897AttackAction::getInstance());
             }
             // 2. 남아있는 총알이 없음.
             else
@@ -342,14 +342,7 @@ void HumanM1897AttackReady::execute(HumanBase* human)
     
     if ( human->getAnimator()->isQueueEmpty() )
     {
-        if ( isMasked(inputMask, HumanBehaviorType::ATTACK ) )
-        {
-            human->getFSM()->changeState(&HumanM1897AttackHover::getInstance());
-        }
-        else
-        {
-            human->getFSM()->changeState(&HumanM1897AttackRelease::getInstance());
-        }
+        human->getFSM()->changeState(&HumanM1897AttackAction::getInstance());
     }
     
     if( isMasked(inputMask, (int)HumanBehaviorType::MOVE) ) human->setVelocity( moving * human->getWalkSpeed() );

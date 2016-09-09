@@ -81,13 +81,8 @@ bool HumanBase::init()
 	_sensory = new SensoryMemory(this, 5);
 	_target_system = new AbstTargetingSystem(this);
 
-	/*_pathPlanner->generatePath(
-		Vec2(245, 246), Vec2(1000, 1000),
-		_game->getGameResource()->getNumOfTileX(),
-		_game->getGameResource()->getNumOfTileY(),
-		_game->getGameResource()->getTileWidth(),
-		_game->getGameResource()->getTileHeight(),
-		DUMMY_TILE_SIZE);*/
+    _balance = Node::create();
+    addChild(_balance);
 
     return true;
 }
@@ -177,7 +172,6 @@ void HumanBase::moveEntity()
     cocos2d::Vec2 futurePosition = getWorldPosition() + getVelocity() * dt;
     _speed = getVelocity().getLength();
     bool intersectResult = false;
-    
     
     // 엔티티들과의 충돌처리
     const std::list<EntityBase*> members = _game->getNeighborsOnMove(oldPos, _speed);
@@ -325,6 +319,15 @@ bool HumanBase::handleMessage(const Telegram& msg)
         ret = true;
     }
     
+    else if ( msg.msg == MessageType::MOVE_BALANCE )
+    {
+        auto offset = static_cast<Vec2*>(msg.extraInfo);
+        _balance->setPosition( _balance->getPosition() - *offset );
+        CC_SAFE_DELETE(offset);
+        
+        ret = true;
+    }
+    
     return ret;
 }
 
@@ -386,6 +389,30 @@ void HumanBase::useItem(EntityType type)
 {
     auto item = _inventoryData->getItemType(type);
     if ( item ) item->use();
+}
+
+
+void HumanBase::releaseWeapon(EntityType type)
+{
+    auto item = _inventoryData->getItemType(type);
+    if ( item && isMasked(item->getFamilyMask(), FamilyMask::WEAPON_BASE) )
+    {
+        if ( _equipedWeapon && _equipedWeapon->getEntityType() == type )
+        {
+            _equipedWeapon->use();
+        }
+    }
+}
+
+
+void HumanBase::vibrate()
+{
+    _game->sendMessage(0.0, this, this, MessageType::MOVE_BALANCE, new Vec2(2.0f * getHeading()));
+    _game->sendMessage(0.05 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(2.0f * getHeading()));
+    _game->sendMessage(0.10 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(2.0f * getHeading()));
+    _game->sendMessage(0.30 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(-2.0f * getHeading()));
+    _game->sendMessage(0.35 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(-2.0f * getHeading()));
+    _game->sendMessage(0.40 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(-2.0f * getHeading()));
 }
 
 

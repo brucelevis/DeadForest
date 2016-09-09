@@ -105,6 +105,7 @@ void WeaponBase::reload()
 void WeaponBase::attack()
 {
     dropCartiridges();
+    _owner->vibrate();
     
     // 공격 흐름 분리
     ItemAndOwner item_owner;

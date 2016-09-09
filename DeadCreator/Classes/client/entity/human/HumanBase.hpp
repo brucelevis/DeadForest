@@ -112,6 +112,7 @@ namespace realtrick
             
             int addItem(ItemBase* item);
             void useItem(EntityType type);
+            void releaseWeapon(EntityType type);
             
             void setUiLayer(UiLayer* uiLayer) { _uiLayer = uiLayer; }
             
@@ -122,6 +123,15 @@ namespace realtrick
             void reload();
             
             InventoryData* getInventoryData() const { return _inventoryData; }
+        
+            cocos2d::Vec2 getBalancePosition() const { return _balance->getPosition(); }
+            virtual void setWorldPosition(const cocos2d::Vec2& pos) override
+            {
+                EntityBase::setWorldPosition(pos);
+                _balance->setPosition(pos);
+            }
+            
+            void vibrate();
             
         private:
         
@@ -146,6 +156,8 @@ namespace realtrick
             cocos2d::Vec2                   _left;
             cocos2d::Vec2                   _right;
             cocos2d::Vec2                   _velocity;
+            
+            cocos2d::Node*                  _balance;
             
             float                           _turnSpeed;
             float                           _speed;

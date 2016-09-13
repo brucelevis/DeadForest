@@ -105,7 +105,16 @@ void WeaponBase::reload()
 void WeaponBase::attack()
 {
     dropCartiridges();
-    _owner->vibrate();
+    auto type = getEntityType();
+    
+    if ( type == EntityType::ITEM_M16A2 ) _owner->vibrate(0.5f);
+    else _owner->vibrate(1.0f);
+    
+    if ( type != EntityType::ITEM_AXE )
+    {
+        setNumOfLeftRounds( getNumOfLeftRounds() - 1 );
+        _game->sendMessage(0.0, _game->getPlayerPtr(), nullptr, MessageType::SYNC_INVENTORY_WEAPON_VIEW, nullptr);
+    }
     
     // 공격 흐름 분리
     ItemAndOwner item_owner;

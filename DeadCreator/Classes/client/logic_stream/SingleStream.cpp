@@ -174,14 +174,6 @@ bool SingleStream::handleMessage(const Telegram& msg)
     
     else if ( msg.msg == MessageType::ATTACK_BY_WEAPON )
     {
-        auto player = _game->getPlayerPtr();
-        auto equipedWeapon = player->getEquipedWeapon();
-        if ( equipedWeapon && equipedWeapon->getEntityType() != EntityType::ITEM_AXE )
-        {
-            equipedWeapon->setNumOfLeftRounds( equipedWeapon->getNumOfLeftRounds() - 1 );
-            _game->sendMessage(0.0, _game->getPlayerPtr(), nullptr, MessageType::SYNC_INVENTORY_WEAPON_VIEW, nullptr);
-        }
-        
         ItemAndOwner itemowner = *static_cast<ItemAndOwner*>(msg.extraInfo);
         EntityType type = static_cast<EntityType>(itemowner.item->getEntityType());
         HumanBase* owner = itemowner.owner;

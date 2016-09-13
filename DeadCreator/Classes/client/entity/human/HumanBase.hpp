@@ -131,7 +131,7 @@ namespace realtrick
                 _balance->setPosition(pos);
             }
             
-            void vibrate();
+            void vibrate(float force);
             
         private:
         

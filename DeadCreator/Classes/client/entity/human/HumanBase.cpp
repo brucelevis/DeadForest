@@ -328,6 +328,13 @@ bool HumanBase::handleMessage(const Telegram& msg)
         ret = true;
     }
     
+    else if ( msg.msg == MessageType::RESET_BALANCE )
+    {
+        _balance->setPosition( getWorldPosition() );
+        
+        ret = true;
+    }
+    
     return ret;
 }
 
@@ -405,14 +412,15 @@ void HumanBase::releaseWeapon(EntityType type)
 }
 
 
-void HumanBase::vibrate()
+void HumanBase::vibrate(float force)
 {
-    _game->sendMessage(0.0, this, this, MessageType::MOVE_BALANCE, new Vec2(2.0f * getHeading()));
-    _game->sendMessage(0.05 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(2.0f * getHeading()));
-    _game->sendMessage(0.10 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(2.0f * getHeading()));
-    _game->sendMessage(0.30 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(-2.0f * getHeading()));
-    _game->sendMessage(0.35 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(-2.0f * getHeading()));
-    _game->sendMessage(0.40 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(-2.0f * getHeading()));
+    _game->sendMessage(0.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * getHeading()));
+    _game->sendMessage(0.05 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * getHeading()));
+    _game->sendMessage(0.10 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * getHeading()));
+    _game->sendMessage(0.30 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
+    _game->sendMessage(0.35 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
+    _game->sendMessage(0.40 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
+    _game->sendMessage(0.45 / 3.0, this, this, MessageType::RESET_BALANCE, nullptr);
 }
 
 

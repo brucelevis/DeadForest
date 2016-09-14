@@ -181,7 +181,6 @@ bool SingleStream::handleMessage(const Telegram& msg)
         
         if ( type == EntityType::ITEM_AXE )
         {
-            _game->addLog("<ItemAxe:attack> attack!");
             Vec2 worldPos = owner->getWorldPosition();
             
             // 엔티티들과의 충돌처리
@@ -231,7 +230,6 @@ bool SingleStream::handleMessage(const Telegram& msg)
         }
         else if ( type == EntityType::ITEM_M16A2 )
         {
-            _game->addLog("<ItemM16A2:attack> attack!");
             std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
             Vec2 worldPos = owner->getWorldPosition();
             
@@ -311,8 +309,6 @@ bool SingleStream::handleMessage(const Telegram& msg)
         else if ( type == EntityType::ITEM_M1897 )
         {
             int numOfShells = static_cast<ItemM1897*>(weapon)->getNumOfShells();
-            
-            _game->addLog("<ItemM1897:attack> attack!");
             vector<vector<pair<float, EntityBase*>>> closestIntersectPoint(numOfShells);
             Vec2 worldPos = owner->getWorldPosition();
             
@@ -395,7 +391,6 @@ bool SingleStream::handleMessage(const Telegram& msg)
         }
         else if ( type == EntityType::ITEM_GLOCK17 )
         {
-            _game->addLog("<ItemGlock17:attack> attack!");
             std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
             Vec2 worldPos = owner->getWorldPosition();
             

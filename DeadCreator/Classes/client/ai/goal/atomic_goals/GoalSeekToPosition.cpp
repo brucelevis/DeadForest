@@ -87,7 +87,6 @@ GoalStatus GoalSeekToPosition::process()
 
 void GoalSeekToPosition::terminate()
 {
-	cocos2d::log("GoalSeekToPosition::terminate()");
 	InputMoveEnd moveEnd(_owner);
 	moveEnd.execute();
 }
@@ -105,8 +104,6 @@ bool GoalSeekToPosition::isStuck()const
 
 	if (TimeTaken > _time_expected)
 	{
-		cocos2d::log("BOT IS STUCK!! (%f %f)", _owner->getWorldPosition().x, _owner->getWorldPosition().y);
-
 		return true;
 	}
 

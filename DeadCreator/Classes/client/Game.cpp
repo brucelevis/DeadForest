@@ -32,6 +32,8 @@ using namespace realtrick::client;
 #include "GMXFile_generated.h"
 #include "util.h"
 
+#include "SimpleProfiler.hpp"
+
 Game::Game() :
 _winSize(Size::ZERO),
 _cellSpace(nullptr),

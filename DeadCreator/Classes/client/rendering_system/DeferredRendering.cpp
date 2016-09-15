@@ -111,12 +111,12 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
     _staticTexture->end();
     
     // bake normal map
-    for ( auto& entity : _dynamicEntities->getChildren() )
-        static_cast<EntityBase*>(entity)->enableNormal(true);
-    
-    _normalTexture->beginWithClear(0.0, 0.0, 0.0, 0.0);
-    _dynamicEntities->visit();
-    _normalTexture->end();
+//    for ( auto& entity : _dynamicEntities->getChildren() )
+//        static_cast<EntityBase*>(entity)->enableNormal(true);
+//    
+//    _normalTexture->beginWithClear(0.0, 0.0, 0.0, 0.0);
+//    _dynamicEntities->visit();
+//    _normalTexture->end();
     
     for ( auto& entity : _dynamicEntities->getChildren() )
         static_cast<EntityBase*>(entity)->enableNormal(false);
@@ -137,7 +137,7 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
     
     getGLProgramState()->setUniformTexture("u_dynamicTex", _dynamicTexture->getSprite()->getTexture());
     getGLProgramState()->setUniformTexture("u_staticTex", _staticTexture->getSprite()->getTexture());
-    getGLProgramState()->setUniformTexture("u_normalTex", _normalTexture->getSprite()->getTexture());
+//    getGLProgramState()->setUniformTexture("u_normalTex", _normalTexture->getSprite()->getTexture());
     getGLProgramState()->setUniformTexture("u_occlusionTex", _occlusionTexture->getSprite()->getTexture());
 }
 

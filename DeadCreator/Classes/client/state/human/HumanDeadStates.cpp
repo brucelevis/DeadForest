@@ -22,9 +22,6 @@ void HumanBackDeadState::enter(HumanBase* human)
     
     human->getGame()->sendMessage(cocos2d::random(3.0, 7.0), human, human, MessageType::DIE, nullptr);
     human->setDead();
-    
-	// Sensory Á¤¸®
-	// human->getGame()->
 
     human->getAnimator()->setShadowVisible(false);
     

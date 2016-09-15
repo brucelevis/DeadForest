@@ -120,8 +120,6 @@ namespace realtrick
             
             void hittedByWeapon(EntityType type, int damage);
             
-            void reload();
-            
             InventoryData* getInventoryData() const { return _inventoryData; }
         
             cocos2d::Vec2 getBalancePosition() const { return _balance->getPosition(); }
@@ -131,6 +129,8 @@ namespace realtrick
                 _balance->setPosition(pos);
             }
             
+            void reload();
+            void attack();
             void vibrate(float force);
             
         private:

@@ -373,12 +373,6 @@ void HumanBase::hittedByWeapon(EntityType type, int damage)
 }
 
 
-void HumanBase::reload()
-{
-    if ( _equipedWeapon ) _equipedWeapon->reload();
-}
-
-
 int HumanBase::addItem(ItemBase* item)
 {
     int slot = _inventoryData->addItem(item);
@@ -409,6 +403,18 @@ void HumanBase::releaseWeapon(EntityType type)
             _equipedWeapon->use();
         }
     }
+}
+
+
+void HumanBase::reload()
+{
+    if ( _equipedWeapon ) _equipedWeapon->reload();
+}
+
+
+void HumanBase::attack()
+{
+    if ( _equipedWeapon ) _equipedWeapon->attack();
 }
 
 

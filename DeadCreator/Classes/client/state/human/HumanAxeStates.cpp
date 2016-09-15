@@ -318,8 +318,8 @@ void HumanAxeAttackHover::exit(HumanBase* human)
 void HumanAxeAttackAction::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanAxeAttackAction::getInstance());
+    human->getGame()->pushLogic(0.0, MessageType::ATTACK_BY_WEAPON, human);
     human->setStateName("attack");
-    human->getEquipedWeapon()->attack();
 }
 
 void HumanAxeAttackAction::execute(HumanBase* human)

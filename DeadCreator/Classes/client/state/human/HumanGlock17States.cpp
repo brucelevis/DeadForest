@@ -187,14 +187,15 @@ bool HumanGlock17MoveLoop::onMessage(HumanBase* human, const Telegram& msg)
 void HumanGlock17Attack::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanGlock17Attack::getInstance());
+    auto game = human->getGame();
     
     SoundSource s;
     s.fileName = "Glock17Fire" + _to_string(random(0, 2)) + ".mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 2000.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    game->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
     
-    human->getEquipedWeapon()->attack();
+    game->pushLogic(0.0, MessageType::ATTACK_BY_WEAPON, human);
     human->setStateName("attack");
 }
 

@@ -172,7 +172,7 @@ bool ZombieDead::onMessage(HumanBase* zombie, const Telegram& msg)
 {
     if ( msg.msg == MessageType::DIE )
     {
-        zombie->getGame()->removeEntity(zombie);
+//        zombie->getGame()->removeEntity(zombie);
         
         return true;
     }

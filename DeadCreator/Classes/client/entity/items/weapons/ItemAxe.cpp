@@ -68,6 +68,58 @@ void ItemAxe::discard()
 }
 
 
+void ItemAxe::attackImpl()
+{
+    auto owner = _owner;
+    Vec2 worldPos = owner->getWorldPosition();
+    
+    // 엔티티들과의 충돌처리
+    bool isHit = false;
+    Vec2 shootAt = owner->getHeading();
+    const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, this->getRange());
+    for (const auto &d : members)
+    {
+        if ( d == owner ) continue;
+        
+        if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+        {
+            HumanBase* human = static_cast<HumanBase*>(d);
+            if( human->isAlive() && physics::intersect(Segment(worldPos,
+                                                               worldPos + owner->getHeading() * this->getRange()),
+                                                       Circle(d->getWorldPosition(), human->getBoundingRadius())) )
+            {
+                ReceiverSenderDamage s;
+                s.damage = this->getDamage();
+                s.receiver = human;
+                s.sender = owner;
+                _game->sendMessage(0.0, human, owner, MessageType::HITTED_BY_AXE, &s);
+                
+                isHit = true;
+            }
+        }
+    }
+    
+    if ( isHit )
+    {
+        SoundSource s;
+        s.fileName = "AxeHit" + _to_string(random(0,2)) + ".mp3";
+        s.position = worldPos;
+        s.soundRange = 200.0f;
+        _game->sendMessage(0.0, owner, owner, MessageType::PLAY_SOUND, &s);
+        _game->sendMessage(0.0, owner, owner, MessageType::HIT, nullptr);
+    }
+    else
+    {
+        SoundSource s;
+        s.fileName = "AxeSwing" + _to_string(random(0,2)) + ".mp3";
+        s.position = worldPos;
+        s.soundRange = 200.0f;
+        _game->sendMessage(0.0, owner, owner, MessageType::PLAY_SOUND, &s);
+        _game->sendMessage(0.0, owner, owner, MessageType::NO_HIT, nullptr);
+    }
+}
+
+
 
 
 

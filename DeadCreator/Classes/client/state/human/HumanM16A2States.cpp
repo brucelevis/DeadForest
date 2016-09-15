@@ -234,7 +234,7 @@ bool HumanM16A2Attack::onMessage(HumanBase* human, const Telegram& msg)
     {
         if ( human->getEquipedWeapon()->getNumOfLeftRounds() > 0 )
         {
-            human->getEquipedWeapon()->attack();
+            human->getGame()->pushLogic(0.0, MessageType::ATTACK_BY_WEAPON, human);
         }
         
         return true;

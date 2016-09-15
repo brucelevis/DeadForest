@@ -29,6 +29,7 @@ namespace realtrick
             virtual void inWeapon() override;
             virtual void outWeapon() override;
             virtual void discard() override;
+            virtual void attackImpl() override;
             
         };
         

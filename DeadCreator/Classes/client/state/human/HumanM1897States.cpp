@@ -435,7 +435,7 @@ void HumanM1897AttackAction::enter(HumanBase* human)
     s.soundRange = 2000.0f;
     human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
     
-    human->getEquipedWeapon()->attack();
+    human->getGame()->pushLogic(0.0, MessageType::ATTACK_BY_WEAPON, human);
 }
 
 void HumanM1897AttackAction::execute(HumanBase* human)

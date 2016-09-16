@@ -7,12 +7,17 @@
 //
 
 #include <exception>
+using namespace std;
+using namespace std::chrono;
 
 #include "SimpleProfiler.hpp"
 #include "Block.hpp"
 using namespace realtrick::profiler;
-using namespace std;
-using namespace std::chrono;
+
+#include "tinyxml2.h"
+#include "json/rapidjson.h"
+#include "flatbuffers.h"
+#include "profiling_schema_generated.h"
 
 
 SimpleProfiler::SimpleProfiler() :
@@ -106,15 +111,14 @@ std::string SimpleProfiler::prettyWriter()
     if ( _mainLoopBlock )
     {
         std::string out;
-        out += "+-----------------------------+---------+--------------+--------------+--------------+--------------+\n";
-        out += "|name                         | calls   | avg time     | min time     | max time     | cpu usage(%) |\n";
-        out += "+-----------------------------+---------+--------------+--------------+--------------+--------------+\n";
-        _mainLoopBlock->writeConsole(0, out);
-        out += "+-----------------------------+---------+--------------+--------------+--------------+--------------+\n";
-    
+        out += "+-----------------------------+---------+-----------+-----------+-----------+------------+\n";
+        out += "|name                         | calls   | avg time  | min time  | max time  | usage(%)   |\n";
+        out += "+-----------------------------+---------+-----------+-----------+-----------+------------+\n";
+        _mainLoopBlock->prettyWrite(0, out);
+        out += "+-----------------------------+---------+-----------+-----------+-----------+------------+\n";
+        
         return out;
     }
-    
     return "##main_loop is not exist!";
 }
 
@@ -127,13 +131,17 @@ std::string SimpleProfiler::jsonWriter()
 
 std::string SimpleProfiler::xmlWriter()
 {
+    //    tinyxml2::XMLDocument doc;
     return "";
 }
 
 
-std::string SimpleProfiler::flatbufferWriter()
+uint8_t* SimpleProfiler::flatbufferWriter()
 {
-    return "";
+    flatbuffers::FlatBufferBuilder builder;
+    auto obj = realtrick::profiler::CreateData(builder);
+    builder.Finish(obj);
+    return builder.GetBufferPointer();
 }
 
 

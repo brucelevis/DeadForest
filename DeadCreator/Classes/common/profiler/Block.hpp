@@ -12,6 +12,8 @@
 #include <chrono>
 #include <string>
 
+#include "profiling_schema_generated.h"
+
 #define SAFE_DELETE(p) do { delete (p); (p) = nullptr; } while(0)
 
 namespace realtrick
@@ -33,7 +35,7 @@ namespace realtrick
             Block* getParent() const { return _parent; }
             void setParent(Block* parent) { _parent = parent; }
             
-            float getCpuUsageFromParent() const;
+            float getUsageFromParent() const;
             
             void setName(const std::string& name) { _name = name; }
             std::string getName() const { return _name; }
@@ -46,7 +48,7 @@ namespace realtrick
             long long getMaxTime() const { return _maxTime; }
             long long getTotalCall() const { return _numberOfCalls; }
             
-            void writeConsole(int depth, std::string& out) const;
+            void prettyWrite(int depth, std::string& out) const;
             
             virtual void begin();
             virtual void end();

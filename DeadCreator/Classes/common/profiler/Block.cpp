@@ -57,7 +57,7 @@ bool Block::init(const std::string& name)
 }
 
 
-float Block::getCpuUsageFromParent() const
+float Block::getUsageFromParent() const
 {
     if ( _parent )
     {
@@ -88,7 +88,7 @@ void Block::end()
 }
 
 
-void Block::writeConsole(int depth, std::string& out) const
+void Block::prettyWrite(int depth, std::string& out) const
 {
     std::string name;
     for( int i = 0 ; i < depth ; ++ i ) name.push_back(' ');
@@ -101,29 +101,29 @@ void Block::writeConsole(int depth, std::string& out) const
     calls.push_back('|');
     
     std::string avgTime(to_string(_avgTime));
-    for(int i = avgTime.size() ; i < 14; ++ i) avgTime.push_back(' ');
+    for(int i = avgTime.size() ; i < 11; ++ i) avgTime.push_back(' ');
     avgTime.push_back('|');
     
     std::string minTime(to_string(_minTime));
-    for(int i = minTime.size() ; i < 14; ++ i) minTime.push_back(' ');
+    for(int i = minTime.size() ; i < 11; ++ i) minTime.push_back(' ');
     minTime.push_back('|');
     
     std::string maxTime(to_string(_maxTime));
-    for(int i = maxTime.size() ; i < 14; ++ i) maxTime.push_back(' ');
+    for(int i = maxTime.size() ; i < 11; ++ i) maxTime.push_back(' ');
     maxTime.push_back('|');
     
-    std::string cpuUsage(to_string(getCpuUsageFromParent()));
-    for(int i = cpuUsage.size() ; i < 14; ++ i) cpuUsage.push_back(' ');
-    cpuUsage.push_back('|');
+    std::string usage(to_string(getUsageFromParent()));
+    for(int i = usage.size() ; i < 12; ++ i) usage.push_back(' ');
+    usage.push_back('|');
     
     if ( calls.front() == '0' ) return ;
     
     out += '|';
-    out += (name + calls + avgTime + minTime + maxTime + cpuUsage);
+    out += (name + calls + avgTime + minTime + maxTime + usage);
     out += '\n';
     
     for ( const auto& child : _children )
-        child->writeConsole(depth + 1, out);
+        child->prettyWrite(depth + 1, out);
 }
 
 

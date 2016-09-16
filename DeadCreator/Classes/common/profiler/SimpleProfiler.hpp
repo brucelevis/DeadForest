@@ -44,7 +44,7 @@ namespace realtrick
             std::string prettyWriter();
             std::string jsonWriter();
             std::string xmlWriter();
-            std::string flatbufferWriter();
+            uint8_t* flatbufferWriter();
 
             void reset();
             

@@ -102,10 +102,13 @@ bool Game::init()
 
 void Game::update(float dt)
 {
+    PROFILE_BEGIN("update game");
     // """IMPORTANT"""
     // logicStream's update() must call before checking pause.
     // because server stream will load data through this method (although game is puased, load game must process)
+    PROFILE_BEGIN("logic stream");
     _logicStream->update(dt);
+    PROFILE_END("logic stream");
     
     // checking pause is done
     if ( _isPaused ) return ;
@@ -114,8 +117,10 @@ void Game::update(float dt)
                                                   _gameResource->getTileWidth(),
                                                   _gameResource->getTileHeight(), DUMMY_TILE_SIZE);
     
+    PROFILE_BEGIN("update entity");
     // 1. update entities
     _entityManager->update(dt);
+    PROFILE_END("update entity");
     
     // 2. set game camera position and chunk update (if cell space is changed)
     _camera->setCameraPos(_entityManager->getPlayerPtr()->getBalancePosition());
@@ -124,10 +129,13 @@ void Game::update(float dt)
         _renderingSystem->updateChunk(_camera);
     }
     
+    PROFILE_BEGIN("update trigger");
     // 3. trigger update and execute
     _triggerSystem->update(dt);
+    PROFILE_END("update trigger");
     
     _messenger->dispatchDelayedMessages();
+    PROFILE_END("update game");
 }
 
 

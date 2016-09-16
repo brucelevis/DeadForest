@@ -23,6 +23,7 @@ using namespace cocos2d;
 using namespace realtrick::client;
 using namespace realtrick;
 
+#include "SimpleProfiler.hpp"
 
 HumanBase::HumanBase(Game* game) : EntityBase(game),
 _animator(nullptr),
@@ -103,26 +104,42 @@ HumanBase* HumanBase::create(Game* game)
 
 void HumanBase::update(float dt)
 {
+    PROFILE_BEGIN("brain");
     if ( _brain && isAlive() ) _brain->think();
+    PROFILE_END("brain");
+    
+    PROFILE_BEGIN("fsm");
     if ( _FSM ) _FSM->update(dt);
-	
+	PROFILE_END("fsm");
+    
+    PROFILE_BEGIN("sensory");
 	_sensory->updateVision();
+    PROFILE_END("sensory");
+    
+    PROFILE_BEGIN("target");
 	_target_system->update();
-	
+	PROFILE_END("target");
 
     // move and rotate
+    PROFILE_BEGIN("move entity");
     this->moveEntity();
+    PROFILE_END("move entity");
+    
     this->rotateEntity();
     
+    PROFILE_BEGIN("foot");
     // calculate foot guage to foot step sound.
     this->setFootGauge( _footGauge + _speed * dt );
+    PROFILE_END("foot");
     
+    PROFILE_BEGIN("animator");
     // update animation
     if ( _animator )
     {
         _animator->setRotation(_rotation);
         _animator->processAnimation(dt);
     }
+    PROFILE_END("animator");
 }
 
 

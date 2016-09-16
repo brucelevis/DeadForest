@@ -32,6 +32,10 @@ bool ShaderTestScene::init()
     
     this->scheduleUpdate();
     
+    auto human = Sprite::create("client/sample/grossini.png");
+    human->setPosition(0, 100);
+    addChild(human);
+    
     return true;
 }
 

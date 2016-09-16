@@ -226,7 +226,7 @@ void PlayGameLayer::showLayer(bool& opened)
 		{
 #endif
 			ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
-			ImGui::Begin("setting", NULL, ImGuiWindowFlags_ShowBorders);
+			ImGui::Begin("statistic", NULL, ImGuiWindowFlags_ShowBorders);
 
 			if (ImGui::TreeNode("debug"))
 			{
@@ -239,24 +239,19 @@ void PlayGameLayer::showLayer(bool& opened)
 				ImGui::Checkbox("graph", &isGraphNodeViewOn);
 				ImGui::TreePop();
 			}
-			if (ImGui::TreeNode("property"))
-			{
-				ImGui::Text("can not use yet.");
-				ImGui::TreePop();
-			}
 
 			ImGui::End();
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 		}
 #endif
-		// logger
-		if (_isGameStarted)
+		// simple profiler viewer
+		if ( _isGameStarted )
 		{
 			auto game = _gameLayer->getGame();
 
 			ImGui::SetNextWindowSize(ImVec2(1000, 150), ImGuiSetCond_Once);
 			ImGui::SetNextWindowPos(ImVec2(100, ImGui::GetIO().DisplaySize.y - 200), ImGuiSetCond_Once);
-			ImGui::Begin("Console Log", NULL, ImGuiWindowFlags_ShowBorders);
+			ImGui::Begin("SimpleProfiler Viewer", NULL, ImGuiWindowFlags_ShowBorders);
 
 			if (ImGui::Button("Clear")) game->clearLogs();
 			ImGui::SameLine(); bool copy = ImGui::Button("Copy");

@@ -62,7 +62,6 @@ GoalStatus GoalReadyToFight::process()
 	//if any of the subgoals have FAILED then this goal re-plans
 	if (_goalStatus == GoalStatus::FAILED)
 	{
-		cocos2d::log("failed in GoalReadyToFight::process()");
 		setGoalStatus(GoalStatus::INACTIVE);
 	}
 

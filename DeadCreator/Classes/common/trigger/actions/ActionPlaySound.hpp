@@ -137,8 +137,6 @@ namespace realtrick
                     s.soundRange = std::numeric_limits<float>::max();
                     s.volume = 1.0f;
                     _game->sendMessage(0.0, _game->getPlayerPtr(), nullptr, MessageType::PLAY_SOUND, &s);
-                    
-                    _game->addLog(cocos2d::StringUtils::format("play sound (%s).", _params.fileName.c_str()));
                 }
             }
             

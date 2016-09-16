@@ -18,6 +18,9 @@ using namespace realtrick::editor;
 using namespace realtrick::client;
 using namespace cocos2d;
 
+#include "SimpleProfiler.hpp"
+#include "profiling_schema_generated.h"
+
 
 void PlayGameLayer::showLayer(bool& opened)
 {
@@ -239,34 +242,28 @@ void PlayGameLayer::showLayer(bool& opened)
 				ImGui::Checkbox("graph", &isGraphNodeViewOn);
 				ImGui::TreePop();
 			}
+            
+            if (ImGui::TreeNode("logger"))
+            {
+                ImGui::BeginChild("scrolling", ImVec2(0, 80), true, ImGuiWindowFlags_HorizontalScrollbar);
+                ImGui::TextUnformatted(game->getLogString().c_str());
+                if (game->isLogAdded()) ImGui::SetScrollHere(1.0f);
+                game->isLogAdded() = false;
+                ImGui::EndChild();
+                ImGui::TreePop();
+            }
+            
+            if ( ImGui::TreeNode("profiler") )
+            {
+                auto obj = realtrick::profiler::GetData(realtrick::profiler::SimpleProfiler::getInstance().flatbufferWriter().first);
+                auto mainLoop = obj->main_loop();
+                
+            }
 
 			ImGui::End();
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 		}
 #endif
-		// simple profiler viewer
-		if ( _isGameStarted )
-		{
-			auto game = _gameLayer->getGame();
-
-			ImGui::SetNextWindowSize(ImVec2(1000, 150), ImGuiSetCond_Once);
-			ImGui::SetNextWindowPos(ImVec2(100, ImGui::GetIO().DisplaySize.y - 200), ImGuiSetCond_Once);
-			ImGui::Begin("SimpleProfiler Viewer", NULL, ImGuiWindowFlags_ShowBorders);
-
-			if (ImGui::Button("Clear")) game->clearLogs();
-			ImGui::SameLine(); bool copy = ImGui::Button("Copy");
-			ImGui::Separator();
-
-			ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
-
-			if (copy)  ImGui::LogToClipboard();
-			ImGui::TextUnformatted(game->getLogString().c_str());
-			if (game->isLogAdded()) ImGui::SetScrollHere(1.0f);
-			game->isLogAdded() = false;
-
-			ImGui::EndChild();
-			ImGui::End();
-		}
 	}
 }
 

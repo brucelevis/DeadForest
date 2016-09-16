@@ -85,10 +85,8 @@ GoalStatus GoalTraverseEdge::process()
 	//if the bot has reached the end of the edge return COMPLETED
 	else
 	{
-		if (Circle(_owner->getWorldPosition(), _owner->getBoundingRadius())
-			.containPoint(_edge.getDestination()))
+		if (Circle(_owner->getWorldPosition(), _owner->getBoundingRadius()).containPoint(_edge.getDestination()))
 		{
-			cocos2d::log("GoalTraverseEdge in COMPLETE");
 			setGoalStatus(GoalStatus::COMPLETED);
 		}
 	}

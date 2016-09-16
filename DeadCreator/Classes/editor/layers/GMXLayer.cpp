@@ -1780,28 +1780,7 @@ void GMXLayer::save(const std::string& path)
     _isFirstFile = false;
     if ( path != "temp_game_map" ) _currFilePath = path;
     
-    log("save! path: %s", path.c_str());
-    log("file name: %s", _file.fileName.c_str());
-    log("default tile: %d", _file.defaultTile);
-    log("number of tile x: %d", _file.numOfTileX);
-    log("number of tile y: %d", _file.numOfTileY);
-    log("tile width: %d", _file.tileWidth);
-    log("tile height: %d", _file.tileHeight);
-    log("world size: %.f, %.f", _file.worldSize.width, _file.worldSize.height);
-    
-    for (int i = 0 ; i < _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4; ++ i)
-    {
-        for(int j = 0 ; j < _file.numOfTileX + DUMMY_TILE_SIZE * 2; ++ j)
-        {
-            if ( _tiles[i][j].getTileType() != static_cast<TileType>(_file.defaultTile) )
-            {
-                log("[%d, %d]: %s", i, j, _tiles[i][j].getNumber().c_str());
-            }
-        }
-    }
-    
     flatbuffers::FlatBufferBuilder builder;
-    
     
     // tile infos
     std::vector<flatbuffers::Offset<DeadCreator::TileInfo>> tileInfos;

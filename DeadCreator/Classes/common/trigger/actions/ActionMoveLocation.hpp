@@ -201,8 +201,6 @@ namespace realtrick
                         
                         _game->getGameResource()->updateLocation(_params.destLocation, updateRect);
                         
-                        _game->addLog("move location");
-                        
                         break;
                     }
                 }

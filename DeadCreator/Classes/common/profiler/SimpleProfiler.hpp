@@ -41,7 +41,11 @@ namespace realtrick
             void begin(const std::string& name);
             void end(const std::string& name);
             
-            void writeConsole(long long ms);
+            std::string prettyWriter();
+            std::string jsonWriter();
+            std::string xmlWriter();
+            std::string flatbufferWriter();
+
             void reset();
             
         private:
@@ -54,7 +58,6 @@ namespace realtrick
             std::map<std::string, Block*> _blocks;
 
             Block* _mainLoopBlock;
-            std::chrono::high_resolution_clock::time_point _timePoint;
             
         };
         

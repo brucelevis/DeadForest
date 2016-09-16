@@ -18,8 +18,7 @@ using namespace std::chrono;
 SimpleProfiler::SimpleProfiler() :
 _blockStack(),
 _blocks(),
-_mainLoopBlock(nullptr),
-_timePoint(high_resolution_clock::now())
+_mainLoopBlock(nullptr)
 {
 }
 
@@ -66,7 +65,7 @@ void SimpleProfiler::begin(const std::string& name)
     
     if ( !_blockStack.empty() && _blockStack.back()->getName() == name )
         throw std::runtime_error(_blockStack.back()->getName() + " is already begin.");
-
+    
     if ( _blocks.count(name) == 0 )
     {
         auto block = Block::create(name);
@@ -96,36 +95,45 @@ void SimpleProfiler::end(const std::string& name)
 }
 
 
-void SimpleProfiler::writeConsole(long long ms)
+void SimpleProfiler::reset()
 {
-    if ( _mainLoopBlock )
-    {
-        auto curr = high_resolution_clock::now();
-        auto interval = duration_cast<milliseconds>(curr - _timePoint);
-        if ( interval.count() > ms )
-        {
-            for(int i = 0 ; i < 100 ; ++ i) printf("\n");
-            
-            printf("+---------------------------------------+---------+--------------+--------------+--------------+--------------+\n");
-            printf("%-40s%-10s%-15s%-15s%-15s%-10s\n", " name", "| calls", "| avg time", "| min time", "| max time", "| cpu usage(%)");
-            printf("+---------------------------------------+---------+--------------+--------------+--------------+--------------+\n");
-            _mainLoopBlock->writeConsole(0);
-            printf("+---------------------------------------+---------+--------------+--------------+--------------+--------------+\n");
-            
-            _timePoint = curr;
-            
-            reset();
-        }
-    }
+    if ( _mainLoopBlock ) _mainLoopBlock->reset();
 }
 
 
-void SimpleProfiler::reset()
+std::string SimpleProfiler::prettyWriter()
 {
     if ( _mainLoopBlock )
     {
-        _mainLoopBlock->reset();
+        std::string out;
+        out += "+-----------------------------+---------+--------------+--------------+--------------+--------------+\n";
+        out += "|name                         | calls   | avg time     | min time     | max time     | cpu usage(%) |\n";
+        out += "+-----------------------------+---------+--------------+--------------+--------------+--------------+\n";
+        _mainLoopBlock->writeConsole(0, out);
+        out += "+-----------------------------+---------+--------------+--------------+--------------+--------------+\n";
+    
+        return out;
     }
+    
+    return "##main_loop is not exist!";
+}
+
+
+std::string SimpleProfiler::jsonWriter()
+{
+    return "";
+}
+
+
+std::string SimpleProfiler::xmlWriter()
+{
+    return "";
+}
+
+
+std::string SimpleProfiler::flatbufferWriter()
+{
+    return "";
 }
 
 

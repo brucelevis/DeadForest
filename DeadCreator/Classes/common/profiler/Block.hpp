@@ -46,7 +46,7 @@ namespace realtrick
             long long getMaxTime() const { return _maxTime; }
             long long getTotalCall() const { return _numberOfCalls; }
             
-            void writeConsole(int depth) const;
+            void writeConsole(int depth, std::string& out) const;
             
             virtual void begin();
             virtual void end();

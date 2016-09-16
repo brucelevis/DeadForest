@@ -88,23 +88,42 @@ void Block::end()
 }
 
 
-void Block::writeConsole(int depth) const
+void Block::writeConsole(int depth, std::string& out) const
 {
     std::string name;
-    for( int i = 0 ; i < depth ; ++ i )
-        name.push_back(' ');
+    for( int i = 0 ; i < depth ; ++ i ) name.push_back(' ');
     name.insert(depth, _name);
-    printf(" %-40s%-10s%-15s%-15s%-15s%-10s\n",
-           name.c_str(),
-           std::to_string(_numberOfCalls).c_str(),
-           std::to_string(_avgTime).c_str(),
-           std::to_string(_minTime).c_str(),
-           std::to_string(_maxTime).c_str(),
-           std::to_string(getCpuUsageFromParent()).c_str());
+    for(int i = _name.size() + depth; i < 29; ++ i) name.push_back(' ');
+    name.push_back('|');
+    
+    std::string calls(to_string(_numberOfCalls));
+    for(int i = calls.size() ; i < 9; ++ i) calls.push_back(' ');
+    calls.push_back('|');
+    
+    std::string avgTime(to_string(_avgTime));
+    for(int i = avgTime.size() ; i < 14; ++ i) avgTime.push_back(' ');
+    avgTime.push_back('|');
+    
+    std::string minTime(to_string(_minTime));
+    for(int i = minTime.size() ; i < 14; ++ i) minTime.push_back(' ');
+    minTime.push_back('|');
+    
+    std::string maxTime(to_string(_maxTime));
+    for(int i = maxTime.size() ; i < 14; ++ i) maxTime.push_back(' ');
+    maxTime.push_back('|');
+    
+    std::string cpuUsage(to_string(getCpuUsageFromParent()));
+    for(int i = cpuUsage.size() ; i < 14; ++ i) cpuUsage.push_back(' ');
+    cpuUsage.push_back('|');
+    
+    if ( calls.front() == '0' ) return ;
+    
+    out += '|';
+    out += (name + calls + avgTime + minTime + maxTime + cpuUsage);
+    out += '\n';
+    
     for ( const auto& child : _children )
-    {
-        child->writeConsole(depth + 1);
-    }
+        child->writeConsole(depth + 1, out);
 }
 
 

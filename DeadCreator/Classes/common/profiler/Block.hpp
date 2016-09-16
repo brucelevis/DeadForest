@@ -13,6 +13,7 @@
 #include <string>
 
 #include "profiling_schema_generated.h"
+using namespace flatbuffers;
 
 #define SAFE_DELETE(p) do { delete (p); (p) = nullptr; } while(0)
 
@@ -49,6 +50,7 @@ namespace realtrick
             long long getTotalCall() const { return _numberOfCalls; }
             
             void prettyWrite(int depth, std::string& out) const;
+            Offset<Vector<Offset<Element>>> getChildrenFlatbuffers(FlatBufferBuilder& builder) const;
             
             virtual void begin();
             virtual void end();

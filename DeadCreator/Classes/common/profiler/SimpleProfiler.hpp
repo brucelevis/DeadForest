@@ -19,12 +19,14 @@
 #define PROFILE_BEGIN(name) realtrick::profiler::SimpleProfiler::getInstance().begin(name)
 #define PROFILE_END(name) realtrick::profiler::SimpleProfiler::getInstance().end(name)
 
+
 namespace realtrick
 {
     namespace profiler
     {
         
         class Block;
+        class Element;
         
         class SimpleProfiler
         {
@@ -44,7 +46,10 @@ namespace realtrick
             std::string prettyWriter();
             std::string jsonWriter();
             std::string xmlWriter();
-            uint8_t* flatbufferWriter();
+            std::pair<uint8_t*, uint32_t> flatbufferWriter();
+            
+            std::string flatbufferWriteHelper(uint8_t* pointer);
+            void flatbufferWriteHelper(int depth, std::string& out, const Element* elem);
 
             void reset();
             

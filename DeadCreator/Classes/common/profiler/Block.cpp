@@ -127,6 +127,28 @@ void Block::prettyWrite(int depth, std::string& out) const
 }
 
 
+Offset<Vector<Offset<Element>>> Block::getChildrenFlatbuffers(FlatBufferBuilder& builder) const
+{
+    std::vector<Offset<Element>> children;
+    for ( const auto& child : getChildren() )
+    {
+        if ( child->getTotalCall() == 0 ) continue;
+        
+        auto elem = CreateElement(builder,
+                                  builder.CreateString(child->getName()),
+                                  child->getTotalCall(),
+                                  child->getAvgTime(),
+                                  child->getMinTime(),
+                                  child->getMaxTime(),
+                                  child->getUsageFromParent(),
+                                  child->getChildrenFlatbuffers(builder));
+        
+        children.push_back(elem);
+    }
+    return builder.CreateVector(children);
+}
+
+
 void Block::reset()
 {
     _totalTime = 0;

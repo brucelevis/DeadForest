@@ -807,6 +807,20 @@ void GMXLayer::updateChunk(const cocos2d::Vec2& pivot)
                                                    worldPos.y - _file.tileHeight / 2 + (_file.tileHeight / 4 * i)),
                                               Color4F(1, 1, 1, 0.05f));
                 }
+                
+//                for ( int i = 0 ; i < _file.worldSize.height ; i += _cellSpacePartition->getCellHeight() )
+//                {
+//                    _worldDebugNode->drawLine(Vec2(0, i), Vec2(_file.worldSize.width, i), Color4F(1.0f, 0.0f, 0.0f, 0.4f));
+//                }
+//                
+//                for ( int i = 0 ; i < _file.worldSize.width ; i += _cellSpacePartition->getCellWidth() )
+//                {
+//                    _worldDebugNode->drawLine(Vec2(i, 0), Vec2(i, _file.worldSize.height), Color4F(1.0f, 0.0f, 0.0f, 0.4f));
+//                }
+//                
+//                _localDebugNode->clear();
+//                _localDebugNode->drawDot(Vec2(_layerSize.width / 2, _layerSize.height / 2), 5.0f, Color4F(1.0f, 1.0f, 0.0f, 1.0f));
+                
             }
         }
     }

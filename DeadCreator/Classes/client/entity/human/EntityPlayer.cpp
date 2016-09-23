@@ -115,6 +115,8 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
             h = cocos2d::clampf(h, 0.0f, 1.0f);
             _uiLayer->setHitPoint(h);
         }
+        
+        ret = true;
     }
     
     else if ( msg.msg == MessageType::HIT )

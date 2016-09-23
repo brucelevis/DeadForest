@@ -74,9 +74,28 @@ bool EntityZombie::handleMessage(const Telegram& msg)
     
     if ( msg.msg == MessageType::HITTED_BY_GUN || msg.msg == MessageType::HITTED_BY_AXE || msg.msg == MessageType::HITTED_BY_FIST )
     {
-        ReceiverSenderDamage* s = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
-        if ( _blood > 0 ) _blood -= s->damage;
-        if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&ZombieDead::getInstance());
+        ReceiverSenderDamage* d = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
+        if ( _blood > 0 ) _blood -= d->damage;
+        if ( _blood <= 0 && isAlive() )
+        {
+            if ( d->sender->getTag() == _game->getPlayerPtr()->getTag() )
+            {
+                if ( msg.msg == MessageType::HITTED_BY_GUN)
+                {
+                    SoundSource s;
+                    s.fileName = "kill_sound.mp3";
+                    s.position = static_cast<HumanBase*>(d->sender)->getWorldPosition();
+                    s.soundRange = 100.0f;
+                    s.volume = 1.0f;
+                    _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
+                }
+                
+                std::string text = "kill zombie!";
+                _game->sendMessage(0.0, d->sender, nullptr, MessageType::DISPLAY_TEXT, &text);
+            }
+
+            this->getFSM()->changeState(&ZombieDead::getInstance());
+        }
         
         // only apply to player
         if ( _uiLayer )

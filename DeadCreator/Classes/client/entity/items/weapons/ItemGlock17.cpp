@@ -86,7 +86,7 @@ void ItemGlock17::attackImpl()
     this->setNumOfLeftRounds( getNumOfLeftRounds() - 1 );
     
     auto owner = _owner;
-    owner->vibrate(1.0f);
+    owner->attackVibrate(1.0f);
     
     std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
     Vec2 worldPos = owner->getWorldPosition();

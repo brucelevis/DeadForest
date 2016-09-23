@@ -297,6 +297,13 @@ bool HumanBase::handleMessage(const Telegram& msg)
         ret = true;
     }
     
+    else if ( msg.msg == MessageType::HITTED_BY_FIST )
+    {
+        this->hittedVibrate(0.3f);
+        
+        ret = true;
+    }
+    
     else if ( msg.msg == MessageType::SYNC_INVENTORY_WEAPON_VIEW )
     {
         if ( _uiLayer )
@@ -468,7 +475,7 @@ void HumanBase::attackByFist()
 }
 
 
-void HumanBase::vibrate(float force)
+void HumanBase::attackVibrate(float force)
 {
     _game->sendMessage(0.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * getHeading()));
     _game->sendMessage(0.05 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * getHeading()));
@@ -476,6 +483,16 @@ void HumanBase::vibrate(float force)
     _game->sendMessage(0.30 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
     _game->sendMessage(0.35 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
     _game->sendMessage(0.40 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
+    _game->sendMessage(0.45 / 3.0, this, this, MessageType::RESET_BALANCE, nullptr);
+}
+
+
+void HumanBase::hittedVibrate(float force)
+{
+    _game->sendMessage(0.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * random(0.0f, 1.0f), force * 4.0f * random(0.0f, 1.0f)));
+    _game->sendMessage(0.05 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * random(0.0f, 1.0f), force * 4.0f * random(0.0f, 1.0f)));
+    _game->sendMessage(0.10 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * random(0.0f, 1.0f), force * 4.0f * random(0.0f, 1.0f)));
+    _game->sendMessage(0.30 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * random(0.0f, 1.0f), force * 4.0f * random(0.0f, 1.0f)));
     _game->sendMessage(0.45 / 3.0, this, this, MessageType::RESET_BALANCE, nullptr);
 }
 

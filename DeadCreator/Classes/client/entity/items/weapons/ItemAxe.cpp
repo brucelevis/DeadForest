@@ -105,7 +105,7 @@ void ItemAxe::attackImpl()
         s.fileName = "AxeHit" + _to_string(random(0,2)) + ".mp3";
         s.position = worldPos;
         s.soundRange = 200.0f;
-        _game->sendMessage(0.0, owner, owner, MessageType::PLAY_SOUND, &s);
+        _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
         _game->sendMessage(0.0, owner, owner, MessageType::HIT, nullptr);
     }
     else
@@ -114,7 +114,7 @@ void ItemAxe::attackImpl()
         s.fileName = "AxeSwing" + _to_string(random(0,2)) + ".mp3";
         s.position = worldPos;
         s.soundRange = 200.0f;
-        _game->sendMessage(0.0, owner, owner, MessageType::PLAY_SOUND, &s);
+        _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
         _game->sendMessage(0.0, owner, owner, MessageType::NO_HIT, nullptr);
     }
 }

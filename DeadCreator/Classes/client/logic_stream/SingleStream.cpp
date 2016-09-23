@@ -15,6 +15,7 @@
 #include "InputCommands.hpp"
 #include "AnimatedFiniteEntity.hpp"
 #include "InventoryData.hpp"
+#include "Camera2D.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
 
@@ -136,7 +137,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
                 s.fileName = "AxeGet.mp3";
                 s.position = player->getWorldPosition();
                 s.soundRange = 200.0f;
-                _game->sendMessage(0.0, player, player, MessageType::PLAY_SOUND, &s);
+                _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
             }
             else
             {
@@ -144,7 +145,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
                 s.fileName = "M16A2Enter.mp3";
                 s.position = player->getWorldPosition();
                 s.soundRange = 200.0f;
-                _game->sendMessage(0.0, player, player, MessageType::PLAY_SOUND, &s);
+                _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
             }
         
             // ui 갱신
@@ -175,10 +176,31 @@ bool SingleStream::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::ATTACK_BY_WEAPON )
     {
         auto owner = static_cast<HumanBase*>(msg.extraInfo);
-        owner->attack();
+        owner->attackByWeapon();
         
         return true;
     }
+    
+    else if ( msg.msg == MessageType::ATTACK_BY_FIST )
+    {
+        auto owner = static_cast<HumanBase*>(msg.extraInfo);
+        owner->attackByFist();
+        
+        return true;
+    }
+    
+    else if ( msg.msg == MessageType::PLAY_SOUND )
+    {
+        SoundSource* s =  static_cast<SoundSource*>(msg.extraInfo);
+        float t = (1.0f - (s->position - _game->getCamera()->getCameraPos()).getLength() / s->soundRange) * s->volume;
+        if ( t >= 0.0f )
+        {
+            experimental::AudioEngine::setVolume( experimental::AudioEngine::play2d("client/sounds/" + s->fileName), t);
+        }
+        
+        return true;
+    }
+    
     
     return false;
 }

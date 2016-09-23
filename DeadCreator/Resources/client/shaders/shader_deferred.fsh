@@ -65,10 +65,10 @@ void main()
     vec4 originColor = texture2D(CC_Texture0, v_texCoord);
     vec4 staticColor = texture2D(u_staticTex, v_texCoord);
     vec4 dynamicColor = texture2D(u_dynamicTex, v_texCoord);
-    vec4 normalColor = texture2D(u_normalTex, v_texCoord);
+//    vec4 normalColor = texture2D(u_normalTex, v_texCoord);
 //    vec4 occlusionColor = blur(u_occlusionTex, v_texCoord, 5.0 , 2.0);
-//    vec4 occlusionColor = texture2D(u_occlusionTex, v_texCoord);
-    vec4 occlusionColor = vec4(1.0);
+    vec4 occlusionColor = texture2D(u_occlusionTex, v_texCoord);
+//    vec4 occlusionColor = vec4(1.0);
     
     vec4 visibleStaticColor = staticColor * occlusionColor.r * (1.0 - dynamicColor.a);
     vec4 unvisibleStaticColor = staticColor * (1.0 - occlusionColor.r);
@@ -88,15 +88,15 @@ void main()
     float t = min(dist / lightRange, 1.0);
     float identity = 1.0 - t;
 
-    vec3 lightColor = vec3(1.0);
-    float intensity = 1.0;
-    vec3 lightDir = normalize(pixelPos - lightPos);
-    vec3 ambient = calcAmbient(lightColor, intensity);
-    vec3 diffuse = calcDiffuse(lightColor, intensity, normalColor, lightDir);
-    vec3 specular = calcSpecular(lightColor, intensity, normalColor, lightDir, lightPos, pixelPos);
+//    vec3 lightColor = vec3(1.0);
+//    float intensity = 1.0;
+//    vec3 lightDir = normalize(pixelPos - lightPos);
+//    vec3 ambient = calcAmbient(lightColor, intensity);
+//    vec3 diffuse = calcDiffuse(lightColor, intensity, normalColor, lightDir);
+//    vec3 specular = calcSpecular(lightColor, intensity, normalColor, lightDir, lightPos, pixelPos);
     
-    vec3 lightFactor = ambient + diffuse + specular;
-    dynamicColor.rgb *= lightFactor;
+//    vec3 lightFactor = ambient + diffuse + specular;
+//    dynamicColor.rgb *= lightFactor;
     dynamicColor *= occlusionColor.r;
 
     vec4 resultColor = vec4(0.0, 0.0, 0.0, 1.0);

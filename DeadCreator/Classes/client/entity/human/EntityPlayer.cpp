@@ -102,7 +102,7 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         ret = true;
     }
     
-    if ( msg.msg == MessageType::HITTED_BY_GUN || msg.msg == MessageType::HITTED_BY_AXE )
+    if ( msg.msg == MessageType::HITTED_BY_GUN || msg.msg == MessageType::HITTED_BY_AXE || msg.msg == MessageType::HITTED_BY_FIST )
     {
         ReceiverSenderDamage* s = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
         if ( _blood > 0 ) _blood -= s->damage;

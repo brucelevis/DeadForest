@@ -258,7 +258,7 @@ void HumanBase::setFootGauge(float g)
         else if ( onTile == TileType::GRASS ) s.fileName = "Grass" + _to_string(random(1, 4)) + ".mp3";
         else if ( onTile == TileType::WATER ) s.fileName = "Water" + _to_string(random(1, 4)) + ".mp3";
         
-        _game->sendMessage(0.0, this, this, MessageType::PLAY_SOUND, &s);
+        _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
         
         return ;
     }
@@ -273,16 +273,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
     
     if ( _FSM ) ret = _FSM->handleMessage(msg);
     
-    if ( msg.msg == MessageType::PLAY_SOUND )
-    {
-        SoundSource* s =  static_cast<SoundSource*>(msg.extraInfo);
-        float t = (1.0f - (s->position - _game->getCamera()->getCameraPos()).getLength() / s->soundRange) * s->volume;
-        experimental::AudioEngine::setVolume( experimental::AudioEngine::play2d("client/sounds/" + s->fileName), t);
-        
-        ret = true;
-    }
-    
-    else if ( msg.msg  == MessageType::HITTED_BY_GUN )
+    if ( msg.msg  == MessageType::HITTED_BY_GUN )
     {
         AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1, 5)) + ".png"},
                                                                    random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
@@ -386,7 +377,6 @@ void HumanBase::hittedByWeapon(EntityType type, int damage)
         d.damage = damage;
         _game->sendMessage(0.0, this, nullptr, MessageType::HITTED_BY_AXE, &d);
     }
-    
 }
 
 
@@ -429,9 +419,52 @@ void HumanBase::reload()
 }
 
 
-void HumanBase::attack()
+void HumanBase::attackByWeapon()
 {
     if ( _equipedWeapon ) _equipedWeapon->attack();
+}
+
+
+void HumanBase::attackByFist()
+{
+    if ( !_equipedWeapon )
+    {
+        Vec2 worldPos = this->getWorldPosition();
+        
+        // 엔티티들과의 충돌처리
+        bool isHit = false;
+        Vec2 shootAt = this->getHeading();
+        const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, 40.0f);
+        for (const auto &d : members)
+        {
+            if ( d == this ) continue;
+            
+            if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+            {
+                HumanBase* human = static_cast<HumanBase*>(d);
+                if( human->isAlive() && physics::intersect(Segment(worldPos, worldPos + this->getHeading() * 40.0f),
+                                                           Circle(d->getWorldPosition(), human->getBoundingRadius())) )
+                {
+                    ReceiverSenderDamage s;
+                    s.damage = 10.0f;
+                    s.receiver = human;
+                    s.sender = this;
+                    _game->sendMessage(0.0, human, this, MessageType::HITTED_BY_FIST, &s);
+                    
+                    isHit = true;
+                }
+            }
+        }
+        
+        if ( isHit )
+        {
+            _game->sendMessage(0.0, this, this, MessageType::HIT, nullptr);
+        }
+        else
+        {
+            _game->sendMessage(0.0, this, this, MessageType::NO_HIT, nullptr);
+        }
+    }
 }
 
 

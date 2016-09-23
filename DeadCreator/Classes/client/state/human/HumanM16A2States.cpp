@@ -60,7 +60,7 @@ void HumanM16A2IdleLoop::execute(HumanBase* human)
                 s.fileName = "Glock17Empty.mp3";
                 s.position = human->getWorldPosition();
                 s.soundRange = 200.0f;
-                human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+                human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
             }
             
             WeaponBase* weapon = human->getEquipedWeapon();
@@ -192,7 +192,7 @@ void HumanM16A2Attack::enter(HumanBase* human)
     s.fileName = "M16A2Fire.mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 2000.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
     human->getGame()->sendMessage(0.0, human, human, MessageType::M16A2_SHOOT, nullptr);
     human->getGame()->sendMessage(0.12, human, human, MessageType::M16A2_SHOOT, nullptr);
@@ -255,7 +255,7 @@ void HumanM16A2Reload::enter(HumanBase* human)
     s.fileName = "M16A2Reload.mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 400.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
     human->setStateName("reload");
 }
@@ -300,7 +300,7 @@ void HumanM16A2Out::enter(HumanBase* human)
     s.fileName = "GunEnter.mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
     human->setStateName("equip weapon");
 }
@@ -345,7 +345,7 @@ void HumanM16A2In::enter(HumanBase* human)
     s.fileName = "M16A2Enter.mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
     human->setStateName("release weapon");
 }

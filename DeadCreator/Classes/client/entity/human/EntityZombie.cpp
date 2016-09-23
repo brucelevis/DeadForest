@@ -72,7 +72,7 @@ bool EntityZombie::handleMessage(const Telegram& msg)
     
     ret = HumanBase::handleMessage(msg);
     
-    if ( msg.msg == MessageType::HITTED_BY_GUN || msg.msg == MessageType::HITTED_BY_AXE )
+    if ( msg.msg == MessageType::HITTED_BY_GUN || msg.msg == MessageType::HITTED_BY_AXE || msg.msg == MessageType::HITTED_BY_FIST )
     {
         ReceiverSenderDamage* s = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
         if ( _blood > 0 ) _blood -= s->damage;
@@ -85,6 +85,22 @@ bool EntityZombie::handleMessage(const Telegram& msg)
             h = cocos2d::clampf(h, 0.0f, 1.0f);
             _uiLayer->setHitPoint(h);
         }
+    }
+    
+    else if ( msg.msg == MessageType::HIT )
+    {
+        // only apply to player
+        if ( _uiLayer ) _uiLayer->runCrossHairEffect("hit");
+        
+        ret = true;
+    }
+    
+    else if ( msg.msg == MessageType::NO_HIT )
+    {
+        // only apply to player
+        if ( _uiLayer ) _uiLayer->runCrossHairEffect("fire");
+        
+        ret = true;
     }
     
     return ret;

@@ -60,7 +60,7 @@ void HumanM1897IdleLoop::execute(HumanBase* human)
                 s.fileName = "Glock17Empty.mp3";
                 s.position = human->getWorldPosition();
                 s.soundRange = 200.0f;
-                human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+                human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
             }
             
             WeaponBase* weapon = human->getEquipedWeapon();
@@ -194,7 +194,7 @@ void HumanM1897Reload::enter(HumanBase* human)
     s.fileName = "shotgun_reload.mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 400.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
     human->setStateName("reload");
 }
@@ -239,7 +239,7 @@ void HumanM1897Out::enter(HumanBase* human)
     s.fileName = "GunEnter.mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
     human->setStateName("equip weapon");
 }
@@ -284,7 +284,7 @@ void HumanM1897In::enter(HumanBase* human)
     s.fileName = "M16A2Enter.mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
     human->setStateName("release weapon");
 }
@@ -433,7 +433,7 @@ void HumanM1897AttackAction::enter(HumanBase* human)
     s.fileName = "shotgun.mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 2000.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
     human->getGame()->pushLogic(0.0, MessageType::ATTACK_BY_WEAPON, human);
 }

@@ -36,6 +36,18 @@ void ZombieIdleLoop::execute(HumanBase* zombie)
         zombie->getAnimator()->pushAnimationFrames(&AnimZombieIdleLoop::getInstance());
     }
     
+    if ( isMasked(inputMask, HumanBehaviorType::ATTACK) )
+    {
+        int random = cocos2d::random(0, 1);
+        if ( random == 0 ) zombie->getFSM()->changeState(&ZombieAttack1::getInstance());
+        else zombie->getFSM()->changeState(&ZombieAttack2::getInstance());
+    }
+    
+    if ( isMasked(inputMask, HumanBehaviorType::TURN) )
+    {
+        zombie->setVelocity( moving * zombie->getWalkSpeed() );
+    }
+    
     if ( inputMask == HumanBehaviorType::MOVE )
     {
         zombie->getFSM()->changeState(&ZombieRunLoop::getInstance());
@@ -114,27 +126,97 @@ bool ZombieRunLoop::onMessage(HumanBase* zombie, const Telegram& msg)
 
 
 //
-// ZombieAttack
+// ZombieAttack1
 //
-void ZombieAttack::enter(HumanBase* zombie)
+void ZombieAttack1::enter(HumanBase* zombie)
 {
-    zombie->getAnimator()->pushAnimationFrames(&AnimZombieAttack::getInstance());
+    zombie->getAnimator()->pushAnimationFrames(&AnimZombieAttack1::getInstance());
     zombie->setStateName("attack");
+    
+    int rand = cocos2d::random(0, 8);
+    if ( rand < 3 )
+    {
+        SoundSource s;
+        s.fileName = std::string("ZombieScream") + _to_string(rand) + ".mp3";
+        s.position = zombie->getWorldPosition();
+        s.soundRange = 800.0f;
+        zombie->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
+    }
+    
+    zombie->getGame()->pushLogic(0.0, MessageType::ATTACK_BY_FIST, zombie);
 }
 
 
-void ZombieAttack::execute(HumanBase* zombie)
+void ZombieAttack1::execute(HumanBase* zombie)
 {
+    int inputMask = zombie->getInputMask();
+    Vec2 moving = zombie->getMoving();
+    
+    if ( zombie->getAnimator()->isQueueEmpty() )
+    {
+        zombie->getFSM()->changeState(&ZombieIdleLoop::getInstance());
+    }
+        
+    if( isMasked(inputMask, (int)HumanBehaviorType::MOVE) ) zombie->setVelocity( moving * zombie->getWalkSpeed() );
+    else zombie->setVelocity( Vec2::ZERO );
 }
 
 
-void ZombieAttack::exit(HumanBase* zombie)
+void ZombieAttack1::exit(HumanBase* zombie)
 {
     zombie->getAnimator()->clearFrameQueue();
 }
 
 
-bool ZombieAttack::onMessage(HumanBase* zombie, const Telegram& msg)
+bool ZombieAttack1::onMessage(HumanBase* zombie, const Telegram& msg)
+{
+    return false;
+}
+
+
+//
+// ZombieAttack2
+//
+void ZombieAttack2::enter(HumanBase* zombie)
+{
+    zombie->getAnimator()->pushAnimationFrames(&AnimZombieAttack2::getInstance());
+    zombie->setStateName("attack");
+    
+    int rand = cocos2d::random(0, 8);
+    if ( rand < 3 )
+    {
+        SoundSource s;
+        s.fileName = std::string("ZombieScream") + _to_string(rand) + ".mp3";
+        s.position = zombie->getWorldPosition();
+        s.soundRange = 800.0f;
+        zombie->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
+    }
+    zombie->getGame()->pushLogic(0.0, MessageType::ATTACK_BY_FIST, zombie);
+}
+
+
+void ZombieAttack2::execute(HumanBase* zombie)
+{
+    int inputMask = zombie->getInputMask();
+    Vec2 moving = zombie->getMoving();
+    
+    if ( zombie->getAnimator()->isQueueEmpty() )
+    {
+        zombie->getFSM()->changeState(&ZombieIdleLoop::getInstance());
+    }
+    
+    if( isMasked(inputMask, (int)HumanBehaviorType::MOVE) ) zombie->setVelocity( moving * zombie->getWalkSpeed() );
+    else zombie->setVelocity( Vec2::ZERO );
+}
+
+
+void ZombieAttack2::exit(HumanBase* zombie)
+{
+    zombie->getAnimator()->clearFrameQueue();
+}
+
+
+bool ZombieAttack2::onMessage(HumanBase* zombie, const Telegram& msg)
 {
     return false;
 }
@@ -153,6 +235,12 @@ void ZombieDead::enter(HumanBase* zombie)
     
     zombie->getAnimator()->pushAnimationFrames(&AnimZombieDead::getInstance());
     zombie->setStateName("dead");
+    
+    SoundSource s;
+    s.fileName = std::string("ZombieDie") + _to_string(cocos2d::random(0, 2)) + ".mp3";
+    s.position = zombie->getWorldPosition();
+    s.soundRange = 800.0f;
+    zombie->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
 }
 
 

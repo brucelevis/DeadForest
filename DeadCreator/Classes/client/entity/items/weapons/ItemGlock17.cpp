@@ -148,9 +148,9 @@ void ItemGlock17::attackImpl()
             
             SoundSource s;
             s.fileName = "GunShotAt" + _to_string(random(0, 1)) + ".mp3";
-            s.position = worldPos + shootAt * collider.first;
+            s.position = worldPos;
             s.soundRange = 2000.0f;
-            _game->sendMessage(0.0, owner, owner, MessageType::PLAY_SOUND, &s);
+            _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
             
             _game->sendMessage(0.0, owner, owner, MessageType::HIT, nullptr);
         }

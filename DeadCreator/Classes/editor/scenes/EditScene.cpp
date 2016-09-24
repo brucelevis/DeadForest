@@ -486,6 +486,14 @@ void EditScene::createGMXLayer(const std::string& filePath)
         file->force2.isAlly = gmxFile->force2_info()->is_ally();
         file->force2.isVision = gmxFile->force2_info()->is_vision();
         
+        std::strncpy(file->force3.name.data(), gmxFile->force3_info()->name()->c_str(), 20);
+        file->force3.isAlly = gmxFile->force3_info()->is_ally();
+        file->force3.isVision = gmxFile->force3_info()->is_vision();
+        
+        std::strncpy(file->force4.name.data(), gmxFile->force4_info()->name()->c_str(), 20);
+        file->force4.isAlly = gmxFile->force4_info()->is_ally();
+        file->force4.isVision = gmxFile->force4_info()->is_vision();
+        
         _layer = GMXLayer::create(*this, *file);
         _layer->setCurrFilePath(filePath);
         _layer->enableFirstFile(false);

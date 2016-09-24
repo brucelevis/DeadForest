@@ -84,8 +84,7 @@ void ItemAxe::attackImpl()
         if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
         {
             HumanBase* human = static_cast<HumanBase*>(d);
-            if( human->isAlive() && physics::intersect(Segment(worldPos,
-                                                               worldPos + owner->getHeading() * this->getRange()),
+            if( human->isAlive() && physics::intersect(Segment(worldPos, worldPos + owner->getHeading() * this->getRange()),
                                                        Circle(d->getWorldPosition(), human->getBoundingRadius())) )
             {
                 ReceiverSenderDamage s;

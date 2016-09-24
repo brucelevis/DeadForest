@@ -15,7 +15,7 @@
 namespace realtrick
 {
     
-    enum class Force : int { FORCE_1 = 0, FORCE_2 = 1 };
+    enum class Force : int { FORCE_1 = 0, FORCE_2 = 1, FORCE_3 = 2, FORCE_4 = 3 };
     enum class Owner : int { HUMAN = 0, COMPUTER = 1, UNUSED = 2 };
             
     struct PlayerInfo

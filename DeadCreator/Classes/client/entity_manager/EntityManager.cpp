@@ -56,6 +56,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             
             if ( res->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
                 zombie->setBrain(new ZombieBrain(zombie));
+
         }
         
         else if ( entityType == EntityType::BULLET_556MM )

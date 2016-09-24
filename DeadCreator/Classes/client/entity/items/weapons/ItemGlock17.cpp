@@ -105,8 +105,8 @@ void ItemGlock17::attackImpl()
         if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
         {
             HumanBase* human = static_cast<HumanBase*>(d);
-            if( human->isAlive() && physics::intersect(Segment(worldPos,
-                                                               worldPos + owner->getHeading() * this->getRange()), Circle(d->getWorldPosition(), 20.0f)) )
+            if( human->isAlive() && physics::intersect(Segment(worldPos, worldPos + owner->getHeading() * this->getRange()),
+                                                       Circle(d->getWorldPosition(), 20.0f)) )
             {
                 closestIntersectPoint.push_back(std::make_pair(worldPos.distance(d->getWorldPosition()), d));
             }

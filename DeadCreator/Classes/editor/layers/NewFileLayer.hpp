@@ -182,6 +182,14 @@ namespace realtrick
                         file->force2.isAlly = true;
                         file->force2.isVision = true;
                         
+                        std::strncpy(file->force3.name.data(), "Force 3", 20);
+                        file->force3.isAlly = true;
+                        file->force3.isVision = true;
+                        
+                        std::strncpy(file->force4.name.data(), "Force 4", 20);
+                        file->force4.isAlly = true;
+                        file->force4.isVision = true;
+                        
                         _imguiLayer->createGMXLayer(file);
                         
                         opened = false;

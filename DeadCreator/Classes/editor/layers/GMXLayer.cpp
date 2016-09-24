@@ -1887,8 +1887,14 @@ void GMXLayer::save(const std::string& path)
     }
     
     // force info
-    auto force1 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force1.name.data()), _file.force1.isAlly, _file.force1.isVision);
-    auto force2 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force2.name.data()), _file.force2.isAlly, _file.force2.isVision);
+    auto force1 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force1.name.data()),
+                                               _file.force1.isAlly, _file.force1.isVision);
+    auto force2 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force2.name.data()),
+                                               _file.force2.isAlly, _file.force2.isVision);
+    auto force3 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force3.name.data()),
+                                               _file.force3.isAlly, _file.force3.isVision);
+    auto force4 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force4.name.data()),
+                                               _file.force4.isAlly, _file.force4.isVision);
     
     auto file = DeadCreator::CreateGMXFile(builder,
                                            static_cast<DeadCreator::TileType>(_file.defaultTile),
@@ -1899,7 +1905,7 @@ void GMXLayer::save(const std::string& path)
                                            builder.CreateVector(locations),
                                            builder.CreateVector(triggers),
                                            builder.CreateVector(playerInfos),
-                                           force1, force2);
+                                           force1, force2, force3, force4);
     builder.Finish(file);
     
     flatbuffers::SaveFile(path.c_str(),

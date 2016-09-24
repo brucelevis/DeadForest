@@ -80,8 +80,12 @@ namespace realtrick
                     for ( auto i = 1 ; i <= 8 ; ++ i)
                     {
                         const PlayerInfo& info = *(_gmxLayer.getPlayerInfos() + i);
-                        if ( info.force != Force::FORCE_1 || info.owner != Owner::HUMAN ) continue;
+                        if ( info.force != Force::FORCE_1 || info.owner == Owner::UNUSED ) continue;
+                        
                         std::string name = "Player " + _to_string(static_cast<int>(info.player));
+                        if ( info.owner == Owner::HUMAN ) name += " (Human)";
+                        else if ( info.owner == Owner::COMPUTER ) name += " (Computer)";
+                        
                         ImGui::Selectable(name.c_str());
                         if ( ImGui::IsItemClicked() )
                         {
@@ -115,8 +119,12 @@ namespace realtrick
                     for ( auto i = 1 ; i <= 8 ; ++ i)
                     {
                         const PlayerInfo& info = *(_gmxLayer.getPlayerInfos() + i);
-                        if ( info.force != Force::FORCE_2 || info.owner != Owner::HUMAN ) continue;
+                        if ( info.force != Force::FORCE_2 || info.owner == Owner::UNUSED ) continue;
+                        
                         std::string name = "Player " + _to_string(static_cast<int>(info.player));
+                        if ( info.owner == Owner::HUMAN ) name += " (Human)";
+                        else if ( info.owner == Owner::COMPUTER ) name += " (Computer)";
+        
                         ImGui::Selectable(name.c_str());
                         if ( ImGui::IsItemClicked() )
                         {
@@ -136,7 +144,7 @@ namespace realtrick
                     ImGui::BeginGroup();
                     ImGui::PushID(2);
                     ImGui::PushItemWidth(200);
-                    ImGui::InputText("", file.force2.name.data(), 20);
+                    ImGui::InputText("", file.force3.name.data(), 20);
                     ImGui::PopItemWidth();
                     ImGui::BeginChild("dummy3", ImVec2(200,200), true);
                     
@@ -149,8 +157,12 @@ namespace realtrick
                     for ( auto i = 1 ; i <= 8 ; ++ i)
                     {
                         const PlayerInfo& info = *(_gmxLayer.getPlayerInfos() + i);
-                        if ( info.force != Force::FORCE_3 ) continue;
+                        if ( info.force != Force::FORCE_3 || info.owner == Owner::UNUSED) continue;
+                        
                         std::string name = "Player " + _to_string(static_cast<int>(info.player));
+                        if ( info.owner == Owner::HUMAN ) name += " (Human)";
+                        else if ( info.owner == Owner::COMPUTER ) name += " (Computer)";
+                        
                         ImGui::Selectable(name.c_str());
                         if ( ImGui::IsItemClicked() )
                         {
@@ -161,8 +173,8 @@ namespace realtrick
                     
                     ImGui::EndChild();
                     ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_ComboBg]);
-                    ImGui::Checkbox("ally", &file.force2.isAlly);
-                    ImGui::SameLine(); ImGui::Checkbox("vision", &file.force2.isVision);
+                    ImGui::Checkbox("ally", &file.force3.isAlly);
+                    ImGui::SameLine(); ImGui::Checkbox("vision", &file.force3.isVision);
                     ImGui::PopStyleColor();
                     ImGui::PopID();
                     ImGui::EndGroup();
@@ -171,7 +183,7 @@ namespace realtrick
                     ImGui::BeginGroup();
                     ImGui::PushID(3);
                     ImGui::PushItemWidth(200);
-                    ImGui::InputText("", file.force2.name.data(), 20);
+                    ImGui::InputText("", file.force4.name.data(), 20);
                     ImGui::PopItemWidth();
                     ImGui::BeginChild("dummy4", ImVec2(200,200), true);
                     
@@ -184,8 +196,12 @@ namespace realtrick
                     for ( auto i = 1 ; i <= 8 ; ++ i)
                     {
                         const PlayerInfo& info = *(_gmxLayer.getPlayerInfos() + i);
-                        if ( info.force != Force::FORCE_4 ) continue;
+                        if ( info.force != Force::FORCE_4 || info.owner == Owner::UNUSED ) continue;
+                        
                         std::string name = "Player " + _to_string(static_cast<int>(info.player));
+                        if ( info.owner == Owner::HUMAN ) name += " (Human)";
+                        else if ( info.owner == Owner::COMPUTER ) name += " (Computer)";
+                        
                         ImGui::Selectable(name.c_str());
                         if ( ImGui::IsItemClicked() )
                         {
@@ -196,8 +212,8 @@ namespace realtrick
                     
                     ImGui::EndChild();
                     ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_ComboBg]);
-                    ImGui::Checkbox("ally", &file.force2.isAlly);
-                    ImGui::SameLine(); ImGui::Checkbox("vision", &file.force2.isVision);
+                    ImGui::Checkbox("ally", &file.force4.isAlly);
+                    ImGui::SameLine(); ImGui::Checkbox("vision", &file.force4.isVision);
                     ImGui::PopStyleColor();
                     ImGui::PopID();
                     ImGui::EndGroup();

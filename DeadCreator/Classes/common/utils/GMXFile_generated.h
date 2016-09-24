@@ -957,7 +957,9 @@ namespace DeadCreator {
             VT_TRIGGERS = 20,
             VT_PLAYERINFOS = 22,
             VT_FORCE1_INFO = 24,
-            VT_FORCE2_INFO = 26
+            VT_FORCE2_INFO = 26,
+            VT_FORCE3_INFO = 28,
+            VT_FORCE4_INFO = 30
         };
         TileType default_type() const { return static_cast<TileType>(GetField<int32_t>(VT_DEFAULT_TYPE, 0)); }
         const flatbuffers::Vector<flatbuffers::Offset<TileInfo>> *tiles() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<TileInfo>> *>(VT_TILES); }
@@ -971,6 +973,8 @@ namespace DeadCreator {
         const flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>> *playerInfos() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>> *>(VT_PLAYERINFOS); }
         const ForceInfo *force1_info() const { return GetPointer<const ForceInfo *>(VT_FORCE1_INFO); }
         const ForceInfo *force2_info() const { return GetPointer<const ForceInfo *>(VT_FORCE2_INFO); }
+        const ForceInfo *force3_info() const { return GetPointer<const ForceInfo *>(VT_FORCE3_INFO); }
+        const ForceInfo *force4_info() const { return GetPointer<const ForceInfo *>(VT_FORCE4_INFO); }
         bool Verify(flatbuffers::Verifier &verifier) const {
             return VerifyTableStart(verifier) &&
             VerifyField<int32_t>(verifier, VT_DEFAULT_TYPE) &&
@@ -999,6 +1003,10 @@ namespace DeadCreator {
             verifier.VerifyTable(force1_info()) &&
             VerifyField<flatbuffers::uoffset_t>(verifier, VT_FORCE2_INFO) &&
             verifier.VerifyTable(force2_info()) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_FORCE3_INFO) &&
+            verifier.VerifyTable(force3_info()) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_FORCE4_INFO) &&
+            verifier.VerifyTable(force4_info()) &&
             verifier.EndTable();
         }
     };
@@ -1018,10 +1026,12 @@ namespace DeadCreator {
         void add_playerInfos(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>>> playerInfos) { fbb_.AddOffset(GMXFile::VT_PLAYERINFOS, playerInfos); }
         void add_force1_info(flatbuffers::Offset<ForceInfo> force1_info) { fbb_.AddOffset(GMXFile::VT_FORCE1_INFO, force1_info); }
         void add_force2_info(flatbuffers::Offset<ForceInfo> force2_info) { fbb_.AddOffset(GMXFile::VT_FORCE2_INFO, force2_info); }
+        void add_force3_info(flatbuffers::Offset<ForceInfo> force3_info) { fbb_.AddOffset(GMXFile::VT_FORCE3_INFO, force3_info); }
+        void add_force4_info(flatbuffers::Offset<ForceInfo> force4_info) { fbb_.AddOffset(GMXFile::VT_FORCE4_INFO, force4_info); }
         GMXFileBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
         GMXFileBuilder &operator=(const GMXFileBuilder &);
         flatbuffers::Offset<GMXFile> Finish() {
-            auto o = flatbuffers::Offset<GMXFile>(fbb_.EndTable(start_, 12));
+            auto o = flatbuffers::Offset<GMXFile>(fbb_.EndTable(start_, 14));
             return o;
         }
     };
@@ -1038,8 +1048,12 @@ namespace DeadCreator {
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Trigger>>> triggers = 0,
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>>> playerInfos = 0,
                                                       flatbuffers::Offset<ForceInfo> force1_info = 0,
-                                                      flatbuffers::Offset<ForceInfo> force2_info = 0) {
+                                                      flatbuffers::Offset<ForceInfo> force2_info = 0,
+                                                      flatbuffers::Offset<ForceInfo> force3_info = 0,
+                                                      flatbuffers::Offset<ForceInfo> force4_info = 0) {
         GMXFileBuilder builder_(_fbb);
+        builder_.add_force4_info(force4_info);
+        builder_.add_force3_info(force3_info);
         builder_.add_force2_info(force2_info);
         builder_.add_force1_info(force1_info);
         builder_.add_playerInfos(playerInfos);

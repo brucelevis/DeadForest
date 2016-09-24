@@ -123,10 +123,6 @@ namespace realtrick
             // player info
             PlayerInfo _playerInfos[9];
             
-            // force
-            ForceInfo _force1Info;
-            ForceInfo _force2Info;
-            
         };
         
     }

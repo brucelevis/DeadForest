@@ -24,6 +24,7 @@ using namespace cocos2d;
 
 void PlayGameLayer::showLayer(bool& opened)
 {
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 	static bool isStatusOn = true;
 	static bool isPlayerInfo = true;
 	static bool isGridOn = false;
@@ -52,10 +53,8 @@ void PlayGameLayer::showLayer(bool& opened)
 	if (_isGameStarted)
 	{
 		auto game = _gameLayer->getGame();
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 		if (!game->isGameEnded())
 		{
-#endif
 			ImGui::SetCursorScreenPos(ImVec2(origin.x, origin.y));
 			auto drawList = ImGui::GetWindowDrawList();
 
@@ -203,31 +202,25 @@ void PlayGameLayer::showLayer(bool& opened)
 			{
 				
 			}
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 		}
-#endif
 	}
 	ImGui::End();
 
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 	if (_isGameStarted)
 	{
 		auto game = _gameLayer->getGame();
 		if (game->isGameEnded())
 			opened = false;
 	}
-#endif
 
 	if (!opened) closeLayer();
 
 	// setting layer
 	if (_isGameStarted)
 	{
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 		auto game = _gameLayer->getGame();
 		if (!game->isGameEnded())
 		{
-#endif
 			ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
 			ImGui::Begin("statistic", NULL, ImGuiWindowFlags_ShowBorders);
 
@@ -261,10 +254,9 @@ void PlayGameLayer::showLayer(bool& opened)
             }
 
 			ImGui::End();
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 		}
-#endif
 	}
+#endif
 }
 
 

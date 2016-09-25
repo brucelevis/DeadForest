@@ -43,16 +43,19 @@ SimpleProfiler& SimpleProfiler::getInstance()
 
 void SimpleProfiler::beginFrame()
 {
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     if ( !_mainLoopBlock )
         _mainLoopBlock = Block::create("main_loop");
     
     _blockStack.push_back(_mainLoopBlock);
     _mainLoopBlock->begin();
+#endif
 }
 
 
 void SimpleProfiler::endFrame()
 {
+    #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     if ( !_mainLoopBlock )
         throw std::runtime_error("main_loop block is not exist so can not call endFrame().");
     
@@ -61,11 +64,13 @@ void SimpleProfiler::endFrame()
     
     _blockStack.pop_back();
     _mainLoopBlock->end();
+#endif
 }
 
 
 void SimpleProfiler::begin(const std::string& name)
 {
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     if ( _blockStack.front()->getName() != "main_loop" )
         throw std::runtime_error("main_loop block is not exist. please call 'PROFILE_BEGIN_FRAME'");
     
@@ -82,11 +87,13 @@ void SimpleProfiler::begin(const std::string& name)
     auto cachedBlock = _blocks.at(name);
     _blockStack.push_back(cachedBlock);
     cachedBlock->begin();
+#endif
 }
 
 
 void SimpleProfiler::end(const std::string& name)
 {
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     if ( _blockStack.empty() )
         throw std::runtime_error("block stack is empty so can not call end().");
     
@@ -98,12 +105,15 @@ void SimpleProfiler::end(const std::string& name)
     
     _blockStack.pop_back();
     _blocks.at(name)->end();
+#endif
 }
 
 
 void SimpleProfiler::reset()
 {
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     if ( _mainLoopBlock ) _mainLoopBlock->reset();
+#endif
 }
 
 

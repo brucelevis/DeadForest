@@ -466,7 +466,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                 file->tileInfos[i][j] = tileName;
             }
         }
-        
+
         
         // player infos
         int i = 1;

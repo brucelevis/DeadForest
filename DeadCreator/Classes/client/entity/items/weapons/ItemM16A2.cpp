@@ -97,6 +97,7 @@ void ItemM16A2::attackImpl()
     for (const auto &d : members)
     {
         if ( d == owner ) continue;
+        if ( _game->isAllyState(owner->getPlayerType(), d->getPlayerType()) ) continue;
         
         if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
         {

@@ -478,6 +478,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
             ++i;
         }
         
+        // force infos
         std::strncpy(file->force1.name.data(), gmxFile->force1_info()->name()->c_str(), 20);
         file->force1.isAlly = gmxFile->force1_info()->is_ally();
         file->force1.isVision = gmxFile->force1_info()->is_vision();

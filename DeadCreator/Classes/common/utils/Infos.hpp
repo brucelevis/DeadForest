@@ -23,12 +23,16 @@ namespace realtrick
         PlayerType player;
         Force force;
         Owner owner;
+        bool isAllyWith[9];
+        bool isSharedVision[9];
         
         PlayerInfo(PlayerType p = PlayerType::INVALID, Force f = Force::FORCE_1, Owner o = Owner::UNUSED) :
         player(p),
         force(f),
         owner(o)
-        {}
+        {
+            for(auto i = 0 ; i < 9 ; ++ i) isAllyWith[i] = isSharedVision[i] = false;
+        }
     };
             
     struct ForceInfo

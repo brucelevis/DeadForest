@@ -445,6 +445,7 @@ void HumanBase::attackByFist()
         for (const auto &d : members)
         {
             if ( d == this ) continue;
+            if ( _game->isAllyState(getPlayerType(), d->getPlayerType()) ) continue;
             
             if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
             {

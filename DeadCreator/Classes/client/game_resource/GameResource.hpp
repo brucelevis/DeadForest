@@ -36,6 +36,7 @@ namespace realtrick
             
             friend class TriggerSystem;
             friend class EntityManager;
+            friend class Game;
             
         public:
         
@@ -119,6 +120,9 @@ namespace realtrick
             
             // trigger
             std::vector<TriggerData> _triggers;
+            
+            // force info
+            ForceInfo _forces[4];
             
             // player info
             PlayerInfo _playerInfos[9];

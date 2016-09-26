@@ -444,7 +444,6 @@ void HumanBase::attackByFist()
         const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, 40.0f);
         for (const auto &d : members)
         {
-            if ( d == this ) continue;
             if ( _game->isAllyState(getPlayerType(), d->getPlayerType()) ) continue;
             
             if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )

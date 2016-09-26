@@ -284,6 +284,9 @@ bool GameResource::initWithBinary(const char* buffer)
             _playerInfos[i].isAllyWith[player] = true;
             _playerInfos[i].isSharedVision[player] = true;
         }
+        
+        _playerInfos[i].isAllyWith[i] = true;
+        _playerInfos[i].isSharedVision[i] = true;
     }
     
     return true;

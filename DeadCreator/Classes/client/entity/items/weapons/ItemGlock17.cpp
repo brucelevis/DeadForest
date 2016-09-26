@@ -101,7 +101,6 @@ void ItemGlock17::attackImpl()
     const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, this->getRange());
     for (const auto &d : members)
     {
-        if ( d == owner ) continue;
         if ( _game->isAllyState(owner->getPlayerType(), d->getPlayerType()) ) continue;
         
         if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )

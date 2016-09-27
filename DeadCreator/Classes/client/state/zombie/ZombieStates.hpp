@@ -60,16 +60,36 @@ namespace realtrick
         
         
         //
-        // ZombieAttack
+        // ZombieAttack1
         //
-        class ZombieAttack : public State, public Singleton<ZombieAttack>
+        class ZombieAttack1 : public State, public Singleton<ZombieAttack1>
         {
             
         public:
             
-            friend Singleton<ZombieAttack>;
-            ZombieAttack() = default;
-            virtual ~ZombieAttack() = default;
+            friend Singleton<ZombieAttack1>;
+            ZombieAttack1() = default;
+            virtual ~ZombieAttack1() = default;
+            
+            virtual void enter(HumanBase* zombie) override;
+            virtual void execute(HumanBase* zombie) override;
+            virtual void exit(HumanBase* zombie) override;
+            virtual bool onMessage(HumanBase* zombie, const Telegram& msg) override;
+            
+        };
+        
+        
+        //
+        // ZombieAttack2
+        //
+        class ZombieAttack2 : public State, public Singleton<ZombieAttack2>
+        {
+            
+        public:
+            
+            friend Singleton<ZombieAttack2>;
+            ZombieAttack2() = default;
+            virtual ~ZombieAttack2() = default;
             
             virtual void enter(HumanBase* zombie) override;
             virtual void execute(HumanBase* zombie) override;

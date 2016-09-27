@@ -242,15 +242,51 @@ bool GameResource::initWithBinary(const char* buffer)
         _triggers.push_back(data);
     }
     
-    // 10. player infos
-    int i = 1;
+    
+    // 10. force infos
+    strncpy(_forces[0].name.data(), file->force1_info()->name()->c_str(), 20);
+    _forces[0].isAlly = file->force1_info()->is_ally();
+    _forces[0].isVision = file->force1_info()->is_vision();
+    
+    strncpy(_forces[1].name.data(), file->force2_info()->name()->c_str(), 20);
+    _forces[1].isAlly = file->force2_info()->is_ally();
+    _forces[1].isVision = file->force2_info()->is_vision();
+    
+    strncpy(_forces[2].name.data(), file->force3_info()->name()->c_str(), 20);
+    _forces[2].isAlly = file->force3_info()->is_ally();
+    _forces[2].isVision = file->force3_info()->is_vision();
+    
+    strncpy(_forces[3].name.data(), file->force4_info()->name()->c_str(), 20);
+    _forces[3].isAlly = file->force4_info()->is_ally();
+    _forces[3].isVision = file->force4_info()->is_vision();
+    
+    
+    // 11. player infos
+    std::vector<int> forcePlayers[4];
+    int iter = 1;
     for ( auto info = file->playerInfos()->begin(); info != file->playerInfos()->end() ; ++ info )
     {
         
-        _playerInfos[i] = PlayerInfo(static_cast<PlayerType>(info->player()),
+        _playerInfos[iter] = PlayerInfo(static_cast<PlayerType>(info->player()),
                                      static_cast<Force>(info->force()),
                                      static_cast<Owner>(info->owner()));
-        ++i;
+        
+        forcePlayers[info->force()].push_back(info->player());
+        
+        ++iter;
+    }
+    
+    for (int i = 1 ; i <= 8; ++ i)
+    {
+        int force = static_cast<int>(_playerInfos[i].force);
+        for( auto player : forcePlayers[force] )
+        {
+            _playerInfos[i].isAllyWith[player] = true;
+            _playerInfos[i].isSharedVision[player] = true;
+        }
+        
+        _playerInfos[i].isAllyWith[i] = true;
+        _playerInfos[i].isSharedVision[i] = true;
     }
     
     return true;

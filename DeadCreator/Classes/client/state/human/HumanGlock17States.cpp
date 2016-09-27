@@ -59,7 +59,7 @@ void HumanGlock17IdleLoop::execute(HumanBase* human)
                 s.fileName = "Glock17Empty.mp3";
                 s.position = human->getWorldPosition();
                 s.soundRange = 200.0f;
-                human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+                human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
             }
             
             WeaponBase* weapon = human->getEquipedWeapon();
@@ -187,14 +187,15 @@ bool HumanGlock17MoveLoop::onMessage(HumanBase* human, const Telegram& msg)
 void HumanGlock17Attack::enter(HumanBase* human)
 {
     human->getAnimator()->pushAnimationFrames(&AnimHumanGlock17Attack::getInstance());
+    auto game = human->getGame();
     
     SoundSource s;
     s.fileName = "Glock17Fire" + _to_string(random(0, 2)) + ".mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 2000.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
-    human->getEquipedWeapon()->attack();
+    game->pushLogic(0.0, MessageType::ATTACK_BY_WEAPON, human);
     human->setStateName("attack");
 }
 
@@ -237,7 +238,7 @@ void HumanGlock17Reload::enter(HumanBase* human)
     s.fileName = "Glock17Reload.mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 400.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
     human->setStateName("reload");
 }
@@ -282,7 +283,7 @@ void HumanGlock17Out::enter(HumanBase* human)
     s.fileName = "GunEnter.mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
     human->setStateName("equip weapon");
 }
@@ -327,7 +328,7 @@ void HumanGlock17In::enter(HumanBase* human)
     s.fileName = "M16A2Enter.mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
     human->setStateName("release weapon");
 }

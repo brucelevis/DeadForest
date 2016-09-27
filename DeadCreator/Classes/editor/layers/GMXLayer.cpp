@@ -807,6 +807,20 @@ void GMXLayer::updateChunk(const cocos2d::Vec2& pivot)
                                                    worldPos.y - _file.tileHeight / 2 + (_file.tileHeight / 4 * i)),
                                               Color4F(1, 1, 1, 0.05f));
                 }
+                
+//                for ( int i = 0 ; i < _file.worldSize.height ; i += _cellSpacePartition->getCellHeight() )
+//                {
+//                    _worldDebugNode->drawLine(Vec2(0, i), Vec2(_file.worldSize.width, i), Color4F(1.0f, 0.0f, 0.0f, 0.4f));
+//                }
+//                
+//                for ( int i = 0 ; i < _file.worldSize.width ; i += _cellSpacePartition->getCellWidth() )
+//                {
+//                    _worldDebugNode->drawLine(Vec2(i, 0), Vec2(i, _file.worldSize.height), Color4F(1.0f, 0.0f, 0.0f, 0.4f));
+//                }
+//                
+//                _localDebugNode->clear();
+//                _localDebugNode->drawDot(Vec2(_layerSize.width / 2, _layerSize.height / 2), 5.0f, Color4F(1.0f, 1.0f, 0.0f, 1.0f));
+                
             }
         }
     }
@@ -1780,28 +1794,7 @@ void GMXLayer::save(const std::string& path)
     _isFirstFile = false;
     if ( path != "temp_game_map" ) _currFilePath = path;
     
-    log("save! path: %s", path.c_str());
-    log("file name: %s", _file.fileName.c_str());
-    log("default tile: %d", _file.defaultTile);
-    log("number of tile x: %d", _file.numOfTileX);
-    log("number of tile y: %d", _file.numOfTileY);
-    log("tile width: %d", _file.tileWidth);
-    log("tile height: %d", _file.tileHeight);
-    log("world size: %.f, %.f", _file.worldSize.width, _file.worldSize.height);
-    
-    for (int i = 0 ; i < _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4; ++ i)
-    {
-        for(int j = 0 ; j < _file.numOfTileX + DUMMY_TILE_SIZE * 2; ++ j)
-        {
-            if ( _tiles[i][j].getTileType() != static_cast<TileType>(_file.defaultTile) )
-            {
-                log("[%d, %d]: %s", i, j, _tiles[i][j].getNumber().c_str());
-            }
-        }
-    }
-    
     flatbuffers::FlatBufferBuilder builder;
-    
     
     // tile infos
     std::vector<flatbuffers::Offset<DeadCreator::TileInfo>> tileInfos;
@@ -1894,8 +1887,14 @@ void GMXLayer::save(const std::string& path)
     }
     
     // force info
-    auto force1 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force1.name.data()), _file.force1.isAlly, _file.force1.isVision);
-    auto force2 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force2.name.data()), _file.force2.isAlly, _file.force2.isVision);
+    auto force1 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force1.name.data()),
+                                               _file.force1.isAlly, _file.force1.isVision);
+    auto force2 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force2.name.data()),
+                                               _file.force2.isAlly, _file.force2.isVision);
+    auto force3 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force3.name.data()),
+                                               _file.force3.isAlly, _file.force3.isVision);
+    auto force4 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force4.name.data()),
+                                               _file.force4.isAlly, _file.force4.isVision);
     
     auto file = DeadCreator::CreateGMXFile(builder,
                                            static_cast<DeadCreator::TileType>(_file.defaultTile),
@@ -1906,7 +1905,7 @@ void GMXLayer::save(const std::string& path)
                                            builder.CreateVector(locations),
                                            builder.CreateVector(triggers),
                                            builder.CreateVector(playerInfos),
-                                           force1, force2);
+                                           force1, force2, force3, force4);
     builder.Finish(file);
     
     flatbuffers::SaveFile(path.c_str(),

@@ -155,6 +155,8 @@ table GMXFile
    playerInfos : [PlayerInfo];
    force1_info : ForceInfo;
    force2_info : ForceInfo;
+   force3_info : ForceInfo;
+   force4_info : ForceInfo;
 }
 
 root_type GMXFile;

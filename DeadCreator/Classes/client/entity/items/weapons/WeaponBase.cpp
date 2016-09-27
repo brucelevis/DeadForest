@@ -90,13 +90,11 @@ void WeaponBase::reload()
         }
         else
         {
-            _game->addLog(StringUtils::format("<WeaponBase::reload> has not bullets."));
             experimental::AudioEngine::play2d("client/sounds/reload_fail.mp3");
         }
     }
     else
     {
-        _game->addLog(StringUtils::format("<WeaponBase::reload> bullet is already full."));
         experimental::AudioEngine::play2d("client/sounds/reload_fail.mp3");
     }
 }
@@ -105,13 +103,8 @@ void WeaponBase::reload()
 void WeaponBase::attack()
 {
     dropCartiridges();
-    _owner->vibrate();
-    
-    // 공격 흐름 분리
-    ItemAndOwner item_owner;
-    item_owner.item = this;
-    item_owner.owner = _owner;
-    _game->pushLogic(0.0, MessageType::ATTACK_BY_WEAPON, &item_owner);
+    attackImpl();
+    _game->sendMessage(0.0, _owner, nullptr, MessageType::SYNC_INVENTORY_WEAPON_VIEW, nullptr);
 }
 
 

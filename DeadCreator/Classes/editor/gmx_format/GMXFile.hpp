@@ -30,6 +30,8 @@ namespace realtrick
             PlayerInfo playerInfos[9];
             ForceInfo force1;
             ForceInfo force2;
+            ForceInfo force3;
+            ForceInfo force4;
             cocos2d::Size worldSize;
             int defaultTile = -1;
             

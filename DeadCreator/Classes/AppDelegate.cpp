@@ -2,6 +2,7 @@
 #include "EditScene.hpp"
 #include "MainMenu3.hpp"
 #include "DummyScene.hpp"
+#include "ShaderTestScene.hpp"
 
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 #include "ImGuiGLViewImpl.h"

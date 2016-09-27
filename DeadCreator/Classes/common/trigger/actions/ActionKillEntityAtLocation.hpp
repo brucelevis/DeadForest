@@ -202,8 +202,6 @@ namespace realtrick
                 // kill entities
                 for ( auto& ent : removeList )
                     _game->killEntity(ent);
-                
-                _game->addLog("kill entity at location");
             }
             
         private:

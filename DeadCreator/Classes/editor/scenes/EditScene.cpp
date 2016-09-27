@@ -466,7 +466,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                 file->tileInfos[i][j] = tileName;
             }
         }
-        
+
         
         // player infos
         int i = 1;
@@ -478,6 +478,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
             ++i;
         }
         
+        // force infos
         std::strncpy(file->force1.name.data(), gmxFile->force1_info()->name()->c_str(), 20);
         file->force1.isAlly = gmxFile->force1_info()->is_ally();
         file->force1.isVision = gmxFile->force1_info()->is_vision();
@@ -485,6 +486,14 @@ void EditScene::createGMXLayer(const std::string& filePath)
         std::strncpy(file->force2.name.data(), gmxFile->force2_info()->name()->c_str(), 20);
         file->force2.isAlly = gmxFile->force2_info()->is_ally();
         file->force2.isVision = gmxFile->force2_info()->is_vision();
+        
+        std::strncpy(file->force3.name.data(), gmxFile->force3_info()->name()->c_str(), 20);
+        file->force3.isAlly = gmxFile->force3_info()->is_ally();
+        file->force3.isVision = gmxFile->force3_info()->is_vision();
+        
+        std::strncpy(file->force4.name.data(), gmxFile->force4_info()->name()->c_str(), 20);
+        file->force4.isAlly = gmxFile->force4_info()->is_ally();
+        file->force4.isVision = gmxFile->force4_info()->is_vision();
         
         _layer = GMXLayer::create(*this, *file);
         _layer->setCurrFilePath(filePath);

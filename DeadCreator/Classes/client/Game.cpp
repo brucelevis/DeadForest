@@ -33,6 +33,7 @@ using namespace realtrick::client;
 #include "GMXFile_generated.h"
 #include "util.h"
 
+
 Game::Game() :
 _winSize(Size::ZERO),
 _cellSpace(nullptr),
@@ -571,9 +572,36 @@ void Game::replaceDefeatScene(float delay)
 }
 
 
+bool Game::isAllyState(PlayerType src, PlayerType dest)
+{
+    int p1 = static_cast<int>(src);
+    int p2 = static_cast<int>(dest);
+    return _gameResource->_playerInfos[p1].isAllyWith[p2];
+}
 
 
+bool Game::isSharedVisionState(PlayerType src, PlayerType dest)
+{
+    int p1 = static_cast<int>(src);
+    int p2 = static_cast<int>(dest);
+    return _gameResource->_playerInfos[p1].isSharedVision[p2];
+}
 
+
+void Game::setAllyState(PlayerType src, PlayerType dest, bool enable)
+{
+    int p1 = static_cast<int>(src);
+    int p2 = static_cast<int>(dest);
+    _gameResource->_playerInfos[p1].isAllyWith[p2] = enable;
+}
+
+
+void Game::setSharedVisionState(PlayerType src, PlayerType dest, bool enable)
+{
+    int p1 = static_cast<int>(src);
+    int p2 = static_cast<int>(dest);
+    _gameResource->_playerInfos[p1].isSharedVision[p2] = enable;
+}
 
 
 //---------------------------- isLOSOkay --------------------------------------

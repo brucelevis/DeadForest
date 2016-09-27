@@ -23,7 +23,6 @@ using namespace cocos2d;
 using namespace realtrick::client;
 using namespace realtrick;
 
-
 HumanBase::HumanBase(Game* game) : EntityBase(game),
 _animator(nullptr),
 _FSM(nullptr),
@@ -104,14 +103,16 @@ HumanBase* HumanBase::create(Game* game)
 void HumanBase::update(float dt)
 {
     if ( _brain && isAlive() ) _brain->think();
+    
     if ( _FSM ) _FSM->update(dt);
-	
+    
 	_sensory->updateVision();
+    
 	_target_system->update();
-	
 
     // move and rotate
     this->moveEntity();
+    
     this->rotateEntity();
     
     // calculate foot guage to foot step sound.
@@ -241,7 +242,7 @@ void HumanBase::setFootGauge(float g)
         else if ( onTile == TileType::GRASS ) s.fileName = "Grass" + _to_string(random(1, 4)) + ".mp3";
         else if ( onTile == TileType::WATER ) s.fileName = "Water" + _to_string(random(1, 4)) + ".mp3";
         
-        _game->sendMessage(0.0, this, this, MessageType::PLAY_SOUND, &s);
+        _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
         
         return ;
     }
@@ -256,16 +257,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
     
     if ( _FSM ) ret = _FSM->handleMessage(msg);
     
-    if ( msg.msg == MessageType::PLAY_SOUND )
-    {
-        SoundSource* s =  static_cast<SoundSource*>(msg.extraInfo);
-        float t = (1.0f - (s->position - _game->getCamera()->getCameraPos()).getLength() / s->soundRange) * s->volume;
-        experimental::AudioEngine::setVolume( experimental::AudioEngine::play2d("client/sounds/" + s->fileName), t);
-        
-        ret = true;
-    }
-    
-    else if ( msg.msg  == MessageType::HITTED_BY_GUN )
+    if ( msg.msg  == MessageType::HITTED_BY_GUN )
     {
         AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1, 5)) + ".png"},
                                                                    random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
@@ -285,6 +277,13 @@ bool HumanBase::handleMessage(const Telegram& msg)
         blood->setWorldPosition(getWorldPosition());
         blood->setScale(0.5f);
         _game->addEntity(blood);
+        
+        ret = true;
+    }
+    
+    else if ( msg.msg == MessageType::HITTED_BY_FIST )
+    {
+        this->hittedVibrate(0.3f);
         
         ret = true;
     }
@@ -328,6 +327,13 @@ bool HumanBase::handleMessage(const Telegram& msg)
         ret = true;
     }
     
+    else if ( msg.msg == MessageType::RESET_BALANCE )
+    {
+        _balance->setPosition( getWorldPosition() );
+        
+        ret = true;
+    }
+    
     return ret;
 }
 
@@ -362,13 +368,6 @@ void HumanBase::hittedByWeapon(EntityType type, int damage)
         d.damage = damage;
         _game->sendMessage(0.0, this, nullptr, MessageType::HITTED_BY_AXE, &d);
     }
-    
-}
-
-
-void HumanBase::reload()
-{
-    if ( _equipedWeapon ) _equipedWeapon->reload();
 }
 
 
@@ -405,14 +404,80 @@ void HumanBase::releaseWeapon(EntityType type)
 }
 
 
-void HumanBase::vibrate()
+void HumanBase::reload()
 {
-    _game->sendMessage(0.0, this, this, MessageType::MOVE_BALANCE, new Vec2(2.0f * getHeading()));
-    _game->sendMessage(0.05 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(2.0f * getHeading()));
-    _game->sendMessage(0.10 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(2.0f * getHeading()));
-    _game->sendMessage(0.30 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(-2.0f * getHeading()));
-    _game->sendMessage(0.35 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(-2.0f * getHeading()));
-    _game->sendMessage(0.40 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(-2.0f * getHeading()));
+    if ( _equipedWeapon ) _equipedWeapon->reload();
+}
+
+
+void HumanBase::attackByWeapon()
+{
+    if ( _equipedWeapon ) _equipedWeapon->attack();
+}
+
+
+void HumanBase::attackByFist()
+{
+    if ( !_equipedWeapon )
+    {
+        Vec2 worldPos = this->getWorldPosition();
+        
+        // 엔티티들과의 충돌처리
+        bool isHit = false;
+        Vec2 shootAt = this->getHeading();
+        const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, 40.0f);
+        for (const auto &d : members)
+        {
+            if ( _game->isAllyState(getPlayerType(), d->getPlayerType()) ) continue;
+            
+            if ( isMasked(d->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+            {
+                HumanBase* human = static_cast<HumanBase*>(d);
+                if( human->isAlive() && physics::intersect(Segment(worldPos, worldPos + this->getHeading() * 40.0f),
+                                                           Circle(d->getWorldPosition(), human->getBoundingRadius())) )
+                {
+                    ReceiverSenderDamage s;
+                    s.damage = 10.0f;
+                    s.receiver = human;
+                    s.sender = this;
+                    _game->sendMessage(0.0, human, this, MessageType::HITTED_BY_FIST, &s);
+                    
+                    isHit = true;
+                }
+            }
+        }
+        
+        if ( isHit )
+        {
+            _game->sendMessage(0.0, this, this, MessageType::HIT, nullptr);
+        }
+        else
+        {
+            _game->sendMessage(0.0, this, this, MessageType::NO_HIT, nullptr);
+        }
+    }
+}
+
+
+void HumanBase::attackVibrate(float force)
+{
+    _game->sendMessage(0.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * getHeading()));
+    _game->sendMessage(0.05 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * getHeading()));
+    _game->sendMessage(0.10 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * getHeading()));
+    _game->sendMessage(0.30 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
+    _game->sendMessage(0.35 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
+    _game->sendMessage(0.40 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
+    _game->sendMessage(0.45 / 3.0, this, this, MessageType::RESET_BALANCE, nullptr);
+}
+
+
+void HumanBase::hittedVibrate(float force)
+{
+    _game->sendMessage(0.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * random(0.0f, 1.0f), force * 4.0f * random(0.0f, 1.0f)));
+    _game->sendMessage(0.05 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * random(0.0f, 1.0f), force * 4.0f * random(0.0f, 1.0f)));
+    _game->sendMessage(0.10 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * random(0.0f, 1.0f), force * 4.0f * random(0.0f, 1.0f)));
+    _game->sendMessage(0.30 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * random(0.0f, 1.0f), force * 4.0f * random(0.0f, 1.0f)));
+    _game->sendMessage(0.45 / 3.0, this, this, MessageType::RESET_BALANCE, nullptr);
 }
 
 

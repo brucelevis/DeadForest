@@ -26,7 +26,6 @@ void MessageDispatcher::discharge(const Telegram& msg)
     
     if( ret == false)
     {
-        _game->addLog(StringUtils::format("<MessageDispatcher:discharge> Message is not handled. MessageType: [%d]", static_cast<int>(msg.msg)));
         cocos2d::log("<MessageDispatcher:discharge> Message is not handled. MessageType: [%d]", static_cast<int>(msg.msg));
     }
 }

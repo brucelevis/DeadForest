@@ -161,7 +161,7 @@ void HumanFistIn::enter(HumanBase* human)
     s.fileName = "M16A2Enter.mp3";
     s.position = human->getWorldPosition();
     s.soundRange = 200.0f;
-    human->getGame()->sendMessage(0.0, human, human, MessageType::PLAY_SOUND, &s);
+    human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     
     human->setStateName("pick weapon");
 }

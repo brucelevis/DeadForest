@@ -121,6 +121,11 @@ namespace realtrick
             void replaceVictoryScene(float delay);
             void replaceDefeatScene(float delay);
             
+            bool isAllyState(PlayerType src, PlayerType dest);
+            bool isSharedVisionState(PlayerType src, PlayerType dest);
+            void setAllyState(PlayerType src, PlayerType dest, bool enable);
+            void setSharedVisionState(PlayerType src, PlayerType dest, bool enable);
+            
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
             bool isGameEnded() const { return _isGameEnded; }
 #endif
@@ -170,8 +175,6 @@ namespace realtrick
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
             bool _isGameEnded = false;
 #endif
-            
-			std::list<PathEdge> _tempPath;
 
         };
         

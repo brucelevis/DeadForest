@@ -42,6 +42,7 @@ namespace realtrick
             virtual void dropCartiridges() {}
             
             virtual void attack() final;
+            virtual void attackImpl() = 0;
             virtual void reload() final;
             virtual void use() override final;
             

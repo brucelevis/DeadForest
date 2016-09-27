@@ -27,6 +27,7 @@ namespace realtrick
 				GoalAttackTarget* goal = new GoalAttackTarget(owner);
 				goal->setEvaluator([brain](HumanBase* owner) { return 1; });
 				brain->getGoalThink()->addGoalEntry(goal);
+				return brain;
 			}
 
 			static ZombieBrain* createWithDestination(
@@ -39,6 +40,7 @@ namespace realtrick
 					new GoalAttackToDestination(owner, desti, arriveRange);
 				goal->setEvaluator([brain](HumanBase* owner) { return 1; });
 				brain->getGoalThink()->addGoalEntry(goal);
+				return brain;
 			}
 
             explicit ZombieBrain(HumanBase* owner) : BrainBase(owner)

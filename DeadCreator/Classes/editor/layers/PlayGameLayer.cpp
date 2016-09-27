@@ -18,9 +18,12 @@ using namespace realtrick::editor;
 using namespace realtrick::client;
 using namespace cocos2d;
 
+#include "profiling_schema_generated.h"
+
 
 void PlayGameLayer::showLayer(bool& opened)
 {
+#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 	static bool isStatusOn = true;
 	static bool isPlayerInfo = true;
 	static bool isGridOn = false;
@@ -49,10 +52,8 @@ void PlayGameLayer::showLayer(bool& opened)
 	if (_isGameStarted)
 	{
 		auto game = _gameLayer->getGame();
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 		if (!game->isGameEnded())
 		{
-#endif
 			ImGui::SetCursorScreenPos(ImVec2(origin.x, origin.y));
 			auto drawList = ImGui::GetWindowDrawList();
 
@@ -200,33 +201,27 @@ void PlayGameLayer::showLayer(bool& opened)
 			{
 				
 			}
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 		}
-#endif
 	}
 	ImGui::End();
 
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 	if (_isGameStarted)
 	{
 		auto game = _gameLayer->getGame();
 		if (game->isGameEnded())
 			opened = false;
 	}
-#endif
 
 	if (!opened) closeLayer();
 
 	// setting layer
 	if (_isGameStarted)
 	{
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 		auto game = _gameLayer->getGame();
 		if (!game->isGameEnded())
 		{
-#endif
 			ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
-			ImGui::Begin("setting", NULL, ImGuiWindowFlags_ShowBorders);
+			ImGui::Begin("statistic", NULL, ImGuiWindowFlags_ShowBorders);
 
 			if (ImGui::TreeNode("debug"))
 			{
@@ -239,40 +234,25 @@ void PlayGameLayer::showLayer(bool& opened)
 				ImGui::Checkbox("graph", &isGraphNodeViewOn);
 				ImGui::TreePop();
 			}
-			if (ImGui::TreeNode("property"))
-			{
-				ImGui::Text("can not use yet.");
-				ImGui::TreePop();
-			}
+            
+            if (ImGui::TreeNode("logger"))
+            {
+                ImGui::BeginChild("scrolling", ImVec2(0, 80), true, ImGuiWindowFlags_HorizontalScrollbar);
+                ImGui::TextUnformatted(game->getLogString().c_str());
+                if (game->isLogAdded()) ImGui::SetScrollHere(1.0f);
+                game->isLogAdded() = false;
+                ImGui::EndChild();
+                ImGui::TreePop();
+            }
+            
+            if ( ImGui::TreeNode("profiler") )
+            {
+            }
 
-			ImGui::End();
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
-		}
-#endif
-		// logger
-		if (_isGameStarted)
-		{
-			auto game = _gameLayer->getGame();
-
-			ImGui::SetNextWindowSize(ImVec2(1000, 150), ImGuiSetCond_Once);
-			ImGui::SetNextWindowPos(ImVec2(100, ImGui::GetIO().DisplaySize.y - 200), ImGuiSetCond_Once);
-			ImGui::Begin("Console Log", NULL, ImGuiWindowFlags_ShowBorders);
-
-			if (ImGui::Button("Clear")) game->clearLogs();
-			ImGui::SameLine(); bool copy = ImGui::Button("Copy");
-			ImGui::Separator();
-
-			ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
-
-			if (copy)  ImGui::LogToClipboard();
-			ImGui::TextUnformatted(game->getLogString().c_str());
-			if (game->isLogAdded()) ImGui::SetScrollHere(1.0f);
-			game->isLogAdded() = false;
-
-			ImGui::EndChild();
 			ImGui::End();
 		}
 	}
+#endif
 }
 
 

@@ -85,10 +85,8 @@ GoalStatus GoalTraverseEdge::process()
 	//if the bot has reached the end of the edge return COMPLETED
 	else
 	{
-		if (Circle(_owner->getWorldPosition(), _owner->getBoundingRadius())
-			.containPoint(_edge.getDestination()))
+		if (Circle(_owner->getWorldPosition(), _owner->getBoundingRadius()).containPoint(_edge.getDestination()))
 		{
-			cocos2d::log("GoalTraverseEdge in COMPLETE");
 			setGoalStatus(GoalStatus::COMPLETED);
 		}
 	}
@@ -118,8 +116,6 @@ bool GoalTraverseEdge::isStuck()const
 
 	if (TimeTaken > _time_expected)
 	{
-		cocos2d::log("BOT IS STUCK!! (%f %f)", _owner->getWorldPosition().x, _owner->getWorldPosition().y);
-
 		return true;
 	}
 

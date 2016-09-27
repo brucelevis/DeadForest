@@ -1,0 +1,19 @@
+namespace realtrick.profiler;
+
+table Element
+{
+   name : string;
+   calls : int;
+   avg_time : int;
+   min_time : int;
+   max_time : int;
+   usage : float;
+   children : [Element];
+}
+
+table Data
+{
+   main_loop : Element;
+}
+
+root_type Data;

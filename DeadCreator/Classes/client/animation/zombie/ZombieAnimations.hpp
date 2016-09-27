@@ -79,19 +79,40 @@ namespace realtrick
         };
         
         
-        class AnimZombieAttack : public AnimationBase, public Singleton<AnimZombieAttack>
+        class AnimZombieAttack1 : public AnimationBase, public Singleton<AnimZombieAttack1>
         {
             
         private:
             
-            friend class Singleton<AnimZombieAttack>;
-            virtual ~AnimZombieAttack() = default;
+            friend class Singleton<AnimZombieAttack1>;
+            virtual ~AnimZombieAttack1() = default;
             
-            AnimZombieAttack()
+            AnimZombieAttack1()
             {
                 _startFrame     = 0;
-                _maxFrame       = 21;
-                _fileName       = "ZombieAttack";
+                _maxFrame       = 9;
+                _fileName       = "ZombieAttack1_";
+                _priority       = 4;
+                _frameSwapTime  = 0.05f;
+                _isReversePlay  = false;
+            }
+            
+        };
+        
+        
+        class AnimZombieAttack2 : public AnimationBase, public Singleton<AnimZombieAttack2>
+        {
+            
+        private:
+            
+            friend class Singleton<AnimZombieAttack2>;
+            virtual ~AnimZombieAttack2() = default;
+            
+            AnimZombieAttack2()
+            {
+                _startFrame     = 0;
+                _maxFrame       = 8;
+                _fileName       = "ZombieAttack2_";
                 _priority       = 4;
                 _frameSwapTime  = 0.05f;
                 _isReversePlay  = false;

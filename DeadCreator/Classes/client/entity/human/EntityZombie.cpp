@@ -72,11 +72,27 @@ bool EntityZombie::handleMessage(const Telegram& msg)
     
     ret = HumanBase::handleMessage(msg);
     
-    if ( msg.msg == MessageType::HITTED_BY_GUN || msg.msg == MessageType::HITTED_BY_AXE )
+    if ( msg.msg == MessageType::HITTED_BY_GUN || msg.msg == MessageType::HITTED_BY_AXE || msg.msg == MessageType::HITTED_BY_FIST )
     {
-        ReceiverSenderDamage* s = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
-        if ( _blood > 0 ) _blood -= s->damage;
-        if ( _blood <= 0 && isAlive() ) this->getFSM()->changeState(&ZombieDead::getInstance());
+        ReceiverSenderDamage* d = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
+        if ( _blood > 0 ) _blood -= d->damage;
+        if ( _blood <= 0 && isAlive() )
+        {
+            if ( d->sender->getTag() == _game->getPlayerPtr()->getTag() )
+            {
+                if ( msg.msg == MessageType::HITTED_BY_GUN)
+                {
+                    SoundSource s;
+                    s.fileName = "kill_sound.mp3";
+                    s.position = static_cast<HumanBase*>(d->sender)->getWorldPosition();
+                    s.soundRange = 100.0f;
+                    s.volume = 1.0f;
+                    _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
+                }
+            }
+
+            this->getFSM()->changeState(&ZombieDead::getInstance());
+        }
         
         // only apply to player
         if ( _uiLayer )
@@ -85,6 +101,24 @@ bool EntityZombie::handleMessage(const Telegram& msg)
             h = cocos2d::clampf(h, 0.0f, 1.0f);
             _uiLayer->setHitPoint(h);
         }
+        
+        ret = true;
+    }
+    
+    else if ( msg.msg == MessageType::HIT )
+    {
+        // only apply to player
+        if ( _uiLayer ) _uiLayer->runCrossHairEffect("hit");
+        
+        ret = true;
+    }
+    
+    else if ( msg.msg == MessageType::NO_HIT )
+    {
+        // only apply to player
+        if ( _uiLayer ) _uiLayer->runCrossHairEffect("fire");
+        
+        ret = true;
     }
     
     return ret;

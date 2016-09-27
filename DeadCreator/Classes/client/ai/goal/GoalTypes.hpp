@@ -27,7 +27,9 @@ namespace realtrick
 			GOAL_FOLLOW_PATH = 8,
 			GOAL_MOVE_TO_POS = 9,
 			GOAL_ATTACK_TARGET = 10,
-			GOAL_MAIN_ATTACK = 11
+			GOAL_MAIN_ATTACK = 11,
+			GOAL_AVOID = 12,
+			GOAL_ATTACK_TO_DESTINATION = 13
         };
         
     }

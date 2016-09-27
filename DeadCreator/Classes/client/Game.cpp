@@ -25,6 +25,7 @@
 #include "PathPlanner.h"
 #include "MainMenu3.hpp"
 #include "RewardScene.hpp"
+#include "SensoryMemory.h"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
@@ -340,9 +341,28 @@ void Game::addEntity(EntityBase* ent, int zOrder)
 
 void Game::removeEntity(EntityBase* ent)
 {
-    _cellSpace->removeEntityFromCell(ent);
-    _entityManager->removeEntity(ent);
-    _renderingSystem->removeEntity(ent);
+	for (auto e : _entityManager->getEntities())
+	{
+		if (isMasked(e.second->getFamilyMask(), FamilyMask::HUMAN_BASE))
+		{
+			HumanBase* human = static_cast<HumanBase*>(e.second);
+
+			if (isMasked(ent->getFamilyMask(), FamilyMask::HUMAN_BASE))
+			{
+				HumanBase* removingHuman = static_cast<HumanBase*>(ent);
+				human->getSensoryMemory()->removeBotFromMemory(removingHuman);
+			}
+			else if (isMasked(ent->getFamilyMask(), FamilyMask::ITEM_BASE))
+			{
+				ItemBase* removingItem = static_cast<ItemBase*>(ent);
+				human->getSensoryMemory()->removeItemFromMemory(removingItem);
+			}
+		}
+	}
+
+	_cellSpace->removeEntityFromCell(ent);
+	_entityManager->removeEntity(ent);
+	_renderingSystem->removeEntity(ent);
 }
 
 

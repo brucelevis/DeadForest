@@ -32,6 +32,8 @@ namespace realtrick
             }
             virtual ~GoalBase() = default;
             
+			HumanBase* getOwner() const { return _owner; }
+
             GoalStatus getGoalStatus() const { return _goalStatus; }
             void setGoalStatus(GoalStatus status) { _goalStatus = status; }
             

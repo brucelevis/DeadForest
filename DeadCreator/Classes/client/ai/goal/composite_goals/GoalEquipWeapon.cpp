@@ -2,6 +2,7 @@
 #include "InventoryData.hpp"
 #include "HumanBase.hpp"
 #include "SensoryMemory.h"
+#include "GoalAvoid.h"
 
 using namespace realtrick::client;
 using namespace realtrick;
@@ -11,7 +12,7 @@ USING_NS_CC;
 //-----------------------------------------------------------------------------
 GoalEquipWeapon::GoalEquipWeapon(HumanBase* owner, EntityType weaponType)
 	:
-	GoalBase(owner),
+	GoalCompositeBase(owner),
 	_weaponType(weaponType)
 {
 	setGoalType(GoalType::GOAL_MAIN_ATTACK);
@@ -25,13 +26,14 @@ void GoalEquipWeapon::activate()
 	setGoalStatus(GoalStatus::ACTIVE);
 
 	_startTime = std::chrono::system_clock::now().time_since_epoch();
-
 	_owner->useItem(_weaponType);
 
 	if (_owner->getEquipedWeapon() != nullptr)
 		_owner->getSensoryMemory()->setAttackRange(_owner->getEquipedWeapon()->getRange() - 10);
 	else
 		_owner->getSensoryMemory()->setAttackRange(50);
+
+	addSubgoal(new GoalAvoid(_owner));
 }
 
 
@@ -39,10 +41,9 @@ void GoalEquipWeapon::activate()
 //-----------------------------------------------------------------------------
 GoalStatus GoalEquipWeapon::process()
 {
-	// If status is INACTIVE, call activate()
-	if (isInactive())
-		activate();
+	if (isInactive()) activate();
 
+	processSubgoals();
 	std::chrono::duration<double> endTime = std::chrono::system_clock::now().time_since_epoch();
 
 	// Wait for equipping item.
@@ -60,7 +61,7 @@ GoalStatus GoalEquipWeapon::process()
 //-----------------------------------------------------------------------------
 void GoalEquipWeapon::terminate()
 {
-	setGoalStatus(GoalStatus::COMPLETED);
+	removeAllSubgoals();
 }
 
 

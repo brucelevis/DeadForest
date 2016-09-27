@@ -87,7 +87,6 @@ GoalStatus GoalSeekToPosition::process()
 
 void GoalSeekToPosition::terminate()
 {
-	cocos2d::log("GoalSeekToPosition::terminate()");
 	InputMoveEnd moveEnd(_owner);
 	moveEnd.execute();
 }

@@ -21,7 +21,7 @@ namespace realtrick
             
         public:
             
-            explicit GoalFindWeapon(HumanBase* owner);
+            explicit GoalFindWeapon(HumanBase* owner, EntityType findWeapon);
             virtual ~GoalFindWeapon();
             
             virtual void activate() override;

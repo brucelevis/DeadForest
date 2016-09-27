@@ -63,6 +63,16 @@ void SensoryMemory::removeBotFromMemory(HumanBase* const bot)
 }
 
 
+void SensoryMemory::removeItemFromMemory(ItemBase* const item)
+{
+	auto record = std::find(std::begin(_sensedItems), std::end(_sensedItems), item);
+
+	if (record != std::end(_sensedItems))
+	{
+		_sensedItems.erase(record);
+	}
+}
+
 
 //----------------------------- updateVision ----------------------------------
 //
@@ -78,40 +88,48 @@ void SensoryMemory::updateVision()
 	{
 		if (_owner->getTag() != (*iter)->getTag())
 		{
-			if (!isMasked((*iter)->getFamilyMask(), FamilyMask::HUMAN_BASE))
-				continue;
-
-			HumanBase* human = static_cast<HumanBase*>(*iter);
-
-			//make sure it is part of the memory map
-			makeNewRecordIfNotAlreadyPresent(human);
-
-			//get a reference to this bot's data
-			MemoryRecord& info = _memory_map[human];
-
-			if(_owner->getWorldPosition().getDistance(human->getWorldPosition()) < _viewRange)
+			if (isMasked((*iter)->getFamilyMask(), FamilyMask::HUMAN_BASE))
 			{
-				info.time_last_sensed = std::chrono::system_clock::now().time_since_epoch();
-				info.last_sensed_position = (*iter)->getWorldPosition();
-				info.time_last_visible = std::chrono::system_clock::now().time_since_epoch();
+				HumanBase* human = static_cast<HumanBase*>(*iter);
 
-				if (_owner->getWorldPosition().getDistance(human->getWorldPosition()) < _attackRange)
+				//make sure it is part of the memory map
+				makeNewRecordIfNotAlreadyPresent(human);
+
+				//get a reference to this bot's data
+				MemoryRecord& info = _memory_map[human];
+
+				if (_owner->getWorldPosition().getDistance(human->getWorldPosition()) < _viewRange)
 				{
-					info.attackable = true;
+					info.time_last_sensed = std::chrono::system_clock::now().time_since_epoch();
+					info.last_sensed_position = (*iter)->getWorldPosition();
+					info.time_last_visible = std::chrono::system_clock::now().time_since_epoch();
+
+					if (_owner->getWorldPosition().getDistance(human->getWorldPosition()) < _attackRange)
+					{
+						info.attackable = true;
+					}
+					else
+						info.attackable = false;
+
+					if (info.within_view == false)
+					{
+						info.within_view = true;
+						info.time_became_visible = info.time_last_sensed;
+					}
 				}
 				else
-					info.attackable = false;
-
-				if (info.within_view == false)
 				{
-					info.within_view = true;
-					info.time_became_visible = info.time_last_sensed;
+					info.attackable = false;
+					info.within_view = false;
 				}
 			}
-			else
+			else if (isMasked((*iter)->getFamilyMask(), FamilyMask::ITEM_BASE))
 			{
-				info.attackable = false;
-				info.within_view = false;
+				ItemBase* item = static_cast<ItemBase*>(*iter);
+				if (_owner->getWorldPosition().getDistance(item->getWorldPosition()) < _viewRange)
+				{
+					_sensedItems.push_back(item);
+				}
 			}
 		}
 	}
@@ -123,7 +141,7 @@ void SensoryMemory::updateVision()
 //  returns a list of the bots that have been sensed recently
 //-----------------------------------------------------------------------------
 std::list<HumanBase*>
-SensoryMemory::getListOfRecentlySensedOpponents()const
+SensoryMemory::getListOfRecentlySensedOpponents() const
 {
 	//this will store all the opponents the bot can remember
 	std::list<HumanBase*> opponents;
@@ -140,6 +158,11 @@ SensoryMemory::getListOfRecentlySensedOpponents()const
 	}
 
 	return opponents;
+}
+
+const std::vector<ItemBase*>& SensoryMemory::getSensedItems() const
+{
+	return _sensedItems;
 }
 
 //----------------------------- isOpponentAttackable --------------------------------

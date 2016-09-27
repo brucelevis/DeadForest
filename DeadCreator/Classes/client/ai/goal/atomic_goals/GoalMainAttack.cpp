@@ -65,12 +65,9 @@ GoalStatus GoalMainAttack::process()
 	if (isInactive())
 		activate();
 
-	InputMoveBegin moveBegin(_owner, (_target - _owner->getWorldPosition()).getNormalized());
-	moveBegin.execute();
-
 	std::chrono::duration<double> endTime = std::chrono::system_clock::now().time_since_epoch();
 
-	if ( 0.5 < (endTime - _startTime).count())
+	if ( 1.0f < (endTime - _startTime).count())
 	{
 		setGoalStatus(GoalStatus::COMPLETED);
 		return getGoalStatus();

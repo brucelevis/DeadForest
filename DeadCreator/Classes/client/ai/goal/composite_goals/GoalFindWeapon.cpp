@@ -13,15 +13,16 @@
 #include "EntityBase.hpp"
 #include "GoalMoveToPosition.hpp"
 #include "GoalEquipWeapon.h"
+#include "SensoryMemory.h"
 
 using namespace realtrick::client;
 using namespace realtrick;
 
 
-GoalFindWeapon::GoalFindWeapon(HumanBase* owner) 
+GoalFindWeapon::GoalFindWeapon(HumanBase* owner, EntityType findWeapon) 
 	:
 	GoalCompositeBase(owner),
-	_findWeapon(EntityType::DEFAULT)
+	_findWeapon(findWeapon)
 {
     setGoalType(GoalType::FIND_WEAPON);
 }
@@ -42,15 +43,18 @@ void GoalFindWeapon::activate()
 
 	for (auto e : _owner->getGame()->getEntityManager()->getEntities())
 	{
-		if (e.second->getEntityType() == EntityType::ITEM_AXE)
+		if (e.second->getEntityType() == _findWeapon)
 		{
 			cocos2d::Vec2 itemPos = e.second->getWorldPosition();
 			float distance = itemPos.distance(_owner->getWorldPosition());
+
+			if (distance > _owner->getSensoryMemory()->getViewRange())
+				continue;
+
 			if (dist > distance)
 			{
 				dist = distance;
 				desti = itemPos;
-				_findWeapon = EntityType::ITEM_AXE;
 			}
 		}
 	}
@@ -72,11 +76,6 @@ GoalStatus GoalFindWeapon::process()
     if ( isInactive() ) activate();
     
     auto subGoalStatus = processSubgoals();
-    if ( subGoalStatus == GoalStatus::FAILED )
-    {
-        activate();
-    }
-
     return subGoalStatus;
 }
 

@@ -2,7 +2,7 @@
 #define GOAL_EQUIP_WEAPON_H
 #pragma warning (disable:4786)
 
-#include "GoalBase.hpp"
+#include "GoalCompositeBase.hpp"
 #include "Types.hpp"
 
 namespace realtrick
@@ -11,7 +11,7 @@ namespace realtrick
 	{
 		class HumanBase;
 
-		class GoalEquipWeapon : public GoalBase
+		class GoalEquipWeapon : public GoalCompositeBase
 		{
 
 		public:

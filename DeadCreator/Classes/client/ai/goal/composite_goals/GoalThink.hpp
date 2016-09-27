@@ -27,6 +27,8 @@ namespace realtrick
             virtual GoalStatus process() override;
             virtual void terminate() override;
             
+			//void arbitrate();
+
             void addGoalEntry(GoalBase* goal) { _goalEntry.push_back(goal); }
           
         private:

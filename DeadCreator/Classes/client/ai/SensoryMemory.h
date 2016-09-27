@@ -20,6 +20,7 @@ namespace realtrick
 	namespace client
 	{
 		class HumanBase;
+		class ItemBase;
 
 		class MemoryRecord
 		{
@@ -81,6 +82,7 @@ namespace realtrick
 			//is created for each opponent in the environment. Each record is updated 
 			//whenever the opponent is encountered. (when it is seen or heard)
 			MemoryMap			_memory_map;
+			std::vector<ItemBase*> _sensedItems;
 
 			//a bot has a memory span equivalent to this value. When a bot requests a 
 			//list of all recently sensed opponents this value is used to determine if 
@@ -102,9 +104,12 @@ namespace realtrick
 			~SensoryMemory();
 
 			void setAttackRange(int range) { _attackRange = range; }
+			int getAttackRange() const { return _attackRange; }
+			int getViewRange() const { return _viewRange; }
 
 			//this removes a bot's record from memory
 			void	removeBotFromMemory(HumanBase* const bot);
+			void	removeItemFromMemory(ItemBase* const item);
 
 			//this method iterates through all the opponents in the game world and 
 			//updates the records of those that are in the owner's FOV(field of view)
@@ -124,7 +129,9 @@ namespace realtrick
 
 			//this method returns a list of all the opponents that have had their
 			//records updated within the last _memory_span seconds.
-			std::list<HumanBase*> getListOfRecentlySensedOpponents()const;
+			std::list<HumanBase*> getListOfRecentlySensedOpponents() const;
+
+			const std::vector<ItemBase*>& getSensedItems() const;
 		};
 	}
 }

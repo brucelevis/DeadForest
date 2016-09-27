@@ -1,5 +1,5 @@
 //
-//  GoalTraverseEdge.hpp
+//  GoalAttackTarget.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 8. 17..

@@ -18,7 +18,6 @@ namespace realtrick
     {
         
         class Game;
-        class RenderTarget;
         class RenderingSystem;
         class EntityBase;
         class OcculusionBaker;

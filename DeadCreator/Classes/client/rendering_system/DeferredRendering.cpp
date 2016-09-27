@@ -7,7 +7,6 @@
 //
 
 #include "DeferredRendering.hpp"
-#include "RenderTarget.hpp"
 #include "RenderingSystem.hpp"
 #include "Effects.hpp"
 #include "EntityBase.hpp"

@@ -276,7 +276,7 @@ bool GameResource::initWithBinary(const char* buffer)
         ++iter;
     }
     
-    for(int i = 1 ; i <= 8; ++ i)
+    for (int i = 1 ; i <= 8; ++ i)
     {
         int force = static_cast<int>(_playerInfos[i].force);
         for( auto player : forcePlayers[force] )

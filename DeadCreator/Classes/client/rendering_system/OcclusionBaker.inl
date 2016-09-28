@@ -1,19 +1,19 @@
 //
-//  OcculusionBaker.inl
+//  OcclusionBaker.inl
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2015. 12. 5..
 //
 //
 
-#include "OcculusionBaker.hpp"
+#include "OcclusionBaker.hpp"
 
 namespace realtrick
 {
     namespace client
     {
         
-        inline bool OcculusionBaker::_isVisibleWall(const Segment& wall) const
+        inline bool OcclusionBaker::_isVisibleWall(const Segment& wall) const
         {
             cocos2d::Vec2 wallDir = wall.end - wall.start;
             cocos2d::Vec2 normal;
@@ -25,14 +25,14 @@ namespace realtrick
         }
         
         
-        inline int OcculusionBaker::_hashFunc(const cocos2d::Vec2& p) const
+        inline int OcclusionBaker::_hashFunc(const cocos2d::Vec2& p) const
         {
             int a = (int)p.x;
             int b = (int)p.y;
             return a + (2 * a * b) + (3 * b) + (a / 4);
         }
         
-        inline bool OcculusionBaker::_isOneHitVertex(const std::vector<Segment>& walls, const cocos2d::Vec2& vert) const
+        inline bool OcclusionBaker::_isOneHitVertex(const std::vector<Segment>& walls, const cocos2d::Vec2& vert) const
         {
             for(auto &wall : walls)
             {
@@ -43,7 +43,7 @@ namespace realtrick
         }
         
         
-        inline cocos2d::Vec2 OcculusionBaker::_getClosestIntersectPointToWall(const std::vector<Segment>& walls, const Segment& seg) const
+        inline cocos2d::Vec2 OcclusionBaker::_getClosestIntersectPointToWall(const std::vector<Segment>& walls, const Segment& seg) const
         {
             std::pair<float, cocos2d::Vec2> closestVal { std::numeric_limits<float>::max(), cocos2d::Vec2::ZERO };
             for(const auto &wall : walls)
@@ -58,7 +58,7 @@ namespace realtrick
         }
         
         
-        inline cocos2d::Vec2 OcculusionBaker::_worldToLocal(const cocos2d::Vec2& point)
+        inline cocos2d::Vec2 OcclusionBaker::_worldToLocal(const cocos2d::Vec2& point)
         {
             return point - _eyePos;
         }

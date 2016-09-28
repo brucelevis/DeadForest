@@ -18,11 +18,11 @@ namespace realtrick
     
     enum FamilyMask
     {
-        ENTITY_BASE         = 0x00000000000001,
-        HUMAN_BASE          = 0x00000000000002,
-        ITEM_BASE           = 0x00000000000004,
-        WEAPON_BASE         = 0x00000000000008,
-        BULLET_BASE         = 0x00000000000010,
+        ENTITY_BASE         = 1 << 0,
+        HUMAN_BASE          = 1 << 1,
+        ITEM_BASE           = 1 << 2,
+        WEAPON_BASE         = 1 << 3,
+        BULLET_BASE         = 1 << 4,
     };
     
     enum EntityType : int
@@ -97,12 +97,6 @@ namespace realtrick
         PlayerType playerType;
         EntityType entityType;
         cocos2d::Vec2 position;
-    };
-    
-    enum class ComponentType : int
-    {
-        RENDERABLE,
-        MAX
     };
         
     inline void addMask(int& src, int mask)                         { src |= mask; }

@@ -20,7 +20,7 @@ namespace realtrick
         class Game;
         class RenderingSystem;
         class EntityBase;
-        class OcculusionBaker;
+        class OcclusionBaker;
         
         class DeferredRendering : public EffectSprite
         {
@@ -49,7 +49,7 @@ namespace realtrick
             cocos2d::RenderTexture* _normalTexture;
             cocos2d::RenderTexture* _occlusionTexture;
             
-            OcculusionBaker* _occulusionBaker;
+            OcclusionBaker* _occlusionBaker;
             
         };
         

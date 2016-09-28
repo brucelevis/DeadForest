@@ -78,7 +78,6 @@ namespace realtrick
             Game* _game;
             std::map<int, EntityBase*> _entities;
             HumanBase* _player;
-            realtrick::PlayerType _playerType;
             
         };
         

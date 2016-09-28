@@ -1,19 +1,19 @@
 //
-//  OcculusionBaker.cpp
+//  OcclusionBaker.cpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2015. 12. 5..
 //
 //
 
-#include "OcculusionBaker.hpp"
+#include "OcclusionBaker.hpp"
 using namespace std;
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
 
 
-OcculusionBaker::OcculusionBaker() :
+OcclusionBaker::OcclusionBaker() :
 _dNode(nullptr),
 _boundary(cocos2d::Rect::ZERO),
 _shadowColor(Color4F(0, 0, 0, 1)),
@@ -25,15 +25,15 @@ _cameraMask(CameraFlag::DEFAULT)
 }
 
 
-OcculusionBaker::~OcculusionBaker()
+OcclusionBaker::~OcclusionBaker()
 {
     CC_SAFE_RELEASE_NULL(_dNode);
 }
 
 
-OcculusionBaker* OcculusionBaker::create(const Size& visibleSize)
+OcclusionBaker* OcclusionBaker::create(const Size& visibleSize)
 {
-    OcculusionBaker* ret = new (std::nothrow)OcculusionBaker();
+    OcclusionBaker* ret = new (std::nothrow)OcclusionBaker();
     if ( ret && ret->init(visibleSize) )
     {
         ret->autorelease();
@@ -44,7 +44,7 @@ OcculusionBaker* OcculusionBaker::create(const Size& visibleSize)
 }
 
 
-bool OcculusionBaker::init(const Size& visibleSize)
+bool OcclusionBaker::init(const Size& visibleSize)
 {
     if ( visibleSize.width <= 0.0f || visibleSize.height <= 0.0f )
         return false;
@@ -57,7 +57,7 @@ bool OcculusionBaker::init(const Size& visibleSize)
 }
 
 
-void OcculusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
+void OcclusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
                                   const cocos2d::Vec2& worldPos,
                                   const cocos2d::Vec2& scaleFactor,
                                   const std::vector<realtrick::Polygon>& polygons,

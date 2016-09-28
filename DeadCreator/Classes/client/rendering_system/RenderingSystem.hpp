@@ -55,7 +55,6 @@ namespace realtrick
             GameResource* _gameResource;
             
             Terrain* _terrain;
-            
             DeferredRendering* _deferredRendering;
      
             float _zoomScale;

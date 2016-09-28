@@ -1,5 +1,5 @@
 //
-//  OcculusionBaker.hpp
+//  OcclusionBaker.hpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2015. 12. 5..
@@ -17,7 +17,7 @@ namespace realtrick
     namespace client
     {
         
-        class OcculusionBaker : public cocos2d::Ref
+        class OcclusionBaker : public cocos2d::Ref
         {
             
         public:
@@ -47,11 +47,11 @@ namespace realtrick
             
         public:
             
-            OcculusionBaker();
-            virtual ~OcculusionBaker();
+            OcclusionBaker();
+            virtual ~OcclusionBaker();
             
             bool init(const cocos2d::Size& visibleSize);
-            static OcculusionBaker* create(const cocos2d::Size& visibleSize);
+            static OcclusionBaker* create(const cocos2d::Size& visibleSize);
             
             void setWindingOrder(WindingOrder order)                { _windingOrder = order; }
             void setShadowColor(const cocos2d::Color4F& color)      { _shadowColor = color; }
@@ -88,7 +88,7 @@ namespace realtrick
     }
 }
 
-#include "OcculusionBaker.inl"
+#include "OcclusionBaker.inl"
 
 
 

@@ -10,7 +10,7 @@
 #include "RenderingSystem.hpp"
 #include "Effects.hpp"
 #include "EntityBase.hpp"
-#include "OcculusionBaker.hpp"
+#include "OcclusionBaker.hpp"
 #include "Game.hpp"
 #include "GameResource.hpp"
 using namespace cocos2d;
@@ -30,7 +30,7 @@ DeferredRendering::~DeferredRendering()
     CC_SAFE_RELEASE_NULL(_staticTexture);
     CC_SAFE_RELEASE_NULL(_normalTexture);
     CC_SAFE_RELEASE_NULL(_occlusionTexture);
-    CC_SAFE_RELEASE_NULL(_occulusionBaker);
+    CC_SAFE_RELEASE_NULL(_occlusionBaker);
 }
 
 
@@ -75,8 +75,8 @@ bool DeferredRendering::initWithFile(const std::string& basicTextureName)
     _occlusionTexture = RenderTexture::create(getContentSize().width, getContentSize().height);
     _occlusionTexture->retain();
     
-    _occulusionBaker = OcculusionBaker::create(getContentSize());
-    _occulusionBaker->retain();
+    _occlusionBaker = OcclusionBaker::create(getContentSize());
+    _occlusionBaker->retain();
     
     return true;
 }
@@ -110,34 +110,33 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
     _staticTexture->end();
     
     // bake normal map
-//    for ( auto& entity : _dynamicEntities->getChildren() )
-//        static_cast<EntityBase*>(entity)->enableNormal(true);
+    //    for ( auto& entity : _dynamicEntities->getChildren() )
+    //        static_cast<EntityBase*>(entity)->enableNormal(true);
     
-//    _normalTexture->beginWithClear(0.0, 0.0, 0.0, 0.0);
-//    _dynamicEntities->visit();
-//    _normalTexture->end();
+    //    _normalTexture->beginWithClear(0.0, 0.0, 0.0, 0.0);
+    //    _dynamicEntities->visit();
+    //    _normalTexture->end();
     
-//    for ( auto& entity : _dynamicEntities->getChildren() )
-//        static_cast<EntityBase*>(entity)->enableNormal(false);
+    //    for ( auto& entity : _dynamicEntities->getChildren() )
+    //        static_cast<EntityBase*>(entity)->enableNormal(false);
     
     // bake occlusion texture
     auto player = _game->getPlayerPtr();
-    OcculusionBaker::FieldOfView fov;
+    OcclusionBaker::FieldOfView fov;
     fov.aroundCircleRadius = 40.0f;
     fov.aroundCircleSlice = 30;
     fov.entryDegree = 110.0f;
     fov.heading = player->getHeading();
     fov.isEnable = true;
-    _occulusionBaker->bakeTexture(_occlusionTexture,
-                                  player->getWorldPosition(),
-                                  zoomScale,
-                                  _game->getNeighborWalls(player->getWorldPosition(), Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT)),
-                                  Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT), fov);
-
+    _occlusionBaker->bakeTexture(_occlusionTexture,
+                                 player->getWorldPosition(),
+                                 zoomScale,
+                                 _game->getNeighborWalls(player->getWorldPosition(), Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT)),
+                                 Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT), fov);
     
     getGLProgramState()->setUniformTexture("u_dynamicTex", _dynamicTexture->getSprite()->getTexture());
     getGLProgramState()->setUniformTexture("u_staticTex", _staticTexture->getSprite()->getTexture());
-//    getGLProgramState()->setUniformTexture("u_normalTex", _normalTexture->getSprite()->getTexture());
+    //    getGLProgramState()->setUniformTexture("u_normalTex", _normalTexture->getSprite()->getTexture());
     getGLProgramState()->setUniformTexture("u_occlusionTex", _occlusionTexture->getSprite()->getTexture());
 }
 

@@ -116,6 +116,17 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
         }
     }
     
+    for ( auto& ent : _entities )
+    {
+        auto currentEntity = ent.second;
+        auto familyMask = currentEntity->getFamilyMask();
+        if ( isMasked(familyMask, FamilyMask::BULLET_BASE) )
+        {
+            // ...
+        }
+    }
+    
+    
     return true;
 }
 

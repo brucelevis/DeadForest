@@ -19,8 +19,7 @@ _boundary(cocos2d::Rect::ZERO),
 _shadowColor(Color4F(0, 0, 0, 1)),
 _visibleColor(Color4F(1, 1, 1, 1)),
 _windingOrder(WindingOrder::CCW),
-_eyePos(Vec2::ZERO),
-_cameraMask(CameraFlag::DEFAULT)
+_eyePos(Vec2::ZERO)
 {
 }
 

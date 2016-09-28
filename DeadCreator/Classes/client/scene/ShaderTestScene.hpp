@@ -9,6 +9,7 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "JoystickEx.hpp"
 
 namespace realtrick
 {
@@ -31,7 +32,11 @@ namespace realtrick
             
         private:
             
-           
+            cocos2d::Sprite* _human;
+            cocos2d::Vec2 _humanHeading = cocos2d::Vec2::UNIT_X;
+            float _humanSpeed = 0.0f;
+            float _humanRotation = 0.0f;
+            JoystickEx* _joystick;
             
         };
     }

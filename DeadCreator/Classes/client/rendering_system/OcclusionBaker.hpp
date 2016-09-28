@@ -80,7 +80,6 @@ namespace realtrick
             cocos2d::Color4F                        _visibleColor;
             WindingOrder                            _windingOrder;
             cocos2d::Vec2                           _eyePos;
-            cocos2d::CameraFlag                     _cameraMask;
             FieldOfView                             _fov;
 
         };

@@ -247,6 +247,7 @@ void PlayGameLayer::showLayer(bool& opened)
             
             if ( ImGui::TreeNode("profiler") )
             {
+                ImGui::TreePop();
             }
 
 			ImGui::End();

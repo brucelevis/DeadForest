@@ -12,24 +12,24 @@ namespace realtrick
 {
     namespace client
     {
-        
 		enum class GoalType
 		{
 			INVALID = -1,
 			THINK = 0,
 			HUNT_TARGET = 1,
 			WANDER = 2,
-			READY_TO_FIGHT = 3,
+			EQUIP_WEAPON = 3,
 			FIND_WEAPON = 4,
-			FOLLOW_PATH = 5,
-			TRAVERSE_EDGE = 6,
-			GOAL_SEEK_TO_POS = 7,
-			GOAL_FOLLOW_PATH = 8,
-			GOAL_MOVE_TO_POS = 9,
-			GOAL_ATTACK_TARGET = 10,
-			GOAL_MAIN_ATTACK = 11,
-			GOAL_AVOID = 12,
-			GOAL_ATTACK_TO_DESTINATION = 13
+			RELOAD = 5,
+			FOLLOW_PATH = 6,
+			TRAVERSE_EDGE = 7,
+			SEEK_TO_POS = 8,
+			MOVE_TO_POS = 9,
+			ATTACK_TARGET = 10,
+			MAIN_ATTACK = 11,
+			RANGE_ATTACK = 12,
+			AVOID = 13,
+			ATTACK_TO_DESTINATION = 14
         };
         
     }

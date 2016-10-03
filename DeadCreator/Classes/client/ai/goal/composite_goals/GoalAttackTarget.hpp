@@ -19,10 +19,13 @@ namespace realtrick
         {
             
         public:
+
 			explicit GoalAttackTarget(HumanBase* const owner);
 
 			virtual ~GoalAttackTarget() override
 			{}
+
+			int evaluate(HumanBase* const owner);
 
             virtual void activate() override;
             virtual GoalStatus process() override;

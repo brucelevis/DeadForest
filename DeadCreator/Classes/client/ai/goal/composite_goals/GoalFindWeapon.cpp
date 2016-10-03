@@ -14,24 +14,24 @@
 #include "GoalMoveToPosition.hpp"
 #include "GoalEquipWeapon.h"
 #include "SensoryMemory.h"
+#include "InventoryData.hpp"
+#include <set>
 
 using namespace realtrick::client;
 using namespace realtrick;
 
 
-GoalFindWeapon::GoalFindWeapon(HumanBase* owner, EntityType findWeapon) 
+GoalFindWeapon::GoalFindWeapon(HumanBase* owner) 
 	:
 	GoalCompositeBase(owner),
-	_findWeapon(findWeapon)
+	_findWeapon(EntityType::DEFAULT)
 {
     setGoalType(GoalType::FIND_WEAPON);
 }
 
 
 GoalFindWeapon::~GoalFindWeapon()
-{
-}
-
+{}
 
 void GoalFindWeapon::activate()
 {
@@ -61,7 +61,6 @@ void GoalFindWeapon::activate()
 
 	if (dist < bigf - 1)
 	{
-		addSubgoal(new GoalEquipWeapon(_owner, _findWeapon));
 		addSubgoal(new GoalMoveToPosition(_owner, desti));
 	}
 	else
@@ -85,11 +84,116 @@ void GoalFindWeapon::terminate()
 	removeAllSubgoals();
 }
 
+int GoalFindWeapon::evaluate(HumanBase* const owner)
+{
+	makeFindItemWeight();
+
+	// Make best choice
+	float weight;
+	_findWeapon = getBestItem(weight);
+	
+	return weight;
+}
+
+void GoalFindWeapon::makeFindItemWeight()
+{
+	_weightFindItem.clear();
+	_weightFindItem.emplace(EntityType::ITEM_AXE, 1.0f);
+	_weightFindItem.emplace(EntityType::ITEM_CONSUMPTION, 0.0f);
+	_weightFindItem.emplace(EntityType::ITEM_GLOCK17, 5.0f);
+	_weightFindItem.emplace(EntityType::ITEM_M16A2, 6.0f);
+	_weightFindItem.emplace(EntityType::ITEM_M1897, 7.0f);
+	_weightFindItem.emplace(EntityType::ITEM_STUFF, 0.0f);
+	_weightFindItem.emplace(EntityType::BULLET_556MM, 2.0f);
+	_weightFindItem.emplace(EntityType::BULLET_9MM, 3.0f);
+	_weightFindItem.emplace(EntityType::BULLET_SHELL, 4.0f);
+
+	auto inventory = _owner->getInventoryData();
+	const auto& items = inventory->getItemLists();
+
+	std::set<int> itemsFiltered;
+	for (const auto& item : items)
+	{
+		if (item)
+			itemsFiltered.emplace(item->getEntityType());
+	}
+
+	for (const auto& item : itemsFiltered)
+	{
+		if (EntityType::BULLET_556MM == item)
+		{
+			_weightFindItem[EntityType::ITEM_M16A2] *= 10.0f;
+		}
+		else if (EntityType::BULLET_9MM == item)
+		{
+			_weightFindItem[EntityType::ITEM_GLOCK17] *= 10.0f;
+		}
+		else if (EntityType::BULLET_SHELL == item)
+		{
+			_weightFindItem[EntityType::ITEM_M1897] *= 10.0f;
+		}
+		else if (EntityType::ITEM_AXE == item)
+		{
+			_weightFindItem[EntityType::ITEM_AXE] = -1.0f;
+		}
+		else if (EntityType::ITEM_CONSUMPTION == item)
+		{
+			_weightFindItem[EntityType::ITEM_CONSUMPTION] = 0.0f;
+		}
+		else if (EntityType::ITEM_GLOCK17 == item)
+		{
+			_weightFindItem[EntityType::BULLET_9MM] *= 10.0f;
+		}
+		else if (EntityType::ITEM_M16A2 == item)
+		{
+			_weightFindItem[EntityType::BULLET_556MM] *= 10.0f;
+		}
+		else if (EntityType::ITEM_M1897 == item)
+		{
+			_weightFindItem[EntityType::BULLET_SHELL] *= 10.0f;
+		}
+		else if (EntityType::ITEM_STUFF == item)
+		{
+			_weightFindItem[EntityType::ITEM_STUFF] = 0.0f;
+		}
+	}
 
 
+	for (auto& e : _weightFindItem)
+	{
+		EntityType itemType = e.first;
+
+		auto founded = std::find_if(
+			std::begin(_owner->getSensoryMemory()->getSensedItems()),
+			std::end(_owner->getSensoryMemory()->getSensedItems()),
+			[itemType](ItemBase* item) { return item->getEntityType() == itemType; }
+		);
+
+		// Don't give weight to non-visible items.
+		if (founded == std::end(_owner->getSensoryMemory()->getSensedItems()))
+		{
+			e.second = -1.0f;
+		}
+	}
+}
 
 
+EntityType GoalFindWeapon::getBestItem(float& weight) const
+{
+	EntityType bestItem = EntityType::DEFAULT;
+	weight = 0.0f;
 
+	for (auto e : _weightFindItem)
+	{
+		if (weight < e.second)
+		{
+			bestItem = e.first;
+			weight = e.second;
+		}
+		cocos2d::log("find item   item : %d   weight : %f", e.first, e.second);
+	}
+	return bestItem;
+}
 
 
 

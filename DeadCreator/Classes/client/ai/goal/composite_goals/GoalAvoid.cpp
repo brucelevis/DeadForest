@@ -14,7 +14,7 @@ GoalAvoid::GoalAvoid(HumanBase* owner)
 	:
 	GoalCompositeBase(owner)
 {
-	setGoalType(GoalType::GOAL_AVOID);
+	setGoalType(GoalType::AVOID);
 }
 
 

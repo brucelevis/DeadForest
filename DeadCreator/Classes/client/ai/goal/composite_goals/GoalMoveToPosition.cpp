@@ -27,7 +27,7 @@ GoalMoveToPosition::GoalMoveToPosition(
 	GoalCompositeBase(owner),
 	_destination(pos)
 {
-	setGoalType(GoalType::GOAL_MOVE_TO_POS);
+	setGoalType(GoalType::MOVE_TO_POS);
 }
 
 //------------------------------- activate ------------------------------------

@@ -16,7 +16,7 @@
 #include "AbstTargetingSystem.h"
 #include "GoalMainAttack.h"
 #include "GoalHuntTarget.hpp"
-#include "GoalReadyToFight.hpp"
+#include "InventoryData.hpp"
 
 
 using namespace realtrick;
@@ -27,7 +27,7 @@ GoalAttackTarget::GoalAttackTarget(HumanBase* const owner)
 	:
 	GoalCompositeBase(owner)
 {
-	setGoalType(GoalType::GOAL_ATTACK_TARGET);
+	setGoalType(GoalType::ATTACK_TARGET);
 }
 
 
@@ -88,4 +88,18 @@ GoalStatus GoalAttackTarget::process()
 
 
 
+int GoalAttackTarget::evaluate(HumanBase* const owner) 
+{
+	if (owner->getEquipedWeapon() != nullptr)
+	{
+		EntityType bulletType = owner->getEquipedWeapon()->getBulletType();
+		int amount = owner->getInventoryData()->getItemAmount(bulletType);
 
+		//#bug
+		//재장전을 해도 총알 개수가 그대로
+		cocos2d::log("GoalAttackTarget => bullet in inventory : %d", amount);
+		cocos2d::log("GoalAttackTarget => reserved bullet : %d", owner->getEquipedWeapon()->getReservedBullets());
+	}
+
+	return 1; 
+}

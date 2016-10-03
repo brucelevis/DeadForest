@@ -1,5 +1,5 @@
-#ifndef GOAL_EQUIP_WEAPON_H
-#define GOAL_EQUIP_WEAPON_H
+#ifndef GOAL_RELOAD_H
+#define GOAL_RELOAD_H
 #pragma warning (disable:4786)
 
 #include "GoalCompositeBase.hpp"
@@ -11,18 +11,16 @@ namespace realtrick
 	{
 		class HumanBase;
 
-		class GoalEquipWeapon : public GoalCompositeBase
+		class GoalReload : public GoalCompositeBase
 		{
 
 		public:
 
-			GoalEquipWeapon(HumanBase* owner);
-			virtual ~GoalEquipWeapon() override
+			GoalReload(HumanBase* owner);
+			virtual ~GoalReload() override
 			{}
 
 			int evaluate(HumanBase* const owner);
-			void makeEquipItemWeight();
-			EntityType getBestItem(float& weight) const;
 
 			virtual void activate() override;
 			virtual GoalStatus process() override;
@@ -30,8 +28,6 @@ namespace realtrick
 
 		private:
 			std::chrono::duration<double> _startTime;
-			std::map<EntityType, float> _weightEquipItem;
-			EntityType _weaponType;
 		};
 	}
 }

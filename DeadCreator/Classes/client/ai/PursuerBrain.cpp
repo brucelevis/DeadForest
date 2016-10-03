@@ -2,7 +2,8 @@
 #include "HumanBase.hpp"
 #include "GoalAttackTarget.hpp"
 #include "GoalFindWeapon.hpp"
-#include "GoalReadyToFight.hpp"
+#include "GoalEquipWeapon.h"
+#include "GoalReload.h"
 #include "InventoryData.hpp"
 
 using namespace realtrick::client;
@@ -12,15 +13,23 @@ PursuerBrain::PursuerBrain(HumanBase* owner)
 BrainBase(owner)
 {
 	_thinker = new GoalThink(owner);
+
 	GoalAttackTarget* attack = new GoalAttackTarget(owner);
-	attack->setEvaluator([this](HumanBase* owner) { return 1; });
+	attack->setEvaluator(std::bind(&GoalAttackTarget::evaluate, attack, owner));
 	_thinker->addGoalEntry(attack);
 
-	GoalReadyToFight* ready = new GoalReadyToFight(owner);
+	GoalEquipWeapon* equip = new GoalEquipWeapon(owner);
+	equip->setEvaluator(std::bind(&GoalEquipWeapon::evaluate, equip, owner));
+	_thinker->addGoalEntry(equip);
 
-	// #instance loss problem
-	ready->setEvaluator(std::bind(&GoalReadyToFight::evaluate, owner));
-	_thinker->addGoalEntry(ready);
+	GoalFindWeapon* find = new GoalFindWeapon(owner);
+	find->setEvaluator(std::bind(&GoalFindWeapon::evaluate, find, owner));
+	_thinker->addGoalEntry(find);
+
+	GoalReload* reload = new GoalReload(owner);
+	reload->setEvaluator(std::bind(&GoalReload::evaluate, reload, owner));
+	_thinker->addGoalEntry(reload);
+
 }
 
 PursuerBrain::~PursuerBrain()

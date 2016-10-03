@@ -26,7 +26,7 @@ GoalSeekToPosition::GoalSeekToPosition(HumanBase* owner, cocos2d::Vec2 target)
 	_position(target),
 	_time_expected(0.0)
 {
-	setGoalType(GoalType::GOAL_SEEK_TO_POS);
+	setGoalType(GoalType::SEEK_TO_POS);
 }
 
 

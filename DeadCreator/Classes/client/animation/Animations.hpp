@@ -19,3 +19,4 @@
 
 // zombie
 #include "ZombieAnimations.hpp"
+#include "Zombie2Animations.hpp"

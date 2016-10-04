@@ -104,7 +104,9 @@ namespace realtrick
                 if ( isFirstCall )
                 {
                     table[EntityType::ENTITY_PLAYER] = EntityData(EntityType::ENTITY_PLAYER, PaletteType::HUMAN, "Sheriff", "editor/sheriff.png");
-                    table[EntityType::ENTITY_ZOMBIE] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::ENEMY, "Zombie", "editor/zombie2.png");
+                    table[EntityType::ENTITY_ZOMBIE] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::ENEMY, "Zombie", "editor/zombie1.png");
+                    table[EntityType::ENTITY_ZOMBIE2] = EntityData(EntityType::ENTITY_ZOMBIE2, PaletteType::ENEMY, "Zombie", "editor/zombie2.png");
+                    table[EntityType::ENTITY_ZOMBIE3] = EntityData(EntityType::ENTITY_ZOMBIE3, PaletteType::ENEMY, "Zombie", "editor/zombie3.png");
                     table[EntityType::ITEM_M16A2] = EntityData(EntityType::ITEM_M16A2, PaletteType::ITEM, "M16A2", "editor/M16A2.png");
                     table[EntityType::ITEM_M1897] = EntityData(EntityType::ITEM_M1897, PaletteType::ITEM,"M1897", "editor/M1897.png");
                     table[EntityType::ITEM_GLOCK17] = EntityData(EntityType::ITEM_GLOCK17, PaletteType::ITEM,"Glock17", "editor/Glock17.png");
@@ -125,7 +127,9 @@ namespace realtrick
                 if ( isFirstCall )
                 {
                     table["Sheriff"] = EntityData(EntityType::ENTITY_PLAYER, PaletteType::HUMAN, "Sheriff", "editor/sheriff.png");
-                    table["Zombie"] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::ENEMY, "Zombie", "editor/zombie2.png");
+                    table["Zombie1"] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::ENEMY, "Zombie1", "editor/zombie1.png");
+                    table["Zombie2"] = EntityData(EntityType::ENTITY_ZOMBIE2, PaletteType::ENEMY, "Zombie2", "editor/zombie2.png");
+                    table["Zombie3"] = EntityData(EntityType::ENTITY_ZOMBIE3, PaletteType::ENEMY, "Zombie3", "editor/zombie3.png");
                     table["M16A2"] = EntityData(EntityType::ITEM_M16A2, PaletteType::ITEM,"M16A2", "editor/M16A2.png");
                     table["M1897"] = EntityData(EntityType::ITEM_M1897, PaletteType::ITEM,"M1897", "editor/M1897.png");
                     table["Glock17"] = EntityData(EntityType::ITEM_GLOCK17, PaletteType::ITEM,"Glock17", "editor/Glock17.png");

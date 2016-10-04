@@ -9,6 +9,7 @@
 #include "EntityManager.hpp"
 #include "GameResource.hpp"
 #include "EntityZombie.hpp"
+#include "EntityZombie2.hpp"
 #include "EntityPlayer.hpp"
 #include "Items.hpp"
 #include "Brains.hpp"
@@ -43,6 +44,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
 				human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
 				human->setEquipedWeapon(nullptr);
 			}
+            
             if ( playerType == ownPlayer ) _player = human;
         }
         
@@ -56,7 +58,30 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             
             if ( res->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
                 zombie->setBrain(ZombieBrain::createDefault(zombie));
-
+        }
+        
+        else if ( entityType == EntityType::ENTITY_ZOMBIE2 )
+        {
+            EntityZombie2* zombie = EntityZombie2::create(_game);
+            zombie->setWorldPosition(position);
+            zombie->setPlayerType(playerType);
+            zombie->setForce(res->_playerInfos[static_cast<int>(playerType)].force);
+            addEntity(zombie, id);
+            
+            if ( res->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
+                zombie->setBrain(ZombieBrain::createDefault(zombie));
+        }
+        
+        else if ( entityType == EntityType::ENTITY_ZOMBIE3 )
+        {
+            EntityZombie* zombie = EntityZombie::create(_game);
+            zombie->setWorldPosition(position);
+            zombie->setPlayerType(playerType);
+            zombie->setForce(res->_playerInfos[static_cast<int>(playerType)].force);
+            addEntity(zombie, id);
+            
+            if ( res->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
+                zombie->setBrain(ZombieBrain::createDefault(zombie));
         }
         
         else if ( entityType == EntityType::BULLET_556MM )

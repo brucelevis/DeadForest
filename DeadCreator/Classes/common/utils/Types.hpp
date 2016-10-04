@@ -41,7 +41,9 @@ namespace realtrick
         BULLET_AXE = 10,
         ENTITY_PLAYER = 11,
         ENTITY_ZOMBIE = 12,
-        ENTITY_FINITE = 13,
+        ENTITY_ZOMBIE2 = 13,
+        ENTITY_ZOMBIE3 = 14,
+        ENTITY_FINITE = 15,
     };
     
     enum class PlayerType : int

@@ -1,13 +1,13 @@
 //
-//  EntityZombie.cpp
+//  EntityZombie2.cpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 8. 2..
+//  Created by mac on 2016. 10. 4..
 //
 //
 
-#include "EntityZombie.hpp"
-#include "ZombieStates.hpp"
+#include "EntityZombie2.hpp"
+#include "Zombie2States.hpp"
 #include "StringHelper.hpp"
 #include "Game.hpp"
 #include "AnimatedFiniteEntity.hpp"
@@ -17,9 +17,9 @@ using namespace realtrick::client;
 using namespace cocos2d;
 
 
-EntityZombie::EntityZombie(Game* game) : HumanBase(game)
+EntityZombie2::EntityZombie2(Game* game) : HumanBase(game)
 {
-    setEntityType(EntityType::ENTITY_ZOMBIE);
+    setEntityType(EntityType::ENTITY_ZOMBIE2);
     setRunSpeed(150.0f);
     setWalkSpeed(75.0f);
     _maxBlood = 100;
@@ -27,29 +27,29 @@ EntityZombie::EntityZombie(Game* game) : HumanBase(game)
 }
 
 
-EntityZombie::~EntityZombie()
+EntityZombie2::~EntityZombie2()
 {
     CC_SAFE_DELETE(_FSM);
     CC_SAFE_DELETE(_brain);
 }
 
 
-bool EntityZombie::init()
+bool EntityZombie2::init()
 {
     if ( !HumanBase::init() )
         return false;
     
     _FSM = new StateMachine(this);
-    _FSM->setCurrState(&ZombieIdleLoop::getInstance());
-    _FSM->changeState(&ZombieIdleLoop::getInstance());
+    _FSM->setCurrState(&Zombie2IdleLoop::getInstance());
+    _FSM->changeState(&Zombie2IdleLoop::getInstance());
     
     return true;
 }
 
 
-EntityZombie* EntityZombie::create(Game* game)
+EntityZombie2* EntityZombie2::create(Game* game)
 {
-    auto ret = new (std::nothrow) EntityZombie(game);
+    auto ret = new (std::nothrow) EntityZombie2(game);
     if ( ret && ret->init() )
     {
         ret->autorelease();
@@ -60,13 +60,13 @@ EntityZombie* EntityZombie::create(Game* game)
 }
 
 
-void EntityZombie::update(float dt)
+void EntityZombie2::update(float dt)
 {
     HumanBase::update(dt);
 }
 
 
-bool EntityZombie::handleMessage(const Telegram& msg)
+bool EntityZombie2::handleMessage(const Telegram& msg)
 {
     bool ret = false;
     
@@ -90,8 +90,8 @@ bool EntityZombie::handleMessage(const Telegram& msg)
                     _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
                 }
             }
-
-            this->getFSM()->changeState(&ZombieDead::getInstance());
+            
+            this->getFSM()->changeState(&Zombie2Dead::getInstance());
         }
         
         // only apply to player
@@ -125,9 +125,9 @@ bool EntityZombie::handleMessage(const Telegram& msg)
 }
 
 
-void EntityZombie::suicide()
+void EntityZombie2::suicide()
 {
-    if ( _FSM ) _FSM->changeState(&ZombieDead::getInstance());
+    if ( _FSM ) _FSM->changeState(&Zombie2Dead::getInstance());
 }
 
 

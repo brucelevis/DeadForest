@@ -575,7 +575,9 @@ void GMXLayer::updateCocosLogic()
             {
                 if ( ent.second->isVisible() &&
                     (ent.second->getEntityType() == EntityType::ENTITY_PLAYER ||
-                     ent.second->getEntityType() == EntityType::ENTITY_ZOMBIE) )
+                     ent.second->getEntityType() == EntityType::ENTITY_ZOMBIE ||
+                     ent.second->getEntityType() == EntityType::ENTITY_ZOMBIE2 ||
+                     ent.second->getEntityType() == EntityType::ENTITY_ZOMBIE3 ) )
                 {
                     ent.second->setBoundingCircle(true, Color4F(1.00, 0.00, 0.00, 0.50));
                     if ( physics::intersect(realtrick::Circle(ent.second->getPosition(), 20.0f),

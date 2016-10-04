@@ -127,7 +127,7 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
     fov.aroundCircleSlice = 30;
     fov.entryDegree = 110.0f;
     fov.heading = player->getHeading();
-    fov.isEnable = true;
+    fov.isEnable = false;
     _occlusionBaker->bakeTexture(_occlusionTexture,
                                  player->getWorldPosition(),
                                  zoomScale,
@@ -138,9 +138,6 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
     getGLProgramState()->setUniformTexture("u_staticTex", _staticTexture->getSprite()->getTexture());
 //    getGLProgramState()->setUniformTexture("u_normalTex", _normalTexture->getSprite()->getTexture());
     getGLProgramState()->setUniformTexture("u_occlusionTex", _occlusionTexture->getSprite()->getTexture());
-    
-    
-//    auto spr = Sprite::create();
     
 }
 

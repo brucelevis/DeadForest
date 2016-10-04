@@ -319,6 +319,9 @@ std::vector<ItemBase*> SensoryMemory::queryUsableRangeWeapon()
 
 	for (const auto& b : bullets)
 	{
+		if (b == nullptr)
+			continue;
+
 		EntityType findType = EntityType::DEFAULT;
 		if (b->getEntityType() == EntityType::BULLET_556MM)
 		{

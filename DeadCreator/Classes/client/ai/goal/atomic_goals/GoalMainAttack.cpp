@@ -45,7 +45,7 @@ void GoalMainAttack::activate()
 			attackBegin.execute();
 
 			InputMoveBegin moveBegin(_owner, (_target - _owner->getWorldPosition()).getNormalized());
-			moveBegin.execute();			
+			moveBegin.execute();
 		}
 		else
 		{
@@ -63,7 +63,6 @@ void GoalMainAttack::activate()
 //-----------------------------------------------------------------------------
 GoalStatus GoalMainAttack::process()
 {
-	//if status is INACTIVE, call activate()
 	if (isInactive())
 		activate();
 

@@ -342,6 +342,7 @@ void Game::addEntity(EntityBase* ent, int zOrder)
 
 void Game::removeEntity(EntityBase* ent)
 {
+	cocos2d::log("removed from game!!");
 	for (auto e : _entityManager->getEntities())
 	{
 		if (isMasked(e.second->getFamilyMask(), FamilyMask::HUMAN_BASE))
@@ -355,6 +356,7 @@ void Game::removeEntity(EntityBase* ent)
 			}
 			else if (isMasked(ent->getFamilyMask(), FamilyMask::ITEM_BASE))
 			{
+				cocos2d::log("item %d", ent->getEntityType());
 				ItemBase* removingItem = static_cast<ItemBase*>(ent);
 				human->getSensoryMemory()->removeItemFromMemory(removingItem);
 			}

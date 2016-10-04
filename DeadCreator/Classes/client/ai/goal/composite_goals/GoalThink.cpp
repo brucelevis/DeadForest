@@ -8,6 +8,7 @@
 
 #include "GoalThink.hpp"
 #include "Goals.hpp"
+#include "HumanBase.hpp"
 using namespace realtrick::client;
 
 
@@ -28,6 +29,7 @@ void GoalThink::activate()
 {
     if ( _goalEntry.empty() ) return ;
     
+	cocos2d::log("entity %d  decision", _owner->getTag());
 
 	GoalBase* bestGoal = nullptr;
 	int weight = 0;

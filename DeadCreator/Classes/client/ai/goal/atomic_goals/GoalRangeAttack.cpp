@@ -19,7 +19,8 @@ USING_NS_CC;
 GoalRangeAttack::GoalRangeAttack(HumanBase* owner, const cocos2d::Vec2& target)
 	:
 	GoalBase(owner),
-	_target(target)
+	_target(target),
+	_attacked(false)
 {
 	setGoalType(GoalType::RANGE_ATTACK);
 }
@@ -42,16 +43,18 @@ void GoalRangeAttack::activate()
 			InputBezelBegin bezelBegin(_owner, heading);
 			bezelBegin.execute();
 
-			InputAttackBegin attackBegin(_owner);
-			attackBegin.execute();
+			cocos2d::Vec2 pos = _owner->getWorldPosition();
 
-			// 여기 방향을 유지하며 뒤로 움직일 방법이 필요함
-			//Vec2 pos = _owner->getWorldPosition();
-			//if (_target.distance(pos) < (float)_owner->getSensoryMemory()->getAttackRange() * 0.75f)
-			//{
-			//	InputMoveBegin moveBegin(_owner, (_target - pos).getNormalized());
-			//	moveBegin.execute();
-			//}
+			if (_target.distance(pos) > _owner->getSensoryMemory()->getAttackRange())
+			{
+				InputMoveBegin moveBegin(_owner, (_target - pos).getNormalized());
+				moveBegin.execute();
+			}
+			else
+			{
+				InputMoveBegin moveBegin(_owner, (pos - _target).getNormalized());
+				moveBegin.execute();
+			}
 		}
 		else
 		{
@@ -74,6 +77,21 @@ GoalStatus GoalRangeAttack::process()
 		activate();
 
 	std::chrono::duration<double> endTime = std::chrono::system_clock::now().time_since_epoch();
+
+	// Attack when bezel is ready
+	if (!_attacked && 0.15f < (endTime - _startTime).count())
+	{
+		if (_owner->getTargetSys()->isTargetPresent())
+		{
+			if (_owner->getTargetSys()->isTargetAttackable())
+			{
+				InputAttackBegin attackBegin(_owner);
+				attackBegin.execute();
+
+				_attacked = true;
+			}
+		}
+	}
 
 	if ( 1.0f < (endTime - _startTime).count())
 	{

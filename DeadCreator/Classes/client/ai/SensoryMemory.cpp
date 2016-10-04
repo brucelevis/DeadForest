@@ -29,7 +29,7 @@ SensoryMemory::SensoryMemory(
 	_owner(owner),
 	_memory_span(memory_span)
 {
-	_viewRange = 200;
+	_viewRange = 800;
 	_attackRange = 60;
 }
 
@@ -70,6 +70,7 @@ void SensoryMemory::removeItemFromMemory(ItemBase* const item)
 	if (record != std::end(_sensedItems))
 	{
 		_sensedItems.erase(record);
+		cocos2d::log("erase sensed item size : %d", _sensedItems.size());	
 	}
 }
 
@@ -128,7 +129,10 @@ void SensoryMemory::updateVision()
 				ItemBase* item = static_cast<ItemBase*>(*iter);
 				if (_owner->getWorldPosition().getDistance(item->getWorldPosition()) < _viewRange)
 				{
-					_sensedItems.push_back(item);
+					auto finded = std::find(std::begin(_sensedItems), std::end(_sensedItems), item);
+
+					if (finded == std::end(_sensedItems))
+						_sensedItems.push_back(item);
 				}
 			}
 		}

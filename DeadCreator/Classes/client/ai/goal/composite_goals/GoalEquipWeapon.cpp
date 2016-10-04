@@ -185,7 +185,7 @@ EntityType GoalEquipWeapon::getBestItem(float& weight) const
 			bestItem = e.first;
 			weight = e.second;
 		}
-		cocos2d::log("equip item   item : %d   weight : %f", e.first, e.second);
+		cocos2d::log("item weight in [GoalEquipWeapon]   item : %d   weight : %f", e.first, e.second);
 	}
 	return bestItem;
 }

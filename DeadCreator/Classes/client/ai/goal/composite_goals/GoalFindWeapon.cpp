@@ -41,6 +41,8 @@ void GoalFindWeapon::activate()
 	float dist = bigf;
 	cocos2d::Vec2 desti;
 
+	cocos2d::log("GoalFindWeapon find : %d", _findWeapon);
+
 	for (auto e : _owner->getGame()->getEntityManager()->getEntities())
 	{
 		if (e.second->getEntityType() == _findWeapon)
@@ -65,6 +67,7 @@ void GoalFindWeapon::activate()
 	}
 	else
 	{
+		cocos2d::log("FAILED in GoalFindWeapon");
 		setGoalStatus(GoalStatus::FAILED);
 	}
 }
@@ -98,7 +101,7 @@ int GoalFindWeapon::evaluate(HumanBase* const owner)
 void GoalFindWeapon::makeFindItemWeight()
 {
 	_weightFindItem.clear();
-	_weightFindItem.emplace(EntityType::ITEM_AXE, 1.0f);
+	_weightFindItem.emplace(EntityType::ITEM_AXE, 3.0f);
 	_weightFindItem.emplace(EntityType::ITEM_CONSUMPTION, 0.0f);
 	_weightFindItem.emplace(EntityType::ITEM_GLOCK17, 5.0f);
 	_weightFindItem.emplace(EntityType::ITEM_M16A2, 6.0f);
@@ -122,13 +125,11 @@ void GoalFindWeapon::makeFindItemWeight()
 	if (_owner->getEquipedWeapon() != nullptr)
 	{
 		cocos2d::log("has weapon!! in makeFindItemWeight()");
-		_weightFindItem[EntityType::ITEM_AXE] = -1.0f;
+		//_weightFindItem[EntityType::ITEM_AXE] = -1.0f;
 		_weightFindItem[EntityType::ITEM_M16A2] = -1.0f;
 		_weightFindItem[EntityType::ITEM_GLOCK17] = -1.0f;
 		_weightFindItem[EntityType::ITEM_M1897] = -1.0f;
 	}
-
-	cocos2d::log("%f", _weightFindItem[EntityType::ITEM_GLOCK17]);
 
 	// Set find-weight for each weapon with current inventory items
 	for (const auto& item : itemsFiltered)
@@ -193,6 +194,10 @@ void GoalFindWeapon::makeFindItemWeight()
 		{
 			e.second = -1.0f;
 		}
+		else
+		{
+			cocos2d::log("found item : %d", e.first);
+		}
 	}
 }
 
@@ -209,7 +214,7 @@ EntityType GoalFindWeapon::getBestItem(float& weight) const
 			bestItem = e.first;
 			weight = e.second;
 		}
-		cocos2d::log("find item   item : %d   weight : %f", e.first, e.second);
+		cocos2d::log("item weight in [GoalFindWeapon]  item : %d   weight : %f", e.first, e.second);
 	}
 	return bestItem;
 }

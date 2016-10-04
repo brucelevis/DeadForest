@@ -27,6 +27,7 @@ namespace realtrick
 
 			cocos2d::Vec2 _target;
 			std::chrono::duration<double> _startTime;
+			bool _attacked;
 		};
 	}
 }

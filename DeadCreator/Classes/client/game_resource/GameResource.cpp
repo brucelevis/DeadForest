@@ -14,6 +14,7 @@ using namespace cocos2d;
 
 #include "util.h"
 
+#include <iostream>
 
 bool GameResource::initGMXFile(const std::string& path)
 {
@@ -266,13 +267,15 @@ bool GameResource::initWithBinary(const char* buffer)
     int iter = 1;
     for ( auto info = file->playerInfos()->begin(); info != file->playerInfos()->end() ; ++ info )
     {
-        
+		if ( static_cast<Owner>(info->owner()) == Owner::UNUSED ) continue; 
+
         _playerInfos[iter] = PlayerInfo(static_cast<PlayerType>(info->player()),
                                      static_cast<Force>(info->force()),
                                      static_cast<Owner>(info->owner()));
         
+
         forcePlayers[info->force()].push_back(info->player());
-        
+     
         ++iter;
     }
     
@@ -281,8 +284,8 @@ bool GameResource::initWithBinary(const char* buffer)
         int force = static_cast<int>(_playerInfos[i].force);
         for( auto player : forcePlayers[force] )
         {
-            _playerInfos[i].isAllyWith[player] = true;
-            _playerInfos[i].isSharedVision[player] = true;
+			_playerInfos[i].isAllyWith[player] = _forces[force].isAlly;
+            _playerInfos[i].isSharedVision[player] = _forces[force].isVision;
         }
         
         _playerInfos[i].isAllyWith[i] = true;

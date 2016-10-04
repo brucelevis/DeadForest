@@ -138,6 +138,10 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
     getGLProgramState()->setUniformTexture("u_staticTex", _staticTexture->getSprite()->getTexture());
 //    getGLProgramState()->setUniformTexture("u_normalTex", _normalTexture->getSprite()->getTexture());
     getGLProgramState()->setUniformTexture("u_occlusionTex", _occlusionTexture->getSprite()->getTexture());
+    
+    
+//    auto spr = Sprite::create();
+    
 }
 
 

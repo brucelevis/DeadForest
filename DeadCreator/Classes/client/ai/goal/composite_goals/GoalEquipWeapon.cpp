@@ -36,18 +36,18 @@ void GoalEquipWeapon::activate()
 	//		_owner->getEquipedWeapon()->getRange(),
 	//		_owner->getEquipedWeapon()->getEntityType(), _weaponType);
 
-	int range = 50;
+	int range = 55;
 	if (_weaponType == EntityType::ITEM_AXE)
-		range = 65;
+		range = 60;
 	else if (_weaponType == EntityType::ITEM_GLOCK17)
-		range = 800;
+		range = 750;
 	else if (_weaponType == EntityType::ITEM_M16A2)
-		range = 800;
+		range = 750;
 	else if (_weaponType == EntityType::ITEM_M1897)
-		range = 200;
+		range = 160;
 
 	if (_owner->getEquipedWeapon() != nullptr)
-		_owner->getSensoryMemory()->setAttackRange(range - 10);
+		_owner->getSensoryMemory()->setAttackRange(range);
 	else
 		_owner->getSensoryMemory()->setAttackRange(range);
 
@@ -90,7 +90,7 @@ int GoalEquipWeapon::evaluate(HumanBase* const owner)
 		EntityType bulletType = owner->getEquipedWeapon()->getBulletType();
 		int amount = owner->getInventoryData()->getItemAmount(bulletType);
 
-		if (owner->getEquipedWeapon()->getReservedBullets() > 0 || amount > 0 ||
+		if (owner->getEquipedWeapon()->getNumOfLeftRounds() > 0 || amount > 0 ||
 			owner->getEquipedWeapon()->getEntityType() == EntityType::ITEM_AXE)
 		{
 			return 0;

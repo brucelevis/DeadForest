@@ -45,20 +45,12 @@ void GoalRangeAttack::activate()
 			InputAttackBegin attackBegin(_owner);
 			attackBegin.execute();
 
-			int amount = 0;
-			if (_owner->getEquipedWeapon() != nullptr)
-			{
-				EntityType bulletType = _owner->getEquipedWeapon()->getBulletType();
-				amount = _owner->getInventoryData()->getItemAmount(bulletType);
-				cocos2d::log("range %d %d", _owner->getEquipedWeapon()->getReservedBullets(), amount);
-			}
-			
 			// 여기 방향을 유지하며 뒤로 움직일 방법이 필요함
-			Vec2 pos = _owner->getWorldPosition();
+			//Vec2 pos = _owner->getWorldPosition();
 			//if (_target.distance(pos) < (float)_owner->getSensoryMemory()->getAttackRange() * 0.75f)
 			//{
-				InputMoveBegin moveBegin(_owner, (_target - pos).getNormalized());
-				moveBegin.execute();
+			//	InputMoveBegin moveBegin(_owner, (_target - pos).getNormalized());
+			//	moveBegin.execute();
 			//}
 		}
 		else

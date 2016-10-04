@@ -26,7 +26,7 @@ namespace realtrick
 		public:
 
 			cocos2d::Vec2 _target;
-			std::chrono::duration<double>	_startTime;
+			std::chrono::duration<double> _startTime;
 		};
 	}
 }

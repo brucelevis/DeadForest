@@ -15,6 +15,7 @@
 #include "PathPlanner.h"
 #include "AbstTargetingSystem.h"
 #include "GoalMainAttack.h"
+#include "GoalRangeAttack.h"
 #include "GoalHuntTarget.hpp"
 #include "InventoryData.hpp"
 
@@ -53,7 +54,10 @@ void GoalAttackTarget::activate()
 	//then select a tactic to follow while shooting
 	if (_owner->getTargetSys()->isTargetAttackable())
 	{
-		addSubgoal(new GoalMainAttack(_owner, _owner->getTargetSys()->getTarget()->getWorldPosition()));
+		if(_owner->getEquipedWeapon() == nullptr || _owner->getEquipedWeapon()->getEntityType() == EntityType::ITEM_AXE)
+			addSubgoal(new GoalMainAttack(_owner, _owner->getTargetSys()->getTarget()->getWorldPosition()));
+		else
+			addSubgoal(new GoalRangeAttack(_owner, _owner->getTargetSys()->getTarget()->getWorldPosition()));
 	}
 
 	//if the target is not attackable, go hunt it.
@@ -90,16 +94,5 @@ GoalStatus GoalAttackTarget::process()
 
 int GoalAttackTarget::evaluate(HumanBase* const owner) 
 {
-	if (owner->getEquipedWeapon() != nullptr)
-	{
-		EntityType bulletType = owner->getEquipedWeapon()->getBulletType();
-		int amount = owner->getInventoryData()->getItemAmount(bulletType);
-
-		//#bug
-		//재장전을 해도 총알 개수가 그대로
-		cocos2d::log("GoalAttackTarget => bullet in inventory : %d", amount);
-		cocos2d::log("GoalAttackTarget => reserved bullet : %d", owner->getEquipedWeapon()->getReservedBullets());
-	}
-
-	return 1; 
+	return 2; 
 }

@@ -44,7 +44,7 @@ GoalStatus GoalReload::process()
 	std::chrono::duration<double> endTime = std::chrono::system_clock::now().time_since_epoch();
 
 	// Wait for equipping item.
-	if ((endTime - _startTime).count() > 1.0)
+	if ((endTime - _startTime).count() > 0.6f)
 	{
 		setGoalStatus(GoalStatus::COMPLETED);
 		return getGoalStatus();
@@ -71,10 +71,8 @@ int GoalReload::evaluate(HumanBase* const owner)
 		owner->getEquipedWeapon()->getEntityType() == EntityType::ITEM_GLOCK17 ||
 		owner->getEquipedWeapon()->getEntityType() == EntityType::ITEM_M16A2)
 	{
-		cocos2d::log("reserved bullet : %d", owner->getEquipedWeapon()->getReservedBullets());
-
 		// If there are some bullets already reloaded
-		if (owner->getEquipedWeapon()->getReservedBullets() > 0)
+		if (owner->getEquipedWeapon()->getNumOfLeftRounds() > 0)
 		{
 			return 0;
 		}
@@ -83,8 +81,6 @@ int GoalReload::evaluate(HumanBase* const owner)
 		{
 			EntityType bulletType = owner->getEquipedWeapon()->getBulletType();
 			int amount = owner->getInventoryData()->getItemAmount(bulletType);
-
-			cocos2d::log("bullet in inventory : %d", amount);
 
 			// If there are some bullets remain in inventory
 			if (amount > 0)

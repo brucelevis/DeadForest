@@ -104,9 +104,9 @@ void GoalFindWeapon::makeFindItemWeight()
 	_weightFindItem.emplace(EntityType::ITEM_M16A2, 6.0f);
 	_weightFindItem.emplace(EntityType::ITEM_M1897, 7.0f);
 	_weightFindItem.emplace(EntityType::ITEM_STUFF, 0.0f);
-	_weightFindItem.emplace(EntityType::BULLET_556MM, 2.0f);
-	_weightFindItem.emplace(EntityType::BULLET_9MM, 3.0f);
-	_weightFindItem.emplace(EntityType::BULLET_SHELL, 4.0f);
+	_weightFindItem.emplace(EntityType::BULLET_556MM, 1.0f);
+	_weightFindItem.emplace(EntityType::BULLET_9MM, 1.0f);
+	_weightFindItem.emplace(EntityType::BULLET_SHELL, 1.0f);
 
 	auto inventory = _owner->getInventoryData();
 	const auto& items = inventory->getItemLists();
@@ -118,18 +118,34 @@ void GoalFindWeapon::makeFindItemWeight()
 			itemsFiltered.emplace(item->getEntityType());
 	}
 
+	// Set find-weight for each weapon with current equipped items
+	if (_owner->getEquipedWeapon() != nullptr)
+	{
+		cocos2d::log("has weapon!! in makeFindItemWeight()");
+		_weightFindItem[EntityType::ITEM_AXE] = -1.0f;
+		_weightFindItem[EntityType::ITEM_M16A2] = -1.0f;
+		_weightFindItem[EntityType::ITEM_GLOCK17] = -1.0f;
+		_weightFindItem[EntityType::ITEM_M1897] = -1.0f;
+	}
+
+	cocos2d::log("%f", _weightFindItem[EntityType::ITEM_GLOCK17]);
+
+	// Set find-weight for each weapon with current inventory items
 	for (const auto& item : itemsFiltered)
 	{
 		if (EntityType::BULLET_556MM == item)
 		{
+			_weightFindItem[EntityType::BULLET_556MM] = -1.0f;
 			_weightFindItem[EntityType::ITEM_M16A2] *= 10.0f;
 		}
 		else if (EntityType::BULLET_9MM == item)
 		{
+			_weightFindItem[EntityType::BULLET_9MM] = -1.0f;
 			_weightFindItem[EntityType::ITEM_GLOCK17] *= 10.0f;
 		}
 		else if (EntityType::BULLET_SHELL == item)
 		{
+			_weightFindItem[EntityType::BULLET_SHELL] = -1.0f;
 			_weightFindItem[EntityType::ITEM_M1897] *= 10.0f;
 		}
 		else if (EntityType::ITEM_AXE == item)
@@ -142,14 +158,17 @@ void GoalFindWeapon::makeFindItemWeight()
 		}
 		else if (EntityType::ITEM_GLOCK17 == item)
 		{
+			_weightFindItem[EntityType::ITEM_GLOCK17] = -1.0f;
 			_weightFindItem[EntityType::BULLET_9MM] *= 10.0f;
 		}
 		else if (EntityType::ITEM_M16A2 == item)
 		{
+			_weightFindItem[EntityType::ITEM_M16A2] = -1.0f;
 			_weightFindItem[EntityType::BULLET_556MM] *= 10.0f;
 		}
 		else if (EntityType::ITEM_M1897 == item)
 		{
+			_weightFindItem[EntityType::ITEM_M1897] = -1.0f;
 			_weightFindItem[EntityType::BULLET_SHELL] *= 10.0f;
 		}
 		else if (EntityType::ITEM_STUFF == item)

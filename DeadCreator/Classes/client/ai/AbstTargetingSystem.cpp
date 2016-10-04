@@ -22,8 +22,7 @@ void AbstTargetingSystem::update()
 	std::list<HumanBase*> sensed_bots;
 	sensed_bots = _owner->getSensoryMemory()->getListOfRecentlySensedOpponents();
 
-	std::list<HumanBase*>::const_iterator bot = sensed_bots.begin();
-	for (bot; bot != sensed_bots.end(); ++bot)
+	for (auto bot = sensed_bots.begin(); bot != sensed_bots.end(); ++bot)
 	{
 		//make sure the bot is alive and that it is not the owner
 		if ((*bot)->isAlive() && (*bot != _owner))

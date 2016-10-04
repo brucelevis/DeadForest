@@ -53,7 +53,7 @@ namespace realtrick
 
             // find key
             begIdx = line.find_first_not_of(delims);
-            if(begIdx != std::string::npos)
+            if( begIdx != std::string::npos )
             {
                 endIdx = line.find_first_of(delims, begIdx);
                 if( endIdx == std::string::npos)

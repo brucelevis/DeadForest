@@ -93,27 +93,27 @@ void Block::prettyWrite(int depth, std::string& out) const
     std::string name;
     for( int i = 0 ; i < depth ; ++ i ) name.push_back(' ');
     name.insert(depth, _name);
-    for(int i = _name.size() + depth; i < 29; ++ i) name.push_back(' ');
+    for(auto i = _name.size() + depth; i < 29; ++ i) name.push_back(' ');
     name.push_back('|');
     
     std::string calls(to_string(_numberOfCalls));
-    for(int i = calls.size() ; i < 9; ++ i) calls.push_back(' ');
+    for(auto i = calls.size() ; i < 9; ++ i) calls.push_back(' ');
     calls.push_back('|');
     
     std::string avgTime(to_string(_avgTime));
-    for(int i = avgTime.size() ; i < 11; ++ i) avgTime.push_back(' ');
+    for(auto i = avgTime.size() ; i < 11; ++ i) avgTime.push_back(' ');
     avgTime.push_back('|');
     
     std::string minTime(to_string(_minTime));
-    for(int i = minTime.size() ; i < 11; ++ i) minTime.push_back(' ');
+    for(auto i = minTime.size() ; i < 11; ++ i) minTime.push_back(' ');
     minTime.push_back('|');
     
     std::string maxTime(to_string(_maxTime));
-    for(int i = maxTime.size() ; i < 11; ++ i) maxTime.push_back(' ');
+    for(auto i = maxTime.size() ; i < 11; ++ i) maxTime.push_back(' ');
     maxTime.push_back('|');
     
     std::string usage(to_string(getUsageFromParent()));
-    for(int i = usage.size() ; i < 12; ++ i) usage.push_back(' ');
+    for(auto i = usage.size() ; i < 12; ++ i) usage.push_back(' ');
     usage.push_back('|');
     
     if ( calls.front() == '0' ) return ;

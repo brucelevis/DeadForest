@@ -185,27 +185,27 @@ void SimpleProfiler::flatbufferWriteHelper(int depth, std::string& out, const El
     std::string name;
     for( int i = 0 ; i < depth ; ++ i ) name.push_back(' ');
     name.insert(depth, elem->name()->str());
-    for(int i = elem->name()->str().size() + depth; i < 29; ++ i) name.push_back(' ');
+    for(auto i = elem->name()->str().size() + depth; i < 29; ++ i) name.push_back(' ');
     name.push_back('|');
     
     std::string calls(to_string(elem->calls()));
-    for(int i = calls.size() ; i < 9; ++ i) calls.push_back(' ');
+    for(auto i = calls.size() ; i < 9; ++ i) calls.push_back(' ');
     calls.push_back('|');
     
     std::string avgTime(to_string(elem->avg_time()));
-    for(int i = avgTime.size() ; i < 11; ++ i) avgTime.push_back(' ');
+    for(auto i = avgTime.size() ; i < 11; ++ i) avgTime.push_back(' ');
     avgTime.push_back('|');
     
     std::string minTime(to_string(elem->min_time()));
-    for(int i = minTime.size() ; i < 11; ++ i) minTime.push_back(' ');
+    for(auto i = minTime.size() ; i < 11; ++ i) minTime.push_back(' ');
     minTime.push_back('|');
     
     std::string maxTime(to_string(elem->max_time()));
-    for(int i = maxTime.size() ; i < 11; ++ i) maxTime.push_back(' ');
+    for(auto i = maxTime.size() ; i < 11; ++ i) maxTime.push_back(' ');
     maxTime.push_back('|');
     
     std::string usage(to_string(elem->usage()));
-    for(int i = usage.size() ; i < 12; ++ i) usage.push_back(' ');
+    for(auto i = usage.size() ; i < 12; ++ i) usage.push_back(' ');
     usage.push_back('|');
     
     if ( calls.front() == '0' ) return ;

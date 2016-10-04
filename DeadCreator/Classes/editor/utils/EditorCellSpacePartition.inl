@@ -87,7 +87,7 @@ namespace realtrick
             ret[7] = w - _numOfCellsX;
             ret[8] = w - _numOfCellsX + 1;
             
-            return std::move(ret);
+            return ret;
         }
         
         
@@ -108,7 +108,7 @@ namespace realtrick
             ret[6] = w - _numOfCellsX;
             ret[7] = w - _numOfCellsX + 1;
             
-            return std::move(ret);
+            return ret;
         }
         
     }

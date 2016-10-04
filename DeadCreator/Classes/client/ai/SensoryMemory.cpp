@@ -302,7 +302,7 @@ std::vector<ItemBase*> SensoryMemory::queryMeleeWeapon()
 
 	for (const auto& item : items)
 	{
-		if(item)
+		if(item != nullptr)
 			if (item->getEntityType() == EntityType::ITEM_AXE)
 				weapons.emplace_back(item);
 	}
@@ -336,7 +336,7 @@ std::vector<ItemBase*> SensoryMemory::queryUsableRangeWeapon()
 			findType = EntityType::ITEM_M1897;
 		}
 		auto iter = std::find_if(std::begin(items), std::end(items),
-			[findType](ItemBase* i) { return i->getEntityType() == findType; });
+			[findType](ItemBase* i) { return (i != nullptr) && i->getEntityType() == findType; });
 
 		if(iter != std::end(items))
 			weapons.push_back(*iter);
@@ -353,7 +353,7 @@ std::vector<ItemBase*> SensoryMemory::queryBullets()
 
 	for (const auto& item : items)
 	{
-		if (item)
+		if (item != nullptr)
 		{
 			if (item->getEntityType() == EntityType::BULLET_556MM || 
 				item->getEntityType() == EntityType::BULLET_9MM ||
@@ -387,7 +387,7 @@ bool SensoryMemory::isReadyToFight() const
 
 	for (const auto& item : items)
 	{
-		if (item)
+		if (item != nullptr)
 			if (item->getEntityType() == _owner->getEquipedWeapon()->getBulletType())
 				return true;
 	}

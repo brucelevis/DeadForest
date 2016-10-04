@@ -84,6 +84,7 @@ namespace realtrick
 			MemoryMap			_memory_map;
 			std::vector<ItemBase*> _sensedItems;
 
+
 			//a bot has a memory span equivalent to this value. When a bot requests a 
 			//list of all recently sensed opponents this value is used to determine if 
 			//the bot is able to remember an opponent or not.
@@ -132,6 +133,12 @@ namespace realtrick
 			std::list<HumanBase*> getListOfRecentlySensedOpponents() const;
 
 			const std::vector<ItemBase*>& getSensedItems() const;
+
+			std::vector<ItemBase*> queryMeleeWeapon();
+			std::vector<ItemBase*> queryUsableRangeWeapon();
+			std::vector<ItemBase*> queryBullets();
+			bool isReadyToFight() const;
+
 		};
 	}
 }

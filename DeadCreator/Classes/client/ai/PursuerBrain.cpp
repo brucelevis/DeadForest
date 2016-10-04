@@ -4,6 +4,7 @@
 #include "GoalFindWeapon.hpp"
 #include "GoalEquipWeapon.h"
 #include "GoalReload.h"
+#include "GoalRunAway.h"
 #include "InventoryData.hpp"
 
 using namespace realtrick::client;
@@ -29,6 +30,10 @@ BrainBase(owner)
 	GoalReload* reload = new GoalReload(owner);
 	reload->setEvaluator(std::bind(&GoalReload::evaluate, reload, owner));
 	_thinker->addGoalEntry(reload);
+
+	GoalRunAway* runaway = new GoalRunAway(owner);
+	runaway->setEvaluator(std::bind(&GoalRunAway::evaluate, runaway, owner));
+	_thinker->addGoalEntry(runaway);
 
 }
 

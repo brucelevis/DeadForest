@@ -2,7 +2,9 @@
 #include "Game.hpp"
 #include "EntityBase.hpp"
 #include "CellSpacePartition.hpp"
+#include "InventoryData.hpp"
 #include <sstream>
+#include <algorithm>
 
 USING_NS_CC;
 using namespace realtrick::client;
@@ -286,6 +288,105 @@ bool SensoryMemory::isUnderAttack() const
 		//if this bot has hit us, return true
 		if (rec.second.recent_damage > 0)
 			return true;
+	}
+	return false;
+}
+
+
+std::vector<ItemBase*> SensoryMemory::queryMeleeWeapon()
+{
+	std::vector<ItemBase*> weapons;
+
+	auto inventory = _owner->getInventoryData();
+	const auto& items = inventory->getItemLists();
+
+	for (const auto& item : items)
+	{
+		if(item)
+			if (item->getEntityType() == EntityType::ITEM_AXE)
+				weapons.emplace_back(item);
+	}
+	return weapons;
+}
+
+std::vector<ItemBase*> SensoryMemory::queryUsableRangeWeapon()
+{
+	auto inventory = _owner->getInventoryData();
+	const auto& items = inventory->getItemLists();
+
+	std::vector<ItemBase*> weapons;
+	std::vector<ItemBase*> bullets = queryBullets();
+
+	for (const auto& b : bullets)
+	{
+		EntityType findType = EntityType::DEFAULT;
+		if (b->getEntityType() == EntityType::BULLET_556MM)
+		{
+			findType = EntityType::ITEM_M16A2;
+		}
+		else if (b->getEntityType() == EntityType::BULLET_9MM)
+		{
+			findType = EntityType::ITEM_GLOCK17;
+		}
+		else if (b->getEntityType() == EntityType::BULLET_SHELL)
+		{
+			findType = EntityType::ITEM_M1897;
+		}
+		auto iter = std::find_if(std::begin(items), std::end(items),
+			[findType](ItemBase* i) { return i->getEntityType() == findType; });
+
+		if(iter != std::end(items))
+			weapons.push_back(*iter);
+	}
+	return weapons;
+}
+
+std::vector<ItemBase*> SensoryMemory::queryBullets()
+{
+	std::vector<ItemBase*> bullets;
+
+	auto inventory = _owner->getInventoryData();
+	const auto& items = inventory->getItemLists();
+
+	for (const auto& item : items)
+	{
+		if (item)
+		{
+			if (item->getEntityType() == EntityType::BULLET_556MM || 
+				item->getEntityType() == EntityType::BULLET_9MM ||
+				item->getEntityType() == EntityType::BULLET_SHELL)
+				bullets.emplace_back(item);
+		}
+	}
+	return bullets;
+}
+
+
+bool SensoryMemory::isReadyToFight() const
+{
+	// no weapon
+	if (_owner->getEquipedWeapon() == nullptr)
+		return false;
+
+	// equipped axe
+	if (_owner->getEquipedWeapon()->getEntityType() == EntityType::ITEM_AXE)
+	{
+		return true;
+	}
+	
+	// equipped range weapon and has bullet
+	if (_owner->getEquipedWeapon()->getNumOfLeftRounds() > 0)
+		return true;
+
+	// equipped range weapon and has no bullet ready, but has it in inventory
+	auto inventory = _owner->getInventoryData();
+	const auto& items = inventory->getItemLists();
+
+	for (const auto& item : items)
+	{
+		if (item)
+			if (item->getEntityType() == _owner->getEquipedWeapon()->getBulletType())
+				return true;
 	}
 	return false;
 }

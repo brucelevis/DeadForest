@@ -29,7 +29,8 @@ namespace realtrick
 			MAIN_ATTACK = 11,
 			RANGE_ATTACK = 12,
 			AVOID = 13,
-			ATTACK_TO_DESTINATION = 14
+			ATTACK_TO_DESTINATION = 14,
+			RUN_AWAY = 15
         };
         
     }

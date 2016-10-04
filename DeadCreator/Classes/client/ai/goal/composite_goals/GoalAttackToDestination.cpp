@@ -24,7 +24,7 @@ GoalAttackToDestination::GoalAttackToDestination(
 	_destination(destination),
 	_arriveRange(arriveRange)
 {
-	setGoalType(GoalType::GOAL_ATTACK_TO_DESTINATION);
+	setGoalType(GoalType::ATTACK_TO_DESTINATION);
 }
 
 
@@ -59,7 +59,7 @@ GoalStatus GoalAttackToDestination::process()
 	}
 
 	if (_owner->getTargetSys()->isTargetPresent() &&
-		_subGoals.back()->getGoalType() == GoalType::GOAL_MOVE_TO_POS)
+		_subGoals.back()->getGoalType() == GoalType::MOVE_TO_POS)
 	{
 		addSubgoal(new GoalAttackTarget(_owner));
 	}

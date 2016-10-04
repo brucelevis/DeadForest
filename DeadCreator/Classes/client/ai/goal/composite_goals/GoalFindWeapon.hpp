@@ -21,15 +21,20 @@ namespace realtrick
             
         public:
             
-            explicit GoalFindWeapon(HumanBase* owner, EntityType findWeapon);
+            explicit GoalFindWeapon(HumanBase* owner);
             virtual ~GoalFindWeapon();
             
+			int evaluate(HumanBase* const owner);
+			void makeFindItemWeight();
+			EntityType getBestItem(float& weight) const;
+
             virtual void activate() override;
             virtual GoalStatus process() override;
             virtual void terminate() override;
             
         private:
             
+			std::map<EntityType, float> _weightFindItem;
 			EntityType _findWeapon;
             
         };

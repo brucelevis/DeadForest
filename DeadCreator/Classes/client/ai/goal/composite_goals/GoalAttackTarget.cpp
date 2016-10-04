@@ -15,8 +15,9 @@
 #include "PathPlanner.h"
 #include "AbstTargetingSystem.h"
 #include "GoalMainAttack.h"
+#include "GoalRangeAttack.h"
 #include "GoalHuntTarget.hpp"
-#include "GoalReadyToFight.hpp"
+#include "InventoryData.hpp"
 
 
 using namespace realtrick;
@@ -27,7 +28,7 @@ GoalAttackTarget::GoalAttackTarget(HumanBase* const owner)
 	:
 	GoalCompositeBase(owner)
 {
-	setGoalType(GoalType::GOAL_ATTACK_TARGET);
+	setGoalType(GoalType::ATTACK_TARGET);
 }
 
 
@@ -53,7 +54,10 @@ void GoalAttackTarget::activate()
 	//then select a tactic to follow while shooting
 	if (_owner->getTargetSys()->isTargetAttackable())
 	{
-		addSubgoal(new GoalMainAttack(_owner, _owner->getTargetSys()->getTarget()->getWorldPosition()));
+		if(_owner->getEquipedWeapon() == nullptr || _owner->getEquipedWeapon()->getEntityType() == EntityType::ITEM_AXE)
+			addSubgoal(new GoalMainAttack(_owner, _owner->getTargetSys()->getTarget()->getWorldPosition()));
+		else
+			addSubgoal(new GoalRangeAttack(_owner, _owner->getTargetSys()->getTarget()->getWorldPosition()));
 	}
 
 	//if the target is not attackable, go hunt it.
@@ -88,4 +92,7 @@ GoalStatus GoalAttackTarget::process()
 
 
 
-
+int GoalAttackTarget::evaluate(HumanBase* const owner) 
+{
+	return 2; 
+}

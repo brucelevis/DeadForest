@@ -14,7 +14,7 @@ GoalAvoid::GoalAvoid(HumanBase* owner)
 	:
 	GoalCompositeBase(owner)
 {
-	setGoalType(GoalType::GOAL_AVOID);
+	setGoalType(GoalType::AVOID);
 }
 
 
@@ -24,21 +24,19 @@ void GoalAvoid::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
-	cocos2d::Vec2 avoidMove;
+	
 	cocos2d::Vec2 ownerPos = _owner->getWorldPosition();
+	cocos2d::Vec2 avoidMove(ownerPos);
 
 	// Avoid from current target enemy
-	avoidMove = (_owner->getTargetSys()->getTarget()->getWorldPosition() - ownerPos).getPerp().getNormalized() * 150;
 
-	// Avoid from all enemies
-	/*
-	auto targetList = _owner->getSensoryMemory()->getListOfRecentlySensedOpponents();
-	for (auto e : targetList)
+	if (_owner->getTargetSys()->getTarget() == nullptr)
 	{
-		avoidMove += (e->getWorldPosition() - ownerPos).getNormalized();
+		setGoalStatus(GoalStatus::COMPLETED);
+		return;
 	}
-	avoidMove = -avoidMove.getNormalized() * 150;
-	*/
+	
+	avoidMove = (_owner->getTargetSys()->getTarget()->getWorldPosition() - ownerPos).getPerp().getNormalized() * 150;
 
 	addSubgoal(new GoalSeekToPosition(_owner, _owner->getWorldPosition() + avoidMove));
 }
@@ -51,6 +49,9 @@ GoalStatus GoalAvoid::process()
 	// If status is INACTIVE, call activate()
 	if (isInactive())
 		activate();
+
+	if (getGoalStatus() == GoalStatus::COMPLETED)
+		return GoalStatus::COMPLETED;
 
 	processSubgoals();
 	

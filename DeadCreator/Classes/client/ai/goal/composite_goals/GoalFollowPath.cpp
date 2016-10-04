@@ -26,7 +26,7 @@ GoalFollowPath::GoalFollowPath(
 	GoalCompositeBase(owner),
 	_path(path)
 {
-	setGoalType(GoalType::GOAL_FOLLOW_PATH);
+	setGoalType(GoalType::FOLLOW_PATH);
 }
 
 

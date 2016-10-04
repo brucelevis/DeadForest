@@ -1,4 +1,4 @@
-#include "GoalMainAttack.h"
+#include "GoalRangeAttack.h"
 #include "AbstTargetingSystem.h"
 #include "SensoryMemory.h"
 #include "HumanBase.hpp"
@@ -8,6 +8,7 @@
 #include "InputBezelBegin.hpp"
 #include "InputBezelEnd.hpp"
 #include "InputMoveBegin.hpp"
+#include "InputMoveEnd.hpp"
 #include "StateMachine.hpp"
 
 using namespace realtrick::client;
@@ -15,18 +16,18 @@ USING_NS_CC;
 
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
-GoalMainAttack::GoalMainAttack(HumanBase* owner, const cocos2d::Vec2& target)
+GoalRangeAttack::GoalRangeAttack(HumanBase* owner, const cocos2d::Vec2& target)
 	:
 	GoalBase(owner),
 	_target(target)
 {
-	setGoalType(GoalType::MAIN_ATTACK);
+	setGoalType(GoalType::RANGE_ATTACK);
 }
 
 
 //---------------------------- activate -------------------------------------
 //-----------------------------------------------------------------------------  
-void GoalMainAttack::activate()
+void GoalRangeAttack::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
@@ -44,8 +45,13 @@ void GoalMainAttack::activate()
 			InputAttackBegin attackBegin(_owner);
 			attackBegin.execute();
 
-			InputMoveBegin moveBegin(_owner, (_target - _owner->getWorldPosition()).getNormalized());
-			moveBegin.execute();			
+			// 여기 방향을 유지하며 뒤로 움직일 방법이 필요함
+			//Vec2 pos = _owner->getWorldPosition();
+			//if (_target.distance(pos) < (float)_owner->getSensoryMemory()->getAttackRange() * 0.75f)
+			//{
+			//	InputMoveBegin moveBegin(_owner, (_target - pos).getNormalized());
+			//	moveBegin.execute();
+			//}
 		}
 		else
 		{
@@ -61,7 +67,7 @@ void GoalMainAttack::activate()
 
 //------------------------------ process --------------------------------------
 //-----------------------------------------------------------------------------
-GoalStatus GoalMainAttack::process()
+GoalStatus GoalRangeAttack::process()
 {
 	//if status is INACTIVE, call activate()
 	if (isInactive())
@@ -81,13 +87,16 @@ GoalStatus GoalMainAttack::process()
 
 //---------------------------- terminate --------------------------------------
 //-----------------------------------------------------------------------------
-void GoalMainAttack::terminate()
+void GoalRangeAttack::terminate()
 {
 	InputBezelEnd bezelEnd(_owner);
 	bezelEnd.execute();
 
 	InputAttackEnd attackEnd(_owner);
 	attackEnd.execute();
+
+	InputMoveEnd moveEnd(_owner);
+	moveEnd.execute();
 
 	setGoalStatus(GoalStatus::COMPLETED);
 }

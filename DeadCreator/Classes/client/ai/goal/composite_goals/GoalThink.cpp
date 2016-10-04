@@ -28,12 +28,23 @@ void GoalThink::activate()
 {
     if ( _goalEntry.empty() ) return ;
     
-    auto bestGoal = 
-		*std::max_element(std::begin(_goalEntry), std::end(_goalEntry), 
-			[](GoalBase* g1, GoalBase* g2) 
+
+	GoalBase* bestGoal = nullptr;
+	int weight = 0;
+
+	for (auto e : _goalEntry)
 	{
-        return (g1->getWeight() < g2->getWeight());
-    });
+		int entWeight = e->getWeight();
+		if (entWeight > weight)
+		{
+			bestGoal = e;
+			weight = entWeight;
+		}
+		cocos2d::log("goal : %d   weight : %d", e->getGoalType(), entWeight);
+	}
+
+	cocos2d::log("best goal : %d   weight : %d\n\n", bestGoal->getGoalType(), weight);
+
     addSubgoal(bestGoal);
     setGoalStatus(GoalStatus::ACTIVE);
 }

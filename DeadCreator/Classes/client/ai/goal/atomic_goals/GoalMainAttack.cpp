@@ -8,6 +8,7 @@
 #include "InputBezelBegin.hpp"
 #include "InputBezelEnd.hpp"
 #include "InputMoveBegin.hpp"
+#include "InputMoveEnd.hpp"
 #include "StateMachine.hpp"
 
 using namespace realtrick::client;
@@ -82,6 +83,9 @@ GoalStatus GoalMainAttack::process()
 //-----------------------------------------------------------------------------
 void GoalMainAttack::terminate()
 {
+	InputMoveEnd moveEnd(_owner);
+	moveEnd.execute();
+
 	InputBezelEnd bezelEnd(_owner);
 	bezelEnd.execute();
 

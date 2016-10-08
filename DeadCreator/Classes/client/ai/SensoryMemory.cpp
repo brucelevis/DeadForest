@@ -31,7 +31,7 @@ SensoryMemory::SensoryMemory(
 	_owner(owner),
 	_memory_span(memory_span)
 {
-	_viewRange = 800;
+	_viewRange = 600;
 	_attackRange = 60;
 }
 
@@ -72,7 +72,6 @@ void SensoryMemory::removeItemFromMemory(ItemBase* const item)
 	if (record != std::end(_sensedItems))
 	{
 		_sensedItems.erase(record);
-		cocos2d::log("erase sensed item size : %d", _sensedItems.size());	
 	}
 }
 

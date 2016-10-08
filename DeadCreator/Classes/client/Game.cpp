@@ -149,6 +149,7 @@ std::list<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, f
         {
             for ( const auto &entity : currCell.members )
             {
+				
                 ret.push_back(entity);
             }
         }

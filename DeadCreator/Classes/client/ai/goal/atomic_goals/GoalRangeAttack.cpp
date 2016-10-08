@@ -36,24 +36,34 @@ void GoalRangeAttack::activate()
 
 	if (_owner->getTargetSys()->isTargetPresent())
 	{
+		cocos2d::Vec2 pos = _owner->getWorldPosition();
+		cocos2d::Vec2 heading = (_target - pos).getNormalized();
+
+		InputBezelBegin bezelBegin(_owner, heading);
+		bezelBegin.execute();
+
 		if (_owner->getTargetSys()->isTargetAttackable())
 		{
-			cocos2d::Vec2 heading = (_target - _owner->getWorldPosition()).getNormalized();
+			float attackRange = _owner->getSensoryMemory()->getAttackRange();
 
-			InputBezelBegin bezelBegin(_owner, heading);
-			bezelBegin.execute();
-
-			cocos2d::Vec2 pos = _owner->getWorldPosition();
-
-			if (_target.distance(pos) > _owner->getSensoryMemory()->getAttackRange())
+			if (_target.distance(pos) > attackRange)
 			{
 				InputMoveBegin moveBegin(_owner, (_target - pos).getNormalized());
 				moveBegin.execute();
 			}
 			else
 			{
-				InputMoveBegin moveBegin(_owner, (pos - _target).getNormalized());
-				moveBegin.execute();
+				int dice = random(0, 100) % 2;
+				if (dice == 0)
+				{
+					InputMoveBegin moveBegin(_owner, (_target - pos).getPerp().getNormalized());
+					moveBegin.execute();
+				}
+				else
+				{
+					InputMoveBegin moveBegin(_owner, (pos - _target).getNormalized());
+					moveBegin.execute();
+				}
 			}
 		}
 		else

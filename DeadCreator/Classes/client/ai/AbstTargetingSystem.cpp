@@ -1,6 +1,7 @@
 #include "AbstTargetingSystem.h"
 #include "HumanBase.hpp"
 #include "SensoryMemory.h"
+#include "Game.hpp"
 
 USING_NS_CC;
 using namespace realtrick::client;
@@ -27,8 +28,9 @@ void AbstTargetingSystem::update()
 		//make sure the bot is alive and that it is not the owner
 		if ((*bot)->isAlive() && (*bot != _owner))
 		{
-			//if (_owner->getTeam() != (*bot)->getTeam())
-			//{
+			// Is ally
+			if (!_owner->getGame()->isAllyState(_owner->getPlayerType(), (*bot)->getPlayerType()))
+			{
 				double dist = ((*bot)->getWorldPosition() - _owner->getWorldPosition()).getLength();
 
 				if (dist < closest_dist_so_far)
@@ -36,7 +38,7 @@ void AbstTargetingSystem::update()
 					closest_dist_so_far = dist;
 					_current_target = *bot;
 				}
-			//}
+			}
 		}
 	}
 }

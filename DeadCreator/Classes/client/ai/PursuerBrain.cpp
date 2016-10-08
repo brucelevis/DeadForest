@@ -5,7 +5,10 @@
 #include "GoalEquipWeapon.h"
 #include "GoalReload.h"
 #include "GoalRunAway.h"
+#include "GoalFollowPlayer.hpp"
+#include "GoalAvoidCollision.h"
 #include "InventoryData.hpp"
+#include "Game.hpp"
 
 using namespace realtrick::client;
 
@@ -35,6 +38,15 @@ BrainBase(owner)
 	runaway->setEvaluator(std::bind(&GoalRunAway::evaluate, runaway, owner));
 	_thinker->addGoalEntry(runaway);
 
+	GoalFollowPlayer* follow = new GoalFollowPlayer(owner);
+	follow->setEvaluator(std::bind(&GoalFollowPlayer::evaluate, follow, owner));
+	_thinker->addGoalEntry(follow);
+
+	//GoalAvoidCollision* avoid = new GoalAvoidCollision(owner);
+	//avoid->setEvaluator(std::bind(&GoalAvoidCollision::evaluate, avoid, owner));
+	//_thinker->addGoalEntry(avoid);
+
+	
 }
 
 PursuerBrain::~PursuerBrain()

@@ -144,6 +144,7 @@ std::list<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, f
     std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
     for ( const int idx : cellIndices )
     {
+		cocos2d::log("%d", idx);
         const Cell& currCell = _cellSpace->getCell(idx);
         if ( currCell.boundingBox.intersectsRect(cocos2d::Rect(position.x - speed / 2, position.y - speed / 2, speed, speed)) )
         {

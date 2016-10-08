@@ -6,7 +6,6 @@
 #include "GoalReload.h"
 #include "GoalRunAway.h"
 #include "GoalFollowPlayer.hpp"
-#include "GoalAvoidCollision.h"
 #include "InventoryData.hpp"
 #include "Game.hpp"
 
@@ -40,13 +39,7 @@ BrainBase(owner)
 
 	GoalFollowPlayer* follow = new GoalFollowPlayer(owner);
 	follow->setEvaluator(std::bind(&GoalFollowPlayer::evaluate, follow, owner));
-	_thinker->addGoalEntry(follow);
-
-	//GoalAvoidCollision* avoid = new GoalAvoidCollision(owner);
-	//avoid->setEvaluator(std::bind(&GoalAvoidCollision::evaluate, avoid, owner));
-	//_thinker->addGoalEntry(avoid);
-
-	
+	_thinker->addGoalEntry(follow);	
 }
 
 PursuerBrain::~PursuerBrain()

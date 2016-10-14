@@ -121,7 +121,8 @@ namespace realtrick
 			void generateIsometricGridGraph(int numOfTileX, int numOfTileY, float tileWidth, float tileHeight, int numOfDummy);
 
 			bool isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const;
-   
+			bool isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B, float radius) const;
+
             void replaceVictoryScene(float delay);
             void replaceDefeatScene(float delay);
             

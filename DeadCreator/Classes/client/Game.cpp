@@ -413,7 +413,6 @@ void Game::addEntity(EntityBase* ent, int zOrder)
 
 void Game::removeEntity(EntityBase* ent)
 {
-	cocos2d::log("removed from game!!");
 	for (auto e : _entityManager->getEntities())
 	{
 		if (isMasked(e.second->getFamilyMask(), FamilyMask::HUMAN_BASE))
@@ -427,7 +426,6 @@ void Game::removeEntity(EntityBase* ent)
 			}
 			else if (isMasked(ent->getFamilyMask(), FamilyMask::ITEM_BASE))
 			{
-				cocos2d::log("item %d", ent->getEntityType());
 				ItemBase* removingItem = static_cast<ItemBase*>(ent);
 				human->getSensoryMemory()->removeItemFromMemory(removingItem);
 			}
@@ -683,8 +681,10 @@ void Game::setSharedVisionState(PlayerType src, PlayerType dest, bool enable)
 //------------------------------------------------------------------------------
 bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const
 {
+	const auto& cols = getNeighborSimpleWalls(A, Segment(A, B));
+
 	bool collide = false;
-	for (auto col : _gameResource->getCollisionData())
+	for (const auto& col : cols)
 	{
 		if (physics::intersect(col, Segment(A, B)))
 		{
@@ -698,7 +698,16 @@ bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const
 
 
 
+//---------------------------- isLOSOkay --------------------------------------
+//
+//  returns true if the ray between A and B is unobstructed.
+//------------------------------------------------------------------------------
+bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B, float radius) const
+{
+	///
 
+	return false;
+}
 
 
 

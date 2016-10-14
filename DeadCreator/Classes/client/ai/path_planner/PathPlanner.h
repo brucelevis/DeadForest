@@ -58,6 +58,7 @@ namespace realtrick
 			// (takes into account the enumerations 'non_graph_source_node' and 'non_graph_target_node')
 			cocos2d::Vec2	getNodePosition(int idx) const { return _graph.getNode(idx).getPos(); }
 
+			int findAvailableNeighberNode(int node, int numOfTileX, int numOfDummy);
 
 			double calculateTimeToReachPosition(cocos2d::Vec2 pos)const;
 

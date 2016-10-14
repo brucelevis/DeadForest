@@ -235,7 +235,7 @@ void HumanBase::moveEntity()
 				maxEnd = end;
 			}
 	}
-	move += (maxBegin - maxEnd).getPerp().getNormalized() * (maxOverlap * 0.33f);
+	move += (maxBegin - maxEnd).getPerp().getNormalized() * (maxOverlap * 1.33f);
 	
 	setWorldPosition(futurePosition + move);
 	_game->getCellSpace()->updateEntity(this, oldPos);

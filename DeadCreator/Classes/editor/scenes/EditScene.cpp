@@ -588,6 +588,28 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         newTrigger->addCondition(condition);
                         break;
                     }
+                    case DeadCreator::ConditionBase_ElapsedTime:
+                    {
+                        auto conditionObject = static_cast<const DeadCreator::ElapsedTime*>(cond->condition());
+                        auto condition = new ConditionElapsedTime();
+                        condition->setApproximation(static_cast<ApproximationType>(conditionObject->approximation()));
+                        condition->setNumber(conditionObject->number());
+                        
+                        newTrigger->addCondition(condition);
+                        
+                        break;
+                    }
+                    case DeadCreator::ConditionBase_CountdownTimer:
+                    {
+                        auto conditionObject = static_cast<const DeadCreator::CountdownTimer*>(cond->condition());
+                        auto condition = new ConditionCountdownTimer();
+                        condition->setApproximation(static_cast<ApproximationType>(conditionObject->approximation()));
+                        condition->setNumber(conditionObject->number());
+                        
+                        newTrigger->addCondition(condition);
+                        
+                        break;
+                    }
                     default: { cocos2d::log("invalid condition type"); break;}
                 }
             }
@@ -691,7 +713,53 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         
                         break;
                     }
+                    case DeadCreator::ActionBase_PauseGame:
+                    {
+                        auto action = new ActionPauseGame();
+                        newTrigger->addAction(action);
                         
+                        break;
+                    }
+                    case DeadCreator::ActionBase_ResumeGame:
+                    {
+                        auto action = new ActionResumeGame();
+                        newTrigger->addAction(action);
+                        
+                        break;
+                    }
+                    case DeadCreator::ActionBase_SetCountdownTimer:
+                    {
+                        auto actionObject = static_cast<const DeadCreator::SetCountdownTimer*>(act->action());
+                        auto action = new ActionSetCountdownTimer();
+                        action->setArithmeticalType(static_cast<ArithmeticalType>(actionObject->arithmetical()));
+                        action->setNumber(actionObject->number());
+                        
+                        newTrigger->addAction(action);
+                        
+                        break;
+                    }
+                    case DeadCreator::ActionBase_MoveEntity:
+                    {
+                        auto actionObject = static_cast<const DeadCreator::MoveEntity*>(act->action());
+                        auto action = new ActionMoveEntity();
+                        
+                        auto numberAll = actionObject->numberAll();
+                        if ( numberAll  == -1 /* all */) action->setNumberAll( { true, 0 } );
+                        else action->setNumberAll( { false, numberAll } );
+
+                        action->setEntity(static_cast<EntityType>(actionObject->entity_type()));
+                        action->setPlayerType(static_cast<PlayerType>(actionObject->player()));
+                        
+                        LocationNode* destLocationPtr = _layer->findLocation(actionObject->dst_location_name()->str());
+                        action->setDestLocation(destLocationPtr);
+                        
+                        LocationNode* sourceLocationPtr = _layer->findLocation(actionObject->src_location_name()->str());
+                        action->setSourceLocation(sourceLocationPtr);
+                        
+                        newTrigger->addAction(action);
+                        
+                        break;
+                    }
                     default: { cocos2d::log("invalid action type"); break;}
                 }
             }

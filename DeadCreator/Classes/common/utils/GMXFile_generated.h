@@ -27,6 +27,8 @@ namespace DeadCreator {
     
     struct Bring;
     
+    struct CountdownTimer;
+    
     struct ElapsedTime;
     
     struct DisplayText;
@@ -50,6 +52,8 @@ namespace DeadCreator {
     struct PauseGame;
     
     struct ResumeGame;
+    
+    struct SetCountdownTimer;
     
     struct Condition;
     
@@ -80,6 +84,21 @@ namespace DeadCreator {
     
     inline const char *EnumNameApproximation(Approximation e) { return EnumNamesApproximation()[static_cast<int>(e)]; }
     
+    enum Arithmetical {
+        Arithmetical_Add = 0,
+        Arithmetical_SetTo = 1,
+        Arithmetical_Subtract = 2,
+        Arithmetical_MIN = Arithmetical_Add,
+        Arithmetical_MAX = Arithmetical_Subtract
+    };
+    
+    inline const char **EnumNamesArithmetical() {
+        static const char *names[] = { "Add", "SetTo", "Subtract", nullptr };
+        return names;
+    }
+    
+    inline const char *EnumNameArithmetical(Arithmetical e) { return EnumNamesArithmetical()[static_cast<int>(e)]; }
+    
     enum TileType {
         TileType_Dirt = 0,
         TileType_Grass = 1,
@@ -101,14 +120,15 @@ namespace DeadCreator {
         ConditionBase_Always = 1,
         ConditionBase_Never = 2,
         ConditionBase_Command = 3,
-        ConditionBase_Bring = 4,
-        ConditionBase_ElapsedTime = 5,
+        ConditionBase_CountdownTimer = 4,
+        ConditionBase_Bring = 5,
+        ConditionBase_ElapsedTime = 6,
         ConditionBase_MIN = ConditionBase_NONE,
         ConditionBase_MAX = ConditionBase_ElapsedTime
     };
     
     inline const char **EnumNamesConditionBase() {
-        static const char *names[] = { "NONE", "Always", "Never", "Command", "Bring", "ElapsedTime", nullptr };
+        static const char *names[] = { "NONE", "Always", "Never", "Command", "CountdownTimer", "Bring", "ElapsedTime", nullptr };
         return names;
     }
     
@@ -129,12 +149,13 @@ namespace DeadCreator {
         ActionBase_MoveEntity = 9,
         ActionBase_PauseGame = 10,
         ActionBase_ResumeGame = 11,
+        ActionBase_SetCountdownTimer = 12,
         ActionBase_MIN = ActionBase_NONE,
-        ActionBase_MAX = ActionBase_ResumeGame
+        ActionBase_MAX = ActionBase_SetCountdownTimer
     };
     
     inline const char **EnumNamesActionBase() {
-        static const char *names[] = { "NONE", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", "Victory", "Defeat", "MoveEntity", "PauseGame", "ResumeGame", nullptr };
+        static const char *names[] = { "NONE", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", "Victory", "Defeat", "MoveEntity", "PauseGame", "ResumeGame", "SetCountdownTimer", nullptr };
         return names;
     }
     
@@ -432,6 +453,43 @@ namespace DeadCreator {
         builder_.add_number(number);
         builder_.add_approximation(approximation);
         builder_.add_player(player);
+        return builder_.Finish();
+    }
+    
+    struct CountdownTimer FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_APPROXIMATION = 4,
+            VT_NUMBER = 6
+        };
+        Approximation approximation() const { return static_cast<Approximation>(GetField<int32_t>(VT_APPROXIMATION, 0)); }
+        int32_t number() const { return GetField<int32_t>(VT_NUMBER, 0); }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<int32_t>(verifier, VT_APPROXIMATION) &&
+            VerifyField<int32_t>(verifier, VT_NUMBER) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct CountdownTimerBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_approximation(Approximation approximation) { fbb_.AddElement<int32_t>(CountdownTimer::VT_APPROXIMATION, static_cast<int32_t>(approximation), 0); }
+        void add_number(int32_t number) { fbb_.AddElement<int32_t>(CountdownTimer::VT_NUMBER, number, 0); }
+        CountdownTimerBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        CountdownTimerBuilder &operator=(const CountdownTimerBuilder &);
+        flatbuffers::Offset<CountdownTimer> Finish() {
+            auto o = flatbuffers::Offset<CountdownTimer>(fbb_.EndTable(start_, 2));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<CountdownTimer> CreateCountdownTimer(flatbuffers::FlatBufferBuilder &_fbb,
+                                                                    Approximation approximation = Approximation_AtLeast,
+                                                                    int32_t number = 0) {
+        CountdownTimerBuilder builder_(_fbb);
+        builder_.add_number(number);
+        builder_.add_approximation(approximation);
         return builder_.Finish();
     }
     
@@ -848,6 +906,43 @@ namespace DeadCreator {
         return builder_.Finish();
     }
     
+    struct SetCountdownTimer FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_ARITHMETICAL = 4,
+            VT_NUMBER = 6
+        };
+        Arithmetical arithmetical() const { return static_cast<Arithmetical>(GetField<int32_t>(VT_ARITHMETICAL, 0)); }
+        int32_t number() const { return GetField<int32_t>(VT_NUMBER, 0); }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<int32_t>(verifier, VT_ARITHMETICAL) &&
+            VerifyField<int32_t>(verifier, VT_NUMBER) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct SetCountdownTimerBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_arithmetical(Arithmetical arithmetical) { fbb_.AddElement<int32_t>(SetCountdownTimer::VT_ARITHMETICAL, static_cast<int32_t>(arithmetical), 0); }
+        void add_number(int32_t number) { fbb_.AddElement<int32_t>(SetCountdownTimer::VT_NUMBER, number, 0); }
+        SetCountdownTimerBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        SetCountdownTimerBuilder &operator=(const SetCountdownTimerBuilder &);
+        flatbuffers::Offset<SetCountdownTimer> Finish() {
+            auto o = flatbuffers::Offset<SetCountdownTimer>(fbb_.EndTable(start_, 2));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<SetCountdownTimer> CreateSetCountdownTimer(flatbuffers::FlatBufferBuilder &_fbb,
+                                                                          Arithmetical arithmetical = Arithmetical_Add,
+                                                                          int32_t number = 0) {
+        SetCountdownTimerBuilder builder_(_fbb);
+        builder_.add_number(number);
+        builder_.add_arithmetical(arithmetical);
+        return builder_.Finish();
+    }
+    
     struct Condition FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
         enum {
             VT_CONDITION_TYPE = 4,
@@ -1235,6 +1330,7 @@ namespace DeadCreator {
             case ConditionBase_Always: return verifier.VerifyTable(reinterpret_cast<const Always *>(union_obj));
             case ConditionBase_Never: return verifier.VerifyTable(reinterpret_cast<const Never *>(union_obj));
             case ConditionBase_Command: return verifier.VerifyTable(reinterpret_cast<const Command *>(union_obj));
+            case ConditionBase_CountdownTimer: return verifier.VerifyTable(reinterpret_cast<const CountdownTimer *>(union_obj));
             case ConditionBase_Bring: return verifier.VerifyTable(reinterpret_cast<const Bring *>(union_obj));
             case ConditionBase_ElapsedTime: return verifier.VerifyTable(reinterpret_cast<const ElapsedTime *>(union_obj));
             default: return false;
@@ -1255,6 +1351,7 @@ namespace DeadCreator {
             case ActionBase_MoveEntity: return verifier.VerifyTable(reinterpret_cast<const MoveEntity *>(union_obj));
             case ActionBase_PauseGame: return verifier.VerifyTable(reinterpret_cast<const PauseGame *>(union_obj));
             case ActionBase_ResumeGame: return verifier.VerifyTable(reinterpret_cast<const ResumeGame *>(union_obj));
+            case ActionBase_SetCountdownTimer: return verifier.VerifyTable(reinterpret_cast<const SetCountdownTimer *>(union_obj));
             default: return false;
         }
     }

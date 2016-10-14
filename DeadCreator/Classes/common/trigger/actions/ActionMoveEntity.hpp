@@ -127,7 +127,7 @@ namespace realtrick
             void setNumberAll(const std::pair<bool, int>& numberAll) { _numberAll.setNumberAll(numberAll); }
             void setEntity(EntityType type) { _entity.setEntityType(type); }
             void setPlayerType(PlayerType type) { _playerType.setPlayerType(type); }
-            void setSorceLocation(LocationNode* loc) { _sourceLocation.setLocation(loc); }
+            void setSourceLocation(LocationNode* loc) { _sourceLocation.setLocation(loc); }
             void setDestLocation(LocationNode* loc) { _destLocation.setLocation(loc); }
             
         private:

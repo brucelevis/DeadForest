@@ -68,6 +68,7 @@ bool TriggerEditLayer::init()
     
     _conditionList.push_back(new ConditionAlways());
     _conditionList.push_back(new ConditionBring());
+    _conditionList.push_back(new ConditionCountdownTimer());
     _conditionList.push_back(new ConditionElapsedTime());
     _conditionList.push_back(new ConditionNever());
     
@@ -81,6 +82,7 @@ bool TriggerEditLayer::init()
     _actionList.push_back(new ActionPlaySoundAtLocation());
     _actionList.push_back(new ActionPreserveTrigger());
     _actionList.push_back(new ActionResumeGame());
+    _actionList.push_back(new ActionSetCountdownTimer());
     _actionList.push_back(new ActionVictory());
     
     return true;
@@ -121,7 +123,7 @@ void TriggerEditLayer::showLayer(bool& opened)
         //
         static int selectedTrigger = -1;
         ImGui::BeginGroup();
-        ImGui::BeginChild("dummy2", ImVec2(TRIGGER_EDIT_WIDTH - 150, TRIGGER_EDIT_HEIGHT - TRIGGER_PLAYER_HEIGHT - 70), true);
+        ImGui::BeginChild("##dummy2", ImVec2(TRIGGER_EDIT_WIDTH - 150, TRIGGER_EDIT_HEIGHT - TRIGGER_PLAYER_HEIGHT - 70), true);
         for( int i = 0 ; i < _triggers.size() ; ++ i)
         {
             ImGui::PushID(i);

@@ -114,47 +114,47 @@ namespace realtrick
     namespace client
     {
         
-        struct ConditionElapsedTimeData: public TriggerDataBase
-        {
-            ApproximationType approximation;
-            int number;
-            
-            ConditionElapsedTimeData() { type = TriggerComponentType::CONDITION_ELAPSED_TIME; }
-        };
-        
-        class ConditionElapsedTime : public ConditionBase
-        {
-            
-        public:
-            
-            explicit ConditionElapsedTime(Game* game) : ConditionBase(game)
-            {
-            }
-            
-            virtual ~ConditionElapsedTime() = default;
-            
-            static ConditionElapsedTime* create(Game* game, ApproximationType appType, int number)
-            {
-                auto ret = new (std::nothrow) ConditionElapsedTime(game);
-                if ( ret && ret->init(appType, number) )
-                {
-                    ret->autorelease();
-                    return ret;
-                }
-                CC_SAFE_DELETE(ret);
-                return nullptr;
-            }
-            
-            bool init(ApproximationType appType, int number)
-            {
-                _params.approximation = appType;
-                _params.number = number;
-                
-                return true;
-            }
-            
-            virtual bool isReady() override
-            {
+//        struct ConditionElapsedTimeData: public TriggerDataBase
+//        {
+//            ApproximationType approximation;
+//            int number;
+//            
+//            ConditionElapsedTimeData() { type = TriggerComponentType::CONDITION_ELAPSED_TIME; }
+//        };
+//        
+//        class ConditionElapsedTime : public ConditionBase
+//        {
+//            
+//        public:
+//            
+//            explicit ConditionElapsedTime(Game* game) : ConditionBase(game)
+//            {
+//            }
+//            
+//            virtual ~ConditionElapsedTime() = default;
+//            
+//            static ConditionElapsedTime* create(Game* game, ApproximationType appType, int number)
+//            {
+//                auto ret = new (std::nothrow) ConditionElapsedTime(game);
+//                if ( ret && ret->init(appType, number) )
+//                {
+//                    ret->autorelease();
+//                    return ret;
+//                }
+//                CC_SAFE_DELETE(ret);
+//                return nullptr;
+//            }
+//            
+//            bool init(ApproximationType appType, int number)
+//            {
+//                _params.approximation = appType;
+//                _params.number = number;
+//                
+//                return true;
+//            }
+//            
+//            virtual bool isReady() override
+//            {
 //                if ( _params.player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
 //                    else _maskedPlayer.set(static_cast<int>(_params.player));
 //                        
@@ -197,15 +197,15 @@ namespace realtrick
 //                else if ( _params.approximation == ApproximationType::AT_MOST && numberOfReadyEntities <= _params.number ) return true;
 //                else if ( _params.approximation == ApproximationType::EXACTLY && numberOfReadyEntities == _params.number ) return true;
 //                
-                return false;
-            }
-            
-        private:
-            
-            ConditionElapsedTimeData _params;
-            std::bitset<30> _maskedPlayer;
-            
-        };
+//                return false;
+//            }
+//
+//        private:
+//            
+//            ConditionElapsedTimeData _params;
+//            std::bitset<30> _maskedPlayer;
+//            
+//        };
         
     }
     

@@ -78,12 +78,21 @@ namespace realtrick
         EXACTLY = 2,
     };
         
+    enum class ArithmeticalType : int
+    {
+        INVALID = -1,
+        Add = 0,
+        SetTo = 1,
+        Subtract = 2
+    };
+        
     enum class TriggerComponentType : int
     {
-        CONDITION_BRING,
         CONDITION_ALWAYS,
-        CONDITION_NEVER,
+        CONDITION_BRING,
+        CONDITION_COUNTDOWN_TIMER,
         CONDITION_ELAPSED_TIME,
+        CONDITION_NEVER,
         ACTION_DISPLAY_TEXT,
         ACTION_MOVE_LOCATION,
         ACTION_KILL_ENTITY_AT_LOCATION,
@@ -94,7 +103,8 @@ namespace realtrick
         ACTION_DEFEAT,
         ACTION_MOVE_ENTITY,
         ACTION_PAUSE_GAME,
-        ACTION_RESUME_GAME
+        ACTION_RESUME_GAME,
+        ACTION_SET_COUNTDOWN_TIMER
     };
         
     struct EntityData

@@ -43,6 +43,16 @@ void GoalFollowPath::activate()
 	//get a reference to the next edge
 	realtrick::PathEdge edge = _path.front();
 
+	cocos2d::log("path count : %d", _path.size());
+	/*for (auto e : _path)
+	{
+		cocos2d::Vec2 s = e.getSource();
+		cocos2d::Vec2 d = e.getDestination();
+
+		cocos2d::log("source : (%f %f)   destination : (%f %f)", s.x, s.y, d.x, d.y);
+	}*/
+
+
 	//remove the edge from the path
 	_path.pop_front();
 

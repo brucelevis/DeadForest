@@ -216,6 +216,10 @@ bool PathPlanner::requestPathToPosition(cocos2d::Vec2 targetPos)
 	//if the target is walkable from the bot's position a path does not need to
 	//be calculated, the bot can go straight to the position by ARRIVING at
 	//the current waypoint
+
+	cocos2d::Vec2 posLeft;
+	cocos2d::Vec2 posRight;
+
 	if (_owner->getGame()->isLOSOkay(_owner->getWorldPosition(), targetPos))
 	{
 		return false;

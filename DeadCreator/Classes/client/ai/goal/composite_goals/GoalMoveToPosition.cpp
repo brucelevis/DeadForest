@@ -65,6 +65,7 @@ GoalStatus GoalMoveToPosition::process()
 	if (_goalStatus == GoalStatus::FAILED)
 	{
 		setGoalStatus(GoalStatus::INACTIVE);
+		cocos2d::log("GoalMoveToPosition FAILED");
 	}
 
 	return _goalStatus;

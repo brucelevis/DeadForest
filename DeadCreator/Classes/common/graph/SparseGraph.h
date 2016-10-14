@@ -51,7 +51,10 @@ namespace realtrick
 		const EdgeList& getEdges(int idx) const;
 
 		//returns the node at the given index
-		const Node& getNode(int idx)const;
+		const Node& getNode(int idx) const;
+
+		// check if this node has any edges
+		bool checkThisNodeHasEdge(int idx) const;
 
 		//non const version
 		Node& getNode(int idx);
@@ -110,12 +113,18 @@ namespace realtrick
 	//  const and non const methods for obtaining a reference to a specific node
 	//----------------------------------------------------------------------------
 	template <class Node, class Edge>
-	const Node&  SparseGraph<Node, Edge>::getNode(int idx)const
+	const Node&  SparseGraph<Node, Edge>::getNode(int idx) const
 	{
 		assert((idx < (int)_nodes.size()) && (idx >= 0) &&
 			"<SparseGraph::getNode>: invalid index");
 
 		return _nodes[idx];
+	}
+
+	template <class Node, class Edge>
+	bool SparseGraph<Node, Edge>::checkThisNodeHasEdge(int idx) const
+	{
+		return getEdges(idx).size() > 0;
 	}
 
 	//non const version

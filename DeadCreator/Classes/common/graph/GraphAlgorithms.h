@@ -328,7 +328,7 @@ namespace realtrick
 			//now to test all the edges attached to this node
 			for (auto eg = std::begin(_graph.getEdges(next_closest_node));
 				eg != std::end(_graph.getEdges(next_closest_node));
-				eg++)
+				++eg)
 			{
 				//calculate the HeuristicPolicy cost from this node to the target (H)                       
 				double HCost = HeuristicPolicy::calculate(_graph, _target, eg->getTo());
@@ -345,7 +345,7 @@ namespace realtrick
 
 					pq.insert(eg->getTo());
 
-					_search_frontier[eg->getTo()] = &*eg;
+					_search_frontier[eg->getTo()] = &(*eg);
 				}
 
 				//if this node is already on the frontier but the cost to get here
@@ -359,7 +359,7 @@ namespace realtrick
 
 					pq.ChangePriority(eg->getTo());
 
-					_search_frontier[eg->getTo()] = &*eg;
+					_search_frontier[eg->getTo()] = &(*eg);
 				}
 			}
 		}

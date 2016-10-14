@@ -5,6 +5,7 @@
 #include "Game.hpp"
 #include "GameResource.hpp"
 #include "Tileset.hpp"
+#include "SparseGraph.h"
 
 using namespace realtrick;
 using namespace client;
@@ -43,15 +44,27 @@ void PathPlanner::generatePath(
 	int source_node_num = indexToNumber(source_idx.first, source_idx.second, numOfTileX, numOfDummy);
 	int desti_node_num = indexToNumber(desti_idx.first, desti_idx.second, numOfTileX, numOfDummy);
 
-	SearchAStar<Graph, HeuristicEuclid> search(_graph, source_node_num, desti_node_num);
+	bool source_has_edge = _graph.checkThisNodeHasEdge(source_node_num);
+	bool desti_has_edge = _graph.checkThisNodeHasEdge(desti_node_num);
 
+	if (!source_has_edge)
+	{
+		source_node_num = findAvailableNeighberNode(source_node_num, numOfTileX, numOfDummy);
+	}
+
+	if (!desti_has_edge)
+	{
+		desti_node_num = findAvailableNeighberNode(desti_node_num, numOfTileX, numOfDummy);
+	}
+
+	SearchAStar<Graph, HeuristicEuclid> search(_graph, source_node_num, desti_node_num);
+	
 	PathEdge source_to_path(source, _graph.getNode(source_node_num).getPos());
 	PathEdge path_to_destination(_graph.getNode(desti_node_num).getPos(), destination);
 
 	_path = search.getPathAsPathEdges();
 	_path.push_front(source_to_path);
 	_path.push_back(path_to_destination);
-
 
 	if (_path.size() == 0)
 		CCLOG("path is zero");
@@ -153,6 +166,23 @@ void PathPlanner::smoothPathEdgesPrecise(Path& path)
 
 		++e1;
 	}
+}
+
+int PathPlanner::findAvailableNeighberNode(int node, int numOfTileX, int numOfDummy)
+{
+	std::pair<int, int> p = numberToIndex(node, numOfTileX, numOfDummy);
+	auto& v = getNeighborTiles(p.first, p.second);
+
+	for (auto e : v)
+	{
+		int other_node = indexToNumber(e.first, e.second, numOfTileX, numOfDummy);
+		if (_graph.checkThisNodeHasEdge(other_node))
+		{
+			return other_node;
+		}
+	}
+	
+	CCASSERT(false, "no available neighber node found!");
 }
 
 double PathPlanner::calculateTimeToReachPosition(cocos2d::Vec2 pos) const

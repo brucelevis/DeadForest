@@ -6,6 +6,24 @@
 USING_NS_CC;
 using namespace realtrick::client;
 
+bool AbstTargetingSystem::isAimAccurate(
+	const cocos2d::Vec2& targetPos,
+	float targetRadius,
+	const cocos2d::Vec2& ownerPos,
+	const cocos2d::Vec2& ownerHeading,
+	float error)
+{
+	float targetRadiusNoised = targetRadius * error;
+	cocos2d::Vec2 toTarget = targetPos - ownerPos;
+	cocos2d::Vec2 correctAim = toTarget.getNormalized();
+	cocos2d::Vec2 aimPerp = (correctAim.getPerp() * targetRadiusNoised + toTarget).getNormalized();
+
+	float minAimAccuracy = correctAim.dot(aimPerp);
+	float ownerAimAccuracy = correctAim.dot(ownerHeading);
+
+	return ownerAimAccuracy > minAimAccuracy;
+}
+
 //-------------------------------- ctor ---------------------------------------
 //-----------------------------------------------------------------------------
 AbstTargetingSystem::AbstTargetingSystem(HumanBase* const owner)
@@ -20,25 +38,16 @@ void AbstTargetingSystem::update()
 	_current_target = nullptr;
 
 	//grab a list of all the opponents the owner can sense
-	std::list<HumanBase*> sensed_bots;
-	sensed_bots = _owner->getSensoryMemory()->getListOfRecentlySensedOpponents();
+	const auto& sensed_bots = _owner->getSensoryMemory()->getListOfRecentlySensedOpponents();
 
 	for (auto bot = sensed_bots.begin(); bot != sensed_bots.end(); ++bot)
 	{
-		//make sure the bot is alive and that it is not the owner
-		if ((*bot)->isAlive() && (*bot != _owner))
-		{
-			// Is ally
-			if (!_owner->getGame()->isAllyState(_owner->getPlayerType(), (*bot)->getPlayerType()))
-			{
-				double dist = ((*bot)->getWorldPosition() - _owner->getWorldPosition()).getLength();
+		double dist = ((*bot)->getWorldPosition() - _owner->getWorldPosition()).getLength();
 
-				if (dist < closest_dist_so_far)
-				{
-					closest_dist_so_far = dist;
-					_current_target = *bot;
-				}
-			}
+		if (dist < closest_dist_so_far)
+		{
+			closest_dist_so_far = dist;
+			_current_target = *bot;
 		}
 	}
 }

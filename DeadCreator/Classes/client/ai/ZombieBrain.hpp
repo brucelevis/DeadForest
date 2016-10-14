@@ -24,9 +24,10 @@ namespace realtrick
 			static ZombieBrain* createDefault(HumanBase* owner)
 			{
 				ZombieBrain* brain = new ZombieBrain(owner);
-				GoalAttackTarget* goal = new GoalAttackTarget(owner);
-				goal->setEvaluator([brain](HumanBase* owner) { return 1; });
+				GoalAttackTarget* goal = new GoalAttackTarget(owner, 1.5f);
+				goal->setEvaluator(std::bind(&GoalAttackTarget::evaluate, goal, owner));
 				brain->getGoalThink()->addGoalEntry(goal);
+
 				return brain;
 			}
 

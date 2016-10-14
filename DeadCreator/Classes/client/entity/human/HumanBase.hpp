@@ -128,7 +128,8 @@ namespace realtrick
                 EntityBase::setWorldPosition(pos);
                 _balance->setPosition(pos);
             }
-            
+        
+
             void reload();
             void attackByWeapon();
             void attackByFist();

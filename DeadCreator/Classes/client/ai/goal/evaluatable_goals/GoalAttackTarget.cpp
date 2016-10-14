@@ -17,16 +17,23 @@
 #include "GoalMainAttack.h"
 #include "GoalRangeAttack.h"
 #include "GoalHuntTarget.hpp"
+#include "SensoryMemory.h"
 #include "InventoryData.hpp"
 
+namespace
+{
+	const int kStandardNumForCrowd = 6;
+	const int kNoiseForCrowd = 2;
+	const int kWeightForAttack = 2;
+}
 
 using namespace realtrick;
 using namespace realtrick::client;
 
 
-GoalAttackTarget::GoalAttackTarget(HumanBase* const owner)
+GoalAttackTarget::GoalAttackTarget(HumanBase* const owner, float character_bias)
 	:
-	GoalCompositeBase(owner)
+	GoalEvaluatable(owner, character_bias)
 {
 	setGoalType(GoalType::ATTACK_TARGET);
 }
@@ -54,10 +61,36 @@ void GoalAttackTarget::activate()
 	//then select a tactic to follow while shooting
 	if (_owner->getTargetSys()->isTargetAttackable())
 	{
-		if(_owner->getEquipedWeapon() == nullptr || _owner->getEquipedWeapon()->getEntityType() == EntityType::ITEM_AXE)
-			addSubgoal(new GoalMainAttack(_owner, _owner->getTargetSys()->getTarget()->getWorldPosition()));
+		if(_owner->getEquipedWeapon() == nullptr) 
+			addSubgoal(
+				new GoalMainAttack(
+					_owner,
+					_owner->getTargetSys()->getTarget()->getWorldPosition(),
+					GoalMainAttack::roughMoving));
+
+		else if(_owner->getEquipedWeapon()->getEntityType() == EntityType::ITEM_AXE)
+			addSubgoal(
+				new GoalMainAttack(
+					_owner, 
+					_owner->getTargetSys()->getTarget()->getWorldPosition(),
+					GoalMainAttack::smartMoving));
 		else
-			addSubgoal(new GoalRangeAttack(_owner, _owner->getTargetSys()->getTarget()->getWorldPosition()));
+		{
+			if(_owner->getSensoryMemory()->getListOfRecentlySensedOpponents().size() > 
+				kStandardNumForCrowd + cocos2d::random(-kNoiseForCrowd, kNoiseForCrowd))
+				addSubgoal(
+					new GoalRangeAttack(
+						_owner,
+						_owner->getTargetSys()->getTarget()->getWorldPosition(),
+						GoalRangeAttack::dealCrowdMoving));
+			else
+				addSubgoal(
+					new GoalRangeAttack(
+						_owner,
+						_owner->getTargetSys()->getTarget()->getWorldPosition(),
+						GoalRangeAttack::smartMoving));
+		}
+			
 	}
 
 	//if the target is not attackable, go hunt it.
@@ -94,5 +127,8 @@ GoalStatus GoalAttackTarget::process()
 
 int GoalAttackTarget::evaluate(HumanBase* const owner) 
 {
-	return 2; 
+	if (_owner->getTargetSys()->isTargetPresent())
+		return kWeightForAttack * _character_bias;
+	else
+		return 0;
 }

@@ -7,24 +7,23 @@
 //
 
 #include <chrono>
+#include "GoalEvaluatable.hpp"
 
-#include "GoalCompositeBase.hpp"
 
 namespace realtrick
 {
     namespace client
     {
-        class GoalFollowPlayer : public GoalCompositeBase
+        class GoalFollowPlayer : public GoalEvaluatable
         {
             
         public:
-			explicit GoalFollowPlayer(HumanBase* const owner);
+			explicit GoalFollowPlayer(HumanBase* const owner, float character_bias = 0.0f);
 
 			virtual ~GoalFollowPlayer() override
 			{}
 
-			int evaluate(HumanBase* const owner);
-
+			virtual int evaluate(HumanBase* const owner) override;
             virtual void activate() override;
             virtual GoalStatus process() override;
 			virtual void terminate() override;

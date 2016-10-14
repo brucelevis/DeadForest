@@ -14,8 +14,14 @@ namespace realtrick
 		{
 
 		public:
+			static cocos2d::Vec2 smartMoving(HumanBase* owner);
+			static cocos2d::Vec2 roughMoving(HumanBase* owner);
 
-			GoalMainAttack(HumanBase* owner, const cocos2d::Vec2& target);
+			GoalMainAttack(
+				HumanBase* owner,
+				const cocos2d::Vec2& target,
+				std::function<cocos2d::Vec2(HumanBase*)> movingStrategy);
+
 			virtual ~GoalMainAttack() override
 			{}
 
@@ -27,6 +33,7 @@ namespace realtrick
 
 			cocos2d::Vec2 _target;
 			std::chrono::duration<double>	_startTime;
+			std::function<cocos2d::Vec2(HumanBase*)> _movingStrategy;
 		};
 	}
 }

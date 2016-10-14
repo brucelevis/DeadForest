@@ -128,8 +128,10 @@ namespace realtrick
 			int				getDamage(HumanBase* const opponent)const;
 			bool			isUnderAttack() const;
 
-			//this method returns a list of all the opponents that have had their
-			//records updated within the last _memory_span seconds.
+			cocos2d::Vec2 avoidingEnemiesVector(cocos2d::Vec2& pos, cocos2d::Vec2& heading);
+			cocos2d::Vec2 avoidingEnemiesVector(HumanBase* const owner);
+
+			// Returns enemy list
 			std::list<HumanBase*> getListOfRecentlySensedOpponents() const;
 
 			const std::vector<ItemBase*>& getSensedItems() const;

@@ -3,6 +3,7 @@
 #include "EntityBase.hpp"
 #include "CellSpacePartition.hpp"
 #include "InventoryData.hpp"
+#include "AbstTargetingSystem.h"
 #include <sstream>
 #include <algorithm>
 
@@ -155,10 +156,16 @@ SensoryMemory::getListOfRecentlySensedOpponents() const
 
 	for(auto& rec : _memory_map)
 	{
-		//if this bot has been updated in the memory recently, add to list
-		if ((current_time - rec.second.time_last_sensed) <= _memory_span)
+		if ((rec.first)->isAlive() && (rec.first != _owner))
 		{
-			opponents.push_back(rec.first);
+			if (!_owner->getGame()->isAllyState(_owner->getPlayerType(), (rec.first)->getPlayerType()))
+			{
+				//if this bot has been updated in the memory recently, add to list
+				if ((current_time - rec.second.time_last_sensed) <= _memory_span)
+				{
+					opponents.push_back(rec.first);
+				}
+			}
 		}
 	}
 
@@ -290,6 +297,39 @@ bool SensoryMemory::isUnderAttack() const
 	}
 	return false;
 }
+
+cocos2d::Vec2 SensoryMemory::avoidingEnemiesVector(cocos2d::Vec2& pos, cocos2d::Vec2& heading)
+{
+	cocos2d::Vec2 avoidMove(heading * std::numeric_limits<float>::min());
+	const auto& enemies = getListOfRecentlySensedOpponents();
+
+	for (auto e : enemies)
+	{
+		cocos2d::Vec2 ePos = e->getWorldPosition();
+		cocos2d::Vec2 toTarget = ePos - pos;
+		avoidMove += -toTarget / toTarget.lengthSquared();
+	}
+	return avoidMove.getNormalized();
+}
+
+
+cocos2d::Vec2 SensoryMemory::avoidingEnemiesVector(HumanBase* const owner)
+{
+	cocos2d::Vec2 avoidMove(owner->getHeading() * std::numeric_limits<float>::min());
+	const auto& enemies = getListOfRecentlySensedOpponents();
+
+	for (auto e : enemies)
+	{
+		if (!(e->getTargetSys()->getTarget() == owner))
+			continue;
+
+		cocos2d::Vec2 ePos = e->getWorldPosition();
+		cocos2d::Vec2 toTarget = ePos - owner->getWorldPosition();
+		avoidMove += -toTarget / toTarget.lengthSquared();
+	}
+	return avoidMove.getNormalized();
+}
+
 
 
 std::vector<ItemBase*> SensoryMemory::queryMeleeWeapon()

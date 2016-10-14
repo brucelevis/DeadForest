@@ -2,7 +2,7 @@
 #define GOAL_RELOAD_H
 #pragma warning (disable:4786)
 
-#include "GoalCompositeBase.hpp"
+#include "GoalEvaluatable.hpp"
 #include "Types.hpp"
 
 namespace realtrick
@@ -11,17 +11,16 @@ namespace realtrick
 	{
 		class HumanBase;
 
-		class GoalReload : public GoalCompositeBase
+		class GoalReload : public GoalEvaluatable
 		{
 
 		public:
 
-			GoalReload(HumanBase* owner);
+			GoalReload(HumanBase* owner, float character_bias = 0.0f);
 			virtual ~GoalReload() override
 			{}
 
-			int evaluate(HumanBase* const owner);
-
+			virtual int evaluate(HumanBase* const owner) override;
 			virtual void activate() override;
 			virtual GoalStatus process() override;
 			virtual void terminate() override;

@@ -11,9 +11,9 @@ USING_NS_CC;
 
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
-GoalEquipWeapon::GoalEquipWeapon(HumanBase* owner)
+GoalEquipWeapon::GoalEquipWeapon(HumanBase* owner, float character_bias)
 	:
-	GoalCompositeBase(owner),
+	GoalEvaluatable(owner, character_bias),
 	_weaponType(EntityType::DEFAULT)
 {
 	setGoalType(GoalType::EQUIP_WEAPON);
@@ -27,7 +27,10 @@ void GoalEquipWeapon::activate()
 	setGoalStatus(GoalStatus::ACTIVE);
 
 	_startTime = std::chrono::system_clock::now().time_since_epoch();
+
 	_owner->useItem(_weaponType);
+
+	cocos2d::log("GoalEquipWeapon::activate()");
 
 	// #bug
 	// 무기 장착 시 공격범위가 예상과 다름(샷건인데 0이 나옴)
@@ -80,30 +83,6 @@ GoalStatus GoalEquipWeapon::process()
 void GoalEquipWeapon::terminate()
 {
 	removeAllSubgoals();
-}
-
-
-int GoalEquipWeapon::evaluate(HumanBase* const owner)
-{
-	if (owner->getEquipedWeapon() != nullptr)
-	{
-		EntityType bulletType = owner->getEquipedWeapon()->getBulletType();
-		int amount = owner->getInventoryData()->getItemAmount(bulletType);
-
-		if (owner->getEquipedWeapon()->getNumOfLeftRounds() > 0 || amount > 0 ||
-			owner->getEquipedWeapon()->getEntityType() == EntityType::ITEM_AXE)
-		{
-			return 0;
-		}
-	}
-
-	makeEquipItemWeight();
-
-	// Make best choice
-	float weight = 0;
-	_weaponType = getBestItem(weight);
-
-	return weight;
 }
 
 
@@ -177,9 +156,9 @@ EntityType GoalEquipWeapon::getBestItem(float& weight) const
 {
 	EntityType bestItem = EntityType::DEFAULT;
 	weight = 0.0f;
-
 	for (auto e : _weightEquipItem)
 	{
+		
 		if (weight < e.second)
 		{
 			bestItem = e.first;
@@ -188,4 +167,31 @@ EntityType GoalEquipWeapon::getBestItem(float& weight) const
 		cocos2d::log("item weight in [GoalEquipWeapon]   item : %d   weight : %f", e.first, e.second);
 	}
 	return bestItem;
+}
+
+
+int GoalEquipWeapon::evaluate(HumanBase* const owner)
+{
+	if (owner->getEquipedWeapon() != nullptr)
+	{
+		cocos2d::log("has equiped weapon");
+		EntityType bulletType = owner->getEquipedWeapon()->getBulletType();
+		int amount = owner->getInventoryData()->getItemAmount(bulletType);
+
+		if (owner->getEquipedWeapon()->getNumOfLeftRounds() > 0 || amount > 0 ||
+			owner->getEquipedWeapon()->getEntityType() == EntityType::ITEM_AXE)
+		{
+			return 0;
+		}
+	}
+
+	cocos2d::log("dont has equiped weapon");
+
+	makeEquipItemWeight();
+
+	// Make best choice
+	float weight = 0;
+	_weaponType = getBestItem(weight);
+
+	return weight;
 }

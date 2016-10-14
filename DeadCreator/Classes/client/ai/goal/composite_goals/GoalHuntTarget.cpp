@@ -11,6 +11,7 @@
 #include "HumanBase.hpp"
 #include "AbstTargetingSystem.h"
 #include "GoalMoveToPosition.hpp"
+#include "SensoryMemory.h"
 using namespace realtrick::client;
 
 
@@ -42,8 +43,7 @@ void GoalHuntTarget::activate()
 		//if the bot has reached the LRP and it still hasn't found the target
 		//it starts to search by using the explore goal to move to random
 		//map locations
-		if (lrp.isZero() ||
-			Circle(_owner->getWorldPosition(), _owner->getBoundingRadius()).containPoint(lrp))
+		if (Circle(_owner->getWorldPosition(), _owner->getSensoryMemory()->getAttackRange()).containPoint(lrp))
 		{
 			setGoalStatus(GoalStatus::COMPLETED);
 		}
@@ -70,7 +70,7 @@ GoalStatus GoalHuntTarget::process()
     auto subGoalStatus = processSubgoals();
 	setGoalStatus(subGoalStatus);
 
-	//if target is in view this goal is satisfied
+	// if target is in view this goal is satisfied
 	if (_owner->getTargetSys()->isTargetAttackable())
 	{
 		setGoalStatus(GoalStatus::COMPLETED);

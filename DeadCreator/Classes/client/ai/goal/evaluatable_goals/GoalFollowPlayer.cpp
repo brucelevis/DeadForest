@@ -10,15 +10,16 @@
 #include "GoalAttackTarget.hpp"
 #include "GoalMoveToPosition.hpp"
 #include "AbstTargetingSystem.h"
+#include "SensoryMemory.h"
 #include "HumanBase.hpp"
 #include "Game.hpp"
 
 using namespace realtrick;
 using namespace realtrick::client;
 
-GoalFollowPlayer::GoalFollowPlayer(HumanBase* const owner)
+GoalFollowPlayer::GoalFollowPlayer(HumanBase* const owner, float character_bias)
 	:
-	GoalCompositeBase(owner)
+	GoalEvaluatable(owner, character_bias)
 {
 	setGoalType(GoalType::FOLLOW_PLAYER);
 }
@@ -34,9 +35,17 @@ void GoalFollowPlayer::activate()
 	//must be removed
 	removeAllSubgoals();
 
+	cocos2d::Vec2 avoidMove = _owner->getSensoryMemory()->avoidingEnemiesVector(_owner);
+	cocos2d::Vec2 ownerPos = _owner->getWorldPosition();
+
 	auto player = _owner->getGame()->getPlayerPtr();
 
-	addSubgoal(new GoalMoveToPosition(_owner, player->getWorldPosition()));
+	cocos2d::Vec2 playerPos = player->getWorldPosition();
+	cocos2d::Vec2 toPlayer = (playerPos - ownerPos).getNormalized() * 2;
+
+	cocos2d::Vec2 move = (toPlayer + avoidMove).getNormalized() * 300;
+	
+	addSubgoal(new GoalMoveToPosition(_owner, ownerPos + move));
 }
 
 
@@ -47,6 +56,7 @@ GoalStatus GoalFollowPlayer::process()
 	//if status is INACTIVE, call activate()
 	if (isInactive())
 		activate();
+
 	auto player = _owner->getGame()->getPlayerPtr();
 	cocos2d::Vec2 pos = _owner->getWorldPosition();
 	cocos2d::Vec2 destination = player->getWorldPosition();
@@ -71,11 +81,11 @@ int GoalFollowPlayer::evaluate(HumanBase* const owner)
 	auto player = _owner->getGame()->getPlayerPtr();
 	float distance = owner->getWorldPosition().distance(player->getWorldPosition());
 
-	int weight = 0;
+	int weight = 1;
 	if (distance < 300.0f)
-		weight = 0;
+		weight = 1;
 	else
-		weight = (int)(distance / 10.0f);
+		weight = 1 + (int)(distance / 10.0f);
 
 	return weight;
 }

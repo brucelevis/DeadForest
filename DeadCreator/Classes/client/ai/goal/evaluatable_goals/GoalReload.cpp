@@ -11,9 +11,9 @@ USING_NS_CC;
 
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
-GoalReload::GoalReload(HumanBase* owner)
+GoalReload::GoalReload(HumanBase* owner, float character_bias)
 	:
-	GoalCompositeBase(owner)
+	GoalEvaluatable(owner, character_bias)
 {
 	setGoalType(GoalType::RELOAD);
 }

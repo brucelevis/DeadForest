@@ -2,7 +2,7 @@
 #define GOAL_RUN_AWAY_H
 #pragma warning (disable:4786)
 
-#include "GoalCompositeBase.hpp"
+#include "GoalEvaluatable.hpp"
 #include "Types.hpp"
 
 namespace realtrick
@@ -11,22 +11,19 @@ namespace realtrick
 	{
 		class HumanBase;
 
-		class GoalRunAway : public GoalCompositeBase
+		class GoalRunAway : public GoalEvaluatable
 		{
 
 		public:
 
-			GoalRunAway(HumanBase* owner);
+			GoalRunAway(HumanBase* owner, float character_bias = 0.0f);
 			virtual ~GoalRunAway() override
 			{}
 
-			int evaluate(HumanBase* const owner);
-
+			virtual int evaluate(HumanBase* const owner) override;
 			virtual void activate() override;
 			virtual GoalStatus process() override;
 			virtual void terminate() override;
-
-		public:
 		};
 	}
 }

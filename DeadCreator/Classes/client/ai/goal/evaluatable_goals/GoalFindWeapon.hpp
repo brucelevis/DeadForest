@@ -8,37 +8,33 @@
 
 #pragma once
 
-#include "GoalCompositeBase.hpp"
+#include "GoalEvaluatable.hpp"
 #include "Types.hpp"
 
 namespace realtrick
 {
     namespace client
     {
-        
-        class GoalFindWeapon : public GoalCompositeBase
+        class GoalFindWeapon : public GoalEvaluatable
         {
-            
         public:
-            
-            explicit GoalFindWeapon(HumanBase* owner);
+            explicit GoalFindWeapon(HumanBase* owner, float character_bias = 0.0f);
             virtual ~GoalFindWeapon();
             
-			int evaluate(HumanBase* const owner);
 			void makeFindItemWeight();
 			EntityType getBestItem(float& weight) const;
 
+			virtual int evaluate(HumanBase* const owner) override;
             virtual void activate() override;
             virtual GoalStatus process() override;
             virtual void terminate() override;
             
         private:
-            
 			std::map<EntityType, float> _weightFindItem;
 			EntityType _findWeapon;
+			int _findWeaponID;
             
         };
-        
     }
 }
 

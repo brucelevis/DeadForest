@@ -32,6 +32,13 @@ namespace realtrick
 			HumanBase*			_current_target;
 
 		public:
+			
+			static bool isAimAccurate(
+				const cocos2d::Vec2& targetPos,
+				float targetRadius,
+				const cocos2d::Vec2& ownerPos,
+				const cocos2d::Vec2& ownerHeading,
+				float error = 1.0f);
 
 			explicit AbstTargetingSystem(HumanBase* const owner);
 

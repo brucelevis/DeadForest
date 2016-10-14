@@ -21,10 +21,11 @@ using namespace realtrick::client;
 using namespace realtrick;
 
 
-GoalFindWeapon::GoalFindWeapon(HumanBase* owner) 
+GoalFindWeapon::GoalFindWeapon(HumanBase* owner, float character_bias)
 	:
-	GoalCompositeBase(owner),
-	_findWeapon(EntityType::DEFAULT)
+	GoalEvaluatable(owner, character_bias),
+	_findWeapon(EntityType::DEFAULT),
+	_findWeaponID(-1)
 {
     setGoalType(GoalType::FIND_WEAPON);
 }
@@ -50,6 +51,8 @@ void GoalFindWeapon::activate()
 			cocos2d::Vec2 itemPos = e.second->getWorldPosition();
 			float distance = itemPos.distance(_owner->getWorldPosition());
 
+			
+
 			if (distance > _owner->getSensoryMemory()->getViewRange())
 				continue;
 
@@ -57,6 +60,7 @@ void GoalFindWeapon::activate()
 			{
 				dist = distance;
 				desti = itemPos;
+				_findWeaponID = e.second->getTag();
 			}
 		}
 	}
@@ -77,6 +81,11 @@ GoalStatus GoalFindWeapon::process()
 {
     if ( isInactive() ) activate();
     
+	EntityBase* item = _owner->getGame()->getEntityManager()->getEntityFromID(_findWeaponID);
+
+	if (item == nullptr)
+		return GoalStatus::COMPLETED;
+
     auto subGoalStatus = processSubgoals();
     return subGoalStatus;
 }

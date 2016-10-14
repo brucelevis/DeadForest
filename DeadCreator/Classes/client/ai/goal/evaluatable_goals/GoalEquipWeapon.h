@@ -2,7 +2,7 @@
 #define GOAL_EQUIP_WEAPON_H
 #pragma warning (disable:4786)
 
-#include "GoalCompositeBase.hpp"
+#include "GoalEvaluatable.hpp"
 #include "Types.hpp"
 
 namespace realtrick
@@ -11,19 +11,17 @@ namespace realtrick
 	{
 		class HumanBase;
 
-		class GoalEquipWeapon : public GoalCompositeBase
+		class GoalEquipWeapon : public GoalEvaluatable
 		{
-
 		public:
-
-			GoalEquipWeapon(HumanBase* owner);
+			GoalEquipWeapon(HumanBase* owner, float character_bias = 0.0f);
 			virtual ~GoalEquipWeapon() override
 			{}
 
-			int evaluate(HumanBase* const owner);
 			void makeEquipItemWeight();
 			EntityType getBestItem(float& weight) const;
 
+			virtual int evaluate(HumanBase* const owner) override;
 			virtual void activate() override;
 			virtual GoalStatus process() override;
 			virtual void terminate() override;

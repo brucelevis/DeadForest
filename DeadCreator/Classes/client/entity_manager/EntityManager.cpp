@@ -45,7 +45,10 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
 				human->setEquipedWeapon(nullptr);
 			}
             
-            if ( playerType == ownPlayer ) _player = human;
+			if (playerType == ownPlayer) {
+				_player = human;
+				human->setBlood(9999);
+			}
         }
         
         else if ( entityType == EntityType::ENTITY_ZOMBIE )

@@ -159,7 +159,7 @@ bool HumanBase::isIntersectWall(const cocos2d::Vec2& futurePosition, const realt
     return false;
 }
 
-
+/*
 void HumanBase::moveEntity()
 {
     if ( getVelocity() == Vec2::ZERO )
@@ -197,8 +197,87 @@ void HumanBase::moveEntity()
         setWorldPosition(futurePosition);
         _game->getCellSpace()->updateEntity(this, oldPos);
     }
-}
+}*/
 
+
+void HumanBase::moveEntity()
+{
+	if (getVelocity() == Vec2::ZERO)
+	{
+		_speed = 0.0f;
+		return;
+	}
+
+	float dt = Director::getInstance()->getDeltaTime();
+	cocos2d::Vec2 oldPos = getWorldPosition();
+	cocos2d::Vec2 futurePosition = getWorldPosition() + getVelocity() * dt;
+	_speed = getVelocity().getLength();
+	bool intersectResult = false;
+	cocos2d::Vec2 move;
+
+	// 엔티티들과의 충돌처리
+	const std::list<EntityBase*> members = _game->getNeighborsOnMove(oldPos, _speed);
+	for (const auto &entity : members)
+	{
+		if (entity == this) continue;
+
+		if (isIntersectOther(futurePosition, entity))
+			intersectResult = true;
+
+		if (!isMasked(entity->getFamilyMask(), HUMAN_BASE))
+			continue;
+
+		HumanBase* human = static_cast<HumanBase*>(entity);
+		if (!human->isAlive())
+			continue;
+
+		cocos2d::Vec2 entityPos = human->getWorldPosition();
+		float overlap =
+			std::max(0.0f, human->getBoundingRadius() + _boundingRadius - entityPos.distance(futurePosition));
+			
+		move += (futurePosition - entityPos).getNormalized() * (overlap / 2);
+	}
+
+	// 벽과의 충돌처리
+	float maxOverlap = 0.0f;
+	Vec2 maxBegin, maxEnd;
+	const std::vector<realtrick::Polygon> walls = _game->getNeighborWalls(futurePosition, _speed);
+	for (const auto& wall : walls)
+	{
+		for (int i = 0; i < wall.vertices.size() - 1; ++i)
+		{
+			Vec2 begin(wall.vertices[i]);
+			Vec2 end(wall.vertices[i + 1]);
+
+			float distance = physics::distToSegment(begin, end, futurePosition);
+			if (distance < _boundingRadius)
+			{
+				if (maxOverlap < distance)
+				{
+					maxOverlap = distance;
+					maxBegin = begin;
+					maxEnd = end;
+				}
+			}				
+		}
+
+		Vec2 begin(wall.vertices.back());
+		Vec2 end(wall.vertices.front());
+
+		float distance = physics::distToSegment(begin, end, futurePosition);
+		if (distance < _boundingRadius)
+			if (maxOverlap < distance)
+			{
+				maxOverlap = distance;
+				maxBegin = begin;
+				maxEnd = end;
+			}
+	}
+	move += (maxBegin - maxEnd).getPerp().getNormalized() * (maxOverlap * 0.33f);
+	
+	setWorldPosition(futurePosition + move);
+	_game->getCellSpace()->updateEntity(this, oldPos);
+}
 
 void HumanBase::rotateEntity()
 {

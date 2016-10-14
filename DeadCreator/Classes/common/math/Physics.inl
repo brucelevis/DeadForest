@@ -373,6 +373,32 @@ namespace realtrick
             return MATH_RAD_TO_DEG(acosf(dir.dot(-a)) + 3.141592f);
         }
         
+
+		inline float distToSegment(
+			const cocos2d::Vec2& A,
+			const cocos2d::Vec2& B,
+			const cocos2d::Vec2& P)
+		{
+			//CCASSERT(A != B, "invalid segment");
+
+			//if the angle is obtuse between PA and AB is obtuse then the closest
+			//vertex must be A
+			float dotA = (P.x - A.x)*(B.x - A.x) + (P.y - A.y)*(B.y - A.y);
+
+			if (dotA <= 0) return (P - A).getLength();
+
+			//if the angle is obtuse between PB and AB is obtuse then the closest
+			//vertex must be B
+			float dotB = (P.x - B.x)*(A.x - B.x) + (P.y - B.y)*(A.y - B.y);
+
+			if (dotB <= 0) return (P - B).getLength();
+
+			//calculate the point along AB that is the closest to P
+			cocos2d::Vec2 Point = A + ((B - A) * dotA) / (dotA + dotB);
+
+			//calculate the distance P-Point
+			return (Point - P).getLength();
+		}
     }
 }
 

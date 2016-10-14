@@ -30,7 +30,9 @@ namespace realtrick
 			RANGE_ATTACK = 12,
 			AVOID = 13,
 			ATTACK_TO_DESTINATION = 14,
-			RUN_AWAY = 15
+			RUN_AWAY = 15,
+			FOLLOW_PLAYER = 16,
+			AVOID_COLLISION = 17
         };
         
     }

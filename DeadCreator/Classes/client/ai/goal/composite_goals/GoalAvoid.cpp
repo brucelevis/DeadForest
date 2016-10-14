@@ -3,6 +3,7 @@
 #include "HumanBase.hpp"
 #include "AbstTargetingSystem.h"
 #include "SensoryMemory.h"
+#include "InputMoveEnd.hpp"
 
 using namespace realtrick::client;
 using namespace realtrick;
@@ -24,7 +25,6 @@ void GoalAvoid::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
-	
 	cocos2d::Vec2 ownerPos = _owner->getWorldPosition();
 	cocos2d::Vec2 avoidMove(ownerPos);
 
@@ -62,6 +62,9 @@ GoalStatus GoalAvoid::process()
 //---------------------------- terminate --------------------------------------
 //-----------------------------------------------------------------------------
 void GoalAvoid::terminate()
-{}
+{
+	InputMoveEnd moveEnd(_owner);
+	moveEnd.execute();
+}
 
 

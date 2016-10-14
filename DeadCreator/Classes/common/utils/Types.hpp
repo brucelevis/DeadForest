@@ -83,6 +83,7 @@ namespace realtrick
         CONDITION_BRING,
         CONDITION_ALWAYS,
         CONDITION_NEVER,
+        CONDITION_ELAPSED_TIME,
         ACTION_DISPLAY_TEXT,
         ACTION_MOVE_LOCATION,
         ACTION_KILL_ENTITY_AT_LOCATION,
@@ -91,6 +92,9 @@ namespace realtrick
         ACTION_PRESERVE_TRIGGER,
         ACTION_VICTORY,
         ACTION_DEFEAT,
+        ACTION_MOVE_ENTITY,
+        ACTION_PAUSE_GAME,
+        ACTION_RESUME_GAME
     };
         
     struct EntityData

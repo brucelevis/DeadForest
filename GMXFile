@@ -52,6 +52,11 @@ table Bring
    entity_type : int;
    location_name : string;
 }
+table ElapsedTime
+{
+   approximation : Approximation;
+   number : int;
+}
 
 table DisplayText
 {
@@ -76,6 +81,14 @@ table MoveLocation
    player : int;
    source_location_name : string;
 }
+table MoveEntity
+{
+   numberAll : int;
+   entity_type : int;
+   player : int;
+   src_location_name : string;
+   dst_location_name : string;
+}
 table KillEntityAtLocation
 {
    numberAll : int;
@@ -83,13 +96,16 @@ table KillEntityAtLocation
    player : int;
    location_name : string;
 }
+table PauseGame{}
+table ResumeGame{}
 
 union ConditionBase 
 {
    Always,
    Never,
    Command,
-   Bring
+   Bring,
+   ElapsedTime
 }
 
 union ActionBase 
@@ -101,7 +117,10 @@ union ActionBase
    PlaySoundAtLocation,
    PlaySound,
    Victory,
-   Defeat
+   Defeat,
+   MoveEntity,
+   PauseGame,
+   ResumeGame
 }
 
 table Condition 

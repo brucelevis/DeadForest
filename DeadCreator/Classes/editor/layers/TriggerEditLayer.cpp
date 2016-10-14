@@ -68,15 +68,19 @@ bool TriggerEditLayer::init()
     
     _conditionList.push_back(new ConditionAlways());
     _conditionList.push_back(new ConditionBring());
+    _conditionList.push_back(new ConditionElapsedTime());
     _conditionList.push_back(new ConditionNever());
     
     _actionList.push_back(new ActionDefeat());
     _actionList.push_back(new ActionDisplayText());
     _actionList.push_back(new ActionKillEntityAtLocation());
+    _actionList.push_back(new ActionMoveEntity());
     _actionList.push_back(new ActionMoveLocation());
+    _actionList.push_back(new ActionPauseGame());
     _actionList.push_back(new ActionPlaySound());
     _actionList.push_back(new ActionPlaySoundAtLocation());
     _actionList.push_back(new ActionPreserveTrigger());
+    _actionList.push_back(new ActionResumeGame());
     _actionList.push_back(new ActionVictory());
     
     return true;
@@ -520,7 +524,7 @@ void TriggerEditLayer::showNewCondition(const char* title, bool& opened, GameTri
             }
             isFirstCall = false;
         }
-        ImGui::Combo("Select Condition", &currentCondition, conditionNameList.c_str(), 3);
+        ImGui::Combo("Select Condition", &currentCondition, conditionNameList.c_str(), 7);
         bool isCompleted = _conditionList[currentCondition]->drawEditMode(&_gmxLayer);
     
         //
@@ -654,7 +658,7 @@ void TriggerEditLayer::showNewAction(const char* title, bool& opened, GameTrigge
             }
             isFirstCall = false;
         }
-        ImGui::Combo("Select Action", &currentAction, actionNameList.c_str(), 3);
+        ImGui::Combo("Select Action", &currentAction, actionNameList.c_str(), 7);
         bool isCompleted = _actionList[currentAction]->drawEditMode(&_gmxLayer);
         
         //

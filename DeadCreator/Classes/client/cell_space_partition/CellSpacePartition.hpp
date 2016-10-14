@@ -29,6 +29,7 @@ namespace realtrick
             
             std::list<EntityBase*>                      members;
             std::vector<realtrick::Polygon>             walls;
+            std::vector<realtrick::Polygon>             simpleWalls;
             cocos2d::Rect                               boundingBox;
             
             Cell(cocos2d::Rect rect): boundingBox(rect) {}
@@ -57,6 +58,7 @@ namespace realtrick
             
             void                     addEntity(EntityBase* ent);
             void                     addWall(const realtrick::Polygon& wall);
+            void                     addSimpleWall(const realtrick::Polygon& wall);
             
             bool                     updateEntity(EntityBase* ent, cocos2d::Vec2 oldPos);
             

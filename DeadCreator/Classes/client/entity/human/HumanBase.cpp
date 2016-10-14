@@ -23,6 +23,8 @@ using namespace cocos2d;
 using namespace realtrick::client;
 using namespace realtrick;
 
+#include "SimpleProfiler.hpp"
+
 HumanBase::HumanBase(Game* game) : EntityBase(game),
 _animator(nullptr),
 _FSM(nullptr),
@@ -109,14 +111,14 @@ void HumanBase::update(float dt)
 	_sensory->updateVision();
     
 	_target_system->update();
-
+    
     // move and rotate
     this->moveEntity();
     
     this->rotateEntity();
     
     // calculate foot guage to foot step sound.
-    this->setFootGauge( _footGauge + _speed * dt );
+//    this->setFootGauge( _footGauge + _speed * dt );
     
     // update animation
     if ( _animator )
@@ -158,46 +160,6 @@ bool HumanBase::isIntersectWall(const cocos2d::Vec2& futurePosition, const realt
     
     return false;
 }
-
-/*
-void HumanBase::moveEntity()
-{
-    if ( getVelocity() == Vec2::ZERO )
-    {
-        _speed = 0.0f;
-        return ;
-    }
-    
-    float dt = Director::getInstance()->getDeltaTime();
-    cocos2d::Vec2 oldPos = getWorldPosition();
-    cocos2d::Vec2 futurePosition = getWorldPosition() + getVelocity() * dt;
-    _speed = getVelocity().getLength();
-    bool intersectResult = false;
-    
-    // 엔티티들과의 충돌처리
-    const std::list<EntityBase*> members = _game->getNeighborsOnMove(oldPos, _speed);
-    for ( const auto &entity : members )
-    {
-        if ( entity == this ) continue;
-        
-        if ( isIntersectOther(futurePosition, entity) )
-            intersectResult = true;
-    }
-    
-    // 벽과의 충돌처리
-    const std::vector<realtrick::Polygon> walls = _game->getNeighborWalls(futurePosition, _speed);
-    for( const auto& wall : walls )
-    {
-        if ( isIntersectWall(futurePosition, wall) )
-            intersectResult = true;
-    }
-    
-    if ( !intersectResult )
-    {
-        setWorldPosition(futurePosition);
-        _game->getCellSpace()->updateEntity(this, oldPos);
-    }
-}*/
 
 
 void HumanBase::moveEntity()

@@ -205,7 +205,9 @@ namespace realtrick
             LocationNode* _grabbedLocation = nullptr;
             
             std::map<std::string, std::vector<cocos2d::Vec2>> _tileCollisions;
+            std::map<std::string, std::vector<cocos2d::Vec2>> _tileSimpleCollisions;
             std::vector< std::vector<cocos2d::Vec2> > _collisionRegions;
+            std::vector< std::vector<cocos2d::Vec2> > _simpleCollisionRegions;
             cocos2d::DrawNode* _collisionNode;
             
             bool _isFirstFile = true;

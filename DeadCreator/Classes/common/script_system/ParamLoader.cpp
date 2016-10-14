@@ -47,8 +47,8 @@ namespace realtrick
                 continue;
             }
             
-            std::string::size_type begIdx;
-            std::string::size_type endIdx;
+            std::string::size_type begIdx = 0;
+            std::string::size_type endIdx = 0;
             const std::string delims(" ;=,");
 
             // find key

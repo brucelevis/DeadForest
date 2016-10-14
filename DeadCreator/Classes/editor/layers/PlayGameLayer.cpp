@@ -15,6 +15,8 @@ using namespace realtrick::editor;
 #include "Camera2D.hpp"
 #include "GameResource.hpp"
 #include "RenderingSystem.hpp"
+#include "SparseGraph.h"
+using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -167,12 +169,26 @@ void PlayGameLayer::showLayer(bool& opened)
 					{
 						auto a = worldToLocal(origin, wall.vertices[i]);
 						auto b = worldToLocal(origin, wall.vertices[i + 1]);
-						drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
+						drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.5)));
 					}
 					auto a = worldToLocal(origin, wall.vertices.back());
 					auto b = worldToLocal(origin, wall.vertices.front());
-					drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
+					drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.5)));
 				}
+                
+                auto simpleWalls = game->getNeighborSimpleWalls(game->getPlayerPtr()->getWorldPosition(), 0.0f);
+                for (const auto& wall : simpleWalls)
+                {
+                    for (int i = 0; i < wall.vertices.size() - 1; ++i)
+                    {
+                        auto a = worldToLocal(origin, wall.vertices[i]);
+                        auto b = worldToLocal(origin, wall.vertices[i + 1]);
+                        drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.5)));
+                    }
+                    auto a = worldToLocal(origin, wall.vertices.back());
+                    auto b = worldToLocal(origin, wall.vertices.front());
+                    drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.5)));
+                }
 			}
 
 			if (isLocationViewOn)
@@ -199,7 +215,8 @@ void PlayGameLayer::showLayer(bool& opened)
 
 			if (isGraphNodeViewOn)
 			{
-				
+                // auto graph = game->getGraph();
+                // auto nodes = graph->getNodes();
 			}
 		}
 	}

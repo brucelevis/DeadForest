@@ -102,6 +102,62 @@ void CellSpacePartition::addWall(const realtrick::Polygon& wall)
 }
 
 
+void CellSpacePartition::addSimpleWall(const realtrick::Polygon& wall)
+{
+    //
+    //      -------- -------- --------
+    //     | 1      | 2      | 3      |
+    //     |        |  ------|-. max  |                      _____       _
+    //     |       -|-       | |      |            -        -     |     | |
+    //     |      | |        | |      |        1: |_|    2:|______|  3: |_|
+    //      -------- -------- --------             _                     _
+    //     | 4    | | 5      |6|      |        4: |_|    5: ------   6: | |
+    //     |       -|----    | |      |                    |      |     | |
+    //     |        |    |   | |      |                     ---   |     | |
+    //     |        |    |   | |      |                        |__|     |_|
+    //      -------- -------- --------                          __       _
+    //     | 7      | 8  |   |9|      |        7:        8:    |  |  9: | |
+    //     |      . |     ---|-       |                         --       -
+    //     |     min|        |        |
+    //     |        |        |        |
+    //      -------- -------- --------
+    //
+    //      해당 벽의 최대 최소 x, y를 각각 구해 AABB 를 만든다.
+    //      공간들을 순회하면서 겹치는 공간이 있다면, 클리핑한다.
+    //      그리고 해당 공간에 클리핑된 벽들을 각각 저장해 놓는다.
+    
+    float minx = std::min_element(std::begin(wall.vertices), std::end(wall.vertices), [](const cocos2d::Vec2& v1, const cocos2d::Vec2& v2) {
+        return (v1.x < v2.x);
+    })->x;
+    
+    float miny = std::min_element(std::begin(wall.vertices), std::end(wall.vertices), [](const cocos2d::Vec2& v1, const cocos2d::Vec2& v2) {
+        return (v1.y < v2.y);
+    })->y;
+    
+    float maxx = std::max_element(std::begin(wall.vertices), std::end(wall.vertices), [](const cocos2d::Vec2& v1, const cocos2d::Vec2& v2) {
+        return (v1.x < v2.x);
+    })->x;
+    
+    float maxy = std::max_element(std::begin(wall.vertices), std::end(wall.vertices), [](const cocos2d::Vec2& v1, const cocos2d::Vec2& v2) {
+        return (v1.y < v2.y);
+    })->y;
+    
+    cocos2d::Vec2 minVertex = cocos2d::Vec2(minx, miny);
+    cocos2d::Vec2 maxVertex = cocos2d::Vec2(maxx, maxy);
+    cocos2d::Rect wallAABB = cocos2d::Rect(minVertex, cocos2d::Size(maxVertex - minVertex));
+    for( auto& cell : _cells )
+    {
+        cocos2d::Rect cellAABB = cell.boundingBox;
+        if ( cellAABB.intersectsRect(wallAABB) )
+        {
+            std::vector<realtrick::Polygon> clippedWalls = clipping::getClippedPolygons(wall, cellAABB);
+            for( const auto& clippedWall : clippedWalls )
+                cell.simpleWalls.push_back(clippedWall);
+        }
+    }
+}
+
+
 bool CellSpacePartition::updateEntity(EntityBase* ent, cocos2d::Vec2 oldPos)
 {
     int oldIdx = positionToIndex(oldPos);

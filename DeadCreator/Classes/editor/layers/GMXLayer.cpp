@@ -1552,6 +1552,204 @@ void GMXLayer::initCollisionData()
     _tileCollisions["5_3_234_RD"].push_back(Vec2(84, 55));
     _tileCollisions["5_3_234_RD"].push_back(Vec2(90, 49));
     _tileCollisions["5_3_234_RD"].push_back(Vec2(101, 47));
+    
+    
+    // simple tile version
+    
+    std::vector<cocos2d::Vec2> vertices =
+    {
+        Vec2(63, 0),    // 0
+        Vec2(32, 32),   // 1
+        Vec2(96, 32),   // 2
+        Vec2(0, 63),    // 3
+        Vec2(63, 63),   // 4
+        Vec2(127,63),   // 5
+        Vec2(32, 96),   // 6
+        Vec2(96, 96),   // 7
+        Vec2(63, 127)   // 8
+    };
+    
+    _tileSimpleCollisions["5_1_1_LD"].push_back(vertices[2]);
+    _tileSimpleCollisions["5_1_1_LD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_1_1_LD"].push_back(vertices[1]);
+    
+    _tileSimpleCollisions["5_1_2_LU"].push_back(vertices[7]);
+    _tileSimpleCollisions["5_1_2_LU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_1_2_LU"].push_back(vertices[2]);
+    
+    _tileSimpleCollisions["5_1_3_RU"].push_back(vertices[6]);
+    _tileSimpleCollisions["5_1_3_RU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_1_3_RU"].push_back(vertices[7]);
+    
+    _tileSimpleCollisions["5_1_4_RD"].push_back(vertices[1]);
+    _tileSimpleCollisions["5_1_4_RD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_1_4_RD"].push_back(vertices[6]);
+    
+    _tileSimpleCollisions["5_1_12_LU"].push_back(vertices[7]);
+    _tileSimpleCollisions["5_1_12_LU"].push_back(vertices[1]);
+    
+    _tileSimpleCollisions["5_1_13_LD"].push_back(vertices[2]);
+    _tileSimpleCollisions["5_1_13_LD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_1_13_LD"].push_back(vertices[1]);
+    
+    _tileSimpleCollisions["5_1_13_RU"].push_back(vertices[6]);
+    _tileSimpleCollisions["5_1_13_RU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_1_13_RU"].push_back(vertices[7]);
+    
+    _tileSimpleCollisions["5_1_14_LD"].push_back(vertices[2]);
+    _tileSimpleCollisions["5_1_14_LD"].push_back(vertices[6]);
+    
+    _tileSimpleCollisions["5_1_23_RU"].push_back(vertices[6]);
+    _tileSimpleCollisions["5_1_23_RU"].push_back(vertices[2]);
+    
+    _tileSimpleCollisions["5_1_24_RD"].push_back(vertices[7]);
+    _tileSimpleCollisions["5_1_24_RD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_1_24_RD"].push_back(vertices[2]);
+    
+    _tileSimpleCollisions["5_1_24_LU"].push_back(vertices[1]);
+    _tileSimpleCollisions["5_1_24_LU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_1_24_LU"].push_back(vertices[6]);
+    
+    _tileSimpleCollisions["5_1_34_RD"].push_back(vertices[1]);
+    _tileSimpleCollisions["5_1_34_RD"].push_back(vertices[7]);
+    
+    _tileSimpleCollisions["5_1_123_RU"].push_back(vertices[6]);
+    _tileSimpleCollisions["5_1_123_RU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_1_123_RU"].push_back(vertices[1]);
+    
+    _tileSimpleCollisions["5_1_124_LU"].push_back(vertices[7]);
+    _tileSimpleCollisions["5_1_124_LU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_1_124_LU"].push_back(vertices[6]);
+    
+    _tileSimpleCollisions["5_1_134_LD"].push_back(vertices[2]);
+    _tileSimpleCollisions["5_1_134_LD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_1_134_LD"].push_back(vertices[7]);
+    
+    _tileSimpleCollisions["5_1_234_RD"].push_back(vertices[1]);
+    _tileSimpleCollisions["5_1_234_RD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_1_234_RD"].push_back(vertices[2]);
+    
+    // seed 2
+    _tileSimpleCollisions["5_2_1_LD"].push_back(vertices[2]);
+    _tileSimpleCollisions["5_2_1_LD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_2_1_LD"].push_back(vertices[1]);
+    
+    _tileSimpleCollisions["5_2_2_LU"].push_back(vertices[7]);
+    _tileSimpleCollisions["5_2_2_LU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_2_2_LU"].push_back(vertices[2]);
+    
+    _tileSimpleCollisions["5_2_3_RU"].push_back(vertices[6]);
+    _tileSimpleCollisions["5_2_3_RU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_2_3_RU"].push_back(vertices[7]);
+    
+    _tileSimpleCollisions["5_2_4_RD"].push_back(vertices[1]);
+    _tileSimpleCollisions["5_2_4_RD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_2_4_RD"].push_back(vertices[6]);
+    
+    _tileSimpleCollisions["5_2_12_LU"].push_back(vertices[7]);
+    _tileSimpleCollisions["5_2_12_LU"].push_back(vertices[1]);
+    
+    _tileSimpleCollisions["5_2_13_LD"].push_back(vertices[2]);
+    _tileSimpleCollisions["5_2_13_LD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_2_13_LD"].push_back(vertices[1]);
+    
+    _tileSimpleCollisions["5_2_13_RU"].push_back(vertices[6]);
+    _tileSimpleCollisions["5_2_13_RU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_2_13_RU"].push_back(vertices[7]);
+    
+    _tileSimpleCollisions["5_2_14_LD"].push_back(vertices[2]);
+    _tileSimpleCollisions["5_2_14_LD"].push_back(vertices[6]);
+    
+    _tileSimpleCollisions["5_2_23_RU"].push_back(vertices[6]);
+    _tileSimpleCollisions["5_2_23_RU"].push_back(vertices[2]);
+    
+    _tileSimpleCollisions["5_2_24_RD"].push_back(vertices[7]);
+    _tileSimpleCollisions["5_2_24_RD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_2_24_RD"].push_back(vertices[2]);
+    
+    _tileSimpleCollisions["5_2_24_LU"].push_back(vertices[1]);
+    _tileSimpleCollisions["5_2_24_LU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_2_24_LU"].push_back(vertices[6]);
+    
+    _tileSimpleCollisions["5_2_34_RD"].push_back(vertices[1]);
+    _tileSimpleCollisions["5_2_34_RD"].push_back(vertices[7]);
+    
+    _tileSimpleCollisions["5_2_123_RU"].push_back(vertices[6]);
+    _tileSimpleCollisions["5_2_123_RU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_2_123_RU"].push_back(vertices[1]);
+    
+    _tileSimpleCollisions["5_2_124_LU"].push_back(vertices[7]);
+    _tileSimpleCollisions["5_2_124_LU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_2_124_LU"].push_back(vertices[6]);
+    
+    _tileSimpleCollisions["5_2_134_LD"].push_back(vertices[2]);
+    _tileSimpleCollisions["5_2_134_LD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_2_134_LD"].push_back(vertices[7]);
+    
+    _tileSimpleCollisions["5_2_234_RD"].push_back(vertices[1]);
+    _tileSimpleCollisions["5_2_234_RD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_2_234_RD"].push_back(vertices[2]);
+    
+    // seed 3
+    _tileSimpleCollisions["5_3_1_LD"].push_back(vertices[2]);
+    _tileSimpleCollisions["5_3_1_LD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_3_1_LD"].push_back(vertices[1]);
+    
+    _tileSimpleCollisions["5_3_2_LU"].push_back(vertices[7]);
+    _tileSimpleCollisions["5_3_2_LU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_3_2_LU"].push_back(vertices[2]);
+    
+    _tileSimpleCollisions["5_3_3_RU"].push_back(vertices[6]);
+    _tileSimpleCollisions["5_3_3_RU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_3_3_RU"].push_back(vertices[7]);
+    
+    _tileSimpleCollisions["5_3_4_RD"].push_back(vertices[1]);
+    _tileSimpleCollisions["5_3_4_RD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_3_4_RD"].push_back(vertices[6]);
+    
+    _tileSimpleCollisions["5_3_12_LU"].push_back(vertices[7]);
+    _tileSimpleCollisions["5_3_12_LU"].push_back(vertices[1]);
+    
+    _tileSimpleCollisions["5_3_13_LD"].push_back(vertices[2]);
+    _tileSimpleCollisions["5_3_13_LD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_3_13_LD"].push_back(vertices[1]);
+    
+    _tileSimpleCollisions["5_3_13_RU"].push_back(vertices[6]);
+    _tileSimpleCollisions["5_3_13_RU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_3_13_RU"].push_back(vertices[7]);
+    
+    _tileSimpleCollisions["5_3_14_LD"].push_back(vertices[2]);
+    _tileSimpleCollisions["5_3_14_LD"].push_back(vertices[6]);
+    
+    _tileSimpleCollisions["5_3_23_RU"].push_back(vertices[6]);
+    _tileSimpleCollisions["5_3_23_RU"].push_back(vertices[2]);
+    
+    _tileSimpleCollisions["5_3_24_RD"].push_back(vertices[7]);
+    _tileSimpleCollisions["5_3_24_RD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_3_24_RD"].push_back(vertices[2]);
+    
+    _tileSimpleCollisions["5_3_24_LU"].push_back(vertices[1]);
+    _tileSimpleCollisions["5_3_24_LU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_3_24_LU"].push_back(vertices[6]);
+    
+    _tileSimpleCollisions["5_3_34_RD"].push_back(vertices[1]);
+    _tileSimpleCollisions["5_3_34_RD"].push_back(vertices[7]);
+    
+    _tileSimpleCollisions["5_3_123_RU"].push_back(vertices[6]);
+    _tileSimpleCollisions["5_3_123_RU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_3_123_RU"].push_back(vertices[1]);
+    
+    _tileSimpleCollisions["5_3_124_LU"].push_back(vertices[7]);
+    _tileSimpleCollisions["5_3_124_LU"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_3_124_LU"].push_back(vertices[6]);
+    
+    _tileSimpleCollisions["5_3_134_LD"].push_back(vertices[2]);
+    _tileSimpleCollisions["5_3_134_LD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_3_134_LD"].push_back(vertices[7]);
+    
+    _tileSimpleCollisions["5_3_234_RD"].push_back(vertices[1]);
+    _tileSimpleCollisions["5_3_234_RD"].push_back(vertices[4]);
+    _tileSimpleCollisions["5_3_234_RD"].push_back(vertices[2]);
 }
 
 
@@ -1574,6 +1772,7 @@ void GMXLayer::updateCollisionRegion()
     }
     
     _collisionRegions.clear();
+    _simpleCollisionRegions.clear();
     for (int i = 0 ; i < _file.numOfTileY * 2 + DUMMY_TILE_SIZE * 4; ++ i)
     {
         for(int j = 0 ; j < _file.numOfTileX + DUMMY_TILE_SIZE * 2; ++ j)
@@ -1581,6 +1780,7 @@ void GMXLayer::updateCollisionRegion()
             if ( _tiles[i][j].getInputState() != TileInputState::INVALID )
             {
                 std::vector<Vec2> polygon;
+                std::vector<Vec2> simplePolygon;
                 int x = j; int y = i;
                 
                 std::string tail = _tiles[y][x].getTileTail();
@@ -1614,7 +1814,14 @@ void GMXLayer::updateCollisionRegion()
                     polygon.push_back(_tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y));
                 }
                 
+                auto simpleCollisions = _tileSimpleCollisions[key];
+                for( auto& vert : simpleCollisions )
+                {
+                    simplePolygon.push_back(_tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y));
+                }
+                
                 Vec2 startPoint = collisions.front();
+                Vec2 simpleStartPoint = simpleCollisions.front();
                 auto startIndex = std::make_pair(x, y);
                 
                 while ( true )
@@ -1636,6 +1843,17 @@ void GMXLayer::updateCollisionRegion()
                     for( auto& vert : collisions )
                     {
                         polygon.push_back(_tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y));
+                    }
+                    
+                    auto simpleCollisions = _tileSimpleCollisions[key];
+                    if ( startIndex == std::make_pair(x, y) && simpleStartPoint.equals(simpleCollisions.front()) )
+                    {
+                        break;
+                    }
+
+                    for( auto& vert : simpleCollisions )
+                    {
+                        simplePolygon.push_back(_tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y));
                     }
                     
                     bool isSpecial = false;
@@ -1666,6 +1884,7 @@ void GMXLayer::updateCollisionRegion()
                 }
                 
                 _collisionRegions.push_back(polygon);
+                _simpleCollisionRegions.push_back(simplePolygon);
             }
         }
     }
@@ -1678,6 +1897,15 @@ void GMXLayer::updateCollisionRegion()
             _collisionNode->drawSegment(poly[i], poly[i+1], 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
         }
         _collisionNode->drawSegment(poly.back(), poly.front(), 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
+    }
+    
+    for(auto& poly : _simpleCollisionRegions)
+    {
+        for(int i = 0 ; i < poly.size()-1; ++ i)
+        {
+            _collisionNode->drawSegment(poly[i], poly[i+1], 1.0f, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
+        }
+        _collisionNode->drawSegment(poly.back(), poly.front(), 1.0f, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
     }
 }
 
@@ -1839,6 +2067,19 @@ void GMXLayer::save(const std::string& path)
         collisionRegions.push_back(poly);
     }
     
+    // simple collision regions
+    std::vector<flatbuffers::Offset<DeadCreator::Polygon>> simpleCollisionRegions;
+    for(int i = 0 ; i < _simpleCollisionRegions.size() ; ++ i)
+    {
+        std::vector<DeadCreator::Vector2> polygon;
+        for(int j = 0; j < _simpleCollisionRegions[i].size(); ++ j)
+        {
+            polygon.push_back(DeadCreator::Vector2(_simpleCollisionRegions[i][j].x, _simpleCollisionRegions[i][j].y));
+        }
+        auto poly = DeadCreator::CreatePolygon(builder, builder.CreateVectorOfStructs(polygon));
+        simpleCollisionRegions.push_back(poly);
+    }
+    
     
     // entities
     std::vector<flatbuffers::Offset<DeadCreator::Entity>> entities;
@@ -1902,6 +2143,7 @@ void GMXLayer::save(const std::string& path)
                                            static_cast<DeadCreator::TileType>(_file.defaultTile),
                                            builder.CreateVector(tileInfos), &numOfTiles, &tileSize,
                                            builder.CreateVector(collisionRegions),
+                                           builder.CreateVector(simpleCollisionRegions),
                                            builder.CreateVector(entities),
                                            &cellSpaceSize,
                                            builder.CreateVector(locations),

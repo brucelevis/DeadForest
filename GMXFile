@@ -148,6 +148,7 @@ table GMXFile
    number_of_tiles : Coord;
    tile_size : Size;
    collision_regions : [Polygon];
+   simple_collision_regions : [Polygon];
    entities : [Entity];
    cell_space_size : Size;
    locations : [Location];

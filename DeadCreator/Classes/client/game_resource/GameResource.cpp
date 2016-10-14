@@ -81,6 +81,17 @@ bool GameResource::initWithBinary(const char* buffer)
         _collisionData.push_back(p);
     }
     
+    // 5-1. simple collision regions
+    for ( auto poly = file->simple_collision_regions()->begin() ; poly != file->simple_collision_regions()->end() ; ++ poly )
+    {
+        Polygon p;
+        for( auto vert = poly->vertices()->begin(); vert != poly->vertices()->end() ; ++ vert )
+        {
+            p.pushVertex(Vec2(vert->x(), vert->y()));
+        }
+        _simpleCollisionData.push_back(p);
+    }
+    
     // 6. entities
     for ( auto entity = file->entities()->begin(); entity != file->entities()->end(); ++ entity )
     {

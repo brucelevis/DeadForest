@@ -16,6 +16,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+
 #include "cocos2d.h"
 
 namespace realtrick
@@ -24,6 +25,7 @@ namespace realtrick
 	template <class NodeType, class EdgeType>
 	class SparseGraph
 	{
+        
 	public:
 
 		//enable easy client access to the edge and node types used in the graph

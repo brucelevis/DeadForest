@@ -144,7 +144,6 @@ std::list<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, f
     std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
     for ( const int idx : cellIndices )
     {
-		cocos2d::log("%d", idx);
         const Cell& currCell = _cellSpace->getCell(idx);
         if ( currCell.boundingBox.intersectsRect(cocos2d::Rect(position.x - speed / 2, position.y - speed / 2, speed, speed)) )
         {
@@ -252,6 +251,70 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
 }
 
 
+std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& position, float speed) const
+{
+    std::vector<realtrick::Polygon> ret;
+    std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
+    for ( const int idx : cellIndices )
+    {
+        const Cell& currCell = _cellSpace->getCell(idx);
+        if ( currCell.boundingBox.intersectsRect(cocos2d::Rect(position.x - speed / 2, position.y - speed / 2, speed, speed)) )
+        {
+            for ( const auto &wall : currCell.simpleWalls )
+            {
+                ret.push_back(wall);
+            }
+        }
+    }
+    return ret;
+}
+
+
+std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const
+{
+    std::vector<realtrick::Polygon> ret;
+    std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
+    for ( const int idx : cellIndices )
+    {
+        const Cell& currCell = _cellSpace->getCell(idx);
+        if ( currCell.boundingBox.intersectsRect(cocos2d::Rect(position - screenSize / 2, screenSize)) )
+        {
+            for ( const auto &wall : currCell.simpleWalls )
+            {
+                ret.push_back(wall);
+            }
+        }
+    }
+    return ret;
+}
+
+
+std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& position, const Segment& ray) const
+{
+    std::vector<realtrick::Polygon> ret;
+    std::vector<int> cellIndices = _cellSpace->getNeighborCellsNotCurrent(position);
+    for ( const int idx : cellIndices )
+    {
+        const Cell& currCell = _cellSpace->getCell(idx);
+        if ( physics::intersect(realtrick::Rect(currCell.boundingBox.origin, currCell.boundingBox.size.width, currCell.boundingBox.size.height), ray) )
+        {
+            for ( const auto &wall : currCell.simpleWalls )
+            {
+                ret.push_back(wall);
+            }
+        }
+    }
+    
+    const Cell& myCell = _cellSpace->getCell(_cellSpace->positionToIndex(position));
+    for( const auto& wall : myCell.walls )
+    {
+        ret.push_back(wall);
+    }
+    
+    return ret;
+}
+
+
 void Game::pushLogic(double delaySeconds, MessageType type, void* extraInfo)
 {
     _messenger->pushMessage(delaySeconds, _logicStream, nullptr, type, extraInfo);
@@ -302,6 +365,12 @@ void Game::loadGameContents(PlayerType ownPlayer)
     for (const auto& wall : walls )
     {
         _cellSpace->addWall(wall);
+    }
+    
+    const auto& simpleWalls = _gameResource->getSimpleCollisionData();
+    for (const auto& wall : simpleWalls )
+    {
+        _cellSpace->addSimpleWall(wall);
     }
     
     const auto& entities = _entityManager->getEntities();

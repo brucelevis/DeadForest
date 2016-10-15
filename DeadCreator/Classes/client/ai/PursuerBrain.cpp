@@ -6,6 +6,7 @@
 #include "GoalReload.h"
 #include "GoalRunAway.h"
 #include "GoalFollowPlayer.hpp"
+#include "GoalMakeFormation.h"
 #include "InventoryData.hpp"
 #include "Game.hpp"
 
@@ -40,6 +41,10 @@ BrainBase(owner)
 	GoalFollowPlayer* follow = new GoalFollowPlayer(owner);
 	follow->setEvaluator(std::bind(&GoalFollowPlayer::evaluate, follow, owner));
 	_thinker->addGoalEntry(follow);	
+
+	//GoalMakeFormation* formation = new GoalMakeFormation(owner);
+	//formation->setEvaluator([](HumanBase* owner) { return 1000; });
+	//_thinker->addGoalEntry(formation);
 }
 
 PursuerBrain::~PursuerBrain()

@@ -132,7 +132,7 @@ namespace realtrick
 			cocos2d::Vec2 avoidingEnemiesVector(HumanBase* const owner);
 
 			// Returns enemy list
-			std::list<HumanBase*> getListOfRecentlySensedOpponents() const;
+			std::list<HumanBase*> getListOfRecentlySensedEntities(bool ally) const;
 
 			const std::vector<ItemBase*>& getSensedItems() const;
 

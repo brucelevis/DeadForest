@@ -147,6 +147,32 @@ std::vector<cocos2d::Vec2> Mat3::getTransformedVector(std::vector<cocos2d::Vec2>
 }
 
 
+//--------------------- pointToWorldSpace --------------------------------
+//
+//  Transforms a point from the agent's local space into world space
+//------------------------------------------------------------------------
+cocos2d::Vec2 Mat3::pointToWorldSpace(
+	const cocos2d::Vec2 &point,
+	const cocos2d::Vec2 &AgentHeading,
+	const cocos2d::Vec2 &AgentSide,
+	const cocos2d::Vec2 &AgentPosition)
+{
+	//make a copy of the point
+	cocos2d::Vec2 TransPoint = point;
+
+	//create a transformation matrix
+	Mat3 matTransform;
+
+	//rotate
+	matTransform.rotate(AgentHeading, AgentSide);
+
+	//and translate
+	matTransform.translate(AgentPosition);
+
+	//now transform the vertices
+	return matTransform.getTransformedVector(TransPoint);
+}
+
 
 
 

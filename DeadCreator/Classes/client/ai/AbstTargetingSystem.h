@@ -23,14 +23,6 @@ namespace realtrick
 
 		class AbstTargetingSystem
 		{
-		protected:
-
-			//the owner of this system
-			HumanBase* const	_owner;
-
-			//the current target (this will be null if there is no target assigned)
-			HumanBase*			_current_target;
-
 		public:
 			
 			static bool isAimAccurate(
@@ -73,12 +65,24 @@ namespace realtrick
 			virtual std::chrono::duration<double>			getTimeTargetHasBeenOutOfView()const;
 
 			//returns a pointer to the target. null if no target current.
-			HumanBase*				getTarget()const;
+			inline HumanBase* getTarget() const				{ return _target; }
+			inline void setTarget(HumanBase* target)		{ _target = target; }
 
-			void					setTarget(HumanBase* target);
+			inline HumanBase* getLeader() const				{ return _leader; }
+			inline void setLeader(HumanBase* const leader)	{ _leader = leader; }
 
 			//sets the target pointer to null
-			void					clearTarget();
+			inline void	clearTarget()						{ _target = nullptr; }
+
+		protected:
+
+			//the owner of this system
+			HumanBase* const	_owner;
+
+			//the current target (this will be null if there is no target assigned)
+			HumanBase*			_target;
+
+			HumanBase*			_leader;
 		};
 	}
 }

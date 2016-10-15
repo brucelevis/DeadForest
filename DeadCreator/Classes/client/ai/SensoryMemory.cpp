@@ -7,6 +7,12 @@
 #include <sstream>
 #include <algorithm>
 
+namespace
+{
+	float kDefaultViewRange = 600.0f;
+	float kDefaultAttackRange = 60.0f;
+}
+
 USING_NS_CC;
 using namespace realtrick::client;
 
@@ -32,8 +38,8 @@ SensoryMemory::SensoryMemory(
 	_owner(owner),
 	_memory_span(memory_span)
 {
-	_viewRange = 600;
-	_attackRange = 60;
+	_viewRange = kDefaultViewRange;
+	_attackRange = kDefaultAttackRange;
 }
 
 SensoryMemory::~SensoryMemory()
@@ -147,7 +153,7 @@ void SensoryMemory::updateVision()
 //  returns a list of the bots that have been sensed recently
 //-----------------------------------------------------------------------------
 std::list<HumanBase*>
-SensoryMemory::getListOfRecentlySensedOpponents() const
+SensoryMemory::getListOfRecentlySensedEntities(bool ally) const
 {
 	//this will store all the opponents the bot can remember
 	std::list<HumanBase*> opponents;
@@ -158,7 +164,7 @@ SensoryMemory::getListOfRecentlySensedOpponents() const
 	{
 		if ((rec.first)->isAlive() && (rec.first != _owner))
 		{
-			if (!_owner->getGame()->isAllyState(_owner->getPlayerType(), (rec.first)->getPlayerType()))
+			if (!(ally ^ _owner->getGame()->isAllyState(_owner->getPlayerType(), (rec.first)->getPlayerType())))
 			{
 				//if this bot has been updated in the memory recently, add to list
 				if ((current_time - rec.second.time_last_sensed) <= _memory_span)
@@ -301,7 +307,7 @@ bool SensoryMemory::isUnderAttack() const
 cocos2d::Vec2 SensoryMemory::avoidingEnemiesVector(cocos2d::Vec2& pos, cocos2d::Vec2& heading)
 {
 	cocos2d::Vec2 avoidMove(heading * std::numeric_limits<float>::min());
-	const auto& enemies = getListOfRecentlySensedOpponents();
+	const auto& enemies = getListOfRecentlySensedEntities(false);
 
 	for (auto e : enemies)
 	{
@@ -316,7 +322,7 @@ cocos2d::Vec2 SensoryMemory::avoidingEnemiesVector(cocos2d::Vec2& pos, cocos2d::
 cocos2d::Vec2 SensoryMemory::avoidingEnemiesVector(HumanBase* const owner)
 {
 	cocos2d::Vec2 avoidMove(owner->getHeading() * std::numeric_limits<float>::min());
-	const auto& enemies = getListOfRecentlySensedOpponents();
+	const auto& enemies = getListOfRecentlySensedEntities(false);
 
 	for (auto e : enemies)
 	{

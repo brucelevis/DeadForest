@@ -1,4 +1,4 @@
-#include "GoalAvoid.h"
+#include "GoalMakeFormation.h"
 #include "GoalSeekToPosition.hpp"
 #include "HumanBase.hpp"
 #include "AbstTargetingSystem.h"
@@ -6,10 +6,6 @@
 #include "InputMoveBegin.hpp"
 #include "InputMoveEnd.hpp"
 
-namespace
-{
-	float kMoveDistance = 150.0f;
-}
 
 using namespace realtrick::client;
 using namespace realtrick;
@@ -17,30 +13,49 @@ USING_NS_CC;
 
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
-GoalAvoid::GoalAvoid(HumanBase* owner)
+GoalMakeFormation::GoalMakeFormation(HumanBase* owner)
 	:
 	GoalCompositeBase(owner)
 {
-	setGoalType(GoalType::AVOID);
+	setGoalType(GoalType::MAKE_FORMATION);
 }
 
 
 //---------------------------- activate -------------------------------------
 //-----------------------------------------------------------------------------  
-void GoalAvoid::activate()
+void GoalMakeFormation::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
-	cocos2d::Vec2 avoidMove(
-		_owner->getSensoryMemory()->avoidingEnemiesVector(_owner->getWorldPosition(), _owner->getHeading()));
+	cocos2d::Vec2 positions[9] =
+	{
+		cocos2d::Vec2(-1, 1), cocos2d::Vec2(0, 1), cocos2d::Vec2(1, 1),
+		cocos2d::Vec2(-1, 0), cocos2d::Vec2(0, 0), cocos2d::Vec2(1, 0),
+		cocos2d::Vec2(-1, -1), cocos2d::Vec2(0, -1), cocos2d::Vec2(1, -1),
+	};
 
-	addSubgoal(new GoalSeekToPosition(_owner, avoidMove * kMoveDistance));
+	int idx = random(0, 8);
+	HumanBase* leader = _owner->getTargetSys()->getLeader();
+
+	if (leader == nullptr)
+	{
+		setGoalStatus(GoalStatus::COMPLETED);
+		return;
+	}
+
+	Vec2 align = Mat3::pointToWorldSpace(
+		positions[idx] * 100,
+		leader->getHeading(),
+		leader->getHeading().getPerp(),
+		leader->getWorldPosition());
+
+	addSubgoal(new GoalSeekToPosition(_owner, align));
 }
 
 
 //------------------------------ process --------------------------------------
 //-----------------------------------------------------------------------------
-GoalStatus GoalAvoid::process()
+GoalStatus GoalMakeFormation::process()
 {
 	// If status is INACTIVE, call activate()
 	if (isInactive())
@@ -58,7 +73,7 @@ GoalStatus GoalAvoid::process()
 
 //---------------------------- terminate --------------------------------------
 //-----------------------------------------------------------------------------
-void GoalAvoid::terminate()
+void GoalMakeFormation::terminate()
 {
 	InputMoveEnd moveEnd(_owner);
 	moveEnd.execute();

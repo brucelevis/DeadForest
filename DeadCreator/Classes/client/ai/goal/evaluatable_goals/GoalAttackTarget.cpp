@@ -76,7 +76,7 @@ void GoalAttackTarget::activate()
 					GoalMainAttack::smartMoving));
 		else
 		{
-			if(_owner->getSensoryMemory()->getListOfRecentlySensedOpponents().size() > 
+			if(_owner->getSensoryMemory()->getListOfRecentlySensedEntities(false).size() > 
 				kStandardNumForCrowd + cocos2d::random(-kNoiseForCrowd, kNoiseForCrowd))
 				addSubgoal(
 					new GoalRangeAttack(

@@ -88,7 +88,7 @@ void GoalAttackTarget::activate()
 					new GoalRangeAttack(
 						_owner,
 						_owner->getTargetSys()->getTarget()->getWorldPosition(),
-						GoalRangeAttack::smartMoving));
+						GoalRangeAttack::makeFormationMoving));
 		}
 			
 	}

@@ -24,7 +24,7 @@ namespace realtrick
 		class AbstTargetingSystem
 		{
 		public:
-			
+
 			static bool isAimAccurate(
 				const cocos2d::Vec2& targetPos,
 				float targetRadius,
@@ -68,11 +68,18 @@ namespace realtrick
 			inline HumanBase* getTarget() const				{ return _target; }
 			inline void setTarget(HumanBase* target)		{ _target = target; }
 
+			//sets the target pointer to null
+			inline void	clearTarget() { _target = nullptr; }
+
 			inline HumanBase* getLeader() const				{ return _leader; }
 			inline void setLeader(HumanBase* const leader)	{ _leader = leader; }
 
-			//sets the target pointer to null
-			inline void	clearTarget()						{ _target = nullptr; }
+			inline const std::vector<HumanBase*>& getFollowers() const { return _followers; }
+
+			bool addFollower(HumanBase* const follower);
+			bool removeFollower(HumanBase* const follower);
+			int queryFollowerIndex(HumanBase* const follower);
+			
 
 		protected:
 
@@ -83,6 +90,8 @@ namespace realtrick
 			HumanBase*			_target;
 
 			HumanBase*			_leader;
+
+			std::vector<HumanBase*> _followers;
 		};
 	}
 }

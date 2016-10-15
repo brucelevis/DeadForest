@@ -2,6 +2,7 @@
 #include "HumanBase.hpp"
 #include "SensoryMemory.h"
 #include "Game.hpp"
+#include "GoalNetwork.h"
 
 USING_NS_CC;
 using namespace realtrick::client;
@@ -31,7 +32,9 @@ AbstTargetingSystem::AbstTargetingSystem(HumanBase* const owner)
 	_owner(owner),
 	_target(nullptr),
 	_leader(nullptr)
-{}
+{
+	_followers.resize(GoalNetwork::kNumOfMaxFollowers, nullptr);
+}
 
 void AbstTargetingSystem::update()
 {
@@ -52,22 +55,41 @@ void AbstTargetingSystem::update()
 		}
 	}
 
+	for (auto e : _followers)
+	{
+		if (e)
+		{
+			if (!e->isAlive())
+				e = nullptr;
+		}
+	}
+
+	if(_leader)
+		_leader->getTargetSys()->removeFollower(_owner);
 	_leader = nullptr;
 
 	// If ally with player, then player is the leader
-	if (!_owner->getGame()->isAllyState(_owner->getPlayerType(),
-		(_owner->getGame()->getPlayerPtr())->getPlayerType()) &&
-		(_owner->getGame()->getPlayerPtr())->isAlive())
+	if (_owner->getGame()->isAllyState(_owner->getPlayerType(),
+		_owner->getGame()->getPlayerPtr()->getPlayerType()) &&
+		_owner->getGame()->getPlayerPtr()->isAlive() &&
+		_owner != _owner->getGame()->getPlayerPtr())
 	{
 		_leader = _owner->getGame()->getPlayerPtr();
+		_leader->getTargetSys()->addFollower(_owner);
 	}
 
-	const auto& ally = _owner->getSensoryMemory()->getListOfRecentlySensedEntities(false);
-	for (auto e : ally)
+	if (_leader == nullptr)
 	{
-		if (_leader == nullptr)
+		// #additional  actually here needs some code for finding the best leader
+		const auto& ally = _owner->getSensoryMemory()->getListOfRecentlySensedEntities(true);
+		for (auto e : ally)
 		{
+			if (e == _owner)
+				continue;
+
 			_leader = e;
+			_leader->getTargetSys()->addFollower(_owner);
+			break;
 		}
 	}
 }
@@ -102,4 +124,43 @@ std::chrono::duration<double> AbstTargetingSystem::getTimeTargetHasBeenVisible()
 std::chrono::duration<double> AbstTargetingSystem::getTimeTargetHasBeenOutOfView() const
 {
   return _owner->getSensoryMemory()->getTimeOpponentHasBeenOutOfView(_target);
+}
+
+
+bool AbstTargetingSystem::addFollower(HumanBase* const follower)
+{
+	bool removed = removeFollower(follower);
+
+	for (auto& e : _followers)
+	{
+		if (e == nullptr)
+		{
+			e = follower;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool AbstTargetingSystem::removeFollower(HumanBase* const follower)
+{
+	for (auto& e : _followers)
+	{
+		if (e == follower)
+		{
+			e = nullptr;
+			return true;
+		}
+	}
+	return false;
+}
+
+int AbstTargetingSystem::queryFollowerIndex(HumanBase* const follower)
+{
+	for (int i = 0; i < _followers.size(); i++)
+	{
+		if (_followers[i] == follower)
+			return i;
+	}
+	return -1;
 }

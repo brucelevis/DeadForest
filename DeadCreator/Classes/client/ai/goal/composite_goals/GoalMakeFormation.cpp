@@ -5,6 +5,10 @@
 #include "SensoryMemory.h"
 #include "InputMoveBegin.hpp"
 #include "InputMoveEnd.hpp"
+#include "InputBezelBegin.hpp"
+#include "InputBezelEnd.hpp"
+
+#include "GoalNetwork.h"
 
 
 using namespace realtrick::client;
@@ -26,15 +30,7 @@ GoalMakeFormation::GoalMakeFormation(HumanBase* owner)
 void GoalMakeFormation::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
-
-	cocos2d::Vec2 positions[9] =
-	{
-		cocos2d::Vec2(-1, 1), cocos2d::Vec2(0, 1), cocos2d::Vec2(1, 1),
-		cocos2d::Vec2(-1, 0), cocos2d::Vec2(0, 0), cocos2d::Vec2(1, 0),
-		cocos2d::Vec2(-1, -1), cocos2d::Vec2(0, -1), cocos2d::Vec2(1, -1),
-	};
-
-	int idx = random(0, 8);
+	
 	HumanBase* leader = _owner->getTargetSys()->getLeader();
 
 	if (leader == nullptr)
@@ -43,13 +39,28 @@ void GoalMakeFormation::activate()
 		return;
 	}
 
+	int idx = leader->getTargetSys()->queryFollowerIndex(_owner);
+
+	// Has no leader
+	if (idx < 0)
+		return;
+
 	Vec2 align = Mat3::pointToWorldSpace(
-		positions[idx] * 100,
-		leader->getHeading(),
-		leader->getHeading().getPerp(),
+		GoalNetwork::kFormations[idx] * GoalNetwork::kFormationDistance,
+		-leader->getHeading().getPerp(),
+		-leader->getHeading().getPerp().getPerp(),
 		leader->getWorldPosition());
 
-	addSubgoal(new GoalSeekToPosition(_owner, align));
+	if (align.distance(_owner->getWorldPosition()) < _owner->getBoundingRadius() * 2)
+	{
+		InputMoveEnd moveEnd(_owner);
+		moveEnd.execute();
+	}
+	else
+	{
+		InputMoveBegin moveBegin(_owner, (align - _owner->getWorldPosition()).getNormalized());
+		moveBegin.execute();
+	}
 }
 
 
@@ -61,22 +72,13 @@ GoalStatus GoalMakeFormation::process()
 	if (isInactive())
 		activate();
 
-	if (getGoalStatus() == GoalStatus::COMPLETED ||
-		getGoalStatus() == GoalStatus::FAILED)
-		return GoalStatus::COMPLETED;
-
-	processSubgoals();
-	
-	return GoalStatus::ACTIVE;
+	return GoalStatus::COMPLETED;
 }
 
 
 //---------------------------- terminate --------------------------------------
 //-----------------------------------------------------------------------------
 void GoalMakeFormation::terminate()
-{
-	InputMoveEnd moveEnd(_owner);
-	moveEnd.execute();
-}
+{}
 
 

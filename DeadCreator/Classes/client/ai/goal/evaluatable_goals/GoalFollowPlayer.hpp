@@ -27,6 +27,10 @@ namespace realtrick
             virtual void activate() override;
             virtual GoalStatus process() override;
 			virtual void terminate() override;
+
+		private:
+			cocos2d::Vec2 _destination;
+			bool _arriveSafeZone;
         };
     }
 }

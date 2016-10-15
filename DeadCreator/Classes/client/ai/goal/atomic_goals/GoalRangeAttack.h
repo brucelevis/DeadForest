@@ -16,6 +16,7 @@ namespace realtrick
 		public:
 			static cocos2d::Vec2 smartMoving(HumanBase* owner);
 			static cocos2d::Vec2 dealCrowdMoving(HumanBase* owner);
+			static cocos2d::Vec2 makeFormationMoving(HumanBase* owner);
 
 			GoalRangeAttack(
 				HumanBase* owner,

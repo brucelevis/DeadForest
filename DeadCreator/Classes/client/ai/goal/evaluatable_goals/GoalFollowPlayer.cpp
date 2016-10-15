@@ -13,13 +13,18 @@
 #include "SensoryMemory.h"
 #include "HumanBase.hpp"
 #include "Game.hpp"
+#include "GoalRangeAttack.h"
+#include "GoalNetwork.h"
+#include "GoalWalkWithAim.h"
+#include "InputCommands.hpp"
 
 using namespace realtrick;
 using namespace realtrick::client;
 
 GoalFollowPlayer::GoalFollowPlayer(HumanBase* const owner, float character_bias)
 	:
-	GoalEvaluatable(owner, character_bias)
+	GoalEvaluatable(owner, character_bias),
+	_arriveSafeZone(false)
 {
 	setGoalType(GoalType::FOLLOW_PLAYER);
 }
@@ -35,17 +40,36 @@ void GoalFollowPlayer::activate()
 	//must be removed
 	removeAllSubgoals();
 
-	cocos2d::Vec2 avoidMove = _owner->getSensoryMemory()->avoidingEnemiesVector(_owner);
-	cocos2d::Vec2 ownerPos = _owner->getWorldPosition();
+	auto leader = _owner->getTargetSys()->getLeader();
+	if (leader == nullptr)
+	{
+		setGoalStatus(GoalStatus::COMPLETED);
+		return;
+	}
 
-	auto player = _owner->getGame()->getPlayerPtr();
+	int idx = leader->getTargetSys()->queryFollowerIndex(_owner);
+	if (idx < 0)
+	{
+		setGoalStatus(GoalStatus::COMPLETED);
+		return;
+	}
+		
+	if(!leader->isAlive())
+	{
+		setGoalStatus(GoalStatus::COMPLETED);
+		return;
+	}
 
-	cocos2d::Vec2 playerPos = player->getWorldPosition();
-	cocos2d::Vec2 toPlayer = (playerPos - ownerPos).getNormalized() * 2;
+	_destination = GoalNetwork::queryFormationPos(_owner, leader, idx);
 
-	cocos2d::Vec2 move = (toPlayer + avoidMove).getNormalized() * 300;
-	
-	addSubgoal(new GoalMoveToPosition(_owner, ownerPos + move));
+	if (_owner->getWorldPosition().distance(_destination) < _owner->getBoundingRadius())
+	{
+		setGoalStatus(GoalStatus::COMPLETED);
+		return;
+	}
+
+	_arriveSafeZone = false;
+	addSubgoal(new GoalMoveToPosition(_owner, _destination));
 }
 
 
@@ -57,35 +81,65 @@ GoalStatus GoalFollowPlayer::process()
 	if (isInactive())
 		activate();
 
-	auto player = _owner->getGame()->getPlayerPtr();
 	cocos2d::Vec2 pos = _owner->getWorldPosition();
-	cocos2d::Vec2 destination = player->getWorldPosition();
-	float arriveRange = 200.0f - cocos2d::random(0.0f, 100.0f);
+	float arriveRange = 150.0f;
 
 	_goalStatus = processSubgoals();
 
-	if(pos.distance(destination) < arriveRange)
-		setGoalStatus(GoalStatus::COMPLETED);
+	if (pos.distance(_destination) < arriveRange)
+	{
+		if (!_arriveSafeZone)
+		{
+			_arriveSafeZone = true;
+			removeAllSubgoals();
 
-	return _goalStatus;
+			cocos2d::Vec2 aimHeading = _owner->getHeading();
+
+			auto leader = _owner->getTargetSys()->getLeader();
+			if (leader != nullptr && leader->isAlive())
+			{
+				aimHeading = leader->getHeading();
+			}
+
+			addSubgoal(new GoalWalkWithAim(_owner, _destination, aimHeading, 0.35f));
+		}
+	}
+	
+	if (_arriveSafeZone)
+		return getGoalStatus();
+	else
+		return GoalStatus::ACTIVE;
 }
 
 
 void GoalFollowPlayer::terminate()
 {
 	removeAllSubgoals();
+
+	InputBezelEnd bezelEnd(_owner);
+	bezelEnd.execute();
+
+	InputMoveEnd moveEnd(_owner);
+	moveEnd.execute();
 }
 
 int GoalFollowPlayer::evaluate(HumanBase* const owner)
 {
-	auto player = _owner->getGame()->getPlayerPtr();
-	float distance = owner->getWorldPosition().distance(player->getWorldPosition());
+	auto leader = _owner->getTargetSys()->getLeader();
+	if (leader == nullptr)
+		return 0;
+
+	int idx = leader->getTargetSys()->queryFollowerIndex(_owner);
+	if (idx < 0)
+		return 0;
+
+	float distance = owner->getWorldPosition().distance(leader->getWorldPosition());
 
 	int weight = 1;
-	if (distance < 300.0f)
+	if (distance < 500.0f)
 		weight = 1;
 	else
-		weight = 1 + (int)(distance / 10.0f);
+		weight = 1 + (int)(distance / 50.0f);
 
 	return weight;
 }

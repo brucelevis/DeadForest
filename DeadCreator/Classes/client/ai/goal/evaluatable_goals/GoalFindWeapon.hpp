@@ -15,6 +15,27 @@ namespace realtrick
 {
     namespace client
     {
+		struct FindItemData
+		{
+			FindItemData()
+				:
+				distance(std::numeric_limits<float>::max()),
+				pos(),
+				id(-1)
+			{}
+
+			FindItemData(float distance, cocos2d::Vec2 pos,	int id)
+				:
+				distance(distance),
+				pos(pos),
+				id(id)
+			{}
+
+			float distance;
+			cocos2d::Vec2 pos;
+			int id;
+		};
+
         class GoalFindWeapon : public GoalEvaluatable
         {
         public:
@@ -22,7 +43,7 @@ namespace realtrick
             virtual ~GoalFindWeapon();
             
 			void makeFindItemWeight();
-			EntityType getBestItem(float& weight) const;
+			std::pair<EntityType, FindItemData> getBestItem(float& weight) const;
 
 			virtual int evaluate(HumanBase* const owner) override;
             virtual void activate() override;
@@ -31,8 +52,9 @@ namespace realtrick
             
         private:
 			std::map<EntityType, float> _weightFindItem;
+			std::map<EntityType, FindItemData> _findItemMap;
 			EntityType _findWeapon;
-			int _findWeaponID;
+			FindItemData _findWeaponData;
             
         };
     }

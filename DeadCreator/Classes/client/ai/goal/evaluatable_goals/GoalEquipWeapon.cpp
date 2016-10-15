@@ -164,7 +164,7 @@ EntityType GoalEquipWeapon::getBestItem(float& weight) const
 			bestItem = e.first;
 			weight = e.second;
 		}
-		cocos2d::log("item weight in [GoalEquipWeapon]   item : %d   weight : %f", e.first, e.second);
+		//cocos2d::log("item weight in [GoalEquipWeapon]   item : %d   weight : %f", e.first, e.second);
 	}
 	return bestItem;
 }
@@ -174,7 +174,7 @@ int GoalEquipWeapon::evaluate(HumanBase* const owner)
 {
 	if (owner->getEquipedWeapon() != nullptr)
 	{
-		cocos2d::log("has equiped weapon");
+		//cocos2d::log("has equiped weapon");
 		EntityType bulletType = owner->getEquipedWeapon()->getBulletType();
 		int amount = owner->getInventoryData()->getItemAmount(bulletType);
 
@@ -185,7 +185,7 @@ int GoalEquipWeapon::evaluate(HumanBase* const owner)
 		}
 	}
 
-	cocos2d::log("dont has equiped weapon");
+	//cocos2d::log("dont has equiped weapon");
 
 	makeEquipItemWeight();
 

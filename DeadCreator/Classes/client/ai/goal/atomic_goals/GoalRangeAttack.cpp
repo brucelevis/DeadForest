@@ -10,6 +10,8 @@
 #include "InputMoveBegin.hpp"
 #include "InputMoveEnd.hpp"
 #include "StateMachine.hpp"
+#include "GoalNetwork.h"
+#include "Mat3.hpp"
 
 namespace
 {
@@ -51,6 +53,28 @@ cocos2d::Vec2 GoalRangeAttack::dealCrowdMoving(HumanBase* owner)
 {
 	cocos2d::Vec2 avoidMove(owner->getSensoryMemory()->avoidingEnemiesVector(owner));
 	return avoidMove.getNormalized();
+}
+
+
+cocos2d::Vec2 GoalRangeAttack::makeFormationMoving(HumanBase* owner)
+{
+	HumanBase* leader = owner->getTargetSys()->getLeader();
+
+	if (leader == nullptr)
+		return smartMoving(owner);
+	
+	int idx = leader->getTargetSys()->queryFollowerIndex(owner);
+
+	// Has no leader
+	if (idx < 0)
+		return smartMoving(owner);
+
+	Vec2 align = GoalNetwork::queryFormationPos(owner, leader, idx);
+
+	if (align.distance(owner->getWorldPosition()) < owner->getBoundingRadius() * 2)
+		return Vec2();
+	else
+		return (align - owner->getWorldPosition()).getNormalized();
 }
 
 //---------------------------- ctor -------------------------------------------

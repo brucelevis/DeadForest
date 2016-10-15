@@ -166,8 +166,12 @@ cocos2d::Vec2 Mat3::pointToWorldSpace(
 	//rotate
 	matTransform.rotate(AgentHeading, AgentSide);
 
+	cocos2d::Vec2 temp1 = matTransform.getTransformedVector(TransPoint);
+
 	//and translate
 	matTransform.translate(AgentPosition);
+
+	cocos2d::Vec2 temp2 = matTransform.getTransformedVector(TransPoint);
 
 	//now transform the vertices
 	return matTransform.getTransformedVector(TransPoint);

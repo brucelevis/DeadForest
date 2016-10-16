@@ -320,7 +320,7 @@ bool SensoryMemory::isUnderAttack() const
 	return false;
 }
 
-cocos2d::Vec2 SensoryMemory::avoidingEnemiesVector(cocos2d::Vec2& pos, cocos2d::Vec2& heading)
+cocos2d::Vec2 SensoryMemory::avoidingEnemiesVector(const cocos2d::Vec2& pos, const cocos2d::Vec2& heading)
 {
 	cocos2d::Vec2 avoidMove(heading * std::numeric_limits<float>::min());
 	const auto& enemies = getListOfRecentlySensedEntities(false);

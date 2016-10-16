@@ -70,15 +70,15 @@ void PathPlanner::generatePath(
 		CCLOG("path is zero");
 
 	//smooth paths if required
-	if (false)
-	{
-		smoothPathEdgesQuick(_path);
-	}
-
-	if (false)
-	{
-		smoothPathEdgesPrecise(_path);
-	}
+//	if (false)
+//	{
+//		smoothPathEdgesQuick(_path);
+//	}
+//
+//	if (false)
+//	{
+//		smoothPathEdgesPrecise(_path);
+//	}
 }
 
 //--------------------------- smoothPathEdgesQuick ----------------------------

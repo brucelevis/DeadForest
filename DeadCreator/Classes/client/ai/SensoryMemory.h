@@ -132,7 +132,7 @@ namespace realtrick
 			int				getDamage(HumanBase* const opponent)const;
 			bool			isUnderAttack() const;
 
-			cocos2d::Vec2 avoidingEnemiesVector(cocos2d::Vec2& pos, cocos2d::Vec2& heading);
+			cocos2d::Vec2 avoidingEnemiesVector(const cocos2d::Vec2& pos, const cocos2d::Vec2& heading);
 			cocos2d::Vec2 avoidingEnemiesVector(HumanBase* const owner);
 
 			// Returns enemy list

@@ -685,6 +685,7 @@ void Game::setSharedVisionState(PlayerType src, PlayerType dest, bool enable)
 bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const
 {
 	const auto& cols = getNeighborSimpleWalls(A, Segment(A, B));
+
 	bool collide = false;
 	for (const auto& col : cols)
 	{

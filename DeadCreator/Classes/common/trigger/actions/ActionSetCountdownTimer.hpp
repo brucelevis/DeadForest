@@ -87,49 +87,53 @@ namespace realtrick
     namespace client
     {
         
-        //        struct ActionSetCountdownTimerData: public TriggerDataBase
-        //        {
-        //            ActionSetCountdownTimerData() { type = TriggerComponentType::ACTION_SetCountdownTimer; }
-        //        };
-        //
-        //        class ActionSetCountdownTimer : public ActionBase
-        //        {
-        //
-        //        public:
-        //
-        //            explicit ActionSetCountdownTimer(Game* game) : ActionBase(game)
-        //            {}
-        //
-        //            virtual ~ActionSetCountdownTimer() = default;
-        //
-        //            static ActionSetCountdownTimer* create(Game* game)
-        //            {
-        //                auto ret = new (std::nothrow) ActionSetCountdownTimer(game);
-        //                if ( ret && ret->init() )
-        //                {
-        //                    ret->autorelease();
-        //                    return ret;
-        //                }
-        //                CC_SAFE_DELETE(ret);
-        //                return nullptr;
-        //            }
-        //
-        //            bool init() { return true; }
-        //
-        //            virtual void doAction()
-        //            {
-        //                auto players = _owner->getPlayers();
-        //                if ( players.test(static_cast<int>(_game->getPlayerPtr()->getPlayerType())) )
-        //                {
-        //                    _game->replaceSetCountdownTimerScene(3.0f);
-        //                }
-        //            }
-        //            
-        //        private:
-        //            
-        //            ActionSetCountdownTimerData _params;
-        //            
-        //        };
+        struct ActionSetCountdownTimerData: public TriggerDataBase
+        {
+            ArithmeticalType arithmetical;
+            int number;
+            
+            ActionSetCountdownTimerData() { type = TriggerComponentType::ACTION_SET_COUNTDOWN_TIMER; }
+        };
+        
+        class ActionSetCountdownTimer : public ActionBase
+        {
+            
+        public:
+            
+            explicit ActionSetCountdownTimer(Game* game) : ActionBase(game)
+            {}
+            
+            virtual ~ActionSetCountdownTimer() = default;
+            
+            static ActionSetCountdownTimer* create(Game* game, ArithmeticalType arithmeticalType, int number)
+            {
+                auto ret = new (std::nothrow) ActionSetCountdownTimer(game);
+                if ( ret && ret->init(arithmeticalType, number) )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
+            bool init(ArithmeticalType arithmeticalType, int number)
+            {
+                _params.arithmetical = arithmeticalType;
+                _params.number = number;
+                
+                return true;
+            }
+            
+            virtual void doAction()
+            {
+            }
+            
+        private:
+            
+            ActionSetCountdownTimerData _params;
+            
+        };
         
     }
 }

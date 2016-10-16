@@ -64,49 +64,49 @@ namespace realtrick
     namespace client
     {
         
-//        struct ActionPauseGameData: public TriggerDataBase
-//        {
-//            ActionPauseGameData() { type = TriggerComponentType::ACTION_PauseGame; }
-//        };
-//        
-//        class ActionPauseGame : public ActionBase
-//        {
-//            
-//        public:
-//            
-//            explicit ActionPauseGame(Game* game) : ActionBase(game)
-//            {}
-//            
-//            virtual ~ActionPauseGame() = default;
-//            
-//            static ActionPauseGame* create(Game* game)
-//            {
-//                auto ret = new (std::nothrow) ActionPauseGame(game);
-//                if ( ret && ret->init() )
-//                {
-//                    ret->autorelease();
-//                    return ret;
-//                }
-//                CC_SAFE_DELETE(ret);
-//                return nullptr;
-//            }
-//            
-//            bool init() { return true; }
-//            
-//            virtual void doAction()
-//            {
-//                auto players = _owner->getPlayers();
-//                if ( players.test(static_cast<int>(_game->getPlayerPtr()->getPlayerType())) )
-//                {
-//                    _game->replacePauseGameScene(3.0f);
-//                }
-//            }
-//            
-//        private:
-//            
-//            ActionPauseGameData _params;
-//            
-//        };
+        struct ActionPauseGameData: public TriggerDataBase
+        {
+            ActionPauseGameData() { type = TriggerComponentType::ACTION_PAUSE_GAME; }
+        };
+        
+        class ActionPauseGame : public ActionBase
+        {
+            
+        public:
+            
+            explicit ActionPauseGame(Game* game) : ActionBase(game)
+            {}
+            
+            virtual ~ActionPauseGame() = default;
+            
+            static ActionPauseGame* create(Game* game)
+            {
+                auto ret = new (std::nothrow) ActionPauseGame(game);
+                if ( ret && ret->init() )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
+            bool init() { return true; }
+            
+            virtual void doAction()
+            {
+                auto players = _owner->getPlayers();
+                if ( players.test(static_cast<int>(_game->getPlayerPtr()->getPlayerType())) )
+                {
+                    //_game->replacePauseGameScene(3.0f);
+                }
+            }
+            
+        private:
+            
+            ActionPauseGameData _params;
+            
+        };
         
     }
 }

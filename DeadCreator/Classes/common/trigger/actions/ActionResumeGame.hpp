@@ -64,49 +64,49 @@ namespace realtrick
     namespace client
     {
         
-        //        struct ActionResumeGameData: public TriggerDataBase
-        //        {
-        //            ActionResumeGameData() { type = TriggerComponentType::ACTION_ResumeGame; }
-        //        };
-        //
-        //        class ActionResumeGame : public ActionBase
-        //        {
-        //
-        //        public:
-        //
-        //            explicit ActionResumeGame(Game* game) : ActionBase(game)
-        //            {}
-        //
-        //            virtual ~ActionResumeGame() = default;
-        //
-        //            static ActionResumeGame* create(Game* game)
-        //            {
-        //                auto ret = new (std::nothrow) ActionResumeGame(game);
-        //                if ( ret && ret->init() )
-        //                {
-        //                    ret->autorelease();
-        //                    return ret;
-        //                }
-        //                CC_SAFE_DELETE(ret);
-        //                return nullptr;
-        //            }
-        //
-        //            bool init() { return true; }
-        //
-        //            virtual void doAction()
-        //            {
-        //                auto players = _owner->getPlayers();
-        //                if ( players.test(static_cast<int>(_game->getPlayerPtr()->getPlayerType())) )
-        //                {
-        //                    _game->replaceResumeGameScene(3.0f);
-        //                }
-        //            }
-        //            
-        //        private:
-        //            
-        //            ActionResumeGameData _params;
-        //            
-        //        };
+        struct ActionResumeGameData: public TriggerDataBase
+        {
+            ActionResumeGameData() { type = TriggerComponentType::ACTION_RESUME_GAME; }
+        };
+        
+        class ActionResumeGame : public ActionBase
+        {
+            
+        public:
+            
+            explicit ActionResumeGame(Game* game) : ActionBase(game)
+            {}
+            
+            virtual ~ActionResumeGame() = default;
+            
+            static ActionResumeGame* create(Game* game)
+            {
+                auto ret = new (std::nothrow) ActionResumeGame(game);
+                if ( ret && ret->init() )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
+            bool init() { return true; }
+            
+            virtual void doAction()
+            {
+                auto players = _owner->getPlayers();
+                if ( players.test(static_cast<int>(_game->getPlayerPtr()->getPlayerType())) )
+                {
+//                    _game->replaceResumeGameScene(3.0f);
+                }
+            }
+            
+        private:
+            
+            ActionResumeGameData _params;
+            
+        };
         
     }
 }

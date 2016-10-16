@@ -39,14 +39,14 @@ void GoalSeekToPosition::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
-	//record the time the bot starts this goal
+	// Record the time the bot starts this goal
 	_start = std::chrono::system_clock::now().time_since_epoch();
 
-	//This value is used to determine if the bot becomes stuck 
+	// This value is used to determine if the bot becomes stuck 
 	_time_expected = std::chrono::duration<double>(
 		_owner->getPathPlanner()->calculateTimeToReachPosition(_position));
 
-	//factor in a margin of error for any reactive behavior
+	// Factor in a margin of error for any reactive behavior
 	std::chrono::duration<double> margin_of_error(0.02);
 
 	_time_expected += margin_of_error;
@@ -54,10 +54,6 @@ void GoalSeekToPosition::activate()
 	InputMoveBegin moveBegin(_owner, (_position - _owner->getWorldPosition()).getNormalized());
 	moveBegin.execute();
 }
-
-
-
-
 
 
 GoalStatus GoalSeekToPosition::process()

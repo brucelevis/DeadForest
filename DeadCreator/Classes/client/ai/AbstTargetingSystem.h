@@ -23,15 +23,14 @@ namespace realtrick
 
 		class AbstTargetingSystem
 		{
-		protected:
-
-			//the owner of this system
-			HumanBase* const	_owner;
-
-			//the current target (this will be null if there is no target assigned)
-			HumanBase*			_current_target;
-
 		public:
+
+			static bool isAimAccurate(
+				const cocos2d::Vec2& targetPos,
+				float targetRadius,
+				const cocos2d::Vec2& ownerPos,
+				const cocos2d::Vec2& ownerHeading,
+				float error = 1.0f);
 
 			explicit AbstTargetingSystem(HumanBase* const owner);
 
@@ -66,12 +65,33 @@ namespace realtrick
 			virtual std::chrono::duration<double>			getTimeTargetHasBeenOutOfView()const;
 
 			//returns a pointer to the target. null if no target current.
-			HumanBase*				getTarget()const;
-
-			void					setTarget(HumanBase* target);
+			inline HumanBase* getTarget() const				{ return _target; }
+			inline void setTarget(HumanBase* target)		{ _target = target; }
 
 			//sets the target pointer to null
-			void					clearTarget();
+			inline void	clearTarget() { _target = nullptr; }
+
+			inline HumanBase* getLeader() const				{ return _leader; }
+			inline void setLeader(HumanBase* const leader)	{ _leader = leader; }
+
+			inline const std::vector<HumanBase*>& getFollowers() const { return _followers; }
+
+			bool addFollower(HumanBase* const follower);
+			bool removeFollower(HumanBase* const follower);
+			int queryFollowerIndex(HumanBase* const follower);
+			
+
+		protected:
+
+			//the owner of this system
+			HumanBase* const	_owner;
+
+			//the current target (this will be null if there is no target assigned)
+			HumanBase*			_target;
+
+			HumanBase*			_leader;
+
+			std::vector<HumanBase*> _followers;
 		};
 	}
 }

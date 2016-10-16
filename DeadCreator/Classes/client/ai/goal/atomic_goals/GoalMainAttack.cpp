@@ -14,12 +14,42 @@
 using namespace realtrick::client;
 USING_NS_CC;
 
+cocos2d::Vec2 GoalMainAttack::smartMoving(HumanBase* owner)
+{
+	HumanBase* target = nullptr;
+	if (owner->getTargetSys()->isTargetPresent())
+	{
+		target = owner->getTargetSys()->getTarget();
+
+		if (!(target->getTargetSys()->getTarget() == owner))
+			return Vec2();
+
+		return target->getMoving();
+	}
+	return owner->getMoving();
+}
+
+cocos2d::Vec2 GoalMainAttack::roughMoving(HumanBase* owner)
+{
+	HumanBase* target = nullptr;
+	if (owner->getTargetSys()->isTargetPresent())
+	{
+		target = owner->getTargetSys()->getTarget();
+		return (target->getWorldPosition() - owner->getWorldPosition()).getNormalized();
+	}
+	return owner->getMoving();
+}
+
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
-GoalMainAttack::GoalMainAttack(HumanBase* owner, const cocos2d::Vec2& target)
+GoalMainAttack::GoalMainAttack(
+	HumanBase* owner,
+	const cocos2d::Vec2& target,
+	std::function<cocos2d::Vec2(HumanBase*)> movingStrategy)
 	:
 	GoalBase(owner),
-	_target(target)
+	_target(target),
+	_movingStrategy(movingStrategy)
 {
 	setGoalType(GoalType::MAIN_ATTACK);
 }
@@ -45,7 +75,7 @@ void GoalMainAttack::activate()
 			InputAttackBegin attackBegin(_owner);
 			attackBegin.execute();
 
-			InputMoveBegin moveBegin(_owner, (_target - _owner->getWorldPosition()).getNormalized());
+			InputMoveBegin moveBegin(_owner, _movingStrategy(_owner));
 			moveBegin.execute();
 		}
 		else

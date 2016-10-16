@@ -30,39 +30,43 @@ namespace realtrick
 			//is used to determine if a bot can 'remember' this record or not. 
 			//(if CurrentTime() - time_last_sensed is greater than the bot's
 			//memory span, the data in this record is made unavailable to clients)
-			std::chrono::duration<double>			time_last_sensed;
+			std::chrono::duration<double>			timeLastSensed;
 
 			//it can be useful to know how long an opponent has been visible. This 
 			//variable is tagged with the current time whenever an opponent first becomes
 			//visible. It's then a simple matter to calculate how long the opponent has
 			//been in view (CurrentTime - time_became_visible)
-			std::chrono::duration<double>			time_became_visible;
+			std::chrono::duration<double>			timeBecameVisible;
 
 			//it can also be useful to know the last time an opponent was seen
-			std::chrono::duration<double>			time_last_visible;
+			std::chrono::duration<double>			timeLastVisible;
 
 			//a vector marking the position where the opponent was last sensed. This can
 			// be used to help hunt down an opponent if it goes out of view
-			cocos2d::Vec2	last_sensed_position;
+			cocos2d::Vec2	lastSensedPos;
 
 			//set to true if opponent is within the field of view of the owner
-			bool			within_view;
+			bool			viewable;
+
+			//set to true if the line between target and entity has no obstacles
+			bool			isLosOkay;
 
 			//set to true if there is no obstruction between the opponent and the owner, 
 			//permitting a shot.
 			bool			attackable;
 
-			int				recent_damage;
+			int				recentDamage;
 
 
 			MemoryRecord()
 				:
-				time_last_sensed(-999),
-				time_became_visible(-999),
-				time_last_visible(0),
-				within_view(false),
+				timeLastSensed(-999),
+				timeBecameVisible(-999),
+				timeLastVisible(0),
+				viewable(false),
 				attackable(false),
-				recent_damage(0)
+				isLosOkay(false),
+				recentDamage(0)
 			{}
 
 			friend std::stringstream & operator<<(std::stringstream &ss, const MemoryRecord& b);
@@ -76,19 +80,19 @@ namespace realtrick
 			typedef std::map<HumanBase*, MemoryRecord> MemoryMap;
 
 			//the owner of this instance
-			HumanBase* const	_owner;
+			HumanBase* const _owner;
 
 			//this container is used to simulate memory of sensory events. A MemoryRecord
 			//is created for each opponent in the environment. Each record is updated 
 			//whenever the opponent is encountered. (when it is seen or heard)
-			MemoryMap			_memory_map;
+			MemoryMap _memory;
 			std::vector<ItemBase*> _sensedItems;
 
 
 			//a bot has a memory span equivalent to this value. When a bot requests a 
 			//list of all recently sensed opponents this value is used to determine if 
 			//the bot is able to remember an opponent or not.
-			std::chrono::duration<double>				_memory_span;
+			std::chrono::duration<double> _memorySpan;
 
 			double _viewRange;
 			double _attackRange;
@@ -96,7 +100,7 @@ namespace realtrick
 			//this methods checks to see if there is an existing record for bot. If
 			//not a new MemoryRecord record is made and added to the memory map.(called
 			//by updateWithSoundSource & updateVision)
-			void       makeNewRecordIfNotAlreadyPresent(HumanBase* bot);
+			void makeNewRecordIfNotAlreadyPresent(HumanBase* bot);
 
 		public:
 
@@ -128,9 +132,11 @@ namespace realtrick
 			int				getDamage(HumanBase* const opponent)const;
 			bool			isUnderAttack() const;
 
-			//this method returns a list of all the opponents that have had their
-			//records updated within the last _memory_span seconds.
-			std::list<HumanBase*> getListOfRecentlySensedOpponents() const;
+			cocos2d::Vec2 avoidingEnemiesVector(cocos2d::Vec2& pos, cocos2d::Vec2& heading);
+			cocos2d::Vec2 avoidingEnemiesVector(HumanBase* const owner);
+
+			// Returns enemy list
+			std::list<HumanBase*> getListOfRecentlySensedEntities(bool ally) const;
 
 			const std::vector<ItemBase*>& getSensedItems() const;
 

@@ -3,22 +3,31 @@
 #include "EntityBase.hpp"
 #include "CellSpacePartition.hpp"
 #include "InventoryData.hpp"
+#include "AbstTargetingSystem.h"
 #include <sstream>
 #include <algorithm>
+
+namespace
+{
+	float kDefaultViewRange = 600.0f;
+	float kDefaultAttackRange = 60.0f;
+}
 
 USING_NS_CC;
 using namespace realtrick::client;
 
-std::stringstream & realtrick::client::operator<<(std::stringstream &ss, const MemoryRecord& m)
+std::stringstream & realtrick::client::operator<<(
+	std::stringstream &ss,
+	const MemoryRecord& m)
 {
 	ss << m.attackable << std::endl
-		<< m.within_view << std::endl
-		<< m.time_became_visible.count() << std::endl
-		<< m.time_last_sensed.count() << std::endl
-		<< m.time_last_visible.count() << std::endl
-		<< m.recent_damage << std::endl
-		<< m.last_sensed_position.x << ", "
-		<< m.last_sensed_position.y << std::endl;
+		<< m.viewable << std::endl
+		<< m.timeBecameVisible.count() << std::endl
+		<< m.timeLastSensed.count() << std::endl
+		<< m.timeLastVisible.count() << std::endl
+		<< m.recentDamage << std::endl
+		<< m.lastSensedPos.x << ", "
+		<< m.lastSensedPos.y << std::endl;
 	return ss;
 }
 
@@ -29,10 +38,10 @@ SensoryMemory::SensoryMemory(
 	double memory_span)
 	:
 	_owner(owner),
-	_memory_span(memory_span)
+	_memorySpan(memory_span)
 {
-	_viewRange = 600;
-	_attackRange = 60;
+	_viewRange = kDefaultViewRange;
+	_attackRange = kDefaultAttackRange;
 }
 
 SensoryMemory::~SensoryMemory()
@@ -44,9 +53,9 @@ void SensoryMemory::makeNewRecordIfNotAlreadyPresent(HumanBase* const opponent)
 {
 	//else check to see if this Opponent already exists in the memory. If it doesn't,
 	//create a new record
-	if (_memory_map.find(opponent) == _memory_map.end())
+	if (_memory.find(opponent) == _memory.end())
 	{
-		_memory_map[opponent] = MemoryRecord();
+		_memory[opponent] = MemoryRecord();
 	}
 }
 
@@ -56,11 +65,11 @@ void SensoryMemory::makeNewRecordIfNotAlreadyPresent(HumanBase* const opponent)
 //-----------------------------------------------------------------------------
 void SensoryMemory::removeBotFromMemory(HumanBase* const bot)
 {
-	MemoryMap::iterator record = _memory_map.find(bot);
+	MemoryMap::iterator record = _memory.find(bot);
 
-	if (record != _memory_map.end())
+	if (record != _memory.end())
 	{
-		_memory_map.erase(record);
+		_memory.erase(record);
 	}
 }
 
@@ -84,7 +93,7 @@ void SensoryMemory::removeItemFromMemory(ItemBase* const item)
 //-----------------------------------------------------------------------------
 void SensoryMemory::updateVision()
 {
-	auto elist = _owner->getGame()->getNeighborsOnMove(_owner->getWorldPosition(), _viewRange);
+	const auto& elist = _owner->getGame()->getNeighborsOnMove(_owner->getWorldPosition(), _viewRange);
 
 	for (auto iter = std::begin(elist); iter != std::end(elist); iter++)
 	{
@@ -98,31 +107,43 @@ void SensoryMemory::updateVision()
 				makeNewRecordIfNotAlreadyPresent(human);
 
 				//get a reference to this bot's data
-				MemoryRecord& info = _memory_map[human];
+				MemoryRecord& info = _memory[human];
 
-				if (_owner->getWorldPosition().getDistance(human->getWorldPosition()) < _viewRange)
+				cocos2d::Vec2 ownerPos = _owner->getWorldPosition();
+				cocos2d::Vec2 humanPos = human->getWorldPosition();
+
+				if (ownerPos.getDistance(humanPos) < _viewRange)
 				{
-					info.time_last_sensed = std::chrono::system_clock::now().time_since_epoch();
-					info.last_sensed_position = (*iter)->getWorldPosition();
-					info.time_last_visible = std::chrono::system_clock::now().time_since_epoch();
+					info.isLosOkay = _owner->getGame()->isLOSOkay(ownerPos, humanPos);
 
-					if (_owner->getWorldPosition().getDistance(human->getWorldPosition()) < _attackRange)
+					if (info.isLosOkay)
 					{
-						info.attackable = true;
-					}
-					else
-						info.attackable = false;
+						info.timeLastSensed =
+							std::chrono::system_clock::now().time_since_epoch();
 
-					if (info.within_view == false)
-					{
-						info.within_view = true;
-						info.time_became_visible = info.time_last_sensed;
+						info.timeLastVisible =
+							std::chrono::system_clock::now().time_since_epoch();
+
+						info.lastSensedPos = humanPos;
+
+						if (ownerPos.getDistance(humanPos) < _attackRange &&
+							info.isLosOkay)
+							info.attackable = true;
+						else
+							info.attackable = false;
+
+						if (info.viewable == false &&
+							info.isLosOkay)
+						{
+							info.viewable = true;
+							info.timeBecameVisible = info.timeLastSensed;
+						}
 					}
 				}
 				else
 				{
 					info.attackable = false;
-					info.within_view = false;
+					info.viewable = false;
 				}
 			}
 			else if (isMasked((*iter)->getFamilyMask(), FamilyMask::ITEM_BASE))
@@ -146,19 +167,27 @@ void SensoryMemory::updateVision()
 //  returns a list of the bots that have been sensed recently
 //-----------------------------------------------------------------------------
 std::list<HumanBase*>
-SensoryMemory::getListOfRecentlySensedOpponents() const
+SensoryMemory::getListOfRecentlySensedEntities(bool ally) const
 {
 	//this will store all the opponents the bot can remember
 	std::list<HumanBase*> opponents;
 
 	std::chrono::duration<double> current_time = std::chrono::system_clock::now().time_since_epoch();
 
-	for(auto& rec : _memory_map)
+	for(auto& rec : _memory)
 	{
-		//if this bot has been updated in the memory recently, add to list
-		if ((current_time - rec.second.time_last_sensed) <= _memory_span)
+		if ((rec.first)->isAlive() && (rec.first != _owner))
 		{
-			opponents.push_back(rec.first);
+			if (!(ally ^ _owner->getGame()->isAllyState(
+				_owner->getPlayerType(),
+				(rec.first)->getPlayerType())))
+			{
+				//if this bot has been updated in the memory recently, add to list
+				if ((current_time - rec.second.timeLastSensed) <= _memorySpan)
+				{
+					opponents.push_back(rec.first);
+				}
+			}
 		}
 	}
 
@@ -177,9 +206,9 @@ const std::vector<ItemBase*>& SensoryMemory::getSensedItems() const
 //-----------------------------------------------------------------------------
 bool SensoryMemory::isOpponentAttackable(HumanBase* const opponent)const
 {
-	MemoryMap::const_iterator it = _memory_map.find(opponent);
+	MemoryMap::const_iterator it = _memory.find(opponent);
 
-	if (it != _memory_map.end())
+	if (it != _memory.end())
 	{
 		return it->second.attackable; 
 	}
@@ -193,11 +222,11 @@ bool SensoryMemory::isOpponentAttackable(HumanBase* const opponent)const
 //-----------------------------------------------------------------------------
 bool SensoryMemory::isOpponentWithinFOV(HumanBase* const opponent) const
 {
-	MemoryMap::const_iterator it = _memory_map.find(opponent);
+	MemoryMap::const_iterator it = _memory.find(opponent);
 
-	if (it != _memory_map.end())
+	if (it != _memory.end())
 	{
-		return it->second.within_view;
+		return it->second.viewable;
 	}
 
 	return false;
@@ -209,11 +238,11 @@ bool SensoryMemory::isOpponentWithinFOV(HumanBase* const opponent) const
 //-----------------------------------------------------------------------------
 Vec2 SensoryMemory::getLastRecordedPositionOfOpponent(HumanBase* const opponent) const
 {
-	MemoryMap::const_iterator it = _memory_map.find(opponent);
+	MemoryMap::const_iterator it = _memory.find(opponent);
 
-	if (it != _memory_map.end())
+	if (it != _memory.end())
 	{
-		return it->second.last_sensed_position;
+		return it->second.lastSensedPos;
 	}
 
 	throw std::runtime_error("< SensoryMemory::getLastRecordedPositionOfOpponent>: Attempting to get position of unrecorded bot");
@@ -225,11 +254,11 @@ Vec2 SensoryMemory::getLastRecordedPositionOfOpponent(HumanBase* const opponent)
 //-----------------------------------------------------------------------------
 std::chrono::duration<double> SensoryMemory::getTimeOpponentHasBeenVisible(HumanBase* const opponent) const
 {
-	MemoryMap::const_iterator it = _memory_map.find(opponent);
+	MemoryMap::const_iterator it = _memory.find(opponent);
 
-	if (it != _memory_map.end() && it->second.within_view)
+	if (it != _memory.end() && it->second.viewable)
 	{
-		return std::chrono::system_clock::now().time_since_epoch() - it->second.time_became_visible;
+		return std::chrono::system_clock::now().time_since_epoch() - it->second.timeBecameVisible;
 	}
 
 	return std::chrono::duration<double>(0);
@@ -237,11 +266,11 @@ std::chrono::duration<double> SensoryMemory::getTimeOpponentHasBeenVisible(Human
 
 int SensoryMemory::getDamage(HumanBase* const opponent)const
 {
-	MemoryMap::const_iterator it = _memory_map.find(opponent);
+	MemoryMap::const_iterator it = _memory.find(opponent);
 
-	if (it != _memory_map.end())
+	if (it != _memory.end())
 	{
-		return it->second.recent_damage;
+		return it->second.recentDamage;
 	}
 
 	return 0;
@@ -254,11 +283,11 @@ int SensoryMemory::getDamage(HumanBase* const opponent)const
 //-----------------------------------------------------------------------------
 std::chrono::duration<double> SensoryMemory::getTimeOpponentHasBeenOutOfView(HumanBase* const opponent)const
 {
-	MemoryMap::const_iterator it = _memory_map.find(opponent);
+	MemoryMap::const_iterator it = _memory.find(opponent);
 
-	if (it != _memory_map.end())
+	if (it != _memory.end())
 	{
-		return std::chrono::system_clock::now().time_since_epoch() - it->second.time_last_visible;
+		return std::chrono::system_clock::now().time_since_epoch() - it->second.timeLastVisible;
 	}
 
 	return std::chrono::duration<double>(std::numeric_limits<double>::max());
@@ -270,11 +299,11 @@ std::chrono::duration<double> SensoryMemory::getTimeOpponentHasBeenOutOfView(Hum
 //-----------------------------------------------------------------------------
 std::chrono::duration<double> SensoryMemory::getTimeSinceLastSensed(HumanBase* const opponent)const
 {
-	MemoryMap::const_iterator it = _memory_map.find(opponent);
+	MemoryMap::const_iterator it = _memory.find(opponent);
 
-	if (it != _memory_map.end() && it->second.within_view)
+	if (it != _memory.end() && it->second.viewable)
 	{
-		return std::chrono::system_clock::now().time_since_epoch() - it->second.time_last_sensed;
+		return std::chrono::system_clock::now().time_since_epoch() - it->second.timeLastSensed;
 	}
 
 	return std::chrono::duration<double>(0);
@@ -282,14 +311,47 @@ std::chrono::duration<double> SensoryMemory::getTimeSinceLastSensed(HumanBase* c
 
 bool SensoryMemory::isUnderAttack() const
 {
-	for (auto& rec : _memory_map)
+	for (auto& rec : _memory)
 	{
 		//if this bot has hit us, return true
-		if (rec.second.recent_damage > 0)
+		if (rec.second.recentDamage > 0)
 			return true;
 	}
 	return false;
 }
+
+cocos2d::Vec2 SensoryMemory::avoidingEnemiesVector(cocos2d::Vec2& pos, cocos2d::Vec2& heading)
+{
+	cocos2d::Vec2 avoidMove(heading * std::numeric_limits<float>::min());
+	const auto& enemies = getListOfRecentlySensedEntities(false);
+
+	for (auto e : enemies)
+	{
+		cocos2d::Vec2 ePos = e->getWorldPosition();
+		cocos2d::Vec2 toTarget = ePos - pos;
+		avoidMove += -toTarget / toTarget.lengthSquared();
+	}
+	return avoidMove.getNormalized();
+}
+
+
+cocos2d::Vec2 SensoryMemory::avoidingEnemiesVector(HumanBase* const owner)
+{
+	cocos2d::Vec2 avoidMove(owner->getHeading() * std::numeric_limits<float>::min());
+	const auto& enemies = getListOfRecentlySensedEntities(false);
+
+	for (auto e : enemies)
+	{
+		if (!(e->getTargetSys()->getTarget() == owner))
+			continue;
+
+		cocos2d::Vec2 ePos = e->getWorldPosition();
+		cocos2d::Vec2 toTarget = ePos - owner->getWorldPosition();
+		avoidMove += -toTarget / toTarget.lengthSquared();
+	}
+	return avoidMove.getNormalized();
+}
+
 
 
 std::vector<ItemBase*> SensoryMemory::queryMeleeWeapon()

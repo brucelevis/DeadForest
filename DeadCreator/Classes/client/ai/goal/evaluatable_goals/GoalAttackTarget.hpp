@@ -8,25 +8,22 @@
 
 #include <chrono>
 
-#include "GoalCompositeBase.hpp"
+#include "GoalEvaluatable.hpp"
 #include "PathEdge.h"
 
 namespace realtrick
 {
     namespace client
     {
-        class GoalAttackTarget : public GoalCompositeBase
+        class GoalAttackTarget : public GoalEvaluatable
         {
-            
         public:
-
-			explicit GoalAttackTarget(HumanBase* const owner);
+			explicit GoalAttackTarget(HumanBase* const owner, float character_bias = 1.0f);
 
 			virtual ~GoalAttackTarget() override
 			{}
 
-			int evaluate(HumanBase* const owner);
-
+			virtual int evaluate(HumanBase* const owner) override;
             virtual void activate() override;
             virtual GoalStatus process() override;
 			virtual void terminate() override

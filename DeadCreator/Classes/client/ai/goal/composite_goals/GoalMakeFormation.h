@@ -1,5 +1,5 @@
-#ifndef GOAL_RUN_AWAY_H
-#define GOAL_RUN_AWAY_H
+#ifndef GOAL_MAKE_FORMATION_H
+#define GOAL_MAKE_FORMATION_H
 #pragma warning (disable:4786)
 
 #include "GoalCompositeBase.hpp"
@@ -11,22 +11,19 @@ namespace realtrick
 	{
 		class HumanBase;
 
-		class GoalRunAway : public GoalCompositeBase
+		class GoalMakeFormation : public GoalCompositeBase
 		{
 
 		public:
 
-			GoalRunAway(HumanBase* owner);
-			virtual ~GoalRunAway() override
+			GoalMakeFormation(HumanBase* owner);
+			virtual ~GoalMakeFormation() override
 			{}
-
-			int evaluate(HumanBase* const owner);
 
 			virtual void activate() override;
 			virtual GoalStatus process() override;
 			virtual void terminate() override;
 
-		public:
 		};
 	}
 }

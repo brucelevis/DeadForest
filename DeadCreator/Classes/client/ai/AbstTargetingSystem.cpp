@@ -2,43 +2,94 @@
 #include "HumanBase.hpp"
 #include "SensoryMemory.h"
 #include "Game.hpp"
+#include "GoalNetwork.h"
 
 USING_NS_CC;
 using namespace realtrick::client;
+
+bool AbstTargetingSystem::isAimAccurate(
+	const cocos2d::Vec2& targetPos,
+	float targetRadius,
+	const cocos2d::Vec2& ownerPos,
+	const cocos2d::Vec2& ownerHeading,
+	float error)
+{
+	float targetRadiusNoised = targetRadius * error;
+	cocos2d::Vec2 toTarget = targetPos - ownerPos;
+	cocos2d::Vec2 correctAim = toTarget.getNormalized();
+	cocos2d::Vec2 aimPerp = (correctAim.getPerp() * targetRadiusNoised + toTarget).getNormalized();
+
+	float minAimAccuracy = correctAim.dot(aimPerp);
+	float ownerAimAccuracy = correctAim.dot(ownerHeading);
+
+	return ownerAimAccuracy > minAimAccuracy;
+}
 
 //-------------------------------- ctor ---------------------------------------
 //-----------------------------------------------------------------------------
 AbstTargetingSystem::AbstTargetingSystem(HumanBase* const owner)
 	:
 	_owner(owner),
-	_current_target(nullptr)
-{}
+	_target(nullptr),
+	_leader(nullptr)
+{
+	_followers.resize(GoalNetwork::kNumOfMaxFollowers, nullptr);
+}
 
 void AbstTargetingSystem::update()
 {
-	double closest_dist_so_far = std::numeric_limits<double>::max();
-	_current_target = nullptr;
+	float closestDist = std::numeric_limits<float>::max();
+	_target = nullptr;
 
 	//grab a list of all the opponents the owner can sense
-	std::list<HumanBase*> sensed_bots;
-	sensed_bots = _owner->getSensoryMemory()->getListOfRecentlySensedOpponents();
+	const auto& enemies = _owner->getSensoryMemory()->getListOfRecentlySensedEntities(false);
 
-	for (auto bot = sensed_bots.begin(); bot != sensed_bots.end(); ++bot)
+	for (auto e : enemies)
 	{
-		//make sure the bot is alive and that it is not the owner
-		if ((*bot)->isAlive() && (*bot != _owner))
-		{
-			// Is ally
-			if (!_owner->getGame()->isAllyState(_owner->getPlayerType(), (*bot)->getPlayerType()))
-			{
-				double dist = ((*bot)->getWorldPosition() - _owner->getWorldPosition()).getLength();
+		float dist = e->getWorldPosition().distance(_owner->getWorldPosition());
 
-				if (dist < closest_dist_so_far)
-				{
-					closest_dist_so_far = dist;
-					_current_target = *bot;
-				}
-			}
+		if (dist < closestDist)
+		{
+			closestDist = dist;
+			_target = e;
+		}
+	}
+
+	for (auto e : _followers)
+	{
+		if (e)
+		{
+			if (!e->isAlive())
+				e = nullptr;
+		}
+	}
+
+	if(_leader)
+		_leader->getTargetSys()->removeFollower(_owner);
+	_leader = nullptr;
+
+	// If ally with player, then player is the leader
+	if (_owner->getGame()->isAllyState(_owner->getPlayerType(),
+		_owner->getGame()->getPlayerPtr()->getPlayerType()) &&
+		_owner->getGame()->getPlayerPtr()->isAlive() &&
+		_owner != _owner->getGame()->getPlayerPtr())
+	{
+		_leader = _owner->getGame()->getPlayerPtr();
+		_leader->getTargetSys()->addFollower(_owner);
+	}
+
+	if (_leader == nullptr)
+	{
+		// #additional  actually here needs some code for finding the best leader
+		const auto& ally = _owner->getSensoryMemory()->getListOfRecentlySensedEntities(true);
+		for (auto e : ally)
+		{
+			if (e == _owner)
+				continue;
+
+			_leader = e;
+			_leader->getTargetSys()->addFollower(_owner);
+			break;
 		}
 	}
 }
@@ -46,48 +97,70 @@ void AbstTargetingSystem::update()
 
 bool AbstTargetingSystem::isTargetWithinFOV() const
 {
-  return _owner->getSensoryMemory()->isOpponentWithinFOV(_current_target);
+  return _owner->getSensoryMemory()->isOpponentWithinFOV(_target);
 }
 
 //returns true if there is a currently assigned target
 bool AbstTargetingSystem::isTargetPresent() const 
 {
-	return _current_target != nullptr;
+	return _target != nullptr;
 }
 
 bool AbstTargetingSystem::isTargetAttackable() const
 {
-  return _owner->getSensoryMemory()->isOpponentAttackable(_current_target);
+  return _owner->getSensoryMemory()->isOpponentAttackable(_target);
 }
 
 cocos2d::Vec2 AbstTargetingSystem::getLastRecordedPosition() const
 {
-  return _owner->getSensoryMemory()->getLastRecordedPositionOfOpponent(_current_target);
+  return _owner->getSensoryMemory()->getLastRecordedPositionOfOpponent(_target);
 }
 
 std::chrono::duration<double> AbstTargetingSystem::getTimeTargetHasBeenVisible() const
 {
-  return _owner->getSensoryMemory()->getTimeOpponentHasBeenVisible(_current_target);
+  return _owner->getSensoryMemory()->getTimeOpponentHasBeenVisible(_target);
 }
 
 std::chrono::duration<double> AbstTargetingSystem::getTimeTargetHasBeenOutOfView() const
 {
-  return _owner->getSensoryMemory()->getTimeOpponentHasBeenOutOfView(_current_target);
+  return _owner->getSensoryMemory()->getTimeOpponentHasBeenOutOfView(_target);
 }
 
-//returns a pointer to the target. null if no target current.
-HumanBase* AbstTargetingSystem::getTarget() const 
+
+bool AbstTargetingSystem::addFollower(HumanBase* const follower)
 {
-	return _current_target; 
+	bool removed = removeFollower(follower);
+
+	for (auto& e : _followers)
+	{
+		if (e == nullptr)
+		{
+			e = follower;
+			return true;
+		}
+	}
+	return false;
 }
 
-void AbstTargetingSystem::setTarget(HumanBase* target)
+bool AbstTargetingSystem::removeFollower(HumanBase* const follower)
 {
-	_current_target = target;
+	for (auto& e : _followers)
+	{
+		if (e == follower)
+		{
+			e = nullptr;
+			return true;
+		}
+	}
+	return false;
 }
 
-//sets the target pointer to null
-void AbstTargetingSystem::clearTarget() 
+int AbstTargetingSystem::queryFollowerIndex(HumanBase* const follower)
 {
-	_current_target = nullptr; 
+	for (int i = 0; i < _followers.size(); i++)
+	{
+		if (_followers[i] == follower)
+			return i;
+	}
+	return -1;
 }

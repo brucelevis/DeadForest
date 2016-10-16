@@ -3,7 +3,13 @@
 #include "HumanBase.hpp"
 #include "AbstTargetingSystem.h"
 #include "SensoryMemory.h"
+#include "InputMoveBegin.hpp"
 #include "InputMoveEnd.hpp"
+
+namespace
+{
+	float kMoveDistance = 150.0f;
+}
 
 using namespace realtrick::client;
 using namespace realtrick;
@@ -25,20 +31,10 @@ void GoalAvoid::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
-	cocos2d::Vec2 ownerPos = _owner->getWorldPosition();
-	cocos2d::Vec2 avoidMove(ownerPos);
+	cocos2d::Vec2 avoidMove(
+		_owner->getSensoryMemory()->avoidingEnemiesVector(_owner->getWorldPosition(), _owner->getHeading()));
 
-	// Avoid from current target enemy
-
-	if (_owner->getTargetSys()->getTarget() == nullptr)
-	{
-		setGoalStatus(GoalStatus::COMPLETED);
-		return;
-	}
-	
-	avoidMove = (_owner->getTargetSys()->getTarget()->getWorldPosition() - ownerPos).getPerp().getNormalized() * 150;
-
-	addSubgoal(new GoalSeekToPosition(_owner, _owner->getWorldPosition() + avoidMove));
+	addSubgoal(new GoalSeekToPosition(_owner, avoidMove * kMoveDistance));
 }
 
 
@@ -50,7 +46,8 @@ GoalStatus GoalAvoid::process()
 	if (isInactive())
 		activate();
 
-	if (getGoalStatus() == GoalStatus::COMPLETED)
+	if (getGoalStatus() == GoalStatus::COMPLETED ||
+		getGoalStatus() == GoalStatus::FAILED)
 		return GoalStatus::COMPLETED;
 
 	processSubgoals();

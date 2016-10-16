@@ -44,6 +44,12 @@ namespace realtrick
         cocos2d::Vec2 getTransformedVector(const cocos2d::Vec2& v);
         std::vector<cocos2d::Vec2> getTransformedVector(std::vector<cocos2d::Vec2> v);
         
+		static cocos2d::Vec2 pointToWorldSpace(
+			const cocos2d::Vec2 &point,
+			const cocos2d::Vec2 &AgentHeading,
+			const cocos2d::Vec2 &AgentSide,
+			const cocos2d::Vec2 &AgentPosition);
+
     private:
         
         void copyFrom(const Mat3& copy);

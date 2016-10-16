@@ -41,6 +41,7 @@ void GoalMoveToPosition::activate()
 
 	if (!_owner->getPathPlanner()->requestPathToPosition(_destination))
 	{
+		cocos2d::log("new GoalSeekToPosition");
 		addSubgoal(new GoalSeekToPosition(_owner, _destination));
 	}
 	else

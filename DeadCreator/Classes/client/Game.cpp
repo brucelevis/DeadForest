@@ -26,6 +26,7 @@
 #include "MainMenu3.hpp"
 #include "RewardScene.hpp"
 #include "SensoryMemory.h"
+#include "GoalNetwork.h"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
@@ -96,6 +97,8 @@ bool Game::init()
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
+	GoalNetwork::staticInitConstants();
+
     return true;
 }
 
@@ -682,7 +685,6 @@ void Game::setSharedVisionState(PlayerType src, PlayerType dest, bool enable)
 bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const
 {
 	const auto& cols = getNeighborSimpleWalls(A, Segment(A, B));
-
 	bool collide = false;
 	for (const auto& col : cols)
 	{
@@ -694,19 +696,6 @@ bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const
 	}
 
 	return !collide;
-}
-
-
-
-//---------------------------- isLOSOkay --------------------------------------
-//
-//  returns true if the ray between A and B is unobstructed.
-//------------------------------------------------------------------------------
-bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B, float radius) const
-{
-	///
-
-	return false;
 }
 
 

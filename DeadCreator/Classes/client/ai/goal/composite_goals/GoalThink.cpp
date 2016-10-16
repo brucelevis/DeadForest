@@ -27,12 +27,12 @@ GoalThink::~GoalThink()
 
 void GoalThink::activate()
 {
-    if ( _goalEntry.empty() ) return ;
+    if ( _goalEntry.empty() ) return;
     
 	cocos2d::log("entity %d  decision", _owner->getTag());
 
 	GoalBase* bestGoal = nullptr;
-	int weight = 0;
+	int weight = -1;
 
 	for (auto e : _goalEntry)
 	{
@@ -44,7 +44,7 @@ void GoalThink::activate()
 		}
 		cocos2d::log("goal : %d   weight : %d", e->getGoalType(), entWeight);
 	}
-
+	cocos2d::log("entity type : %d", _owner->getEntityType());
 	cocos2d::log("best goal : %d   weight : %d\n\n", bestGoal->getGoalType(), weight);
 
     addSubgoal(bestGoal);

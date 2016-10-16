@@ -25,7 +25,6 @@ using namespace cocos2d;
 
 void PlayGameLayer::showLayer(bool& opened)
 {
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 	static bool isStatusOn = true;
 	static bool isPlayerInfo = true;
 	static bool isGridOn = false;
@@ -226,13 +225,14 @@ void PlayGameLayer::showLayer(bool& opened)
                         Vec2 rectDest = rectOrigin + Vec2(3, 3);
                         drawList->AddRect(ImVec2(rectOrigin.x, rectOrigin.y), ImVec2(rectDest.x, rectDest.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.6)));
                 
+                        auto resource = game->getGameResource();
                         auto edges = graph->getEdges(node.getIndex());
                         for(const auto& edge : edges)
                         {
-                            auto from = numberToIndex(edge.getFrom(), 40, 4);
-                            auto to = numberToIndex(edge.getTo(), 40, 4);
-                            auto fromPosition = indexToPosition(from.first, from.second, 128, 128, 4);
-                            auto toPosition = indexToPosition(to.first, to.second, 128, 128, 4);
+                            auto from = numberToIndex(edge.getFrom(), resource->getNumOfTileX(), DUMMY_TILE_SIZE);
+                            auto to = numberToIndex(edge.getTo(), resource->getNumOfTileX(), DUMMY_TILE_SIZE);
+                            auto fromPosition = indexToPosition(from.first, from.second, resource->getTileWidth(), resource->getTileHeight(), DUMMY_TILE_SIZE);
+                            auto toPosition = indexToPosition(to.first, to.second, resource->getTileWidth(), resource->getTileHeight(), DUMMY_TILE_SIZE);
                             
                             Vec2 fromOrigin = worldToLocal(origin, fromPosition);
                             Vec2 toOrigin = worldToLocal(origin, toPosition);
@@ -294,7 +294,6 @@ void PlayGameLayer::showLayer(bool& opened)
 			ImGui::End();
 		}
 	}
-#endif
 }
 
 

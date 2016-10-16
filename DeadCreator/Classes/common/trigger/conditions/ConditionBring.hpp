@@ -51,8 +51,6 @@ namespace realtrick
             virtual ~ConditionBring() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
-                
                 // player combo box
                 ImGui::PushID(0);
                 _playerType.drawImGui();
@@ -81,8 +79,6 @@ namespace realtrick
                 ImGui::PushID(4);
                 _location.drawImGui(opt);
                 ImGui::PopID();
-                
-                ImGui::EndChild();
                 
                 return (_playerType.isItemSelected() &&
                         _approximation.isItemSelected() &&

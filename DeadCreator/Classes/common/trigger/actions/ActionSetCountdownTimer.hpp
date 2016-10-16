@@ -39,8 +39,6 @@ namespace realtrick
             virtual ~ActionSetCountdownTimer() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
-                
                 ImGui::TextUnformatted("Modify Countdown Timer:");
                 
                 // arithmetical combo box
@@ -50,8 +48,6 @@ namespace realtrick
                 ImGui::SameLine(); _number.drawImGui();
                 
                 ImGui::SameLine(); ImGui::TextUnformatted("seconds.");
-                
-                ImGui::EndChild();
                 
                 return true;
             }

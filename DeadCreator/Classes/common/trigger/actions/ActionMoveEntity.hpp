@@ -43,8 +43,6 @@ namespace realtrick
             virtual ~ActionMoveEntity() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
-                
                 ImGui::Text("Move");
                 
                 // dest Entity combo box
@@ -76,8 +74,6 @@ namespace realtrick
                 ImGui::PushID(4);
                 ImGui::SameLine(); _destLocation.drawImGui(opt);
                 ImGui::PopID();
-                
-                ImGui::EndChild();
                 
                 return (_numberAll.isItemSelected() &&
                         _entity.isItemSelected() &&

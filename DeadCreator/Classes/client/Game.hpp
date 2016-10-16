@@ -130,9 +130,7 @@ namespace realtrick
             void setAllyState(PlayerType src, PlayerType dest, bool enable);
             void setSharedVisionState(PlayerType src, PlayerType dest, bool enable);
             
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
             bool isGameEnded() const { return _isGameEnded; }
-#endif
             
         private:
             
@@ -176,9 +174,7 @@ namespace realtrick
             std::string _logString;
             bool _isLogAdded = false;
       
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
             bool _isGameEnded = false;
-#endif
 
         };
         

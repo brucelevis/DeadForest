@@ -48,8 +48,6 @@ namespace realtrick
             virtual ~ConditionElapsedTime() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
-                
                 ImGui::SameLine(); ImGui::Text("Elapsed scenario time is ");
                 
                 // approximation combo box
@@ -63,8 +61,6 @@ namespace realtrick
                 ImGui::PopID();
                 
                 ImGui::SameLine(); ImGui::Text("game seconds.");
-                
-                ImGui::EndChild();
                 
                 return (_approximation.isItemSelected());
             }

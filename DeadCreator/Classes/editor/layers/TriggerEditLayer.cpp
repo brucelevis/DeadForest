@@ -68,15 +68,21 @@ bool TriggerEditLayer::init()
     
     _conditionList.push_back(new ConditionAlways());
     _conditionList.push_back(new ConditionBring());
+    _conditionList.push_back(new ConditionCountdownTimer());
+    _conditionList.push_back(new ConditionElapsedTime());
     _conditionList.push_back(new ConditionNever());
     
     _actionList.push_back(new ActionDefeat());
     _actionList.push_back(new ActionDisplayText());
     _actionList.push_back(new ActionKillEntityAtLocation());
+    _actionList.push_back(new ActionMoveEntity());
     _actionList.push_back(new ActionMoveLocation());
+    _actionList.push_back(new ActionPauseGame());
     _actionList.push_back(new ActionPlaySound());
     _actionList.push_back(new ActionPlaySoundAtLocation());
     _actionList.push_back(new ActionPreserveTrigger());
+    _actionList.push_back(new ActionResumeGame());
+    _actionList.push_back(new ActionSetCountdownTimer());
     _actionList.push_back(new ActionVictory());
     
     return true;
@@ -117,7 +123,7 @@ void TriggerEditLayer::showLayer(bool& opened)
         //
         static int selectedTrigger = -1;
         ImGui::BeginGroup();
-        ImGui::BeginChild("dummy2", ImVec2(TRIGGER_EDIT_WIDTH - 150, TRIGGER_EDIT_HEIGHT - TRIGGER_PLAYER_HEIGHT - 70), true);
+        ImGui::BeginChild("##dummy2", ImVec2(TRIGGER_EDIT_WIDTH - 150, TRIGGER_EDIT_HEIGHT - TRIGGER_PLAYER_HEIGHT - 70), true);
         for( int i = 0 ; i < _triggers.size() ; ++ i)
         {
             ImGui::PushID(i);
@@ -254,7 +260,7 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
             //
             // draw select player layer
             //
-            ImGui::BeginChild("##dummy", ImVec2(0, TRIGGER_EDIT_HEIGHT - 150), true);
+            ImGui::BeginChild("##dummy", ImVec2(0, TRIGGER_EDIT_HEIGHT - 140), true);
             ImGui::Text("For which players will this trigger execute?");
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
             for(int i = 0 ; i < 8 ; ++ i)
@@ -276,7 +282,7 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
             //
             static int selectedCondition = -1;
             ImGui::BeginGroup();
-            ImGui::BeginChild("##dummy", ImVec2(TRIGGER_EDIT_WIDTH - 50, TRIGGER_EDIT_HEIGHT - 150), true);
+            ImGui::BeginChild("##dummy", ImVec2(TRIGGER_EDIT_WIDTH - 50, TRIGGER_EDIT_HEIGHT - 140), true);
             for (int i = 0 ; i < trigger->conditions.size(); ++ i)
             {
                 ImGui::PushID(i);
@@ -366,7 +372,7 @@ void TriggerEditLayer::showTrigger(const char* title, bool& opened, GameTrigger*
             //
             static int selectedAction = -1;
             ImGui::BeginGroup();
-            ImGui::BeginChild("##dummy", ImVec2(TRIGGER_EDIT_WIDTH - 50, TRIGGER_EDIT_HEIGHT - 150), true);
+            ImGui::BeginChild("##dummy", ImVec2(TRIGGER_EDIT_WIDTH - 50, TRIGGER_EDIT_HEIGHT - 140), true);
             for (int i = 0 ; i < trigger->actions.size(); ++ i)
             {
                 ImGui::PushID(i);
@@ -520,9 +526,11 @@ void TriggerEditLayer::showNewCondition(const char* title, bool& opened, GameTri
             }
             isFirstCall = false;
         }
-        ImGui::Combo("Select Condition", &currentCondition, conditionNameList.c_str(), 3);
+        ImGui::Combo("Select Condition", &currentCondition, conditionNameList.c_str(), 7);
+        ImGui::BeginChild("##dummy", ImVec2(0, HEIGHT - 90), true);
         bool isCompleted = _conditionList[currentCondition]->drawEditMode(&_gmxLayer);
-    
+        ImGui::EndChild();
+        
         //
         // draw ok button
         //
@@ -580,7 +588,9 @@ void TriggerEditLayer::showModifyCondition(const char* title, bool& opened, Game
         // draw condition edit window
         //
         ImGui::Bullet(); ImGui::Text(_modifyingCondition->name().c_str(), NULL);
+        ImGui::BeginChild("##dummy", ImVec2(0, HEIGHT - 90), true);
         bool isCompleted = _modifyingCondition->drawEditMode(&_gmxLayer);
+        ImGui::EndChild();
         
         //
         // draw ok button
@@ -654,8 +664,10 @@ void TriggerEditLayer::showNewAction(const char* title, bool& opened, GameTrigge
             }
             isFirstCall = false;
         }
-        ImGui::Combo("Select Action", &currentAction, actionNameList.c_str(), 3);
+        ImGui::Combo("Select Action", &currentAction, actionNameList.c_str(), 7);
+        ImGui::BeginChild("##dummy", ImVec2(0, HEIGHT - 90), true);
         bool isCompleted = _actionList[currentAction]->drawEditMode(&_gmxLayer);
+        ImGui::EndChild();
         
         //
         // draw ok button
@@ -714,7 +726,9 @@ void TriggerEditLayer::showModifyAction(const char* title, bool& opened, GameTri
         // draw condition edit window
         //
         ImGui::Bullet(); ImGui::Text(_modifyingAction->name().c_str(), NULL);
+        ImGui::BeginChild("##dummy", ImVec2(0, HEIGHT - 90), true);
         bool isCompleted = _modifyingAction->drawEditMode(&_gmxLayer);
+        ImGui::EndChild();
         
         //
         // draw ok button

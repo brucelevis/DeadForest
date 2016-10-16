@@ -70,15 +70,15 @@ void PathPlanner::generatePath(
 		CCLOG("path is zero");
 
 	//smooth paths if required
-	if (false)
-	{
-		smoothPathEdgesQuick(_path);
-	}
-
-	if (false)
-	{
-		smoothPathEdgesPrecise(_path);
-	}
+//	if (false)
+//	{
+//		smoothPathEdgesQuick(_path);
+//	}
+//
+//	if (false)
+//	{
+//		smoothPathEdgesPrecise(_path);
+//	}
 }
 
 //--------------------------- smoothPathEdgesQuick ----------------------------
@@ -171,7 +171,7 @@ void PathPlanner::smoothPathEdgesPrecise(Path& path)
 int PathPlanner::findAvailableNeighberNode(int node, int numOfTileX, int numOfDummy)
 {
 	std::pair<int, int> p = numberToIndex(node, numOfTileX, numOfDummy);
-	auto& v = getNeighborTiles(p.first, p.second);
+	auto v = getNeighborTiles(p.first, p.second);
 
 	for (auto e : v)
 	{

@@ -96,6 +96,9 @@ namespace realtrick
             float getBoundingRadius() const { return _boundingRadius; }
             
             EntityType getEntityType() const { return _type; }
+            void addFamilyMask(int mask) { _familyMask |= mask; }
+            
+            int getFamilyType() const { return _familyMask; }
             
             static const std::map<EntityType, EntityData>& getEntityTableByType()
             {
@@ -146,6 +149,7 @@ namespace realtrick
             
             int _id = -1;
             EntityType _type = EntityType::DEFAULT;
+            int _familyMask = 0;
             cocos2d::Sprite* _image = nullptr;
             PlayerType _playerType = PlayerType::INVALID;
             cocos2d::DrawNode* _selectedCircle = nullptr;

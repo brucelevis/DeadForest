@@ -1811,13 +1811,15 @@ void GMXLayer::updateCollisionRegion()
                 auto collisions = _tileCollisions[key];
                 for( auto& vert : collisions )
                 {
-                    polygon.push_back(_tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y));
+                    auto convertedVert = _tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y);
+                    polygon.push_back(convertedVert);
                 }
                 
                 auto simpleCollisions = _tileSimpleCollisions[key];
                 for( auto& vert : simpleCollisions )
                 {
-                    simplePolygon.push_back(_tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y));
+                    auto convertedVert = _tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y);
+                    simplePolygon.push_back(convertedVert);
                 }
                 
                 Vec2 startPoint = collisions.front();
@@ -1842,7 +1844,8 @@ void GMXLayer::updateCollisionRegion()
                     
                     for( auto& vert : collisions )
                     {
-                        polygon.push_back(_tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y));
+                        auto convertedVert = _tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y);
+                        polygon.push_back(convertedVert);
                     }
                     
                     auto simpleCollisions = _tileSimpleCollisions[key];
@@ -1853,7 +1856,12 @@ void GMXLayer::updateCollisionRegion()
 
                     for( auto& vert : simpleCollisions )
                     {
-                        simplePolygon.push_back(_tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y));
+                        auto convertedVert = _tiles[y][x].getPosition() - Vec2(_file.tileWidth / 2, _file.tileHeight / 2) + Vec2(vert.x, _file.tileHeight - vert.y);
+                        if ( simplePolygon.back() == convertedVert )
+                        {
+                            simplePolygon.pop_back();
+                        }
+                        else simplePolygon.push_back(convertedVert);
                     }
                     
                     bool isSpecial = false;
@@ -1894,6 +1902,7 @@ void GMXLayer::updateCollisionRegion()
     {
         for(int i = 0 ; i < poly.size()-1; ++ i)
         {
+            _collisionNode->drawDot(poly[i], 3.0f, Color4F(0.85f, 0.85f, 0.85f, 0.5f));
             _collisionNode->drawSegment(poly[i], poly[i+1], 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
         }
         _collisionNode->drawSegment(poly.back(), poly.front(), 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
@@ -1903,6 +1912,7 @@ void GMXLayer::updateCollisionRegion()
     {
         for(int i = 0 ; i < poly.size()-1; ++ i)
         {
+            _collisionNode->drawDot(poly[i], 3.0f, Color4F(0.85f, 0.85f, 0.0f, 0.5f));
             _collisionNode->drawSegment(poly[i], poly[i+1], 1.0f, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
         }
         _collisionNode->drawSegment(poly.back(), poly.front(), 1.0f, Color4F(1.0f, 1.0f, 0.0f, 0.5f));

@@ -203,7 +203,7 @@ void HumanBase::moveEntity()
 	// 벽과의 충돌처리
 	float maxOverlap = 0.0f;
 	Vec2 maxBegin, maxEnd;
-	const std::vector<realtrick::Polygon> walls = _game->getNeighborWalls(futurePosition, _speed);
+	const std::vector<realtrick::Polygon> walls = _game->getNeighborSimpleWalls(futurePosition, _speed);
 	for (const auto& wall : walls)
 	{
 		for (int i = 0; i < wall.vertices.size() - 1; ++i)

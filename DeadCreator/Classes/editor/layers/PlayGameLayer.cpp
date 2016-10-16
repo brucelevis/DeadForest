@@ -25,7 +25,6 @@ using namespace cocos2d;
 
 void PlayGameLayer::showLayer(bool& opened)
 {
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
 	static bool isStatusOn = true;
 	static bool isPlayerInfo = true;
 	static bool isGridOn = false;
@@ -104,7 +103,7 @@ void PlayGameLayer::showLayer(bool& opened)
 					drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
 				}
 
-				// center recet
+				// center rect
 				auto indices = getFocusedTileIndex(game->getPlayerPtr()->getWorldPosition(), 128, 128, 4);
 				const auto& tiles = resource->getTileData();
 				for (int i = indices.second - Prm.getValueAsInt("numOfViewableTileY") / 2;
@@ -215,9 +214,34 @@ void PlayGameLayer::showLayer(bool& opened)
 
 			if (isGraphNodeViewOn)
 			{
-                // auto graph = game->getGraph();
-                // auto nodes = graph->getNodes();
+                auto graph = game->getGraph();
+                auto nodes = graph->getNodes();
+                for(const auto& node : nodes)
+                {
+                    auto playerPosition = game->getPlayerPtr()->getWorldPosition();
+                    if ( playerPosition.distance(node.getPos()) < 1000 )
+                    {
+                        Vec2 rectOrigin = worldToLocal(origin, node.getPos());
+                        Vec2 rectDest = rectOrigin + Vec2(3, 3);
+                        drawList->AddRect(ImVec2(rectOrigin.x, rectOrigin.y), ImVec2(rectDest.x, rectDest.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.6)));
+                
+                        auto resource = game->getGameResource();
+                        auto edges = graph->getEdges(node.getIndex());
+                        for(const auto& edge : edges)
+                        {
+                            auto from = numberToIndex(edge.getFrom(), resource->getNumOfTileX(), DUMMY_TILE_SIZE);
+                            auto to = numberToIndex(edge.getTo(), resource->getNumOfTileX(), DUMMY_TILE_SIZE);
+                            auto fromPosition = indexToPosition(from.first, from.second, resource->getTileWidth(), resource->getTileHeight(), DUMMY_TILE_SIZE);
+                            auto toPosition = indexToPosition(to.first, to.second, resource->getTileWidth(), resource->getTileHeight(), DUMMY_TILE_SIZE);
+                            
+                            Vec2 fromOrigin = worldToLocal(origin, fromPosition);
+                            Vec2 toOrigin = worldToLocal(origin, toPosition);
+                            drawList->AddLine(ImVec2(fromOrigin.x, fromOrigin.y), ImVec2(toOrigin.x, toOrigin.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.2)));
+                        }
+                    }
+                }
 			}
+            
 		}
 	}
 	ImGui::End();
@@ -270,7 +294,6 @@ void PlayGameLayer::showLayer(bool& opened)
 			ImGui::End();
 		}
 	}
-#endif
 }
 
 
@@ -291,11 +314,9 @@ void PlayGameLayer::closeLayer()
 cocos2d::Vec2 PlayGameLayer::worldToLocal(const cocos2d::Vec2& p)
 {
 	auto game = _gameLayer->getGame();
-	_cameraTransform.identity();
-	_cameraTransform.translate(-game->getPlayerPtr()->getWorldPosition());
-	auto transformedVector = _cameraTransform.getTransformedVector(p);
-	return cocos2d::Vec2(transformedVector.x * game->getRenderingSysetm()->getZoomScale().x,
-		transformedVector.y * game->getRenderingSysetm()->getZoomScale().y);
+    auto transformedVector =  p - game->getPlayerPtr()->getWorldPosition();
+    auto zoomScale = game->getRenderingSysetm()->getZoomScale();
+	return cocos2d::Vec2(transformedVector.x * zoomScale.x, transformedVector.y * zoomScale.y);
 }
 
 

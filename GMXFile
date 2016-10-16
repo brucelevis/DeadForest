@@ -26,6 +26,7 @@ table ForceInfo
 }
 
 enum Approximation : int { AtLeast = 0, AtMost, Exactly }
+enum Arithmetical : int { Add = 0, SetTo, Subtract }
 enum TileType : int { Dirt = 0, Grass, Water, Hill }
  
 table TileInfo
@@ -52,6 +53,16 @@ table Bring
    entity_type : int;
    location_name : string;
 }
+table CountdownTimer
+{
+   approximation : Approximation;
+   number : int;
+}
+table ElapsedTime
+{
+   approximation : Approximation;
+   number : int;
+}
 
 table DisplayText
 {
@@ -76,6 +87,14 @@ table MoveLocation
    player : int;
    source_location_name : string;
 }
+table MoveEntity
+{
+   numberAll : int;
+   entity_type : int;
+   player : int;
+   src_location_name : string;
+   dst_location_name : string;
+}
 table KillEntityAtLocation
 {
    numberAll : int;
@@ -83,13 +102,22 @@ table KillEntityAtLocation
    player : int;
    location_name : string;
 }
+table PauseGame{}
+table ResumeGame{}
+table SetCountdownTimer
+{
+   arithmetical : Arithmetical;
+   number : int;
+}
 
 union ConditionBase 
 {
    Always,
    Never,
    Command,
-   Bring
+   CountdownTimer,
+   Bring,
+   ElapsedTime
 }
 
 union ActionBase 
@@ -101,7 +129,11 @@ union ActionBase
    PlaySoundAtLocation,
    PlaySound,
    Victory,
-   Defeat
+   Defeat,
+   MoveEntity,
+   PauseGame,
+   ResumeGame,
+   SetCountdownTimer
 }
 
 table Condition 

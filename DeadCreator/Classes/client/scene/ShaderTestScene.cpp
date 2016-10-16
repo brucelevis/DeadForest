@@ -68,6 +68,15 @@ bool ShaderTestScene::init()
         
     });
     addChild(bezel);
+    
+    auto keyboard = cocos2d::EventListenerKeyboard::create();
+    keyboard->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode k, cocos2d::Event* e){
+        if (k == cocos2d::EventKeyboard::KeyCode::KEY_0)
+        {
+            cocos2d::log("0 pressed");
+        }
+    };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboard, this);
 
     return true;
 }

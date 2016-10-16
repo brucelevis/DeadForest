@@ -1,5 +1,5 @@
 //
-//  ActionDefeat.hpp
+//  ActionPauseGame.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 9. 5..
@@ -16,45 +16,45 @@ namespace realtrick
     namespace editor
     {
         
-        class ActionDefeat : public ActionBase
+        class ActionPauseGame : public ActionBase
         {
             
         public:
             
-            ActionDefeat() { name() = "Defeat"; }
-            ActionDefeat(const ActionDefeat& rhs) : ActionBase(rhs) { copyFrom(rhs); }
-            ActionDefeat& operator=(const ActionDefeat& rhs)
+            ActionPauseGame() { name() = "Pause Game"; }
+            ActionPauseGame(const ActionPauseGame& rhs) : ActionBase(rhs) { copyFrom(rhs); }
+            ActionPauseGame& operator=(const ActionPauseGame& rhs)
             {
                 if ( &rhs != this ) copyFrom(rhs);
                 return *this;
             }
             
-            void copyFrom(const ActionDefeat& rhs)
+            void copyFrom(const ActionPauseGame& rhs)
             {
                 ActionBase::copyFrom(rhs);
             }
             
-            virtual ~ActionDefeat() = default;
+            virtual ~ActionPauseGame() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                ImGui::TextUnformatted("End scenario in defeat for current player.");
+                ImGui::TextUnformatted("Pause the game.");
                 
                 return true;
             }
             
             virtual std::string getSummaryString() const override
             {
-                std::string ret = "End scenario in defeat for current player.";
+                std::string ret = "Pause the game.";
                 return ret;
             }
             
             virtual void reset() override { }
-            virtual ActionDefeat* clone() const override { return new ActionDefeat(*this); }
+            virtual ActionPauseGame* clone() const override { return new ActionPauseGame(*this); }
             
             virtual flatbuffers::Offset<DeadCreator::Action> getActionObject(flatbuffers::FlatBufferBuilder& builder) override
             {
-                auto obj = DeadCreator::CreateDefeat(builder);
-                return DeadCreator::CreateAction(builder, DeadCreator::ActionBase_Defeat, obj.Union());
+                auto obj = DeadCreator::CreatePauseGame(builder);
+                return DeadCreator::CreateAction(builder, DeadCreator::ActionBase_PauseGame, obj.Union());
             }
             
         };
@@ -64,24 +64,24 @@ namespace realtrick
     namespace client
     {
         
-        struct ActionDefeatData: public TriggerDataBase
+        struct ActionPauseGameData: public TriggerDataBase
         {
-            ActionDefeatData() { type = TriggerComponentType::ACTION_DEFEAT; }
+            ActionPauseGameData() { type = TriggerComponentType::ACTION_PAUSE_GAME; }
         };
         
-        class ActionDefeat : public ActionBase
+        class ActionPauseGame : public ActionBase
         {
             
         public:
             
-            explicit ActionDefeat(Game* game) : ActionBase(game)
+            explicit ActionPauseGame(Game* game) : ActionBase(game)
             {}
             
-            virtual ~ActionDefeat() = default;
+            virtual ~ActionPauseGame() = default;
             
-            static ActionDefeat* create(Game* game)
+            static ActionPauseGame* create(Game* game)
             {
-                auto ret = new (std::nothrow) ActionDefeat(game);
+                auto ret = new (std::nothrow) ActionPauseGame(game);
                 if ( ret && ret->init() )
                 {
                     ret->autorelease();
@@ -98,13 +98,13 @@ namespace realtrick
                 auto players = _owner->getPlayers();
                 if ( players.test(static_cast<int>(_game->getPlayerPtr()->getPlayerType())) )
                 {
-                    _game->replaceDefeatScene(3.0f);
+                    //_game->replacePauseGameScene(3.0f);
                 }
             }
             
         private:
             
-            ActionDefeatData _params;
+            ActionPauseGameData _params;
             
         };
         

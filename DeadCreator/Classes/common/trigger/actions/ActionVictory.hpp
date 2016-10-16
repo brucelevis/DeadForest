@@ -37,9 +37,7 @@ namespace realtrick
             virtual ~ActionVictory() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
                 ImGui::TextUnformatted("End scenario in victory for current player.");
-                ImGui::EndChild();
                 
                 return true;
             }

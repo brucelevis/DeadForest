@@ -59,6 +59,9 @@ namespace realtrick
             
             virtual void drawImGui(void* opt = nullptr) override
             {
+                ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
+                ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.80, 0.80, 0.80, 1.0));
+                ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.75, 0.75, 0.75, 1.0));
                 ImGui::PushItemWidth(30);
                 if ( ImGui::DragInt("", &_number, 1, 0, 255) )
                 {
@@ -68,6 +71,7 @@ namespace realtrick
                     setParameterName(_to_string(_number));
                 }
                 ImGui::PopItemWidth();
+                ImGui::PopStyleColor(3);
             }
             
         private:

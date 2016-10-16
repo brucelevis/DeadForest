@@ -42,8 +42,6 @@ namespace realtrick
             virtual ~ActionMoveLocation() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
-                
                 ImGui::Text("Center location labeled");
                 
                 // dest location combo box
@@ -71,8 +69,6 @@ namespace realtrick
                 ImGui::PushID(3);
                 ImGui::SameLine(); _sourceLocation.drawImGui(opt);
                 ImGui::PopID();
-                
-                ImGui::EndChild();
                 
                 return (_destLocation.isItemSelected() &&
                         _entity.isItemSelected() &&

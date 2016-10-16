@@ -38,8 +38,6 @@ namespace realtrick
             virtual ~ActionPlaySound() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
-                
                 ImGui::Text("Play");
                 
                 // file name
@@ -50,8 +48,6 @@ namespace realtrick
                 ImGui::PopID();
                 
                 ImGui::SameLine(); ImGui::Text("(file_name.mp3)");
-                
-                ImGui::EndChild();
                 
                 return (_fileName.isItemSelected());
             }

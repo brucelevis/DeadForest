@@ -1,5 +1,5 @@
 //
-//  ActionDefeat.hpp
+//  ActionResumeGame.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 9. 5..
@@ -16,45 +16,45 @@ namespace realtrick
     namespace editor
     {
         
-        class ActionDefeat : public ActionBase
+        class ActionResumeGame : public ActionBase
         {
             
         public:
             
-            ActionDefeat() { name() = "Defeat"; }
-            ActionDefeat(const ActionDefeat& rhs) : ActionBase(rhs) { copyFrom(rhs); }
-            ActionDefeat& operator=(const ActionDefeat& rhs)
+            ActionResumeGame() { name() = "Resume Game"; }
+            ActionResumeGame(const ActionResumeGame& rhs) : ActionBase(rhs) { copyFrom(rhs); }
+            ActionResumeGame& operator=(const ActionResumeGame& rhs)
             {
                 if ( &rhs != this ) copyFrom(rhs);
                 return *this;
             }
             
-            void copyFrom(const ActionDefeat& rhs)
+            void copyFrom(const ActionResumeGame& rhs)
             {
                 ActionBase::copyFrom(rhs);
             }
             
-            virtual ~ActionDefeat() = default;
+            virtual ~ActionResumeGame() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                ImGui::TextUnformatted("End scenario in defeat for current player.");
+                ImGui::TextUnformatted("Resume the game.");
                 
                 return true;
             }
             
             virtual std::string getSummaryString() const override
             {
-                std::string ret = "End scenario in defeat for current player.";
+                std::string ret = "Resume the game.";
                 return ret;
             }
             
             virtual void reset() override { }
-            virtual ActionDefeat* clone() const override { return new ActionDefeat(*this); }
+            virtual ActionResumeGame* clone() const override { return new ActionResumeGame(*this); }
             
             virtual flatbuffers::Offset<DeadCreator::Action> getActionObject(flatbuffers::FlatBufferBuilder& builder) override
             {
-                auto obj = DeadCreator::CreateDefeat(builder);
-                return DeadCreator::CreateAction(builder, DeadCreator::ActionBase_Defeat, obj.Union());
+                auto obj = DeadCreator::CreateResumeGame(builder);
+                return DeadCreator::CreateAction(builder, DeadCreator::ActionBase_ResumeGame, obj.Union());
             }
             
         };
@@ -64,24 +64,24 @@ namespace realtrick
     namespace client
     {
         
-        struct ActionDefeatData: public TriggerDataBase
+        struct ActionResumeGameData: public TriggerDataBase
         {
-            ActionDefeatData() { type = TriggerComponentType::ACTION_DEFEAT; }
+            ActionResumeGameData() { type = TriggerComponentType::ACTION_RESUME_GAME; }
         };
         
-        class ActionDefeat : public ActionBase
+        class ActionResumeGame : public ActionBase
         {
             
         public:
             
-            explicit ActionDefeat(Game* game) : ActionBase(game)
+            explicit ActionResumeGame(Game* game) : ActionBase(game)
             {}
             
-            virtual ~ActionDefeat() = default;
+            virtual ~ActionResumeGame() = default;
             
-            static ActionDefeat* create(Game* game)
+            static ActionResumeGame* create(Game* game)
             {
-                auto ret = new (std::nothrow) ActionDefeat(game);
+                auto ret = new (std::nothrow) ActionResumeGame(game);
                 if ( ret && ret->init() )
                 {
                     ret->autorelease();
@@ -98,13 +98,13 @@ namespace realtrick
                 auto players = _owner->getPlayers();
                 if ( players.test(static_cast<int>(_game->getPlayerPtr()->getPlayerType())) )
                 {
-                    _game->replaceDefeatScene(3.0f);
+//                    _game->replaceResumeGameScene(3.0f);
                 }
             }
             
         private:
             
-            ActionDefeatData _params;
+            ActionResumeGameData _params;
             
         };
         

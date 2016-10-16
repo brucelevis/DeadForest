@@ -43,9 +43,7 @@ namespace realtrick
             virtual ~ConditionNever() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                ImGui::BeginChild("##dummy", ImVec2(0, 250), true);
                 ImGui::TextUnformatted("Never.");
-                ImGui::EndChild();
                 
                 return true;
             }

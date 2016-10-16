@@ -141,53 +141,52 @@ namespace realtrick
     namespace client
     {
         
-//        struct ActionMoveEntityData: public TriggerDataBase
-//        {
-//            std::string destEntity;
-//            EntityType entity;
-//            PlayerType player;
-//            std::string sourceEntity;
-//            
-//            ActionMoveEntityData() { type = TriggerComponentType::ACTION_MOVE_Entity; }
-//        };
-//        
-//        class ActionMoveEntity : public ActionBase
-//        {
-//            
-//        public:
-//            
-//            explicit ActionMoveEntity(Game* game) : ActionBase(game)
-//            {}
-//            
-//            virtual ~ActionMoveEntity() = default;
-//            
-//            static ActionMoveEntity* create(Game* game,
-//                                              const std::string& destEntity,
-//                                              EntityType entity, PlayerType player,
-//                                              const std::string& sourceEntity)
-//            {
-//                auto ret = new (std::nothrow) ActionMoveEntity(game);
-//                if ( ret && ret->init(destEntity, entity, player, sourceEntity) )
-//                {
-//                    ret->autorelease();
-//                    return ret;
-//                }
-//                CC_SAFE_DELETE(ret);
-//                return nullptr;
-//            }
-//            
-//            bool init(const std::string& destEntity, EntityType entity, PlayerType player, const std::string& sourceEntity)
-//            {
-//                _params.destEntity = destEntity;
-//                _params.entity = entity;
-//                _params.player = player;
-//                _params.sourceEntity = sourceEntity;
-//                
-//                return true;
-//            }
-//            
-//            virtual void doAction()
-//            {
+        struct ActionMoveEntityData: public TriggerDataBase
+        {
+            int number;
+            EntityType entity;
+            PlayerType player;
+            std::string sourceLocation;
+            std::string destLocation;
+            
+            ActionMoveEntityData() { type = TriggerComponentType::ACTION_MOVE_ENTITY; }
+        };
+        
+        class ActionMoveEntity : public ActionBase
+        {
+            
+        public:
+            
+            explicit ActionMoveEntity(Game* game) : ActionBase(game)
+            {}
+            
+            virtual ~ActionMoveEntity() = default;
+            
+            static ActionMoveEntity* create(Game* game, int number, EntityType entity, PlayerType player, const std::string& srcLocation, const std::string& destLocation)
+            {
+                auto ret = new (std::nothrow) ActionMoveEntity(game);
+                if ( ret && ret->init(number, entity, player, srcLocation, destLocation) )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
+            bool init(int number, EntityType entity, PlayerType player, const std::string& srcLocation, const std::string& destLocation)
+            {
+                _params.number = number;
+                _params.entity = entity;
+                _params.player = player;
+                _params.sourceLocation = srcLocation;
+                _params.destLocation = destLocation;
+                
+                return true;
+            }
+            
+            virtual void doAction()
+            {
 //                if ( _params.player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
 //                else _maskedPlayer.set(static_cast<int>(_params.player));
 //                
@@ -212,14 +211,14 @@ namespace realtrick
 //                        break;
 //                    }
 //                }
-//            }
-//            
-//        private:
-//            
-//            ActionMoveEntityData _params;
-//            std::bitset<30> _maskedPlayer;
-//            
-//        };
+            }
+            
+        private:
+            
+            ActionMoveEntityData _params;
+            std::bitset<30> _maskedPlayer;
+            
+        };
         
     }
 }

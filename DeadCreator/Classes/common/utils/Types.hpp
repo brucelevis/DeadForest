@@ -25,25 +25,26 @@ namespace realtrick
         BULLET_BASE         = 1 << 4,
     };
     
-    enum EntityType : int
-    {
-        DEFAULT = -1,
-        ITEM_AXE = 0,
-        ITEM_GLOCK17 = 1,
-        ITEM_M16A2 = 2,
-        ITEM_M1897 = 3,
-        ITEM_CONSUMPTION = 4,
-        ITEM_WEAPON = 5,
-        ITEM_STUFF = 6,
-        BULLET_556MM = 7,
-        BULLET_9MM= 8,
-        BULLET_SHELL = 9,
-        BULLET_AXE = 10,
-        ENTITY_PLAYER = 11,
-        ENTITY_ZOMBIE = 12,
-        ENTITY_ZOMBIE2 = 13,
-        ENTITY_ZOMBIE3 = 14,
-        ENTITY_FINITE = 15,
+	enum EntityType : int
+	{
+		DEFAULT = -1,
+		ITEM_AXE = 0,
+		ITEM_GLOCK17 = 1,
+		ITEM_M16A2 = 2,
+		ITEM_M1897 = 3,
+		ITEM_CONSUMPTION = 4,
+		ITEM_WEAPON = 5,
+		ITEM_STUFF = 6,
+		BULLET_556MM = 7,
+		BULLET_9MM = 8,
+		BULLET_SHELL = 9,
+		BULLET_AXE = 10,
+		ENTITY_PLAYER = 11,
+		ENTITY_ZOMBIE = 12,
+		ENTITY_ZOMBIE2 = 13,
+		ENTITY_ZOMBIE3 = 14,
+		ENTITY_FINITE = 15,
+		MAX = 16
     };
     
     enum class PlayerType : int

@@ -80,7 +80,8 @@ GoalStatus GoalTraverseEdge::process()
 	//if the bot has reached the end of the edge return COMPLETED
 	else
 	{
-		if (Circle(_owner->getWorldPosition(), _owner->getBoundingRadius()).containPoint(_edge.getDestination()))
+		if (_owner->getWorldPosition().distance(_edge.getDestination()) < 
+			_owner->getBoundingRadius() * 3.0f)
 		{
 			setGoalStatus(GoalStatus::COMPLETED);
 		}

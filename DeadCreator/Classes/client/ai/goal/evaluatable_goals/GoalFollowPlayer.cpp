@@ -36,8 +36,8 @@ void GoalFollowPlayer::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
-	//if this goal is reactivated then there may be some existing subgoals that
-	//must be removed
+	// if this goal is reactivated then there may be some existing subgoals that
+	// must be removed
 	removeAllSubgoals();
 
 	auto leader = _owner->getTargetSys()->getLeader();
@@ -87,35 +87,9 @@ GoalStatus GoalFollowPlayer::process()
 	if (isInactive())
 		activate();
 
-	//cocos2d::Vec2 pos = _owner->getWorldPosition();
-	//float arriveRange = 150.0f;
-
 	setGoalStatus(processSubgoals());
 
 	return getGoalStatus();
-
-	/*if (pos.distance(_destination) < arriveRange)
-	{
-		if (!_arriveSafeZone)
-		{
-			_arriveSafeZone = true;
-			removeAllSubgoals();
-
-			cocos2d::Vec2 aimHeading = _owner->getHeading();
-			auto leader = _owner->getTargetSys()->getLeader();
-
-			if (leader != nullptr && leader->isAlive())
-				aimHeading = leader->getHeading();
-
-			addSubgoal(new GoalWalkWithAim(_owner, _destination, aimHeading, 0.35f));
-		}
-	}
-	
-	if (_arriveSafeZone)
-		return getGoalStatus();
-	else
-		return GoalStatus::ACTIVE;
-		*/
 }
 
 

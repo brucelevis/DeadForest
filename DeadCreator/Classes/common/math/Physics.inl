@@ -399,6 +399,36 @@ namespace realtrick
 			//calculate the distance P-Point
 			return (Point - P).getLength();
 		}
+
+
+		//---------------------- pointInPolygon -----------------------
+		//
+		//  returns true if the point P is in the polygon.
+		//  it doesn't ensure about boundary
+		//-------------------------------------------------------------
+		inline bool pointInPolygon(
+			cocos2d::Vec2 P,
+			const std::vector<cocos2d::Vec2>& poly)
+		{
+			CCASSERT(poly.size() > 2, "poly is not a polygon");
+
+			int crosses = 0;
+
+			for (size_t i = 0; i < poly.size(); i++)
+			{
+				size_t j = (i + 1) % poly.size();
+
+				if ((poly[i].y > P.y) != (poly[j].y > P.y))
+				{
+					float crossX =
+						(poly[j].x - poly[i].x) * (P.y - poly[i].y) /
+						(poly[j].y - poly[i].y) + poly[i].x;
+					if (P.x < crossX)
+						++crosses;
+				}
+			}
+			return crosses % 2 > 0;
+		}
     }
 }
 

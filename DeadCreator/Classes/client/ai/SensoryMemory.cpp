@@ -431,6 +431,35 @@ std::vector<ItemBase*> SensoryMemory::queryBullets()
 	return bullets;
 }
 
+bool SensoryMemory::queryUsableRangeWeaponExists(realtrick::EntityType equipped) const
+{
+	auto inventory = _owner->getInventoryData();
+	const auto& items = inventory->getItemLists();
+
+	std::vector<bool> finded(EntityType::MAX, false);
+
+	for (const auto& item : items)
+	{
+		if (item != nullptr)
+		{
+			if (item->getEntityType() == EntityType::BULLET_556MM ||
+				item->getEntityType() == EntityType::BULLET_9MM ||
+				item->getEntityType() == EntityType::BULLET_SHELL ||
+				item->getEntityType() == EntityType::ITEM_GLOCK17 ||
+				item->getEntityType() == EntityType::ITEM_M16A2 ||
+				item->getEntityType() == EntityType::ITEM_M1897)
+				finded[item->getEntityType()] = true;
+		}
+	}
+
+	if(equipped != EntityType::DEFAULT)
+		finded[equipped] = false;
+
+	return
+		(finded[EntityType::BULLET_556MM] && finded[EntityType::ITEM_M16A2]) ||
+		(finded[EntityType::BULLET_9MM] && finded[EntityType::ITEM_GLOCK17]) ||
+		(finded[EntityType::BULLET_SHELL] && finded[EntityType::ITEM_M1897]);
+}
 
 bool SensoryMemory::isReadyToFight() const
 {

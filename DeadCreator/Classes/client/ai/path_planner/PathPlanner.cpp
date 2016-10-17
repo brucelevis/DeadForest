@@ -248,7 +248,7 @@ bool PathPlanner::requestPathToPosition(cocos2d::Vec2 targetPos)
 	//be calculated, the bot can go straight to the position by ARRIVING at
 	//the current waypoint
 
-	if (_owner->getGame()->isLOSOkay(_owner->getWorldPosition(), targetPos))
+	if (_owner->getGame()->isLOSOkay(_owner->getWorldPosition(), targetPos, _owner->getBoundingRadius()))
 	{
 		return false;
 	}

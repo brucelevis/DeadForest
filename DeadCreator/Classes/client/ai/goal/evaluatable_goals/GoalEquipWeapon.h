@@ -4,6 +4,7 @@
 
 #include "GoalEvaluatable.hpp"
 #include "Types.hpp"
+#include <array>
 
 namespace realtrick
 {
@@ -28,7 +29,8 @@ namespace realtrick
 
 		private:
 			std::chrono::duration<double> _startTime;
-			std::map<EntityType, float> _weightEquipItem;
+			//std::map<EntityType, float> _weightEquipItem;
+			std::array<float, EntityType::MAX> _weightEquipItem;
 			EntityType _weaponType;
 		};
 	}

@@ -42,14 +42,29 @@ void GoalMoveToPosition::activate()
 	//make sure the subgoal list is clear.
 	removeAllSubgoals();
 
+	const auto& walls = _owner->getGame()->getNeighborSimpleWalls(_destination, 1.0f);
+	bool canReach = true;
+
+	for (auto& wall : walls)
+	{
+		if (wall.containPoint(_destination))
+		{
+			canReach = false;
+			break;
+		}
+	}
+
+	if (!canReach)
+	{
+		setGoalStatus(GoalStatus::COMPLETED);
+		return;
+	}
+
 	if (!_owner->getPathPlanner()->requestPathToPosition(_destination))
-	{
 		addSubgoal(new GoalSeekToPosition(_owner, _destination, _arrivingData));
-	}
+
 	else
-	{
 		addSubgoal(new GoalFollowPath(_owner, _owner->getPathPlanner()->getPath()));
-	}
 }
 
 

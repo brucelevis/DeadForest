@@ -7,6 +7,7 @@
 //
 
 #include "Geometry.hpp"
+#include "Physics.hpp"
 
 namespace realtrick
 {
@@ -250,12 +251,10 @@ namespace realtrick
         this->vertices.push_back(point);
     }
     
-    // TODO
     bool Polygon::containPoint(const cocos2d::Vec2& point) const
     {
-        return false;
+        return physics::pointInPolygon(point, vertices);
     }
-    
 }
 
 

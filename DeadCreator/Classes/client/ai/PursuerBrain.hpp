@@ -19,14 +19,16 @@ namespace realtrick
         {
             
         public:
-            
-			explicit PursuerBrain(HumanBase* owner);
-            
-			virtual ~PursuerBrain();
+			static PursuerBrain* createDefault(HumanBase* owner);
+
+			virtual ~PursuerBrain()
+			{}
             
 			virtual void think() override;
-            
-			int decisionWeight();
+          
+		private:
+			explicit PursuerBrain(HumanBase* owner)	: BrainBase(owner)
+			{}
         };
     }
 }

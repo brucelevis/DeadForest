@@ -31,7 +31,7 @@ void PlayGameLayer::showLayer(bool& opened)
 	static bool isCellSpaceOn = false;
 	static bool isPhysicsViewOn = false;
 	static bool isLocationViewOn = false;
-	static bool isGraphNodeViewOn = false;
+	static bool isGraphNodeViewOn = true;
 
 	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2 - GAME_SCREEN_WIDTH / 2,
 		ImGui::GetIO().DisplaySize.y / 2 - GAME_SCREEN_HEIGHT / 2), ImGuiSetCond_Once);

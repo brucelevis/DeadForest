@@ -21,7 +21,8 @@ namespace realtrick
         public:
 			
             GoalTraverseEdge(HumanBase* owner, realtrick::PathEdge edge, bool last_edge);
-            virtual ~GoalTraverseEdge();
+			virtual ~GoalTraverseEdge()
+			{}
             
             virtual void activate() override;
             virtual GoalStatus process() override;

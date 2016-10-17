@@ -7,6 +7,7 @@
 
 using namespace realtrick::client;
 using namespace realtrick;
+using namespace std::chrono;
 USING_NS_CC;
 
 //---------------------------- ctor -------------------------------------------
@@ -26,7 +27,7 @@ void GoalEquipWeapon::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
-	_startTime = std::chrono::system_clock::now().time_since_epoch();
+	_startTime = system_clock::now().time_since_epoch();
 
 	_owner->useItem(_weaponType);
 
@@ -65,7 +66,8 @@ GoalStatus GoalEquipWeapon::process()
 	if (isInactive()) activate();
 
 	processSubgoals();
-	std::chrono::duration<double> endTime = std::chrono::system_clock::now().time_since_epoch();
+	duration<double> endTime = 
+		system_clock::now().time_since_epoch();
 
 	// Wait for equipping item.
 	if ((endTime - _startTime).count() > 1.0)
@@ -158,7 +160,6 @@ EntityType GoalEquipWeapon::getBestItem(float& weight) const
 	weight = 0.0f;
 	for (auto e : _weightEquipItem)
 	{
-		
 		if (weight < e.second)
 		{
 			bestItem = e.first;

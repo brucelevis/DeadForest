@@ -15,20 +15,23 @@
 #include "HumanBase.hpp"
 #include "PathPlanner.h"
 
-
 using namespace realtrick;
 using namespace realtrick::client;
+USING_NS_CC;
 
 
 GoalMoveToPosition::GoalMoveToPosition(
 	HumanBase* const owner,
-	cocos2d::Vec2 pos)
+	Vec2 pos,
+	std::shared_ptr<ArrivingData> arrivingData)
 	:
 	GoalCompositeBase(owner),
-	_destination(pos)
+	_destination(pos),
+	_arrivingData(arrivingData)
 {
 	setGoalType(GoalType::MOVE_TO_POS);
 }
+
 
 //------------------------------- activate ------------------------------------
 //-----------------------------------------------------------------------------
@@ -41,8 +44,7 @@ void GoalMoveToPosition::activate()
 
 	if (!_owner->getPathPlanner()->requestPathToPosition(_destination))
 	{
-		cocos2d::log("new GoalSeekToPosition");
-		addSubgoal(new GoalSeekToPosition(_owner, _destination));
+		addSubgoal(new GoalSeekToPosition(_owner, _destination, _arrivingData));
 	}
 	else
 	{
@@ -66,7 +68,7 @@ GoalStatus GoalMoveToPosition::process()
 	if (_goalStatus == GoalStatus::FAILED)
 	{
 		setGoalStatus(GoalStatus::INACTIVE);
-		cocos2d::log("GoalMoveToPosition FAILED");
+		log("GoalMoveToPosition FAILED");
 	}
 
 	return _goalStatus;

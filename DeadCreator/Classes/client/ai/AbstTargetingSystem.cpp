@@ -15,9 +15,9 @@ bool AbstTargetingSystem::isAimAccurate(
 	float error)
 {
 	float targetRadiusNoised = targetRadius * error;
-	cocos2d::Vec2 toTarget = targetPos - ownerPos;
-	cocos2d::Vec2 correctAim = toTarget.getNormalized();
-	cocos2d::Vec2 aimPerp = (correctAim.getPerp() * targetRadiusNoised + toTarget).getNormalized();
+	Vec2 toTarget = targetPos - ownerPos;
+	Vec2 correctAim = toTarget.getNormalized();
+	Vec2 aimPerp = (correctAim.getPerp() * targetRadiusNoised + toTarget).getNormalized();
 
 	float minAimAccuracy = correctAim.dot(aimPerp);
 	float ownerAimAccuracy = correctAim.dot(ownerHeading);

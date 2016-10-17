@@ -13,6 +13,8 @@
 
 using namespace realtrick;
 using namespace realtrick::client;
+using namespace std::chrono;
+USING_NS_CC;
 
 
 GoalTraverseEdge::GoalTraverseEdge(HumanBase* owner, PathEdge edge, bool last_edge) 
@@ -23,11 +25,6 @@ GoalTraverseEdge::GoalTraverseEdge(HumanBase* owner, PathEdge edge, bool last_ed
 	_last_edge_in_path(last_edge)
 {
     setGoalType(GoalType::TRAVERSE_EDGE);
-}
-
-
-GoalTraverseEdge::~GoalTraverseEdge()
-{
 }
 
 
@@ -51,19 +48,17 @@ void GoalTraverseEdge::activate()
 	}
 
 	//record the time the bot starts this goal
-	_start = std::chrono::system_clock::now().time_since_epoch();
+	_start = system_clock::now().time_since_epoch();
 
 
 	//calculate the expected time required to reach the this waypoint. This value
 	//is used to determine if the bot becomes stuck 
-	_time_expected = std::chrono::duration<double>(
+	_time_expected = duration<double>(
 			_owner->getPathPlanner()->calculateTimeToReachPosition(_edge.getDestination()));
 
 	//factor in a margin of error for any reactive behavior
-	std::chrono::duration<double> margin_of_error(0.01);
-
+	duration<double> margin_of_error(0.01);
 	_time_expected += margin_of_error;
-
 
 	InputMoveBegin moveBegin(_owner, (_edge.getDestination() - _owner->getWorldPosition()).getNormalized());
 	moveBegin.execute();
@@ -111,14 +106,15 @@ realtrick::PathEdge GoalTraverseEdge::getEdge() const { return _edge; }
 //-----------------------------------------------------------------------------
 bool GoalTraverseEdge::isStuck()const
 {
-	std::chrono::duration<double> end = std::chrono::system_clock::now().time_since_epoch();
-	auto TimeTaken = end - _start;
+	duration<double> endTime
+		= system_clock::now().time_since_epoch();
 
-	if (TimeTaken > _time_expected)
-	{
+	duration<double> timeTaken = endTime - _start;
+
+	if (timeTaken > _time_expected)
 		return true;
-	}
 
 	return false;
 }
+
 

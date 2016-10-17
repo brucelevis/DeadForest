@@ -27,10 +27,6 @@ namespace realtrick
 			virtual void think() override;
             
 			int decisionWeight();
-
-        private:
-            
-            GoalThink* _thinker;
         };
     }
 }

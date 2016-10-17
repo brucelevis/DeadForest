@@ -7,7 +7,7 @@
 //
 
 #include <chrono>
-
+#include <memory>
 #include "GoalCompositeBase.hpp"
 #include "PathEdge.h"
 
@@ -19,9 +19,11 @@ namespace realtrick
         {
             
         public:
+			// precise version
 			GoalMoveToPosition(
 				HumanBase* const owner,
-				cocos2d::Vec2 pos);
+				cocos2d::Vec2 pos,
+				std::shared_ptr<ArrivingData> arrivingData = nullptr);
 
 			virtual ~GoalMoveToPosition() override
 			{}
@@ -32,8 +34,11 @@ namespace realtrick
 
         private:
         
-			//the position the bot wants to reach
+			// the position the bot wants to reach
 			cocos2d::Vec2 _destination;
+
+			// additional data for precise arriving
+			std::shared_ptr<ArrivingData> _arrivingData;
         };
     }
 }

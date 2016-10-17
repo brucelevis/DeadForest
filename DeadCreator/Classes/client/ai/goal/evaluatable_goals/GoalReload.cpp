@@ -7,6 +7,7 @@
 
 using namespace realtrick::client;
 using namespace realtrick;
+using namespace std::chrono;
 USING_NS_CC;
 
 //---------------------------- ctor -------------------------------------------
@@ -25,7 +26,7 @@ void GoalReload::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
-	_startTime = std::chrono::system_clock::now().time_since_epoch();
+	_startTime = system_clock::now().time_since_epoch();
 
 	InputReload cmd(_owner);
 	cmd.execute();
@@ -41,7 +42,8 @@ GoalStatus GoalReload::process()
 	if (isInactive()) activate();
 
 	processSubgoals();
-	std::chrono::duration<double> endTime = std::chrono::system_clock::now().time_since_epoch();
+	duration<double> endTime = 
+		system_clock::now().time_since_epoch();
 
 	// Wait for equipping item.
 	if ((endTime - _startTime).count() > 0.6f)

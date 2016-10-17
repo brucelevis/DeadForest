@@ -62,14 +62,20 @@ void GoalFollowPlayer::activate()
 
 	_destination = GoalNetwork::queryFormationPos(_owner, leader, idx);
 
-	if (_owner->getWorldPosition().distance(_destination) < _owner->getBoundingRadius())
+	if (_owner->getWorldPosition().distance(_destination) <
+		_owner->getBoundingRadius())
 	{
 		setGoalStatus(GoalStatus::COMPLETED);
 		return;
 	}
 
 	_arriveSafeZone = false;
-	addSubgoal(new GoalMoveToPosition(_owner, _destination));
+	addSubgoal(
+		new GoalMoveToPosition(
+			_owner,
+			_destination,
+			std::make_shared<ArrivingData>(
+				ArrivingData(leader->getHeading(), 100.0f, 50.0f))));
 }
 
 
@@ -81,12 +87,14 @@ GoalStatus GoalFollowPlayer::process()
 	if (isInactive())
 		activate();
 
-	cocos2d::Vec2 pos = _owner->getWorldPosition();
-	float arriveRange = 150.0f;
+	//cocos2d::Vec2 pos = _owner->getWorldPosition();
+	//float arriveRange = 150.0f;
 
-	_goalStatus = processSubgoals();
+	setGoalStatus(processSubgoals());
 
-	if (pos.distance(_destination) < arriveRange)
+	return getGoalStatus();
+
+	/*if (pos.distance(_destination) < arriveRange)
 	{
 		if (!_arriveSafeZone)
 		{
@@ -94,12 +102,10 @@ GoalStatus GoalFollowPlayer::process()
 			removeAllSubgoals();
 
 			cocos2d::Vec2 aimHeading = _owner->getHeading();
-
 			auto leader = _owner->getTargetSys()->getLeader();
+
 			if (leader != nullptr && leader->isAlive())
-			{
 				aimHeading = leader->getHeading();
-			}
 
 			addSubgoal(new GoalWalkWithAim(_owner, _destination, aimHeading, 0.35f));
 		}
@@ -109,6 +115,7 @@ GoalStatus GoalFollowPlayer::process()
 		return getGoalStatus();
 	else
 		return GoalStatus::ACTIVE;
+		*/
 }
 
 

@@ -49,26 +49,12 @@ namespace realtrick
                 _thinker = new GoalThink(owner);
             }
             
-			GoalThink* getGoalThink() const { return _thinker; }
-
-            virtual ~ZombieBrain()
-            {
-                delete _thinker;
-                _thinker = nullptr;
-            }
-            
             virtual void think() override
             {
 				if(_regulator.isReady())
 					_thinker->process();
             }
-            
-        private:
-            
-            GoalThink* _thinker;
-            
         };
-        
     }
 }
 

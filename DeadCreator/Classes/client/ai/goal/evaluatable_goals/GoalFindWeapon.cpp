@@ -20,6 +20,7 @@
 
 using namespace realtrick::client;
 using namespace realtrick;
+USING_NS_CC;
 
 
 GoalFindWeapon::GoalFindWeapon(HumanBase* owner, float character_bias)
@@ -53,29 +54,19 @@ void GoalFindWeapon::activate()
 
 GoalStatus GoalFindWeapon::process()
 {
-    if ( isInactive() ) activate();
+	if (isInactive()) activate();
     
 	GoalStatus subGoalStatus = processSubgoals();
-	EntityBase* item = _owner->getGame()->getEntityManager()->getEntityFromID(_findWeaponData.id);
+	EntityBase* item = 
+		_owner->getGame()->getEntityManager()->getEntityFromID(_findWeaponData.id);
 
 	if (item == nullptr)
-	{
 		return GoalStatus::COMPLETED;
-	}
-	else
-	{
-		if (subGoalStatus == GoalStatus::COMPLETED)
-		{
-			InputMoveBegin moveBegin(
-				_owner, 
-				(item->getWorldPosition() - _owner->getWorldPosition()).getNormalized());
-
-			moveBegin.execute();
-		}
-	}
 		
     return subGoalStatus;
 }
+
+
 
 
 void GoalFindWeapon::terminate()
@@ -182,7 +173,7 @@ void GoalFindWeapon::makeFindItemWeight()
 	{
 		EntityType itemType = e.first;
 		float minDistance = std::numeric_limits<float>::max();
-		cocos2d::Vec2 pos;
+		Vec2 pos;
 		int id = -1;
 
 		const auto& items = _owner->getSensoryMemory()->getSensedItems();
@@ -228,18 +219,17 @@ std::pair<EntityType, FindItemData> GoalFindWeapon::getBestItem(float& weight) c
 			bestItem = e.first;
 			weight = e.second;
 
-		
 			if (iter != std::end(_findItemMap))
 			{
 				itemData = iter->second;
-				//cocos2d::log("item weight in [GoalFindWeapon]  item : %d   weight : %f    distance : %f    id : %d    pos : (%f, %f)"
-				//	, e.first, e.second, itemData.distance, itemData.id, itemData.pos.x, itemData.pos.y);
+				log("item weight in [GoalFindWeapon]  item : %d   weight : %f    distance : %f    id : %d    pos : (%f, %f)"
+					, e.first, e.second, itemData.distance, itemData.id, itemData.pos.x, itemData.pos.y);
 			}
 		}
 		
 	}
 
-	//cocos2d::log("final item id : %d", itemData.id);
+	log("final item id : %d", itemData.id);
 	return std::make_pair(bestItem, itemData);
 }
 

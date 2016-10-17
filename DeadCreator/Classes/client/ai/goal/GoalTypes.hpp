@@ -37,5 +37,22 @@ namespace realtrick
 			WALK_WITH_AIM = 19
         };
         
+
+		struct ArrivingData
+		{
+			ArrivingData(
+				cocos2d::Vec2 arriveHeading,
+				float startWalkRange,
+				float arriveRange)
+				:
+				arriveHeading(arriveHeading),
+				startWalkRange(startWalkRange),
+				arriveRange(arriveRange)
+			{}
+
+			cocos2d::Vec2 arriveHeading;
+			float startWalkRange;
+			float arriveRange;
+		};
     }
 }

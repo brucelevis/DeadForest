@@ -30,9 +30,7 @@ GoalAvoid::GoalAvoid(HumanBase* owner)
 void GoalAvoid::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
-
-	cocos2d::Vec2 avoidMove(_owner->getSensoryMemory()->avoidingEnemiesVector(_owner->getWorldPosition(), _owner->getHeading()));
-
+	Vec2 avoidMove(_owner->getSensoryMemory()->avoidingEnemiesVector(_owner->getWorldPosition(), _owner->getHeading()));
 	addSubgoal(new GoalSeekToPosition(_owner, avoidMove * kMoveDistance));
 }
 

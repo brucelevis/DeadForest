@@ -587,8 +587,16 @@ void Game::generateIsometricGridGraph(
 
 			int to = indexToNumber(to_j, to_i, numOfTileX, numOfDummy);
 
+			const auto& tileData = _gameResource->getTileData();
 
-			if (_gameResource->getTileData()[to_i][to_j].getTileType() == TileType::HILL)
+			/*if (tileData[to_i][to_j].getTileType() == TileType::HILL)
+				cocos2d::log("tile type : %d    tile input state : %d   tile header : %s    tile tail : %s",
+					tileData[to_i][to_j].getTileType(),
+					tileData[to_i][to_j].getInputState(),
+					tileData[to_i][to_j].getTileHeader().c_str(), 
+					tileData[to_i][to_j].getTileTail().c_str());*/
+
+			if (tileData[to_i][to_j].getTileType() == TileType::HILL)
 				continue;
 
 			_graph->addEdge(realtrick::NavGraphEdge(from, to, _graph

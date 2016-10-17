@@ -187,7 +187,8 @@ int PathPlanner::findAvailableNeighberNode(int node, int numOfTileX, int numOfDu
 
 double PathPlanner::calculateTimeToReachPosition(cocos2d::Vec2 pos) const
 {
-	return (_owner->getWorldPosition() - pos).getLengthSq() / (_owner->getRunSpeed() * 100);
+	return 2 * (_owner->getWorldPosition() - pos).getLength() 
+		/ (_owner->getRunSpeed() + _owner->getWalkSpeed());
 }
 
 //------------------------ getClosestNodeToPosition ---------------------------

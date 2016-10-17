@@ -12,6 +12,7 @@
 #include "StateMachine.hpp"
 
 using namespace realtrick::client;
+using namespace std::chrono;
 USING_NS_CC;
 
 cocos2d::Vec2 GoalMainAttack::smartMoving(HumanBase* owner)
@@ -61,7 +62,7 @@ void GoalMainAttack::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
-	_startTime = std::chrono::system_clock::now().time_since_epoch();
+	_startTime = system_clock::now().time_since_epoch();
 
 	if (_owner->getTargetSys()->isTargetPresent())
 	{
@@ -97,7 +98,8 @@ GoalStatus GoalMainAttack::process()
 	if (isInactive())
 		activate();
 
-	std::chrono::duration<double> endTime = std::chrono::system_clock::now().time_since_epoch();
+	duration<double> endTime = 
+		system_clock::now().time_since_epoch();
 
 	if ( 1.0f < (endTime - _startTime).count())
 	{

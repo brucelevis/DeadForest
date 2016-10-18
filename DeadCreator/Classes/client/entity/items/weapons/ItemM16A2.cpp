@@ -93,7 +93,7 @@ void ItemM16A2::attackImpl()
     Vec2 shootAt = rotMat.getTransformedVector(owner->getHeading());
     Segment bulletRay = Segment(worldPos, worldPos + shootAt * this->getRange());
     
-    const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, this->getRange());
+    const auto& members = _game->getNeighborsOnAttack(worldPos, shootAt, this->getRange());
     for (const auto &d : members)
     {
         if ( _game->isAllyState(owner->getPlayerType(), d->getPlayerType()) ) continue;

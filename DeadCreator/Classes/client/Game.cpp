@@ -196,6 +196,12 @@ std::vector<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& positio
 }
 
 
+std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& pos) const
+{
+    return getNeighborWalls(pos, 0.0f);
+}
+
+
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, float speed) const
 {
     std::vector<realtrick::Polygon> ret;
@@ -257,6 +263,12 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
     }
     
     return ret;
+}
+
+
+std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& pos) const
+{
+    return getNeighborSimpleWalls(pos, 0.0f);
 }
 
 

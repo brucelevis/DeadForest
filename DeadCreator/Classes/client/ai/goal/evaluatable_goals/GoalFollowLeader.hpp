@@ -1,5 +1,5 @@
 //
-//  GoalFollowPlayer.hpp
+//  GoalFollowLeader.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 8. 17..
@@ -14,13 +14,13 @@ namespace realtrick
 {
     namespace client
     {
-        class GoalFollowPlayer : public GoalEvaluatable
+        class GoalFollowLeader : public GoalEvaluatable
         {
             
         public:
-			explicit GoalFollowPlayer(HumanBase* const owner, float character_bias = 0.0f);
+			explicit GoalFollowLeader(HumanBase* const owner, float character_bias = 0.0f);
 
-			virtual ~GoalFollowPlayer() override
+			virtual ~GoalFollowLeader() override
 			{}
 
 			virtual int evaluate(HumanBase* const owner) override;

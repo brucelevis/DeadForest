@@ -1,12 +1,12 @@
 //
-//  GoalFollowPlayer.cpp
+//  GoalFollowLeader.cpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 8. 17..
 //
 //
 
-#include "GoalFollowPlayer.hpp"
+#include "GoalFollowLeader.hpp"
 #include "GoalAttackTarget.hpp"
 #include "GoalMoveToPosition.hpp"
 #include "AbstTargetingSystem.h"
@@ -21,7 +21,7 @@
 using namespace realtrick;
 using namespace realtrick::client;
 
-GoalFollowPlayer::GoalFollowPlayer(HumanBase* const owner, float character_bias)
+GoalFollowLeader::GoalFollowLeader(HumanBase* const owner, float character_bias)
 	:
 	GoalEvaluatable(owner, character_bias),
 	_arriveSafeZone(false)
@@ -32,7 +32,7 @@ GoalFollowPlayer::GoalFollowPlayer(HumanBase* const owner, float character_bias)
 
 //------------------------------- Activate ------------------------------------
 //-----------------------------------------------------------------------------
-void GoalFollowPlayer::activate()
+void GoalFollowLeader::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
@@ -81,7 +81,7 @@ void GoalFollowPlayer::activate()
 
 //------------------------------ process --------------------------------------
 //-----------------------------------------------------------------------------
-GoalStatus GoalFollowPlayer::process()
+GoalStatus GoalFollowLeader::process()
 {
 	//if status is INACTIVE, call activate()
 	if (isInactive())
@@ -93,7 +93,7 @@ GoalStatus GoalFollowPlayer::process()
 }
 
 
-void GoalFollowPlayer::terminate()
+void GoalFollowLeader::terminate()
 {
 	removeAllSubgoals();
 
@@ -104,7 +104,7 @@ void GoalFollowPlayer::terminate()
 	moveEnd.execute();
 }
 
-int GoalFollowPlayer::evaluate(HumanBase* const owner)
+int GoalFollowLeader::evaluate(HumanBase* const owner)
 {
 	auto leader = _owner->getTargetSys()->getLeader();
 	if (leader == nullptr)

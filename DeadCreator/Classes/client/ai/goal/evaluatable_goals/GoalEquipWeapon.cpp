@@ -8,6 +8,12 @@
 namespace
 {
 	const float kEquippingTime = 1.0f;
+	const int kNumOfRangeWeapon = 4;
+
+	const float kWeightAXE = 100.0f;
+	const float kWeightGLOCK17 = 100.0f;
+	const float kWeightM16A2 = 100.0f;
+	const float kWeightM1897 = 100.0f;
 }
 
 using namespace realtrick::client;
@@ -94,13 +100,14 @@ void GoalEquipWeapon::terminate()
 
 void GoalEquipWeapon::makeEquipItemWeight()
 {
-	std::array<int, 4> bulletsByWeapon{};
+	std::array<int, kNumOfRangeWeapon> bulletsByWeapon{};
 
 	auto inventory = _owner->getInventoryData();
 	const auto& items = inventory->getItemLists();
 
 	// Setting bullet..
-	std::set<int> itemsFiltered;
+	std::array<int, EntityType::MAX> itemsFiltered{false};
+
 	for (const auto& item : items)
 	{
 		if (item)
@@ -117,7 +124,7 @@ void GoalEquipWeapon::makeEquipItemWeight()
 				WeaponBase* weapon = static_cast<WeaponBase*>(item);
 				bulletsByWeapon[item->getEntityType()] += weapon->getNumOfLeftRounds();
 			}
-			itemsFiltered.emplace(item->getEntityType());
+			itemsFiltered[item->getEntityType()] = true;
 		}
 	}
 
@@ -126,17 +133,21 @@ void GoalEquipWeapon::makeEquipItemWeight()
 	bulletsByWeapon[EntityType::ITEM_M1897] += inventory->getItemAmount(BULLET_SHELL);
 
 
-	cocos2d::log("BULLET_9MM : %d   BULLET_556MM : %d   BULLET_SHELL : %d",
-		inventory->getItemAmount(BULLET_9MM),
-		inventory->getItemAmount(BULLET_556MM),
-		inventory->getItemAmount(BULLET_SHELL));
+	//cocos2d::log("BULLET_9MM : %d   BULLET_556MM : %d   BULLET_SHELL : %d",
+	//	inventory->getItemAmount(BULLET_9MM),
+	//	inventory->getItemAmount(BULLET_556MM),
+	//	inventory->getItemAmount(BULLET_SHELL));
 		
 	// Weight setting with weapons.
-	for (const auto& item : itemsFiltered)
+	for (size_t i = 0; i < EntityType::MAX; i++)
 	{
+		EntityType item = (EntityType)i;
+		if (!itemsFiltered[i])
+			continue;
+
 		if (EntityType::ITEM_AXE == item)
 		{
-			_weightEquipItem[EntityType::ITEM_AXE] = 100.0f;
+			_weightEquipItem[EntityType::ITEM_AXE] = kWeightAXE;
 		}
 		else if (EntityType::ITEM_CONSUMPTION == item)
 		{
@@ -145,17 +156,17 @@ void GoalEquipWeapon::makeEquipItemWeight()
 		else if (EntityType::ITEM_GLOCK17 == item)
 		{
 			_weightEquipItem[EntityType::ITEM_GLOCK17] = 
-				200.0f * (float)bulletsByWeapon[EntityType::ITEM_GLOCK17] / 21.0f;
+				kWeightGLOCK17 * (float)bulletsByWeapon[EntityType::ITEM_GLOCK17] / 21.0f;
 		}
 		else if (EntityType::ITEM_M16A2 == item)
 		{
 			_weightEquipItem[EntityType::ITEM_M16A2] =
-				200.0f * (float)bulletsByWeapon[EntityType::ITEM_M16A2] / 90.0f;
+				kWeightM16A2 * (float)bulletsByWeapon[EntityType::ITEM_M16A2] / 90.0f;
 		}
 		else if (EntityType::ITEM_M1897 == item)
 		{
 			_weightEquipItem[EntityType::ITEM_M1897] = 
-				200.0f * (float)bulletsByWeapon[EntityType::ITEM_M1897] / 30.0f;
+				kWeightM1897 * (float)bulletsByWeapon[EntityType::ITEM_M1897] / 30.0f;
 		}
 		else if (EntityType::ITEM_STUFF == item)
 		{
@@ -178,7 +189,7 @@ EntityType GoalEquipWeapon::getBestItem(float& weight) const
 			bestItem = (EntityType)i;
 			weight = _weightEquipItem[i];
 		}
-		cocos2d::log("item weight in [GoalEquipWeapon]   item : %d   weight : %f", i, _weightEquipItem[i]);
+		//cocos2d::log("item weight in [GoalEquipWeapon]   item : %d   weight : %f", i, _weightEquipItem[i]);
 	}
 
 	return bestItem;

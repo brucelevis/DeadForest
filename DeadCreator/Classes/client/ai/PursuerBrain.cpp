@@ -5,7 +5,7 @@
 #include "GoalEquipWeapon.h"
 #include "GoalReload.h"
 #include "GoalRunAway.h"
-#include "GoalFollowPlayer.hpp"
+#include "GoalFollowLeader.hpp"
 #include "InventoryData.hpp"
 #include "Game.hpp"
 
@@ -35,8 +35,8 @@ PursuerBrain* PursuerBrain::createDefault(HumanBase* owner)
 	runaway->setEvaluator(std::bind(&GoalRunAway::evaluate, runaway, owner));
 	brain->getGoalThink()->addGoalEntry(runaway);
 
-	GoalFollowPlayer* follow = new GoalFollowPlayer(owner);
-	follow->setEvaluator(std::bind(&GoalFollowPlayer::evaluate, follow, owner));
+	GoalFollowLeader* follow = new GoalFollowLeader(owner);
+	follow->setEvaluator(std::bind(&GoalFollowLeader::evaluate, follow, owner));
 	brain->getGoalThink()->addGoalEntry(follow);
 
 	return brain;

@@ -31,7 +31,7 @@ void PlayGameLayer::showLayer(bool& opened)
 	static bool isCellSpaceOn = false;
 	static bool isPhysicsViewOn = false;
 	static bool isLocationViewOn = false;
-	static bool isGraphNodeViewOn = true;
+	static bool isGraphNodeViewOn = false;
 
 	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2 - GAME_SCREEN_WIDTH / 2,
 		ImGui::GetIO().DisplaySize.y / 2 - GAME_SCREEN_HEIGHT / 2), ImGuiSetCond_Once);
@@ -219,14 +219,14 @@ void PlayGameLayer::showLayer(bool& opened)
                 for(const auto& node : nodes)
                 {
                     auto playerPosition = game->getPlayerPtr()->getWorldPosition();
-                    if ( playerPosition.distance(node.getPos()) < 1000 )
+                    if ( playerPosition.distanceSquared(node.getPos()) < 200 * 200 )
                     {
                         Vec2 rectOrigin = worldToLocal(origin, node.getPos());
                         Vec2 rectDest = rectOrigin + Vec2(3, 3);
                         drawList->AddRect(ImVec2(rectOrigin.x, rectOrigin.y), ImVec2(rectDest.x, rectDest.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.6)));
                 
                         auto resource = game->getGameResource();
-                        auto edges = graph->getEdges(node.getIndex());
+                        const auto& edges = graph->getEdges(node.getIndex());
                         for(const auto& edge : edges)
                         {
                             auto from = numberToIndex(edge.getFrom(), resource->getNumOfTileX(), DUMMY_TILE_SIZE);

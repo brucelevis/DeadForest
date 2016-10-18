@@ -1,12 +1,12 @@
 //
-//  GoalFollowPlayer.cpp
+//  GoalFollowLeader.cpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 8. 17..
 //
 //
 
-#include "GoalFollowPlayer.hpp"
+#include "GoalFollowLeader.hpp"
 #include "GoalAttackTarget.hpp"
 #include "GoalMoveToPosition.hpp"
 #include "AbstTargetingSystem.h"
@@ -21,7 +21,7 @@
 using namespace realtrick;
 using namespace realtrick::client;
 
-GoalFollowPlayer::GoalFollowPlayer(HumanBase* const owner, float character_bias)
+GoalFollowLeader::GoalFollowLeader(HumanBase* const owner, float character_bias)
 	:
 	GoalEvaluatable(owner, character_bias),
 	_arriveSafeZone(false)
@@ -32,12 +32,12 @@ GoalFollowPlayer::GoalFollowPlayer(HumanBase* const owner, float character_bias)
 
 //------------------------------- Activate ------------------------------------
 //-----------------------------------------------------------------------------
-void GoalFollowPlayer::activate()
+void GoalFollowLeader::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
-	//if this goal is reactivated then there may be some existing subgoals that
-	//must be removed
+	// if this goal is reactivated then there may be some existing subgoals that
+	// must be removed
 	removeAllSubgoals();
 
 	auto leader = _owner->getTargetSys()->getLeader();
@@ -62,57 +62,38 @@ void GoalFollowPlayer::activate()
 
 	_destination = GoalNetwork::queryFormationPos(_owner, leader, idx);
 
-	if (_owner->getWorldPosition().distance(_destination) < _owner->getBoundingRadius())
+	if (_owner->getWorldPosition().distance(_destination) <
+		_owner->getBoundingRadius())
 	{
 		setGoalStatus(GoalStatus::COMPLETED);
 		return;
 	}
 
 	_arriveSafeZone = false;
-	addSubgoal(new GoalMoveToPosition(_owner, _destination));
+	addSubgoal(
+		new GoalMoveToPosition(
+			_owner,
+			_destination,
+			std::make_shared<ArrivingData>(
+				ArrivingData(leader->getHeading(), 100.0f, 50.0f))));
 }
 
 
 //------------------------------ process --------------------------------------
 //-----------------------------------------------------------------------------
-GoalStatus GoalFollowPlayer::process()
+GoalStatus GoalFollowLeader::process()
 {
 	//if status is INACTIVE, call activate()
 	if (isInactive())
 		activate();
 
-	cocos2d::Vec2 pos = _owner->getWorldPosition();
-	float arriveRange = 150.0f;
+	setGoalStatus(processSubgoals());
 
-	_goalStatus = processSubgoals();
-
-	if (pos.distance(_destination) < arriveRange)
-	{
-		if (!_arriveSafeZone)
-		{
-			_arriveSafeZone = true;
-			removeAllSubgoals();
-
-			cocos2d::Vec2 aimHeading = _owner->getHeading();
-
-			auto leader = _owner->getTargetSys()->getLeader();
-			if (leader != nullptr && leader->isAlive())
-			{
-				aimHeading = leader->getHeading();
-			}
-
-			addSubgoal(new GoalWalkWithAim(_owner, _destination, aimHeading, 0.35f));
-		}
-	}
-	
-	if (_arriveSafeZone)
-		return getGoalStatus();
-	else
-		return GoalStatus::ACTIVE;
+	return getGoalStatus();
 }
 
 
-void GoalFollowPlayer::terminate()
+void GoalFollowLeader::terminate()
 {
 	removeAllSubgoals();
 
@@ -123,7 +104,7 @@ void GoalFollowPlayer::terminate()
 	moveEnd.execute();
 }
 
-int GoalFollowPlayer::evaluate(HumanBase* const owner)
+int GoalFollowLeader::evaluate(HumanBase* const owner)
 {
 	auto leader = _owner->getTargetSys()->getLeader();
 	if (leader == nullptr)

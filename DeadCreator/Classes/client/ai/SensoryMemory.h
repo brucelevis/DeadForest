@@ -14,6 +14,7 @@
 #include <list>
 #include <sstream>
 #include "cocos2d.h"
+#include "Types.hpp"
 
 namespace realtrick
 {
@@ -143,6 +144,8 @@ namespace realtrick
 			std::vector<ItemBase*> queryMeleeWeapon();
 			std::vector<ItemBase*> queryUsableRangeWeapon();
 			std::vector<ItemBase*> queryBullets();
+			bool queryUsableRangeWeaponExists(realtrick::EntityType equipped) const;
+
 			bool isReadyToFight() const;
 
 		};

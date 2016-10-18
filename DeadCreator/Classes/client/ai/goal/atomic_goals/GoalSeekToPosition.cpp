@@ -15,22 +15,22 @@
 
 using namespace realtrick;
 using namespace realtrick::client;
+using namespace std::chrono;
+USING_NS_CC;
 
 
-
-//---------------------------- ctor -------------------------------------------
-//-----------------------------------------------------------------------------
-GoalSeekToPosition::GoalSeekToPosition(HumanBase* owner, cocos2d::Vec2 target)
+GoalSeekToPosition::GoalSeekToPosition(
+	HumanBase* owner,
+	Vec2 target,
+	std::shared_ptr<ArrivingData> arrivingData)
 	:
 	GoalBase(owner),
-	_position(target),
-	_time_expected(0.0)
+	_destination(target),
+	_time_expected(0.0f),
+	_arrivingData(arrivingData)
 {
 	setGoalType(GoalType::SEEK_TO_POS);
 }
-
-
-
 
 
 //---------------------------- activate -------------------------------------
@@ -40,18 +40,18 @@ void GoalSeekToPosition::activate()
 	setGoalStatus(GoalStatus::ACTIVE);
 
 	// Record the time the bot starts this goal
-	_start = std::chrono::system_clock::now().time_since_epoch();
+	_start = system_clock::now().time_since_epoch();
 
 	// This value is used to determine if the bot becomes stuck 
-	_time_expected = std::chrono::duration<double>(
-		_owner->getPathPlanner()->calculateTimeToReachPosition(_position));
+	_time_expected = duration<double>(
+		_owner->getPathPlanner()->calculateTimeToReachPosition(_destination));
 
 	// Factor in a margin of error for any reactive behavior
-	std::chrono::duration<double> margin_of_error(0.02);
+	duration<double> margin_of_error(0.02);
 
 	_time_expected += margin_of_error;
 
-	InputMoveBegin moveBegin(_owner, (_position - _owner->getWorldPosition()).getNormalized());
+	InputMoveBegin moveBegin(_owner, (_destination - _owner->getWorldPosition()).getNormalized());
 	moveBegin.execute();
 }
 
@@ -71,9 +71,33 @@ GoalStatus GoalSeekToPosition::process()
 	//if the bot has reached the end of the edge return COMPLETED
 	else
 	{
-		if (Circle(_owner->getWorldPosition(), _owner->getBoundingRadius()).containPoint(_position))
+		Vec2 pos = _owner->getWorldPosition();
+		float radius = _owner->getBoundingRadius();
+
+		Vec2 arriveHeading;
+		float startWalkRange;
+		float arriveRange;
+
+		if (_arrivingData == nullptr)
 		{
-			setGoalStatus(GoalStatus::COMPLETED);
+			arriveHeading = _owner->getHeading();
+			startWalkRange = radius * 2.5f;
+			arriveRange = radius * 0.5f;
+		}
+		else
+		{
+			arriveHeading = _arrivingData->arriveHeading;
+			startWalkRange = _arrivingData->startWalkRange;
+			arriveRange = _arrivingData->arriveRange;
+		}
+
+		if (pos.distance(_destination) < startWalkRange)
+		{
+			InputBezelBegin bezelBegin(_owner, arriveHeading);
+			bezelBegin.execute();
+
+			if (pos.distance(_destination) < arriveRange)
+				setGoalStatus(GoalStatus::COMPLETED);
 		}
 	}
 
@@ -85,6 +109,9 @@ void GoalSeekToPosition::terminate()
 {
 	InputMoveEnd moveEnd(_owner);
 	moveEnd.execute();
+
+	InputBezelEnd bezelEnd(_owner);
+	bezelEnd.execute();
 }
 
 
@@ -96,12 +123,13 @@ void GoalSeekToPosition::terminate()
 //-----------------------------------------------------------------------------
 bool GoalSeekToPosition::isStuck()const
 {
-	auto TimeTaken = std::chrono::system_clock::now().time_since_epoch() - _start;
+	duration<double> endTime
+		= system_clock::now().time_since_epoch();
 
-	if (TimeTaken > _time_expected)
-	{
+	duration<double> timeTaken = endTime - _start;
+
+	if (timeTaken > _time_expected)
 		return true;
-	}
 
 	return false;
 }

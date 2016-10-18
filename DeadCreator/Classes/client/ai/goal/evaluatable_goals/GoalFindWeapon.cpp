@@ -20,29 +20,18 @@
 
 using namespace realtrick::client;
 using namespace realtrick;
+USING_NS_CC;
 
 
 GoalFindWeapon::GoalFindWeapon(HumanBase* owner, float character_bias)
 	:
 	GoalEvaluatable(owner, character_bias),
-	_findWeapon(EntityType::DEFAULT),
 	_findWeaponData()
 {
     setGoalType(GoalType::FIND_WEAPON);
-	_findItemMap.emplace(EntityType::ITEM_AXE, FindItemData());
-	_findItemMap.emplace(EntityType::ITEM_CONSUMPTION, FindItemData());
-	_findItemMap.emplace(EntityType::ITEM_GLOCK17, FindItemData());
-	_findItemMap.emplace(EntityType::ITEM_M16A2, FindItemData());
-	_findItemMap.emplace(EntityType::ITEM_M1897, FindItemData());
-	_findItemMap.emplace(EntityType::ITEM_STUFF, FindItemData());
-	_findItemMap.emplace(EntityType::BULLET_556MM, FindItemData());
-	_findItemMap.emplace(EntityType::BULLET_9MM, FindItemData());
-	_findItemMap.emplace(EntityType::BULLET_SHELL, FindItemData());
+	_findItemMap.resize(EntityType::MAX, FindItemData());
+	_weightFindItem.resize(EntityType::MAX, 0.0f);
 }
-
-
-GoalFindWeapon::~GoalFindWeapon()
-{}
 
 void GoalFindWeapon::activate()
 {
@@ -53,30 +42,18 @@ void GoalFindWeapon::activate()
 
 GoalStatus GoalFindWeapon::process()
 {
-    if ( isInactive() ) activate();
+	if (isInactive())
+		activate();
     
 	GoalStatus subGoalStatus = processSubgoals();
-	EntityBase* item = _owner->getGame()->getEntityManager()->getEntityFromID(_findWeaponData.id);
+	EntityBase* item = 
+		_owner->getGame()->getEntityManager()->getEntityFromID(_findWeaponData.id);
 
 	if (item == nullptr)
-	{
 		return GoalStatus::COMPLETED;
-	}
-	else
-	{
-		if (subGoalStatus == GoalStatus::COMPLETED)
-		{
-			InputMoveBegin moveBegin(
-				_owner, 
-				(item->getWorldPosition() - _owner->getWorldPosition()).getNormalized());
-
-			moveBegin.execute();
-		}
-	}
 		
     return subGoalStatus;
 }
-
 
 void GoalFindWeapon::terminate()
 {
@@ -91,9 +68,7 @@ int GoalFindWeapon::evaluate(HumanBase* const owner)
 
 	// Make best choice
 	float weight;
-
 	auto itemData = getBestItem(weight);
-	_findWeapon = itemData.first; 
 	_findWeaponData = itemData.second;
 
 	return weight;
@@ -101,26 +76,25 @@ int GoalFindWeapon::evaluate(HumanBase* const owner)
 
 void GoalFindWeapon::makeFindItemWeight()
 {
-	_weightFindItem.clear();
-	_weightFindItem.emplace(EntityType::ITEM_AXE, 3.0f);
-	_weightFindItem.emplace(EntityType::ITEM_CONSUMPTION, 0.0f);
-	_weightFindItem.emplace(EntityType::ITEM_GLOCK17, 5.0f);
-	_weightFindItem.emplace(EntityType::ITEM_M16A2, 6.0f);
-	_weightFindItem.emplace(EntityType::ITEM_M1897, 7.0f);
-	_weightFindItem.emplace(EntityType::ITEM_STUFF, 0.0f);
-	_weightFindItem.emplace(EntityType::BULLET_556MM, 1.0f);
-	_weightFindItem.emplace(EntityType::BULLET_9MM, 1.0f);
-	_weightFindItem.emplace(EntityType::BULLET_SHELL, 1.0f);
+	_weightFindItem[ITEM_AXE] = 3.0f;
+	_weightFindItem[ITEM_CONSUMPTION] = 0.0f;
+	_weightFindItem[ITEM_GLOCK17] = 5.0f;
+	_weightFindItem[ITEM_M16A2] = 6.0f;
+	_weightFindItem[ITEM_M1897] = 7.0f;
+	_weightFindItem[ITEM_STUFF] = 0.0f;
+	_weightFindItem[BULLET_556MM] = 1.0f;
+	_weightFindItem[BULLET_9MM] = 1.0f;
+	_weightFindItem[BULLET_SHELL] = 1.0f;
 
 	auto inventory = _owner->getInventoryData();
 	const auto& items = inventory->getItemLists();
 
-	std::set<int> itemsFiltered;
+	// Setting bullet..
+	std::array<int, EntityType::MAX> itemsFiltered{ false };
+
 	for (const auto& item : items)
-	{
 		if (item)
-			itemsFiltered.emplace(item->getEntityType());
-	}
+			itemsFiltered[item->getEntityType()] = true;
 
 	// Set find-weight for each weapon with current equipped items
 	if (_owner->getEquipedWeapon() != nullptr)
@@ -131,8 +105,13 @@ void GoalFindWeapon::makeFindItemWeight()
 	}
 
 	// Set find-weight for each weapon with current inventory items
-	for (const auto& item : itemsFiltered)
+	for (size_t i = 0; i < itemsFiltered.size(); ++i)
 	{
+		if (!itemsFiltered[i])
+			continue;
+
+		EntityType item = (EntityType)i;
+
 		if (EntityType::BULLET_556MM == item)
 		{
 			_weightFindItem[EntityType::BULLET_556MM] = -1.0f;
@@ -177,19 +156,21 @@ void GoalFindWeapon::makeFindItemWeight()
 		}
 	}
 
-
-	for (auto& e : _weightFindItem)
+	// Set not sensed items with invalid value,
+	// and set sensed items with the distance.
+	for (size_t i = 0; i < _weightFindItem.size(); ++i)
 	{
-		EntityType itemType = e.first;
+		EntityType item = (EntityType)i;
+
 		float minDistance = std::numeric_limits<float>::max();
-		cocos2d::Vec2 pos;
-		int id = -1;
+		Vec2 pos;
+		int id = cocos2d::Node::INVALID_TAG;
 
 		const auto& items = _owner->getSensoryMemory()->getSensedItems();
 
 		for (auto i : items)
 		{
-			if (i->getEntityType() != itemType)
+			if (i->getEntityType() != item)
 				continue;
 
 			float distance = i->getWorldPosition().distance(_owner->getWorldPosition());
@@ -203,12 +184,12 @@ void GoalFindWeapon::makeFindItemWeight()
 
 		if (minDistance > std::numeric_limits<float>::max() - 50)
 		{
-			e.second = -1.0f;
+			_weightFindItem[item] = -1.0f;
 		}
 		else
 		{
-			e.second *= 500.0f / minDistance;
-			_findItemMap[itemType] = FindItemData(minDistance, pos, id);
+			_weightFindItem[item] *= 500.0f / minDistance;
+			_findItemMap[item] = FindItemData(minDistance, pos, id);
 		}
 	}
 }
@@ -220,26 +201,25 @@ std::pair<EntityType, FindItemData> GoalFindWeapon::getBestItem(float& weight) c
 	FindItemData itemData;
 	weight = 0.0f;
 
-	for (auto e : _weightFindItem)
+	for (size_t i = 0; i < _weightFindItem.size(); ++i)
 	{
-		auto iter = _findItemMap.find(e.first);
-		if (weight < e.second)
-		{
-			bestItem = e.first;
-			weight = e.second;
+		EntityType item = (EntityType)i;
 
-		
-			if (iter != std::end(_findItemMap))
+		if (weight < _weightFindItem[item])
+		{
+			bestItem = item;
+			weight = _weightFindItem[item];
+
+			if (_findItemMap[item].id != cocos2d::Node::INVALID_TAG)
 			{
-				itemData = iter->second;
-				//cocos2d::log("item weight in [GoalFindWeapon]  item : %d   weight : %f    distance : %f    id : %d    pos : (%f, %f)"
-				//	, e.first, e.second, itemData.distance, itemData.id, itemData.pos.x, itemData.pos.y);
+				itemData = _findItemMap[item];
+				//log("item weight in [GoalFindWeapon]  item : %d   weight : %f    distance : %f    id : %d    pos : (%f, %f)"
+					//, e.first, e.second, itemData.distance, itemData.id, itemData.pos.x, itemData.pos.y);
 			}
 		}
-		
 	}
 
-	//cocos2d::log("final item id : %d", itemData.id);
+	//log("final item id : %d", itemData.id);
 	return std::make_pair(bestItem, itemData);
 }
 

@@ -46,6 +46,7 @@ namespace realtrick
         inline bool     isContainPointInDiamond(const cocos2d::Vec2& diamondCenter, float halfLen, const cocos2d::Vec2& p);
         inline float    getAngleFromZero(const cocos2d::Vec2& point);
 		inline float    distToSegment(const cocos2d::Vec2& A, const cocos2d::Vec2& B, const cocos2d::Vec2& P);
+		inline bool		pointInPolygon(cocos2d::Vec2 P, const std::vector<cocos2d::Vec2>& poly);
     }
 }
 

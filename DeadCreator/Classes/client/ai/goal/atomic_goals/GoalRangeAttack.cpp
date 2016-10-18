@@ -20,17 +20,18 @@ namespace
 }
 
 using namespace realtrick::client;
+using namespace std::chrono;
 USING_NS_CC;
 
-cocos2d::Vec2 GoalRangeAttack::smartMoving(HumanBase* owner)
+Vec2 GoalRangeAttack::smartMoving(HumanBase* owner)
 {
 	HumanBase* target = nullptr;
 	if (owner->getTargetSys()->isTargetPresent())
 	{
 		target = owner->getTargetSys()->getTarget();
 
-		cocos2d::Vec2 ownerPos = owner->getWorldPosition();
-		cocos2d::Vec2 targetPos = target->getWorldPosition();
+		Vec2 ownerPos = owner->getWorldPosition();
+		Vec2 targetPos = target->getWorldPosition();
 
 		if (0 < target->getMoving().dot((targetPos - ownerPos).getNormalized()))
 		{
@@ -49,14 +50,14 @@ cocos2d::Vec2 GoalRangeAttack::smartMoving(HumanBase* owner)
 	return Vec2();
 }
 
-cocos2d::Vec2 GoalRangeAttack::dealCrowdMoving(HumanBase* owner)
+Vec2 GoalRangeAttack::dealCrowdMoving(HumanBase* owner)
 {
 	cocos2d::Vec2 avoidMove(owner->getSensoryMemory()->avoidingEnemiesVector(owner));
 	return avoidMove.getNormalized();
 }
 
 
-cocos2d::Vec2 GoalRangeAttack::makeFormationMoving(HumanBase* owner)
+Vec2 GoalRangeAttack::makeFormationMoving(HumanBase* owner)
 {
 	HumanBase* leader = owner->getTargetSys()->getLeader();
 
@@ -99,13 +100,13 @@ void GoalRangeAttack::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
-	_startTime = std::chrono::system_clock::now().time_since_epoch();
+	_startTime = system_clock::now().time_since_epoch();
 
 	if (_owner->getTargetSys()->isTargetPresent())
 	{
-		cocos2d::Vec2 targetPos = _owner->getTargetSys()->getTarget()->getWorldPosition();
-		cocos2d::Vec2 ownerPos = _owner->getWorldPosition();
-		cocos2d::Vec2 aim = (targetPos - ownerPos).getNormalized();
+		Vec2 targetPos = _owner->getTargetSys()->getTarget()->getWorldPosition();
+		Vec2 ownerPos = _owner->getWorldPosition();
+		Vec2 aim = (targetPos - ownerPos).getNormalized();
 
 		InputBezelBegin bezelBegin(_owner, aim);
 		bezelBegin.execute();
@@ -144,15 +145,16 @@ GoalStatus GoalRangeAttack::process()
 	if (isInactive())
 		activate();
 
-	std::chrono::duration<double> endTime = std::chrono::system_clock::now().time_since_epoch();
+	duration<double> endTime = 
+		system_clock::now().time_since_epoch();
 
 	if (!_attacked)
 	{
 		if (_owner->getTargetSys()->isTargetPresent())
 		{
-			cocos2d::Vec2 targetPos = _owner->getTargetSys()->getTarget()->getWorldPosition();
-			cocos2d::Vec2 ownerPos = _owner->getWorldPosition();
-			cocos2d::Vec2 aim = (targetPos - ownerPos).getNormalized();
+			Vec2 targetPos = _owner->getTargetSys()->getTarget()->getWorldPosition();
+			Vec2 ownerPos = _owner->getWorldPosition();
+			Vec2 aim = (targetPos - ownerPos).getNormalized();
 
 			InputBezelBegin bezelBegin(_owner, aim);
 			bezelBegin.execute();
@@ -165,7 +167,7 @@ GoalStatus GoalRangeAttack::process()
 			}
 		}
 
-		_startTime = std::chrono::system_clock::now().time_since_epoch();
+		_startTime = system_clock::now().time_since_epoch();
 	}
 
 	if (kDelayForCompleteAttack < (endTime - _startTime).count())

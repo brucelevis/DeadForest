@@ -10,6 +10,7 @@
 #include "StateMachine.hpp"
 
 using namespace realtrick::client;
+using namespace std::chrono;
 USING_NS_CC;
 
 //---------------------------- ctor -------------------------------------------
@@ -35,7 +36,7 @@ void GoalWalkWithAim::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
 
-	_startTime = std::chrono::system_clock::now().time_since_epoch();
+	_startTime = system_clock::now().time_since_epoch();
 
 	InputMoveBegin moveBegin(
 		_owner, 
@@ -55,8 +56,8 @@ GoalStatus GoalWalkWithAim::process()
 	if (isInactive())
 		activate();
 
-	std::chrono::duration<double> endTime = 
-		std::chrono::system_clock::now().time_since_epoch();
+	duration<double> endTime = 
+		system_clock::now().time_since_epoch();
 
 	if (_walkTime < (endTime - _startTime).count())
 		setGoalStatus(GoalStatus::COMPLETED);

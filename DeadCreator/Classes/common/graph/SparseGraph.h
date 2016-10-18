@@ -72,7 +72,9 @@ namespace realtrick
 		//edge passed as a parameter is valid before adding it to the graph. If the
 		//graph is a digraph then a similar edge connecting the nodes in the opposite
 		//direction will be automatically added.
-		void addEdge(Edge edge);
+		void addEdge(Edge edge, bool bi_directional = false);
+
+		const typename EdgeList::const_iterator eraseEdge(int idx, const typename EdgeList::const_iterator& iter);
 
 		int numNodes() const { return static_cast<int>(_nodes.size()); }
 
@@ -188,7 +190,7 @@ namespace realtrick
 	//  direction will be automatically added.
 	//-----------------------------------------------------------------------------
 	template <class Node, class Edge>
-	void SparseGraph<Node, Edge>::addEdge(Edge edge)
+	void SparseGraph<Node, Edge>::addEdge(Edge edge, bool bi_directional)
 	{
 		//first make sure the from and to nodes exist within the graph 
 		assert((0 <= edge.getFrom() && edge.getFrom() < (int)_nodes.size()) &&
@@ -196,9 +198,19 @@ namespace realtrick
 			"<SparseGraph::addEdge>: invalid node index");
 
 		_edges[edge.getFrom()].push_back(edge);
-		_edges[edge.getTo()].push_back(Edge(edge.getTo(), edge.getFrom(), edge.getCost()));
+		if(bi_directional)
+			_edges[edge.getTo()].push_back(Edge(edge.getTo(), edge.getFrom(), edge.getCost()));
 	}
 
+	template <class Node, class Edge>
+	const typename SparseGraph<Node, Edge>::EdgeList::const_iterator
+		SparseGraph<Node, Edge>::eraseEdge(int idx, const typename EdgeList::const_iterator& iter)
+	{
+		assert((idx < (int)_nodes.size()) && (idx >= 0) &&
+			"<SparseGraph::getNode>: invalid index");
+
+		return _edges[idx].erase(iter);
+	}
 
 
 	//-------------------------- addNode -------------------------------------

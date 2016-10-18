@@ -27,6 +27,7 @@
 #include "RewardScene.hpp"
 #include "SensoryMemory.h"
 #include "GoalNetwork.h"
+
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
@@ -198,7 +199,14 @@ std::vector<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& positio
 
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& pos) const
 {
-    return getNeighborWalls(pos, 0.0f);
+	std::vector<realtrick::Polygon> ret;
+	const Cell& myCell = _cellSpace->getCell(_cellSpace->positionToIndex(pos));
+	for (const auto& wall : myCell.walls)
+	{
+		ret.push_back(wall);
+	}
+
+	return ret;
 }
 
 
@@ -268,7 +276,15 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
 
 std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& pos) const
 {
-    return getNeighborSimpleWalls(pos, 0.0f);
+	std::vector<realtrick::Polygon> ret;
+	const Cell& myCell = _cellSpace->getCell(_cellSpace->positionToIndex(pos));
+
+	for (const auto& wall : myCell.simpleWalls)
+	{
+		ret.push_back(wall);
+	}
+
+	return ret;
 }
 
 
@@ -333,6 +349,15 @@ std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2
     }
     
     return ret;
+}
+
+bool Game::isCollideSimpleWalls(const cocos2d::Vec2& pos) const
+{
+	const auto& walls = getNeighborSimpleWalls(pos);
+	for (const auto& wall : walls)
+		if (wall.containPoint(pos))
+			return true;
+	return false;
 }
 
 
@@ -570,47 +595,136 @@ void Game::generateIsometricGridGraph(
 	float tileHeight,
 	int numOfDummy)
 {
-	cocos2d::Vec2 pos;
 	int tileNumX = numOfTileX + numOfDummy * 2;
 	int tileNumY = numOfTileY * 2 + numOfDummy * 4;
 	for (int i = 0; i < tileNumY; i++)
 	{
 		for (int j = 0; j < tileNumX; j++)
 		{
-			pos = indexToPosition(j, i, tileWidth, tileHeight, numOfDummy);
+			cocos2d::Vec2 pos = indexToPosition(j, i, tileWidth, tileHeight, numOfDummy);
 			_graph->addNode(NavGraphNode(_graph->getNextFreeNodeIndex(), pos));
 		}
 	}
 
+
+	// Settings for graph loading..
+
+	//       2
+	//     1   3
+	//   0 (x,y) 4
+	//     7   5
+	//       6
+	const int L = 0;
+	const int LU = 1;
+	const int U = 2;
+	const int RU = 3;
+	const int R = 4;
+	const int RD = 5;
+	const int D = 6;
+	const int LD = 7;
+
+	//	tail == "1"		!U
+	//	tail == "2"		!R
+	//	tail == "3"		!D
+	//	tail == "4"		!L
+	//	tail == "12"	!(U, RU, R)
+	//	tail == "13"	경로 x
+	//	tail == "14"	!(L, LU, U)
+	//	tail == "23"	!(R, RD, D)
+	//	tail == "24"	경로 x
+	//	tail == "34"	!(L, LD, D)
+	//	tail == "123"	LU, L, LD
+	//	tail == "124"	LD, D, RD
+	//	tail == "134"	RU, R, RD
+	//	tail == "234"	LU, U, RU
+	std::map<std::string, std::vector<bool> > pushByTypeMap;
+
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"1", { true, true, false, true, true, true, true, true }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"2", { true, true, true, true, false, true, true, true }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"3", { true, true, true, true, true, true, false, true }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"4", { false, true, true, true, true, true, true, true }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"12", { true, true, false, false, false, true, true, true }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"13", { false, false, false, false, false, false, false, false }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"14", { false, false, false, true, true, true, true, true }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"23", { true, true, true, true, false, false, false, true }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"24", { false, false, false, false, false, false, false, false }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"34", { false, true, true, true, true, true, false, false }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"123", { true, true, false, false, false, false, false, true }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"124", { false, false, false, false, false, true, true, true }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"134", { false, false, false, true, true, true, false, false }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"234", { false, true, true, true, false, false, false, false }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"1234", { false, false, false, false, false, false, false, false }));
+	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
+		"not_hill", { true, true, true, true, true, true, true, true }));
+
+	const auto& tileData = _gameResource->getTileData();
+
 	for (auto n = std::begin(_graph->getNodes()); n != std::end(_graph->getNodes()); ++ n)
 	{
 		int from = n->getIndex();
-		auto idx_pair = numberToIndex(from, numOfTileX, numOfDummy);
+		auto index = numberToIndex(from, numOfTileX, numOfDummy);
 
-		if (!isValidIndex(idx_pair.first, idx_pair.second, numOfTileX, numOfTileY))
+		if (!isValidIndex(index.first, index.second, numOfTileX, numOfTileY))
 			continue;
 
-		if (_gameResource->getTileData()[idx_pair.second][idx_pair.first].getTileType() == TileType::HILL)
-			continue;
+		realtrick::TileType tileType = tileData[index.second][index.first].getTileType();
+		std::string tail = tileData[index.second][index.first].getTileTail();
+		const auto& adj = getNeighborTiles(index.first, index.second);
 
-		auto adj = getNeighborTiles(idx_pair.first, idx_pair.second);
+		if (tileType != TileType::HILL)
+			tail = "not_hill";
 
-		for (auto& e : adj)
+		const auto& pushList(pushByTypeMap[tail]);
+
+		for (size_t dir = 0; dir < pushList.size(); dir++)
 		{
-			int to_j = e.first;
-			int to_i = e.second;
+			if (!pushList[dir])
+				continue;
+
+			int to_j = adj[dir].first;
+			int to_i = adj[dir].second;
 
 			if (!isValidIndex(to_j, to_i, numOfTileX, numOfTileY))
 				continue;
 
 			int to = indexToNumber(to_j, to_i, numOfTileX, numOfDummy);
 
-
-			if (_gameResource->getTileData()[to_i][to_j].getTileType() == TileType::HILL)
-				continue;
-
 			_graph->addEdge(realtrick::NavGraphEdge(from, to, _graph
 				->getNode(from).getPos().getDistance(_graph->getNode(to).getPos())));
+		}
+	}
+
+	// Now remove the edges which is non-bi-directional.
+	for (auto n = std::begin(_graph->getNodes()); n != std::end(_graph->getNodes()); ++n)
+	{
+		int from = n->getIndex();
+		auto e = std::begin(_graph->getEdges(from));
+
+		while (e != std::end(_graph->getEdges(from)))
+		{
+			int to = e->getTo();
+			auto iter = std::find_if(std::begin(_graph->getEdges(to)), std::end(_graph->getEdges(to)), 
+				[from](const auto& e) { return e.getTo() == from; });
+
+			if (iter != std::end(_graph->getEdges(to)))
+				++e;
+			else
+				e = _graph->eraseEdge(from, e);
 		}
 	}
 }
@@ -703,6 +817,7 @@ void Game::setSharedVisionState(PlayerType src, PlayerType dest, bool enable)
 bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const
 {
 	const auto& cols = getNeighborSimpleWalls(A, Segment(A, B));
+
 	bool collide = false;
 	for (const auto& col : cols)
 	{
@@ -714,6 +829,15 @@ bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const
 	}
 
 	return !collide;
+}
+
+
+bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B, float radius) const
+{
+	Vec2 left = (B - A).getPerp().getNormalized() * radius * 0.5f;
+	Vec2 right = -left;
+
+	return isLOSOkay(A + left, B + left) && isLOSOkay(A + right, B + right);
 }
 
 

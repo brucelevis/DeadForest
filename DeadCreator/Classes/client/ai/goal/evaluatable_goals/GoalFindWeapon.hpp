@@ -21,7 +21,7 @@ namespace realtrick
 				:
 				distance(std::numeric_limits<float>::max()),
 				pos(),
-				id(-1)
+				id(cocos2d::Node::INVALID_TAG)
 			{}
 
 			FindItemData(float distance, cocos2d::Vec2 pos,	int id)
@@ -40,7 +40,8 @@ namespace realtrick
         {
         public:
             explicit GoalFindWeapon(HumanBase* owner, float character_bias = 0.0f);
-            virtual ~GoalFindWeapon();
+			virtual ~GoalFindWeapon()
+			{}
             
 			void makeFindItemWeight();
 			std::pair<EntityType, FindItemData> getBestItem(float& weight) const;
@@ -51,11 +52,10 @@ namespace realtrick
             virtual void terminate() override;
             
         private:
-			std::map<EntityType, float> _weightFindItem;
-			std::map<EntityType, FindItemData> _findItemMap;
-			EntityType _findWeapon;
+			std::vector<float> _weightFindItem;
+			std::vector<FindItemData> _findItemMap;
+
 			FindItemData _findWeaponData;
-            
         };
     }
 }

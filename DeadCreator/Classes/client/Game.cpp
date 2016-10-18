@@ -614,15 +614,6 @@ void Game::generateIsometricGridGraph(
 	//   0 (x,y) 4
 	//     7   5
 	//       6
-//	const int L = 0;
-//	const int LU = 1;
-//	const int U = 2;
-//	const int RU = 3;
-//	const int R = 4;
-//	const int RD = 5;
-//	const int D = 6;
-//	const int LD = 7;
-
 	//	tail == "1"		!U
 	//	tail == "2"		!R
 	//	tail == "3"		!D
@@ -696,13 +687,13 @@ void Game::generateIsometricGridGraph(
 			if (!pushList[dir])
 				continue;
 
-			int to_j = adj[dir].first;
-			int to_i = adj[dir].second;
+			int toJ = adj[dir].first;
+			int toI = adj[dir].second;
 
-			if (!isValidIndex(to_j, to_i, numOfTileX, numOfTileY))
+			if (!isValidIndex(toJ, toI, numOfTileX, numOfTileY))
 				continue;
 
-			int to = indexToNumber(to_j, to_i, numOfTileX, numOfDummy);
+			int to = indexToNumber(toJ, toI, numOfTileX, numOfDummy);
 
 			_graph->addEdge(realtrick::NavGraphEdge(from, to, _graph
 				->getNode(from).getPos().getDistance(_graph->getNode(to).getPos())));

@@ -68,9 +68,9 @@ void EntityPlayer::update(float dt)
 }
 
 
-bool EntityPlayer::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other)
+bool EntityPlayer::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other, cocos2d::Vec2& additionalVelocity)
 {
-    bool ret = HumanBase::isIntersectOther(futurePosition, other);;
+    bool ret = HumanBase::isIntersectOther(futurePosition, other, additionalVelocity);
     
     if ( isMasked(other->getFamilyMask(), ITEM_BASE) )
     {

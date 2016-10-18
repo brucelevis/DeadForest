@@ -41,7 +41,8 @@ _winSize(Size::ZERO),
 _cellSpace(nullptr),
 _triggerSystem(nullptr),
 _bgmID(0),
-_isPaused(true)
+_isPaused(true),
+_elapsedTime(0.0f)
 {
 }
 
@@ -113,6 +114,8 @@ void Game::update(float dt)
     
     // checking pause is done
     if ( _isPaused ) return ;
+    
+    _elapsedTime += dt;
     
     pair<int, int> oldIndex = getFocusedTileIndex(_camera->getCameraPos(),
                                                   _gameResource->getTileWidth(),

@@ -150,18 +150,43 @@ bool GameResource::initWithBinary(const char* buffer)
                     condition->entity = static_cast<EntityType>(conditionObject->entity_type());
                     condition->location = conditionObject->location_name()->str();
                     data.conditions.push_back(condition);
+                    
                     break;
                 }
                 case DeadCreator::ConditionBase_Always:
                 {
                     auto condition = new ConditionAlwaysData();
                     data.conditions.push_back(condition);
+                    
                     break;
                 }
                 case DeadCreator::ConditionBase_Never:
                 {
                     auto condition = new ConditionNeverData();
                     data.conditions.push_back(condition);
+                    
+                    break;
+                }
+                case DeadCreator::ConditionBase_ElapsedTime:
+                {
+                    auto conditionObject = static_cast<const DeadCreator::ElapsedTime*>(cond->condition());
+                    
+                    auto condition = new ConditionElapsedTimeData();
+                    condition->approximation = static_cast<ApproximationType>(conditionObject->approximation());
+                    condition->number = conditionObject->number();
+                    data.conditions.push_back(condition);
+                    
+                    break;
+                }
+                case DeadCreator::ConditionBase_CountdownTimer:
+                {
+                    auto conditionObject = static_cast<const DeadCreator::CountdownTimer*>(cond->condition());
+                    
+                    auto condition = new ConditionCountdownTimerData();
+                    condition->approximation = static_cast<ApproximationType>(conditionObject->approximation());
+                    condition->number = conditionObject->number();
+                    data.conditions.push_back(condition);
+                    
                     break;
                 }
                     
@@ -245,6 +270,43 @@ bool GameResource::initWithBinary(const char* buffer)
                     action->location = actionObject->location_name()->str();
                     data.actions.push_back(action);
                     
+                    break;
+                }
+                case DeadCreator::ActionBase_MoveEntity:
+                {
+                    auto actionObject = static_cast<const DeadCreator::MoveEntity*>(act->action());
+                    auto action = new ActionMoveEntityData();
+                    action->number = actionObject->numberAll();
+                    action->entity = static_cast<EntityType>(actionObject->entity_type());
+                    action->player = static_cast<PlayerType>(actionObject->player());
+                    action->sourceLocation = actionObject->src_location_name()->str();
+                    action->destLocation = actionObject->dst_location_name()->str();
+                    data.actions.push_back(action);
+                    
+                    break;
+                }
+                case DeadCreator::ActionBase_PauseGame:
+                {
+                    auto action = new ActionPauseGameData();
+                    data.actions.push_back(action);
+                    
+                    break;
+                }
+                case DeadCreator::ActionBase_ResumeGame:
+                {
+                    auto action = new ActionResumeGameData();
+                    data.actions.push_back(action);
+                    
+                    break;
+                }
+                case DeadCreator::ActionBase_SetCountdownTimer:
+                {
+                    auto actionObject = static_cast<const DeadCreator::SetCountdownTimer*>(act->action());
+                    auto action = new ActionSetCountdownTimerData();
+                    action->arithmetical = static_cast<ArithmeticalType>(actionObject->arithmetical());
+                    action->number = actionObject->number();
+                    data.actions.push_back(action);
+
                     break;
                 }
                 default: { cocos2d::log("invalid action type"); break;}

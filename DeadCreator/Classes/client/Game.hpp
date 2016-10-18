@@ -138,6 +138,8 @@ namespace realtrick
             
             bool isGameEnded() const { return _isGameEnded; }
             
+            const float getElapsedTime() const { return _elapsedTime; }
+            
         private:
             
             cocos2d::Size _winSize;
@@ -173,6 +175,7 @@ namespace realtrick
 			Graph*		_graph;
             
             bool _isPaused;
+            float _elapsedTime;
             int _bgmID;
             
             // stored logs

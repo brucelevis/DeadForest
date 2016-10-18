@@ -151,13 +151,26 @@ namespace realtrick
             
             virtual bool isReady() override
             {
+                auto elapsedTime = _game->getElapsedTime();
+                if ( _params.approximation == ApproximationType::AT_LEAST && elapsedTime >= _params.number )
+                {
+                    return true;
+                }
+                else if ( _params.approximation == ApproximationType::AT_MOST && elapsedTime <= _params.number )
+                {
+                    return true;
+                }
+                else if ( _params.approximation == ApproximationType::EXACTLY && elapsedTime >= _params.number && elapsedTime <= _params.number + 1 )
+                {
+                    return true;
+                }
+                
                 return false;
             }
             
         private:
             
             ConditionElapsedTimeData _params;
-            std::bitset<30> _maskedPlayer;
             
         };
         

@@ -48,6 +48,20 @@ bool TriggerSystem::initWithResource(GameResource* res)
                 auto condition = ConditionNever::create(_game);
                 newTrigger->addCondition(condition);
             }
+            
+            else if ( (*cond)->type == TriggerComponentType::CONDITION_COUNTDOWN_TIMER )
+            {
+                auto data = static_cast<ConditionCountdownTimerData*>(*cond);
+                auto condition = ConditionCountdownTimer::create(_game, data->approximation, data->number);
+                newTrigger->addCondition(condition);
+            }
+            
+            else if ( (*cond)->type == TriggerComponentType::CONDITION_ELAPSED_TIME )
+            {
+                auto data = static_cast<ConditionElapsedTimeData*>(*cond);
+                auto condition = ConditionElapsedTime::create(_game, data->approximation, data->number);
+                newTrigger->addCondition(condition);
+            }
         }
         
         // set actions
@@ -116,6 +130,38 @@ bool TriggerSystem::initWithResource(GameResource* res)
                 newTrigger->addAction(action);
             }
             
+            else if ( (*act)->type == TriggerComponentType::ACTION_MOVE_ENTITY )
+            {
+                auto data = static_cast<ActionMoveEntityData*>(*act);
+                auto action = ActionMoveEntity::create(_game,
+                                                       data->number,
+                                                       data->entity,
+                                                       data->player,
+                                                       data->sourceLocation,
+                                                       data->destLocation);
+                newTrigger->addAction(action);
+            }
+            
+            else if ( (*act)->type == TriggerComponentType::ACTION_PAUSE_GAME )
+            {
+                auto action = ActionPauseGame::create(_game);
+                newTrigger->addAction(action);
+            }
+            
+            else if ( (*act)->type == TriggerComponentType::ACTION_RESUME_GAME )
+            {
+                auto action = ActionResumeGame::create(_game);
+                newTrigger->addAction(action);
+            }
+            
+            else if ( (*act)->type == TriggerComponentType::ACTION_SET_COUNTDOWN_TIMER )
+            {
+                auto data = static_cast<ActionSetCountdownTimerData*>(*act);
+                auto action = ActionSetCountdownTimer::create(_game,
+                                                              data->arithmetical,
+                                                              data->number);
+                newTrigger->addAction(action);
+            }
         }
         
         int triggerID = getNextValidTriggerID();

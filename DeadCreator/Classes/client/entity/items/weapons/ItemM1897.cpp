@@ -106,7 +106,7 @@ void ItemM1897::attackImpl()
         shootAts[i].second = randomRotation.getTransformedVector(typicalHeading);
     }
     
-    const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, typicalHeading, this->getRange());
+    const auto& members = _game->getNeighborsOnAttack(worldPos, typicalHeading, this->getRange());
     for (const auto &d : members)
     {
         if ( _game->isAllyState(owner->getPlayerType(), d->getPlayerType()) ) continue;

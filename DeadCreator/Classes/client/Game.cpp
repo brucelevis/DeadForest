@@ -142,9 +142,15 @@ void Game::loadBGM()
 }
 
 
-std::list<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const
+std::vector<EntityBase*> Game::getNeighbors(const cocos2d::Vec2& position) const
 {
-    std::list<EntityBase*> ret;
+    return getNeighborsOnMove(position, 0.0f);
+}
+
+
+std::vector<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const
+{
+    std::vector<EntityBase*> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
     for ( const int idx : cellIndices )
     {
@@ -162,9 +168,9 @@ std::list<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, f
 }
 
 
-std::list<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const
+std::vector<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const
 {
-    std::list<EntityBase*> ret;
+    std::vector<EntityBase*> ret;
     std::vector<int> cellIndices = _cellSpace->getNeighborCellsNotCurrent(position);
     for ( const int idx : cellIndices )
     {
@@ -188,6 +194,12 @@ std::list<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& position,
     }
     
     return ret;
+}
+
+
+std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& pos) const
+{
+    return getNeighborWalls(pos, 0.0f);
 }
 
 
@@ -252,6 +264,12 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
     }
     
     return ret;
+}
+
+
+std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& pos) const
+{
+    return getNeighborSimpleWalls(pos, 0.0f);
 }
 
 

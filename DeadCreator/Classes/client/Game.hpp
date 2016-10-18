@@ -92,11 +92,15 @@ namespace realtrick
             void loadGameContents(PlayerType ownPlayer);
             void loadBGM();
             
-            std::list<EntityBase*> getNeighborsOnMove(const cocos2d::Vec2& pos, float speed) const;
-            std::list<EntityBase*> getNeighborsOnAttack(const cocos2d::Vec2& pos, const cocos2d::Vec2& dir, float range) const;
+            std::vector<EntityBase*> getNeighbors(const cocos2d::Vec2& pos) const;
+            std::vector<EntityBase*> getNeighborsOnMove(const cocos2d::Vec2& pos, float speed) const;
+            std::vector<EntityBase*> getNeighborsOnAttack(const cocos2d::Vec2& pos, const cocos2d::Vec2& dir, float range) const;
+            
+            std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos) const;
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, float speed) const;
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const Segment& ray) const;
+            std::vector<realtrick::Polygon> getNeighborSimpleWalls(const cocos2d::Vec2& pos) const;
             std::vector<realtrick::Polygon> getNeighborSimpleWalls(const cocos2d::Vec2& pos, float speed) const;
             std::vector<realtrick::Polygon> getNeighborSimpleWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
             std::vector<realtrick::Polygon> getNeighborSimpleWalls(const cocos2d::Vec2& pos, const Segment& ray) const;

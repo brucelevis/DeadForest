@@ -178,7 +178,7 @@ void HumanBase::moveEntity()
 	cocos2d::Vec2 move;
 
 	// 엔티티들과의 충돌처리
-	const std::list<EntityBase*> members = _game->getNeighborsOnMove(oldPos, _speed);
+	const auto& members = _game->getNeighborsOnMove(oldPos, _speed);
 	for (const auto &entity : members)
 	{
 		if (entity == this) continue;
@@ -466,7 +466,7 @@ void HumanBase::attackByFist()
         // 엔티티들과의 충돌처리
         bool isHit = false;
         Vec2 shootAt = this->getHeading();
-        const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, 40.0f);
+        const auto& members = _game->getNeighborsOnAttack(worldPos, shootAt, 40.0f);
         for (const auto &d : members)
         {
             if ( _game->isAllyState(getPlayerType(), d->getPlayerType()) ) continue;

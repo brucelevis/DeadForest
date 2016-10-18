@@ -76,7 +76,7 @@ void ItemAxe::attackImpl()
     // 엔티티들과의 충돌처리
     bool isHit = false;
     Vec2 shootAt = owner->getHeading();
-    const std::list<EntityBase*>& members = _game->getNeighborsOnAttack(worldPos, shootAt, this->getRange());
+    const auto& members = _game->getNeighborsOnAttack(worldPos, shootAt, this->getRange());
     for (const auto &d : members)
     {
         if ( _game->isAllyState(owner->getPlayerType(), d->getPlayerType()) ) continue;

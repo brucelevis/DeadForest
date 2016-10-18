@@ -614,14 +614,14 @@ void Game::generateIsometricGridGraph(
 	//   0 (x,y) 4
 	//     7   5
 	//       6
-	const int L = 0;
-	const int LU = 1;
-	const int U = 2;
-	const int RU = 3;
-	const int R = 4;
-	const int RD = 5;
-	const int D = 6;
-	const int LD = 7;
+//	const int L = 0;
+//	const int LU = 1;
+//	const int U = 2;
+//	const int RU = 3;
+//	const int R = 4;
+//	const int RD = 5;
+//	const int D = 6;
+//	const int LD = 7;
 
 	//	tail == "1"		!U
 	//	tail == "2"		!R
@@ -719,7 +719,7 @@ void Game::generateIsometricGridGraph(
 		{
 			int to = e->getTo();
 			auto iter = std::find_if(std::begin(_graph->getEdges(to)), std::end(_graph->getEdges(to)), 
-				[from](const auto& e) { return e.getTo() == from; });
+				[from](const GraphEdge& e) { return e.getTo() == from; });
 
 			if (iter != std::end(_graph->getEdges(to)))
 				++e;

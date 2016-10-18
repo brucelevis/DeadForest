@@ -23,9 +23,7 @@ namespace realtrick
 
 			virtual ~PursuerBrain()
 			{}
-            
-			virtual void think() override;
-          
+
 		private:
 			explicit PursuerBrain(HumanBase* owner)	: BrainBase(owner)
 			{}

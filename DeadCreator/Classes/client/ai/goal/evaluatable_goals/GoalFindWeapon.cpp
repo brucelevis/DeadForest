@@ -92,13 +92,9 @@ void GoalFindWeapon::makeFindItemWeight()
 	// Setting bullet..
 	std::array<int, EntityType::MAX> itemsFiltered{ false };
 
-	//std::set<int> itemsFiltered;
 	for (const auto& item : items)
-	{
 		if (item)
 			itemsFiltered[item->getEntityType()] = true;
-			//itemsFiltered.emplace(item->getEntityType());
-	}
 
 	// Set find-weight for each weapon with current equipped items
 	if (_owner->getEquipedWeapon() != nullptr)

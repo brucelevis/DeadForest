@@ -42,9 +42,3 @@ PursuerBrain* PursuerBrain::createDefault(HumanBase* owner)
 	return brain;
 }
 
-void PursuerBrain::think()
-{
-	if (_regulator.isReady())
-		_thinker->process();
-}
-

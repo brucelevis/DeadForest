@@ -199,7 +199,14 @@ std::vector<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& positio
 
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& pos) const
 {
-    return getNeighborWalls(pos, 0.0f);
+	std::vector<realtrick::Polygon> ret;
+	const Cell& myCell = _cellSpace->getCell(_cellSpace->positionToIndex(pos));
+	for (const auto& wall : myCell.walls)
+	{
+		ret.push_back(wall);
+	}
+
+	return ret;
 }
 
 
@@ -269,7 +276,15 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
 
 std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& pos) const
 {
-    return getNeighborSimpleWalls(pos, 0.0f);
+	std::vector<realtrick::Polygon> ret;
+	const Cell& myCell = _cellSpace->getCell(_cellSpace->positionToIndex(pos));
+
+	for (const auto& wall : myCell.simpleWalls)
+	{
+		ret.push_back(wall);
+	}
+
+	return ret;
 }
 
 
@@ -334,6 +349,15 @@ std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2
     }
     
     return ret;
+}
+
+bool Game::isCollideSimpleWalls(const cocos2d::Vec2& pos) const
+{
+	const auto& walls = getNeighborSimpleWalls(pos);
+	for (const auto& wall : walls)
+		if (wall.containPoint(pos))
+			return true;
+	return false;
 }
 
 

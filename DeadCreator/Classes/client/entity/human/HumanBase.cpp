@@ -52,7 +52,8 @@ _runSpeed(0.0f),
 _footGauge(0.0f),
 _rotation(0.0f),
 _userNickName(""),
-_stateName("idle")
+_stateName("idle"),
+_regulator(0.1f)
 {
     ADD_FAMILY_MASK(_familyMask, HUMAN_BASE);
     setBoundingRadius(Prm.getValueAsFloat("boundingRadius"));
@@ -80,7 +81,7 @@ bool HumanBase::init()
 
 	_pathPlanner = new PathPlanner(*_game->getGraph(), this);
 	_sensory = new SensoryMemory(this, 5);
-	_target_system = new AbstTargetingSystem(this);
+	_targetSystem = new AbstTargetingSystem(this);
 
     _balance = Node::create();
     addChild(_balance);
@@ -104,13 +105,14 @@ HumanBase* HumanBase::create(Game* game)
 
 void HumanBase::update(float dt)
 {
-    if ( _brain && isAlive() ) _brain->think();
+	if (_brain && isAlive() && _regulator.isReady())
+	{
+		_brain->think();
+		_sensory->updateVision();
+		_targetSystem->update();
+	}
     
     if ( _FSM ) _FSM->update(dt);
-    
-	_sensory->updateVision();
-    
-	_target_system->update();
     
     // move and rotate
     this->moveEntity();

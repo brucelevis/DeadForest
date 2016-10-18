@@ -25,9 +25,3 @@ ZombieBrain* ZombieBrain::createWithDestination(
 	brain->getGoalThink()->addGoalEntry(goal);
 	return brain;
 }
-
-void ZombieBrain::think()
-{
-	if (_regulator.isReady())
-		_thinker->process();
-}

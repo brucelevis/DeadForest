@@ -42,19 +42,7 @@ void GoalMoveToPosition::activate()
 	//make sure the subgoal list is clear.
 	removeAllSubgoals();
 
-	const auto& walls = _owner->getGame()->getNeighborSimpleWalls(_destination, 1.0f);
-	bool canReach = true;
-
-	for (auto& wall : walls)
-	{
-		if (wall.containPoint(_destination))
-		{
-			canReach = false;
-			break;
-		}
-	}
-
-	if (!canReach)
+	if (_owner->getGame()->isCollideSimpleWalls(_destination))
 	{
 		setGoalStatus(GoalStatus::COMPLETED);
 		return;

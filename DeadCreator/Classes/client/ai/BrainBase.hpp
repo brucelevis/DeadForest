@@ -7,7 +7,6 @@
 //
 
 #pragma once
-#include "Regulator.h"
 #include "GoalThink.hpp"
 #include <memory>
 
@@ -28,8 +27,8 @@ namespace realtrick
             explicit BrainBase(HumanBase* owner) 
 				: 
 				_owner(owner),
-				_thinker(new GoalThink(owner)),
-				_regulator(0.1f) {}
+				_thinker(new GoalThink(owner))
+			{}
 
 			virtual ~BrainBase()
 			{
@@ -37,13 +36,16 @@ namespace realtrick
 				_thinker = nullptr;
 			}
             
-            virtual void think() = 0;
+			virtual void think()
+			{
+				
+					_thinker->process();
+			}
             
         protected:
             
             HumanBase* _owner;
 			GoalThink* _thinker;
-			Regulator _regulator;
             
         };
         

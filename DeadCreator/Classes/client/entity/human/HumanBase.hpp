@@ -12,6 +12,7 @@
 #include "Animator.hpp"
 #include "Physics.hpp"
 #include "Types.hpp"
+#include "Regulator.h"
 
 namespace realtrick
 {
@@ -54,7 +55,7 @@ namespace realtrick
 			StateMachine* getFSM() const { return _FSM; }
 			PathPlanner* getPathPlanner() const { return _pathPlanner; }
 			SensoryMemory* getSensoryMemory() const { return _sensory; }
-			AbstTargetingSystem* getTargetSys() const { return _target_system; }
+			AbstTargetingSystem* getTargetSys() const { return _targetSystem; }
             
             cocos2d::Vec2 getHeading() const { return _heading; }
             
@@ -147,7 +148,8 @@ namespace realtrick
             BrainBase*                      _brain;
 			PathPlanner*					_pathPlanner;
 			SensoryMemory*					_sensory;
-			AbstTargetingSystem*			_target_system;
+			AbstTargetingSystem*			_targetSystem;
+			Regulator						_regulator;
 
             UiLayer*                        _uiLayer;
             WeaponBase*                     _equipedWeapon;

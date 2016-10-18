@@ -27,9 +27,6 @@ namespace realtrick
 				const cocos2d::Vec2& desti,
 				float arriveRange = 100);
 
-			virtual void think() override;
-
-
 		private:
 
 			explicit ZombieBrain(HumanBase* owner) : BrainBase(owner)

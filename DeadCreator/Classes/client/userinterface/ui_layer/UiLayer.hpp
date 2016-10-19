@@ -48,10 +48,11 @@ namespace realtrick
             void displayText(const std::string& text);
             void syncItemView(InventoryData* data);
             void syncWeaponView(InventoryData* data);
+            
             void setCountdownTimer(unsigned int seconds);
             void addCountdownTimer(unsigned int seconds);
             void subtractCountdownTimer(unsigned int seconds);
-
+            const int getCountdownTimer() const;
             
         private:
             

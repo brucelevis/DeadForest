@@ -803,6 +803,12 @@ void Game::setSharedVisionState(PlayerType src, PlayerType dest, bool enable)
 }
 
 
+const int Game::getCountdownTimer() const
+{
+    return _uiLayer->getCountdownTimer();
+}
+
+
 void Game::setCountdownTimer(unsigned int seconds)
 {
     _uiLayer->setCountdownTimer(seconds);

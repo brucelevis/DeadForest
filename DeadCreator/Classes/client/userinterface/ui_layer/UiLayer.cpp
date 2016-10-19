@@ -422,6 +422,10 @@ void UiLayer::subtractCountdownTimer(unsigned int seconds)
 }
 
 
+const int UiLayer::getCountdownTimer() const
+{
+    return _countdownTimerView->getCountdownTimer();
+}
 
 
 

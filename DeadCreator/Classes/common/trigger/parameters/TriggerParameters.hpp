@@ -16,3 +16,5 @@
 #include "TriggerParameterNumber.hpp"
 #include "TriggerParameterNumberAll.hpp"
 #include "TriggerParameterText.hpp"
+#include "TriggerParameterSwitchName.hpp"
+#include "TriggerParameterSwitchStatus.hpp"

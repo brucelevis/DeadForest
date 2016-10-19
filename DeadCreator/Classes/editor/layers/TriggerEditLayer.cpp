@@ -85,6 +85,18 @@ bool TriggerEditLayer::init()
     _actionList.push_back(new ActionSetCountdownTimer());
     _actionList.push_back(new ActionVictory());
     
+    for(int i = 0 ; i < 256; ++ i)
+    {
+        std::string str = "Switch ";
+        str += _to_string(i);
+        std::strncpy(_switchNames[i].data(), str.c_str(), 100);
+        _isSelectedSwitchName[i] = false;
+    }
+    _selectedSwitchNameIndex = 0;
+    _oldSelectedSwitchNameIndex = 0;
+    _isSelectedSwitchName[_selectedSwitchNameIndex] = true;
+    std::strncpy(_tempSwitchNameForCompareOverlap.data(), _switchNames[_selectedSwitchNameIndex].data(), 100);
+    
     return true;
 }
 
@@ -101,6 +113,7 @@ void TriggerEditLayer::showLayer(bool& opened)
         
         static bool isShowNewTrigger = false;
         static bool isModifyTrigger = false;
+        static bool isShowChangeSwitchName = false;
         
         //
         // draw player list
@@ -203,6 +216,10 @@ void TriggerEditLayer::showLayer(bool& opened)
                 selectedTrigger += 1;
             }
         }
+        if ( ImGui::Button("Switches", ImVec2(130, 25)) )
+        {
+            isShowChangeSwitchName = true;
+        }
         ImGui::PopID();
         ImGui::EndGroup();
         
@@ -217,7 +234,8 @@ void TriggerEditLayer::showLayer(bool& opened)
         //
         if ( isShowNewTrigger ) showTrigger("New Trigger", isShowNewTrigger, _modifyingTrigger);
         if ( isModifyTrigger ) showTrigger("Modify Trigger", isModifyTrigger, _modifyingTrigger, true, selectedTrigger);
-            
+        if ( isShowChangeSwitchName ) showChangeSwitchName("Change Swithch Name", isShowChangeSwitchName);
+        
         ImGui::PopStyleVar();
         ImGui::EndPopup();
     }
@@ -794,6 +812,103 @@ void TriggerEditLayer::saveTriggers(flatbuffers::FlatBufferBuilder& builder,
     }
 }
 
+
+void TriggerEditLayer::showChangeSwitchName(const char* title, bool& opened)
+{
+    static const int WIDTH = TRIGGER_COMPONENT_EDIT_WIDTH;
+    static const int HEIGHT = TRIGGER_COMPONENT_EDIT_HEIGHT;
+    ImGuiContext& g = *GImGui;
+    ImGui::OpenPopup(title);
+    ImGui::SetNextWindowPos(ImVec2((g.IO.DisplaySize.x - WIDTH) / 2, (g.IO.DisplaySize.y - HEIGHT) / 2), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(WIDTH, HEIGHT));
+    ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4(0.90, 0.90, 0.90, 0.90));
+    if ( ImGui::BeginPopupModal(title, NULL, ImGuiWindowFlags_NoResize) )
+    {
+        ImGui::BeginChild("##dummy", ImVec2(0, HEIGHT - 65), true);
+        for(int i = 0 ; i < 256 ; ++ i)
+        {
+            if ( ImGui::Selectable(_switchNames[i].data(), _isSelectedSwitchName[i]) )
+            {
+                std::strncpy(_tempSwitchNameForCompareOverlap.data(), _switchNames[i].data(), 100);
+                
+                _isSelectedSwitchName[_oldSelectedSwitchNameIndex] = false;
+                _selectedSwitchNameIndex = i;
+                _isSelectedSwitchName[_selectedSwitchNameIndex] = true;
+                
+                _oldSelectedSwitchNameIndex = i;
+            }
+        }
+        ImGui::EndChild();
+        
+        static bool isOverlapName = false;
+        ImGui::PushItemWidth(WIDTH - 470);
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 0.90));
+        if ( ImGui::InputText("", _tempSwitchNameForCompareOverlap.data(), 100) )
+        {
+            isOverlapName = false;
+            for(int i = 0 ; i < 256; ++ i)
+            {
+                if ( _selectedSwitchNameIndex == i ) continue;
+                if ( strcmp(_tempSwitchNameForCompareOverlap.data(), _switchNames[i].data()) == 0 )
+                {
+                    isOverlapName = true;
+                    break;
+                }
+            }
+        }
+        ImGui::PopStyleColor();
+        ImGui::PopItemWidth();
+        
+        ImGui::SameLine();
+        
+        ImVec4 backupButton = ImGui::GetStyle().Colors[ImGuiCol_Button];
+        ImVec4 backupHoverColor = ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];
+        ImVec4 backupActiveColor = ImGui::GetStyle().Colors[ImGuiCol_ButtonActive];
+        if ( isOverlapName )
+        {
+            ImGui::GetStyle().Colors[ImGuiCol_Button] = ImVec4(0.20, 0.00, 0.00, 0.35);
+            ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = ImVec4(0.20, 0.00, 0.00, 0.35);
+            ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = ImVec4(0.20, 0.00, 0.00, 0.35);
+        }
+        if ( ImGui::ButtonEx("Set Name", ImVec2(145, 25)) && !isOverlapName )
+        {
+            std::strncpy(_switchNames[_selectedSwitchNameIndex].data(), _tempSwitchNameForCompareOverlap.data(), 100);
+        }
+        ImGui::GetStyle().Colors[ImGuiCol_Button] = backupButton;
+        ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = backupHoverColor;
+        ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = backupActiveColor;
+        
+        ImGui::SameLine();
+        if ( ImGui::ButtonEx("Reset Names", ImVec2(145, 25)) )
+        {
+            for(int i = 0 ; i < 256; ++ i)
+            {
+                std::string str = "Switch ";
+                str += _to_string(i);
+                std::strncpy(_switchNames[i].data(), str.c_str(), 100);
+                _isSelectedSwitchName[i] = false;
+            }
+            _isSelectedSwitchName[_selectedSwitchNameIndex] = true;
+            std::strncpy(_tempSwitchNameForCompareOverlap.data(), _switchNames[_selectedSwitchNameIndex].data(), 100);
+        }
+        
+        // draw close button
+        ImGui::SameLine();
+        if (ImGui::Button("Close", ImVec2(145, 25)))
+        {
+            _isSelectedSwitchName[_selectedSwitchNameIndex] = false;
+            _isSelectedSwitchName[0] = true;
+            _oldSelectedSwitchNameIndex = _selectedSwitchNameIndex = 0;
+            std::strncpy(_tempSwitchNameForCompareOverlap.data(), _switchNames[_selectedSwitchNameIndex].data(), 100);
+            
+            opened = false;
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
+    }
+    ImGui::PopStyleColor();
+}
 
 
 

@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <array>
+
 #include "cocos2d.h"
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -42,6 +44,7 @@ namespace realtrick
             void showModifyCondition(const char* title, bool& opened, GameTrigger* trigger, int condIndex);
             void showNewAction(const char* title, bool& opened, GameTrigger* newTrigger);
             void showModifyAction(const char* title, bool& opened, GameTrigger* trigger, int actIndex);
+            void showChangeSwitchName(const char* title, bool& opened);
             
             void saveTriggers(flatbuffers::FlatBufferBuilder& builder,
                               std::vector<flatbuffers::Offset<DeadCreator::Trigger>>& out_triggers);
@@ -61,6 +64,12 @@ namespace realtrick
             GameTrigger* _modifyingTrigger;
             ConditionBase* _modifyingCondition;
             ActionBase* _modifyingAction;
+            
+            std::array<char, 100> _switchNames[256];
+            std::array<char, 100> _tempSwitchNameForCompareOverlap;
+            bool _isSelectedSwitchName[256];
+            unsigned short _selectedSwitchNameIndex = 0;
+            unsigned short _oldSelectedSwitchNameIndex = 0;
             
         };
         

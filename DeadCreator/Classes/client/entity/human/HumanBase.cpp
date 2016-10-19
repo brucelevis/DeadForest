@@ -131,8 +131,7 @@ void HumanBase::update(float dt)
 }
 
 
-bool HumanBase::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other,
-	cocos2d::Vec2& additionalVelocity)
+bool HumanBase::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other, cocos2d::Vec2& additionalVelocity)
 {
     if ( isMasked(other->getFamilyMask(), HUMAN_BASE) )
     {
@@ -141,8 +140,7 @@ bool HumanBase::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase
 		if (!human->isAlive()) return false;
 
 		cocos2d::Vec2 entityPos = human->getWorldPosition();
-		float overlap =
-			std::max(0.0f, human->getBoundingRadius() + _boundingRadius - entityPos.distance(futurePosition));
+		float overlap = std::max(0.0f, human->getBoundingRadius() + _boundingRadius - entityPos.distance(futurePosition));
 
 		additionalVelocity += (futurePosition - entityPos).getNormalized() * (overlap / 2);
 

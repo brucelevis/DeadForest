@@ -37,7 +37,11 @@ namespace realtrick
             void resetTimer();
             
             const int getCountdownTimer() const { return _countdownTimer; }
-                                   
+            
+        private:
+            
+            void tick();
+            
         private:
             
             Game* _game;

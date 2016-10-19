@@ -66,6 +66,8 @@ void PlayGameLayer::showLayer(bool& opened)
 				ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
 				ImGui::Text("Vertices: %d", static_cast<int>(renderer->getDrawnVertices()));
 				ImGui::Text("Batches: %d", static_cast<int>(renderer->getDrawnBatches()));
+                ImGui::Text("Elapsed Time: %d (sec)", static_cast<int>(game->getElapsedTime()));
+                
 				ImGui::PopStyleColor();
 			}
 

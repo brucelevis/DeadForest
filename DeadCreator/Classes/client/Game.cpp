@@ -107,34 +107,33 @@ bool Game::init()
 
 void Game::update(float dt)
 {
-    // """IMPORTANT"""
-    // logicStream's update() must call before checking pause.
-    // because server stream will load data through this method (although game is puased, load game must process)
-    _logicStream->update(dt);
-    
-    // checking pause is done
-    if ( _isPaused ) return ;
-    
     _elapsedTime += dt;
     
-    pair<int, int> oldIndex = getFocusedTileIndex(_camera->getCameraPos(),
-                                                  _gameResource->getTileWidth(),
-                                                  _gameResource->getTileHeight(), DUMMY_TILE_SIZE);
+    // update logic stream
+    _logicStream->update(dt);
     
-    // 1. update entities
-    _entityManager->update(dt);
-    
-    // 2. set game camera position and chunk update (if cell space is changed)
-    _camera->setCameraPos(_entityManager->getPlayerPtr()->getBalancePosition());
-    if ( oldIndex != getFocusedTileIndex(_camera->getCameraPos(), _gameResource->getTileWidth(), _gameResource->getTileHeight(), DUMMY_TILE_SIZE) )
-    {
-        _renderingSystem->updateChunk(_camera);
-    }
-    
-    // 3. trigger update and execute
+    // trigger update and execute
     _triggerSystem->update(dt);
     
-    _messenger->dispatchDelayedMessages();
+    
+    if ( !_isPaused )
+    {
+        pair<int, int> oldIndex = getFocusedTileIndex(_camera->getCameraPos(),
+                                                      _gameResource->getTileWidth(),
+                                                      _gameResource->getTileHeight(), DUMMY_TILE_SIZE);
+        
+        // update entities
+        _entityManager->update(dt);
+        
+        // set game camera position and chunk update (if cell space is changed)
+        _camera->setCameraPos(_entityManager->getPlayerPtr()->getBalancePosition());
+        if ( oldIndex != getFocusedTileIndex(_camera->getCameraPos(), _gameResource->getTileWidth(), _gameResource->getTileHeight(), DUMMY_TILE_SIZE) )
+        {
+            _renderingSystem->updateChunk(_camera);
+        }
+        
+        _messenger->dispatchDelayedMessages();
+    }
 }
 
 

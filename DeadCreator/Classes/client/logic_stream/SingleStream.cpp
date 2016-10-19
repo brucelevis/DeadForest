@@ -201,6 +201,19 @@ bool SingleStream::handleMessage(const Telegram& msg)
         return true;
     }
     
+    else if ( msg.msg == MessageType::PAUSE_GAME )
+    {
+        _game->pauseGame();
+        
+        return true;
+    }
+    
+    else if ( msg.msg == MessageType::RESUME_GAME )
+    {
+        _game->resumeGame();
+        
+        return true;
+    }
     
     return false;
 }

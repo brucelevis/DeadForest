@@ -10,6 +10,7 @@
 
 #include "ActionBase.hpp"
 #include "TriggerParameters.hpp"
+#include "MessageTypes.hpp"
 
 namespace realtrick
 {
@@ -95,11 +96,7 @@ namespace realtrick
             
             virtual void doAction()
             {
-                auto players = _owner->getPlayers();
-                if ( players.test(static_cast<int>(_game->getPlayerPtr()->getPlayerType())) )
-                {
-                    //_game->replacePauseGameScene(3.0f);
-                }
+                _game->pushLogic(0.0, MessageType::PAUSE_GAME, nullptr);
             }
             
         private:

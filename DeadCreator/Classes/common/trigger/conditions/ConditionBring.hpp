@@ -196,6 +196,8 @@ namespace realtrick
             
             virtual bool isReady() override
             {
+                if ( _game->isPaused() ) return false;
+                
                 if ( _params.player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
                 else _maskedPlayer.set(static_cast<int>(_params.player));
                     

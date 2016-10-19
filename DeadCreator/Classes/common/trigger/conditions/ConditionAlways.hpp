@@ -101,7 +101,12 @@ namespace realtrick
             }
             
             bool init() { return true; }
-            virtual bool isReady() override { return true; }
+            virtual bool isReady() override
+            {
+                if ( _game->isPaused() ) return false;
+                
+                return true;
+            }
             
         private:
             

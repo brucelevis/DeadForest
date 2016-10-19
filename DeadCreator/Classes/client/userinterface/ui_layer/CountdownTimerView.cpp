@@ -67,6 +67,8 @@ bool CountdownTimerView::init()
 
 void CountdownTimerView::update(float dt)
 {
+    if ( _game->isPaused() ) return ;
+    
     if ( _countdownTimer <= 0 )
     {
         if ( isVisible() ) setVisible(false);
@@ -78,30 +80,34 @@ void CountdownTimerView::update(float dt)
     if ( _accumulatedTime >= 1.0f )
     {
         _countdownTimer --;
-        
-        int hours = _countdownTimer / 3600;
-        int leftTime = _countdownTimer % 3600;
-        int minutes = leftTime / 60;
-        int seconds = leftTime % 60;
-        
-        std::string hoursString;
-        if ( hours / 10 == 0) hoursString += '0';
-        hoursString += _to_string(hours);
-        
-        std::string minuteString;
-        if ( minutes / 10 == 0) minuteString += '0';
-        minuteString += _to_string(minutes);
-        
-        std::string secondString;
-        if ( seconds / 10 == 0) secondString += '0';
-        secondString += _to_string(seconds);
-        
-        _hourView->setString(hoursString);
-        _minuteView->setString(minuteString);
-        _secondView->setString(secondString);
-        
+        tick();
         _accumulatedTime = 0.0f;
     }
+}
+
+
+void CountdownTimerView::tick()
+{
+    int hours = _countdownTimer / 3600;
+    int leftTime = _countdownTimer % 3600;
+    int minutes = leftTime / 60;
+    int seconds = leftTime % 60;
+    
+    std::string hoursString;
+    if ( hours / 10 == 0) hoursString += '0';
+    hoursString += _to_string(hours);
+    
+    std::string minuteString;
+    if ( minutes / 10 == 0) minuteString += '0';
+    minuteString += _to_string(minutes);
+    
+    std::string secondString;
+    if ( seconds / 10 == 0) secondString += '0';
+    secondString += _to_string(seconds);
+    
+    _hourView->setString(hoursString);
+    _minuteView->setString(minuteString);
+    _secondView->setString(secondString);
 }
 
 
@@ -111,6 +117,8 @@ void CountdownTimerView::setCountdownTimer(unsigned int seconds)
     _countdownTimer = std::min(seconds, 359999u);
     if ( _countdownTimer > 0 ) setVisible(true);
     else setVisible(false);
+    
+    tick();
 }
 
 
@@ -120,6 +128,8 @@ void CountdownTimerView::addCountdownTimer(unsigned int seconds)
     _countdownTimer = std::min(_countdownTimer + seconds, 359999u);
     if ( _countdownTimer > 0 ) setVisible(true);
     else setVisible(false);
+    
+    tick();
 }
 
 
@@ -128,6 +138,8 @@ void CountdownTimerView::subtractCountdownTimer(unsigned int seconds)
     _countdownTimer = std::min(_countdownTimer - seconds, 0u);
     if ( _countdownTimer > 0 ) setVisible(true);
     else setVisible(false);
+    
+    tick();
 }
 
 
@@ -135,6 +147,8 @@ void CountdownTimerView::resetTimer()
 {
     _countdownTimer = 0;
     setVisible(false);
+    
+    tick();
 }
 
 

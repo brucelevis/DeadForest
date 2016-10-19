@@ -151,6 +151,8 @@ namespace realtrick
             
             virtual bool isReady() override
             {
+                if ( _game->isPaused() ) return false;
+                
                 return false;
             }
             

@@ -10,6 +10,7 @@
 
 #include "ActionBase.hpp"
 #include "TriggerParameters.hpp"
+#include "Game.hpp"
 
 namespace realtrick
 {
@@ -127,6 +128,19 @@ namespace realtrick
             
             virtual void doAction()
             {
+                auto number = _params.number;
+                if ( _params.arithmetical == ArithmeticalType::SET_TO)
+                {
+                    _game->setCountdownTimer(number);
+                }
+                else if ( _params.arithmetical == ArithmeticalType::ADD)
+                {
+                    _game->addCountdownTimer(number);
+                }
+                else if ( _params.arithmetical == ArithmeticalType::SUBTRACT)
+                {
+                    _game->subtractCountdownTimer(number);
+                }
             }
             
         private:

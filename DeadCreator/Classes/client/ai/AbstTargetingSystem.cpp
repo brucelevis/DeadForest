@@ -129,7 +129,7 @@ std::chrono::duration<double> AbstTargetingSystem::getTimeTargetHasBeenOutOfView
 
 bool AbstTargetingSystem::addFollower(HumanBase* const follower)
 {
-	bool removed = removeFollower(follower);
+	//bool removed = removeFollower(follower);
 
 	for (auto& e : _followers)
 	{

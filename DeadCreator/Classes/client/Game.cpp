@@ -813,6 +813,24 @@ void Game::setSharedVisionState(PlayerType src, PlayerType dest, bool enable)
 }
 
 
+void Game::setCountdownTimer(unsigned int seconds)
+{
+    _uiLayer->setCountdownTimer(seconds);
+}
+
+
+void Game::addCountdownTimer(unsigned int seconds)
+{
+    _uiLayer->addCountdownTimer(seconds);
+}
+
+
+void Game::subtractCountdownTimer(unsigned int seconds)
+{
+    _uiLayer->subtractCountdownTimer(seconds);
+}
+
+
 //---------------------------- isLOSOkay --------------------------------------
 //
 //  returns true if the ray between A and B is unobstructed.

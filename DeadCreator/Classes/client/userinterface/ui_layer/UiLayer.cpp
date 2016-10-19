@@ -25,6 +25,7 @@
 #include "WeaponView.hpp"
 #include "InventoryData.hpp"
 #include "EntityPlayer.hpp"
+#include "CountdownTimerView.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 
@@ -228,6 +229,11 @@ bool UiLayer::init()
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboard, this);
     
 #endif    
+
+    
+    _countdownTimerView = CountdownTimerView::create(_game);
+    _countdownTimerView->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT - 50));
+    addChild(_countdownTimerView);
     
     _inGameUiLayer = Node::create();
     _inGameUiLayer->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);
@@ -397,6 +403,23 @@ void UiLayer::syncWeaponView(InventoryData* data)
     _weaponView->syncWeaponView(data);
 }
 
+
+void UiLayer::setCountdownTimer(unsigned int seconds)
+{
+    _countdownTimerView->setCountdownTimer(seconds);
+}
+
+
+void UiLayer::addCountdownTimer(unsigned int seconds)
+{
+    _countdownTimerView->addCountdownTimer(seconds);
+}
+
+
+void UiLayer::subtractCountdownTimer(unsigned int seconds)
+{
+    _countdownTimerView->subtractCountdownTimer(seconds);
+}
 
 
 

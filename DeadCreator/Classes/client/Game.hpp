@@ -139,6 +139,9 @@ namespace realtrick
             bool isGameEnded() const { return _isGameEnded; }
             
             const float getElapsedTime() const { return _elapsedTime; }
+            void setCountdownTimer(unsigned int seconds);
+            void addCountdownTimer(unsigned int seconds);
+            void subtractCountdownTimer(unsigned int seconds);
             
         private:
             

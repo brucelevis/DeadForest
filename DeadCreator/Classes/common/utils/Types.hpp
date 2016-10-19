@@ -82,9 +82,9 @@ namespace realtrick
     enum class ArithmeticalType : int
     {
         INVALID = -1,
-        Add = 0,
-        SetTo = 1,
-        Subtract = 2
+        ADD = 0,
+        SET_TO = 1,
+        SUBTRACT = 2
     };
         
     enum class TriggerComponentType : int

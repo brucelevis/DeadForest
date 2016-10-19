@@ -46,9 +46,9 @@ namespace realtrick
             ArithmeticalType getArithmeticalType() const { return _arithmetical; }
             void setArithmeticalType(ArithmeticalType type)
             {
-                if ( type == ArithmeticalType::Add ) setParameterName("add");
-                else if ( type == ArithmeticalType::SetTo ) setParameterName("set to");
-                else if ( type == ArithmeticalType::Subtract ) setParameterName("subtract");
+                if ( type == ArithmeticalType::ADD ) setParameterName("add");
+                else if ( type == ArithmeticalType::SET_TO ) setParameterName("set to");
+                else if ( type == ArithmeticalType::SUBTRACT ) setParameterName("subtract");
             
                 _arithmetical = type;
                 _currArithmetical = static_cast<int>(type);

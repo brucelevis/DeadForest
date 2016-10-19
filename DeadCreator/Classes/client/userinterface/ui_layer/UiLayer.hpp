@@ -28,6 +28,7 @@ namespace realtrick
         class InventoryView;
         class WeaponView;
         class InventoryData;
+        class CountdownTimerView;
         
         class UiLayer : public cocos2d::Node
         {
@@ -47,6 +48,10 @@ namespace realtrick
             void displayText(const std::string& text);
             void syncItemView(InventoryData* data);
             void syncWeaponView(InventoryData* data);
+            void setCountdownTimer(unsigned int seconds);
+            void addCountdownTimer(unsigned int seconds);
+            void subtractCountdownTimer(unsigned int seconds);
+
             
         private:
             
@@ -65,6 +70,7 @@ namespace realtrick
             InventoryView* _inventoryView;
             WeaponView* _weaponView;
             cocos2d::ui::Button* _inventoryButton;
+            CountdownTimerView* _countdownTimerView;
             
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
             

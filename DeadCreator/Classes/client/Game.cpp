@@ -439,10 +439,10 @@ void Game::loadGameContents(PlayerType ownPlayer)
         _renderingSystem->addEntity(entity.second, zOrder);
     }
     
-    UiLayer* uiLayer = UiLayer::create(this);
-    _renderingSystem->addUINode(uiLayer);
+    _uiLayer = UiLayer::create(this);
+    _renderingSystem->addUINode(_uiLayer);
     
-    _entityManager->getPlayerPtr()->setUiLayer(uiLayer);
+    _entityManager->getPlayerPtr()->setUiLayer(_uiLayer);
 }
 
 

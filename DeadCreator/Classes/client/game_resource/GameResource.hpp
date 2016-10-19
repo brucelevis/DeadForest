@@ -71,14 +71,14 @@ namespace realtrick
             
             // this is constant datas so data that from "getter" is available in game.
             // hence mutable datas (such as entities, triggers) do not have to make getter. (just use for initialize game)
-            int getTileWidth() const { return _tileWidth; }
-            int getTileHeight() const { return _tileHeight; }
-            int getWorldWidth() const { return _worldWidth; }
-            int getWorldHeight() const { return _worldHeight; }
-            int getCellWidth() const { return _cellWidth; }
-            int getCellHeight() const { return _cellHeight; }
-            int getNumOfTileX() const { return _numOfTileX; }
-            int getNumOfTileY() const { return _numOfTileY; }
+            const int getTileWidth() const { return _tileWidth; }
+            const int getTileHeight() const { return _tileHeight; }
+            const int getWorldWidth() const { return _worldWidth; }
+            const int getWorldHeight() const { return _worldHeight; }
+            const int getCellWidth() const { return _cellWidth; }
+            const int getCellHeight() const { return _cellHeight; }
+            const int getNumOfTileX() const { return _numOfTileX; }
+            const int getNumOfTileY() const { return _numOfTileY; }
             
             const std::vector<Polygon>& getCollisionData() const { return _collisionData; }
             const std::vector<Polygon>& getSimpleCollisionData() const { return _simpleCollisionData; }

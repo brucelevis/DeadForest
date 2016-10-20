@@ -29,6 +29,7 @@ enum Approximation : int { AtLeast = 0, AtMost, Exactly }
 enum Arithmetical : int { Add = 0, SetTo, Subtract }
 enum TileType : int { Dirt = 0, Grass, Water, Hill }
 enum SwitchStatus : int { Cleared = 0, Set }
+enum SwitchStatus2 : int { Clear = 0, Set, Toggle, Randomize }
  
 table TileInfo
 {
@@ -114,6 +115,10 @@ table SetCountdownTimer
    arithmetical : Arithmetical;
    number : int;
 }
+table SetSwitch
+{
+   info : SwitchInfo2;
+}
 
 union ConditionBase 
 {
@@ -139,7 +144,8 @@ union ActionBase
    MoveEntity,
    PauseGame,
    ResumeGame,
-   SetCountdownTimer
+   SetCountdownTimer,
+   SetSwitch
 }
 
 table Condition 
@@ -182,6 +188,12 @@ table SwitchInfo
 {
    name : string;
    status : SwitchStatus;
+   index : int;
+}
+table SwitchInfo2
+{
+   name : string;
+   status : SwitchStatus2;
    index : int;
 }
 

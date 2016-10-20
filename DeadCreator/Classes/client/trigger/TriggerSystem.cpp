@@ -169,6 +169,13 @@ bool TriggerSystem::initWithResource(GameResource* res)
                                                               data->number);
                 newTrigger->addAction(action);
             }
+            
+            else if ( (*act)->type == TriggerComponentType::ACTION_SET_SWITCH )
+            {
+                auto data = static_cast<ActionSetSwitchData*>(*act);
+                auto action = ActionSetSwitch::create(_game, data->info);
+                newTrigger->addAction(action);
+            }
         }
         
         int triggerID = getNextValidTriggerID();

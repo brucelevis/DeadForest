@@ -162,7 +162,7 @@ namespace realtrick
                 if ( _game->isPaused() ) return false;
                 
                 auto countdownTimer = _game->getCountdownTimer();
-                if ( countdownTimer == 0) return false;
+                if ( countdownTimer < 0 ) return false;
                 
                 if ( _params.approximation == ApproximationType::AT_LEAST && countdownTimer >= _params.number )
                 {
@@ -172,7 +172,7 @@ namespace realtrick
                 {
                     return true;
                 }
-                else if ( _params.approximation == ApproximationType::EXACTLY && countdownTimer >= _params.number && countdownTimer <= _params.number + 1 )
+                else if ( _params.approximation == ApproximationType::EXACTLY && countdownTimer == _params.number )
                 {
                     return true;
                 }

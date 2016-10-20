@@ -15,7 +15,7 @@ using namespace cocos2d;
 
 CountdownTimerView::CountdownTimerView(Game* game) :
 _game(game),
-_countdownTimer(0),
+_countdownTimer(-1),
 _accumulatedTime(0.0f)
 {
 }
@@ -69,10 +69,10 @@ void CountdownTimerView::update(float dt)
 {
     if ( _game->isPaused() ) return ;
     
-    if ( _countdownTimer <= 0 )
+    if ( _countdownTimer < 0 )
     {
         if ( isVisible() ) setVisible(false);
-        _countdownTimer = 0;
+        _countdownTimer = -1;
         return ;
     }
     
@@ -88,6 +88,8 @@ void CountdownTimerView::update(float dt)
 
 void CountdownTimerView::tick()
 {
+    if ( _countdownTimer < 0 ) return ;
+    
     int hours = _countdownTimer / 3600;
     int leftTime = _countdownTimer % 3600;
     int minutes = leftTime / 60;
@@ -125,6 +127,7 @@ void CountdownTimerView::setCountdownTimer(unsigned int seconds)
 void CountdownTimerView::addCountdownTimer(unsigned int seconds)
 {
     // 99:59:59 (359999 seconds) is max
+    if ( _countdownTimer == -1 ) _countdownTimer = 0;
     _countdownTimer = std::min(_countdownTimer + seconds, 359999u);
     if ( _countdownTimer > 0 ) setVisible(true);
     else setVisible(false);
@@ -135,6 +138,7 @@ void CountdownTimerView::addCountdownTimer(unsigned int seconds)
 
 void CountdownTimerView::subtractCountdownTimer(unsigned int seconds)
 {
+    if ( _countdownTimer == -1 ) _countdownTimer = 0;
     _countdownTimer = std::min(_countdownTimer - seconds, 0u);
     if ( _countdownTimer > 0 ) setVisible(true);
     else setVisible(false);
@@ -145,7 +149,7 @@ void CountdownTimerView::subtractCountdownTimer(unsigned int seconds)
 
 void CountdownTimerView::resetTimer()
 {
-    _countdownTimer = 0;
+    _countdownTimer = -1;
     setVisible(false);
     
     tick();

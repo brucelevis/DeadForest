@@ -96,6 +96,15 @@ namespace realtrick
         SET = 1
     };
         
+    enum class SwitchStatus2 : int
+    {
+        INVALID = -1,
+        CLEAR = 0,
+        SET = 1,
+        TOGGLE = 2,
+        RANDOMIZE = 3
+    };
+        
     enum class TriggerComponentType : int
     {
         CONDITION_ALWAYS,
@@ -115,7 +124,8 @@ namespace realtrick
         ACTION_MOVE_ENTITY,
         ACTION_PAUSE_GAME,
         ACTION_RESUME_GAME,
-        ACTION_SET_COUNTDOWN_TIMER
+        ACTION_SET_COUNTDOWN_TIMER,
+        ACTION_SET_SWITCH,
     };
         
     struct EntityData
@@ -141,6 +151,29 @@ namespace realtrick
         }
         
         void copyFrom(const Switch& rhs)
+        {
+            name.fill('\0');
+            std::strncpy(name.data(), rhs.name.data(), 100);
+            status = rhs.status;
+            index = rhs.index;
+        }
+    };
+        
+    struct Switch2
+    {
+        std::array<char, 100> name;
+        SwitchStatus2 status;
+        int index;
+        
+        Switch2() = default;
+        Switch2(const Switch2& rhs) { copyFrom(rhs); }
+        Switch2& operator=(const Switch2& rhs)
+        {
+            if ( &rhs != this ) copyFrom(rhs);
+            return *this;
+        }
+        
+        void copyFrom(const Switch2& rhs)
         {
             name.fill('\0');
             std::strncpy(name.data(), rhs.name.data(), 100);

@@ -57,6 +57,8 @@ namespace DeadCreator {
     
     struct SetCountdownTimer;
     
+    struct SetSwitch;
+    
     struct Condition;
     
     struct Action;
@@ -70,6 +72,8 @@ namespace DeadCreator {
     struct PlayerInfo;
     
     struct SwitchInfo;
+    
+    struct SwitchInfo2;
     
     struct GMXFile;
     
@@ -133,6 +137,22 @@ namespace DeadCreator {
     
     inline const char *EnumNameSwitchStatus(SwitchStatus e) { return EnumNamesSwitchStatus()[static_cast<int>(e)]; }
     
+    enum SwitchStatus2 {
+        SwitchStatus2_Clear = 0,
+        SwitchStatus2_Set = 1,
+        SwitchStatus2_Toggle = 2,
+        SwitchStatus2_Randomize = 3,
+        SwitchStatus2_MIN = SwitchStatus2_Clear,
+        SwitchStatus2_MAX = SwitchStatus2_Randomize
+    };
+    
+    inline const char **EnumNamesSwitchStatus2() {
+        static const char *names[] = { "Clear", "Set", "Toggle", "Randomize", nullptr };
+        return names;
+    }
+    
+    inline const char *EnumNameSwitchStatus2(SwitchStatus2 e) { return EnumNamesSwitchStatus2()[static_cast<int>(e)]; }
+    
     enum ConditionBase {
         ConditionBase_NONE = 0,
         ConditionBase_Always = 1,
@@ -169,12 +189,13 @@ namespace DeadCreator {
         ActionBase_PauseGame = 10,
         ActionBase_ResumeGame = 11,
         ActionBase_SetCountdownTimer = 12,
+        ActionBase_SetSwitch = 13,
         ActionBase_MIN = ActionBase_NONE,
-        ActionBase_MAX = ActionBase_SetCountdownTimer
+        ActionBase_MAX = ActionBase_SetSwitch
     };
     
     inline const char **EnumNamesActionBase() {
-        static const char *names[] = { "NONE", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", "Victory", "Defeat", "MoveEntity", "PauseGame", "ResumeGame", "SetCountdownTimer", nullptr };
+        static const char *names[] = { "NONE", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", "Victory", "Defeat", "MoveEntity", "PauseGame", "ResumeGame", "SetCountdownTimer", "SetSwitch", nullptr };
         return names;
     }
     
@@ -994,6 +1015,38 @@ namespace DeadCreator {
         return builder_.Finish();
     }
     
+    struct SetSwitch FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_INFO = 4
+        };
+        const SwitchInfo2 *info() const { return GetPointer<const SwitchInfo2 *>(VT_INFO); }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_INFO) &&
+            verifier.VerifyTable(info()) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct SetSwitchBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_info(flatbuffers::Offset<SwitchInfo2> info) { fbb_.AddOffset(SetSwitch::VT_INFO, info); }
+        SetSwitchBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        SetSwitchBuilder &operator=(const SetSwitchBuilder &);
+        flatbuffers::Offset<SetSwitch> Finish() {
+            auto o = flatbuffers::Offset<SetSwitch>(fbb_.EndTable(start_, 1));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<SetSwitch> CreateSetSwitch(flatbuffers::FlatBufferBuilder &_fbb,
+                                                          flatbuffers::Offset<SwitchInfo2> info = 0) {
+        SetSwitchBuilder builder_(_fbb);
+        builder_.add_info(info);
+        return builder_.Finish();
+    }
+    
     struct Condition FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
         enum {
             VT_CONDITION_TYPE = 4,
@@ -1286,6 +1339,50 @@ namespace DeadCreator {
         return builder_.Finish();
     }
     
+    struct SwitchInfo2 FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_NAME = 4,
+            VT_STATUS = 6,
+            VT_INDEX = 8
+        };
+        const flatbuffers::String *name() const { return GetPointer<const flatbuffers::String *>(VT_NAME); }
+        SwitchStatus2 status() const { return static_cast<SwitchStatus2>(GetField<int32_t>(VT_STATUS, 0)); }
+        int32_t index() const { return GetField<int32_t>(VT_INDEX, 0); }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_NAME) &&
+            verifier.Verify(name()) &&
+            VerifyField<int32_t>(verifier, VT_STATUS) &&
+            VerifyField<int32_t>(verifier, VT_INDEX) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct SwitchInfo2Builder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_name(flatbuffers::Offset<flatbuffers::String> name) { fbb_.AddOffset(SwitchInfo2::VT_NAME, name); }
+        void add_status(SwitchStatus2 status) { fbb_.AddElement<int32_t>(SwitchInfo2::VT_STATUS, static_cast<int32_t>(status), 0); }
+        void add_index(int32_t index) { fbb_.AddElement<int32_t>(SwitchInfo2::VT_INDEX, index, 0); }
+        SwitchInfo2Builder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        SwitchInfo2Builder &operator=(const SwitchInfo2Builder &);
+        flatbuffers::Offset<SwitchInfo2> Finish() {
+            auto o = flatbuffers::Offset<SwitchInfo2>(fbb_.EndTable(start_, 3));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<SwitchInfo2> CreateSwitchInfo2(flatbuffers::FlatBufferBuilder &_fbb,
+                                                              flatbuffers::Offset<flatbuffers::String> name = 0,
+                                                              SwitchStatus2 status = SwitchStatus2_Clear,
+                                                              int32_t index = 0) {
+        SwitchInfo2Builder builder_(_fbb);
+        builder_.add_index(index);
+        builder_.add_status(status);
+        builder_.add_name(name);
+        return builder_.Finish();
+    }
+    
     struct GMXFile FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
         enum {
             VT_DEFAULT_TYPE = 4,
@@ -1456,6 +1553,7 @@ namespace DeadCreator {
             case ActionBase_PauseGame: return verifier.VerifyTable(reinterpret_cast<const PauseGame *>(union_obj));
             case ActionBase_ResumeGame: return verifier.VerifyTable(reinterpret_cast<const ResumeGame *>(union_obj));
             case ActionBase_SetCountdownTimer: return verifier.VerifyTable(reinterpret_cast<const SetCountdownTimer *>(union_obj));
+            case ActionBase_SetSwitch: return verifier.VerifyTable(reinterpret_cast<const SetSwitch *>(union_obj));
             default: return false;
         }
     }

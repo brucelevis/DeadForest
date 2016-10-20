@@ -84,6 +84,7 @@ bool TriggerEditLayer::init()
     _actionList.push_back(new ActionPreserveTrigger(&_gmxLayer));
     _actionList.push_back(new ActionResumeGame(&_gmxLayer));
     _actionList.push_back(new ActionSetCountdownTimer(&_gmxLayer));
+    _actionList.push_back(new ActionSetSwitch(&_gmxLayer));
     _actionList.push_back(new ActionVictory(&_gmxLayer));
     
     _switchs.resize(256);

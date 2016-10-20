@@ -20,3 +20,4 @@
 #include "ActionPauseGame.hpp"
 #include "ActionResumeGame.hpp"
 #include "ActionSetCountdownTimer.hpp"
+#include "ActionSetSwitch.hpp"

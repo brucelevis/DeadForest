@@ -340,6 +340,18 @@ bool GameResource::initWithBinary(const char* buffer)
 
                     break;
                 }
+                case DeadCreator::ActionBase_SetSwitch:
+                {
+                    auto actionObject = static_cast<const DeadCreator::SetSwitch*>(act->action());
+                    auto action = new ActionSetSwitchData();
+                    std::strncpy(action->info.name.data(), actionObject->info()->name()->c_str(), 100);
+                    action->info.index = actionObject->info()->index();
+                    action->info.status = static_cast<SwitchStatus2>(actionObject->info()->status());
+                    data.actions.push_back(action);
+                    
+                    break;
+                }
+                    
                 default: { cocos2d::log("invalid action type"); break;}
             }
         }

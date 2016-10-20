@@ -18,3 +18,4 @@
 #include "TriggerParameterText.hpp"
 #include "TriggerParameterSwitchName.hpp"
 #include "TriggerParameterSwitchStatus.hpp"
+#include "TriggerParameterSwitchStatus2.hpp"

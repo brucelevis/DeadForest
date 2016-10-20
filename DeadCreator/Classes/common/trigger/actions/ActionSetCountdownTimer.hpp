@@ -58,7 +58,7 @@ namespace realtrick
                 
                 ImGui::SameLine(); ImGui::TextUnformatted("seconds.");
                 
-                return true;
+                return (_arithmetical.isItemSelected() && _number.isItemSelected());
             }
             
             virtual std::string getSummaryString() const override

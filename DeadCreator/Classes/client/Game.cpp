@@ -834,6 +834,13 @@ SwitchStatus Game::getSwitchStatus(int index) const
 }
 
 
+void Game::setSwitchStatus(int index, SwitchStatus status)
+{
+    CCASSERT((index >= 0 && index < 256), "out of switch's index");
+    _gameResource->_switchs[index].status = status;
+}
+
+
 //---------------------------- isLOSOkay --------------------------------------
 //
 //  returns true if the ray between A and B is unobstructed.

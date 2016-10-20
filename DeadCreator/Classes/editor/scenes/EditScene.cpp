@@ -786,6 +786,18 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         
                         break;
                     }
+                    case DeadCreator::ActionBase_SetSwitch:
+                    {
+                        auto actionObject = static_cast<const DeadCreator::SetSwitch*>(act->action());
+                        auto action = new ActionSetSwitch(_layer);
+                        action->setSwitchName(actionObject->info()->name()->str());
+                        action->setStatus(static_cast<SwitchStatus2>(actionObject->info()->status()));
+                        action->setSwitchIndex(actionObject->info()->index());
+                        
+                        newTrigger->addAction(action);
+                        
+                        break;
+                    }
                     default: { cocos2d::log("invalid action type"); break;}
                 }
             }

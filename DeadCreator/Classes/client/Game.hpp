@@ -145,6 +145,7 @@ namespace realtrick
             void subtractCountdownTimer(unsigned int seconds);
             
             SwitchStatus getSwitchStatus(int index) const;
+            void setSwitchStatus(int index, SwitchStatus status);
             
         private:
             

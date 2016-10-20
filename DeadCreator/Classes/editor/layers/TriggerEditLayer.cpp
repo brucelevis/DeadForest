@@ -915,6 +915,3 @@ void TriggerEditLayer::showChangeSwitchName(const char* title, bool& opened)
 
 
 
-
-
-

@@ -51,7 +51,7 @@ namespace realtrick
             
             const std::vector<std::array<char, 100>>& getSwitchNames() const { return _switchNames; }
             void setSwitchName(int i, const std::array<char, 100>& name) { CCASSERT((i >= 0 && i < 256), "out of index"); _switchNames[i] = name; }
-            
+    
         private:
             
             GMXLayer& _gmxLayer;

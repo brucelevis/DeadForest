@@ -71,21 +71,17 @@ namespace realtrick
             
             virtual void drawImGui(void* opt = nullptr) override
             {
-                if ( opt == nullptr ) throw std::runtime_error("location's drawImGUi() must have *opt(gmx layer's instance)");
-                    
-                auto gmxLayer = static_cast<GMXLayer*>(opt);
-                
                 ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
                 ImGui::PushItemWidth(200);
                 std::string locationList;
-                for(auto& loc : gmxLayer->getLocations() )
+                for(auto& loc : _gmxLayer->getLocations() )
                 {
                     locationList += loc->getLocationName();
                     locationList += '\0';
                 }
                 if ( ImGui::Combo("", &_currLocation, locationList.c_str(), 5) )
                 {
-                    setLocation(gmxLayer->getLocations().at(_currLocation));
+                    setLocation(_gmxLayer->getLocations().at(_currLocation));
                 }
                 ImGui::PopItemWidth();
                 ImGui::PopStyleColor();

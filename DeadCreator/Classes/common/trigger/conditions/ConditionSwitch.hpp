@@ -56,14 +56,14 @@ namespace realtrick
             virtual ~ConditionSwitch() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                // approximation combo box
+                // combo box
                 ImGui::PushID(1);
                 _name.drawImGui(opt);
                 ImGui::PopID();
                 
                 ImGui::SameLine(); ImGui::TextUnformatted("is ");
                 
-                // drag int
+                // status
                 ImGui::PushID(2);
                 ImGui::SameLine(); _status.drawImGui();
                 ImGui::PopID();

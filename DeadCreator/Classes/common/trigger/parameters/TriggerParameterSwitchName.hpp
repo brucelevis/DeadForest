@@ -29,7 +29,10 @@ namespace realtrick
         public:
             
             TriggerParameterSwitchName() = default;
-            explicit TriggerParameterSwitchName(GMXLayer* layer) : TriggerParameterBase(layer) { setParameterName(""); }
+            explicit TriggerParameterSwitchName(GMXLayer* layer) : TriggerParameterBase(layer)
+            {
+                setParameterName("");
+            }
             TriggerParameterSwitchName(const TriggerParameterSwitchName& rhs) : TriggerParameterBase(rhs) { copyFrom(rhs); }
             TriggerParameterSwitchName& operator=(const TriggerParameterSwitchName& rhs)
             {
@@ -44,7 +47,9 @@ namespace realtrick
                 _currIndex = rhs._currIndex;
             }
             
-            virtual ~TriggerParameterSwitchName() = default;
+            virtual ~TriggerParameterSwitchName()
+            {
+            }
             
             int getSwitchIndex() const { return _currIndex; }
             void setSwitchIndex(int index) { _currIndex = index; }
@@ -66,12 +71,10 @@ namespace realtrick
             
             virtual void drawImGui(void* opt = nullptr) override
             {
-                auto gmxLayer = static_cast<GMXLayer*>(opt);
-                
                 ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.85, 0.85, 0.85, 1.0));
                 ImGui::PushItemWidth(600);
                 std::string switchNames;
-                auto triggerEditLayer = gmxLayer->getTriggerEditLayer();
+                auto triggerEditLayer = _gmxLayer->getTriggerEditLayer();
                 const auto& switchNameList = triggerEditLayer->getSwitchNames();
                 for( const auto& name : switchNameList )
                 {
@@ -86,9 +89,21 @@ namespace realtrick
                 ImGui::PopStyleColor();
             }
             
+            virtual std::string getParameterName() const override
+            {
+                auto triggerEditLayer = _gmxLayer->getTriggerEditLayer();
+                const auto& switchNameList = triggerEditLayer->getSwitchNames();
+                if ( switchNameList[_currIndex].data() != _switchName )
+                {
+                    _switchName = switchNameList[_currIndex].data();
+                    _parameterName = _switchName;
+                }
+                return _parameterName;
+            }
+            
         private:
             
-            std::string _switchName;
+            mutable std::string _switchName;
             int _currIndex = -1;
             
         };

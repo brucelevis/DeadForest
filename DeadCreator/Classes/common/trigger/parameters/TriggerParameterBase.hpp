@@ -42,6 +42,7 @@ namespace realtrick
             
             void copyFrom(const TriggerParameterBase& rhs)
             {
+                _gmxLayer = rhs._gmxLayer;
                 _parameterName = rhs._parameterName;
             }
             
@@ -58,7 +59,7 @@ namespace realtrick
         protected:
             
             GMXLayer* _gmxLayer;
-            std::string _parameterName;
+            mutable std::string _parameterName;
             
         };
         

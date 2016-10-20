@@ -30,12 +30,15 @@ bool GameResource::initWithBinary(const char* buffer)
 {
     const DeadCreator::GMXFile* file = DeadCreator::GetGMXFile(buffer);
     
+    
     // 1. default tile
     _defaultTile = file->default_type();
+    
     
     // 2. tile size
     _tileWidth = file->tile_size()->width();
     _tileHeight = file->tile_size()->height();
+    
     
     // 3. number of tiles
     _numOfTileX = file->number_of_tiles()->x() + DUMMY_TILE_SIZE * 2;
@@ -43,6 +46,7 @@ bool GameResource::initWithBinary(const char* buffer)
     
     _worldWidth = _tileWidth * _numOfTileX;
     _worldHeight = _tileHeight * _numOfTileY;
+    
     
     // 4. tile infos
     _tileData.resize(_numOfTileY);
@@ -70,6 +74,7 @@ bool GameResource::initWithBinary(const char* buffer)
         _tileData[tile->indices()->y()][tile->indices()->x()].setNumber(tile->number()->str());
     }
     
+    
     // 5. collision regions
     for ( auto poly = file->collision_regions()->begin() ; poly != file->collision_regions()->end() ; ++ poly )
     {
@@ -81,6 +86,7 @@ bool GameResource::initWithBinary(const char* buffer)
         _collisionData.push_back(p);
     }
     
+    
     // 5-1. simple collision regions
     for ( auto poly = file->simple_collision_regions()->begin() ; poly != file->simple_collision_regions()->end() ; ++ poly )
     {
@@ -91,6 +97,7 @@ bool GameResource::initWithBinary(const char* buffer)
         }
         _simpleCollisionData.push_back(p);
     }
+    
     
     // 6. entities
     for ( auto entity = file->entities()->begin(); entity != file->entities()->end(); ++ entity )
@@ -104,9 +111,11 @@ bool GameResource::initWithBinary(const char* buffer)
         _entities.push_back(data);
     }
     
+    
     // 7. cell space size
     _cellWidth = file->cell_space_size()->width();
     _cellHeight = file->cell_space_size()->height();
+    
     
     // 8. locations
     for ( auto location = file->locations()->begin(); location != file->locations()->end(); ++location)
@@ -122,7 +131,17 @@ bool GameResource::initWithBinary(const char* buffer)
     }
     
     
-    // 9. triggers
+    // 9. switchs
+    for( auto swc = file->switch_infos()->begin(); swc != file->switch_infos()->end() ; ++ swc)
+    {
+        int currIndex = swc->index();
+        _switchs[currIndex].index = currIndex;
+        std::strncpy(_switchs[currIndex].name.data(), swc->name()->c_str(), 100);
+        _switchs[currIndex].status = static_cast<SwitchStatus>(swc->status());
+    }
+    
+    
+    // 10. triggers
     for ( auto trigger = file->triggers()->begin() ; trigger != file->triggers()->end() ; ++trigger)
     {
         TriggerData data;
@@ -185,6 +204,18 @@ bool GameResource::initWithBinary(const char* buffer)
                     auto condition = new ConditionCountdownTimerData();
                     condition->approximation = static_cast<ApproximationType>(conditionObject->approximation());
                     condition->number = conditionObject->number();
+                    data.conditions.push_back(condition);
+                    
+                    break;
+                }
+                case DeadCreator::ConditionBase_Switch:
+                {
+                    auto conditionObject = static_cast<const DeadCreator::Switch*>(cond->condition());
+                    
+                    auto condition = new ConditionSwitchData();
+                    std::strncpy(condition->info.name.data(), conditionObject->info()->name()->c_str(), 100);
+                    condition->info.index = conditionObject->info()->index();
+                    condition->info.status = static_cast<SwitchStatus>(conditionObject->info()->status());
                     data.conditions.push_back(condition);
                     
                     break;
@@ -317,7 +348,7 @@ bool GameResource::initWithBinary(const char* buffer)
     }
     
     
-    // 10. force infos
+    // 11. force infos
     strncpy(_forces[0].name.data(), file->force1_info()->name()->c_str(), 20);
     _forces[0].isAlly = file->force1_info()->is_ally();
     _forces[0].isVision = file->force1_info()->is_vision();
@@ -335,7 +366,7 @@ bool GameResource::initWithBinary(const char* buffer)
     _forces[3].isVision = file->force4_info()->is_vision();
     
     
-    // 11. player infos
+    // 12. player infos
     std::vector<int> forcePlayers[4];
     int iter = 1;
     for ( auto info = file->playerInfos()->begin(); info != file->playerInfos()->end() ; ++ info )

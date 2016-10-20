@@ -827,6 +827,13 @@ void Game::subtractCountdownTimer(unsigned int seconds)
 }
 
 
+SwitchStatus Game::getSwitchStatus(int index) const
+{
+    CCASSERT((index >= 0 && index < 256), "out of switch's index");
+    return _gameResource->_switchs[index].status;
+}
+
+
 //---------------------------- isLOSOkay --------------------------------------
 //
 //  returns true if the ray between A and B is unobstructed.

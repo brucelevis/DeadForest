@@ -545,14 +545,14 @@ void EditScene::createGMXLayer(const std::string& filePath)
         }
         
         
-        // switch names
-        int index = 0;
-        for ( auto iter = gmxFile->switch_names()->begin() ; iter != gmxFile->switch_names()->end() ; ++ iter)
+        // switchs
+        for ( auto iter = gmxFile->switch_infos()->begin() ; iter != gmxFile->switch_infos()->end() ; ++ iter)
         {
-            std::array<char, 100> name;
-            std::strncpy(name.data(), iter->c_str(), 100);
-            _layer->getTriggerEditLayer()->setSwitchName(index, name);
-            ++index;
+            Switch swc;
+            std::strncpy(swc.name.data(), iter->name()->c_str(), 100);
+            swc.status = static_cast<SwitchStatus>(iter->status());
+            swc.index = iter->index();
+            _layer->getTriggerEditLayer()->setSwitch(swc);
         }
         
         
@@ -628,9 +628,9 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     {
                         auto conditionObject = static_cast<const DeadCreator::Switch*>(cond->condition());
                         auto condition = new ConditionSwitch(_layer);
-                        condition->setSwitchName(conditionObject->switch_name()->str());
-                        condition->setSwitchIndex(conditionObject->switch_index());
-                        condition->setStatus(static_cast<SwitchStatus>(conditionObject->status()));
+                        condition->setSwitchName(conditionObject->info()->name()->str());
+                        condition->setStatus(static_cast<SwitchStatus>(conditionObject->info()->status()));
+                        condition->setSwitchIndex(conditionObject->info()->index());
                         
                         newTrigger->addCondition(condition);
                         

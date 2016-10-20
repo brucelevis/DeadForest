@@ -144,6 +144,8 @@ namespace realtrick
             void addCountdownTimer(unsigned int seconds);
             void subtractCountdownTimer(unsigned int seconds);
             
+            SwitchStatus getSwitchStatus(int index) const;
+            
         private:
             
             cocos2d::Size _winSize;

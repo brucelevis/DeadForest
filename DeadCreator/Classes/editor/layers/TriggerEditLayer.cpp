@@ -86,18 +86,20 @@ bool TriggerEditLayer::init()
     _actionList.push_back(new ActionSetCountdownTimer(&_gmxLayer));
     _actionList.push_back(new ActionVictory(&_gmxLayer));
     
-    _switchNames.resize(256);
+    _switchs.resize(256);
     for(int i = 0 ; i < 256; ++ i)
     {
         std::string str = "Switch ";
         str += _to_string(i);
-        std::strncpy(_switchNames[i].data(), str.c_str(), 100);
+        std::strncpy(_switchs[i].name.data(), str.c_str(), 100);
+        _switchs[i].status = SwitchStatus::CLEARED;
+        _switchs[i].index = i;
         _isSelectedSwitchName[i] = false;
     }
     _selectedSwitchNameIndex = 0;
     _oldSelectedSwitchNameIndex = 0;
     _isSelectedSwitchName[_selectedSwitchNameIndex] = true;
-    std::strncpy(_tempSwitchNameForCompareOverlap.data(), _switchNames[_selectedSwitchNameIndex].data(), 100);
+    std::strncpy(_tempSwitchNameForCompareOverlap.data(), _switchs[_selectedSwitchNameIndex].name.data(), 100);
     
     return true;
 }
@@ -828,9 +830,9 @@ void TriggerEditLayer::showChangeSwitchName(const char* title, bool& opened)
         ImGui::BeginChild("##dummy", ImVec2(0, HEIGHT - 65), true);
         for(int i = 0 ; i < 256 ; ++ i)
         {
-            if ( ImGui::Selectable(_switchNames[i].data(), _isSelectedSwitchName[i]) )
+            if ( ImGui::Selectable(_switchs[i].name.data(), _isSelectedSwitchName[i]) )
             {
-                std::strncpy(_tempSwitchNameForCompareOverlap.data(), _switchNames[i].data(), 100);
+                std::strncpy(_tempSwitchNameForCompareOverlap.data(), _switchs[i].name.data(), 100);
                 
                 _isSelectedSwitchName[_oldSelectedSwitchNameIndex] = false;
                 _selectedSwitchNameIndex = i;
@@ -850,7 +852,7 @@ void TriggerEditLayer::showChangeSwitchName(const char* title, bool& opened)
             for(int i = 0 ; i < 256; ++ i)
             {
                 if ( _selectedSwitchNameIndex == i ) continue;
-                if ( strcmp(_tempSwitchNameForCompareOverlap.data(), _switchNames[i].data()) == 0 )
+                if ( strcmp(_tempSwitchNameForCompareOverlap.data(), _switchs[i].name.data()) == 0 )
                 {
                     isOverlapName = true;
                     break;
@@ -873,7 +875,7 @@ void TriggerEditLayer::showChangeSwitchName(const char* title, bool& opened)
         }
         if ( ImGui::ButtonEx("Set Name", ImVec2(145, 25)) && !isOverlapName )
         {
-            std::strncpy(_switchNames[_selectedSwitchNameIndex].data(), _tempSwitchNameForCompareOverlap.data(), 100);
+            std::strncpy(_switchs[_selectedSwitchNameIndex].name.data(), _tempSwitchNameForCompareOverlap.data(), 100);
         }
         ImGui::GetStyle().Colors[ImGuiCol_Button] = backupButton;
         ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = backupHoverColor;
@@ -886,11 +888,11 @@ void TriggerEditLayer::showChangeSwitchName(const char* title, bool& opened)
             {
                 std::string str = "Switch ";
                 str += _to_string(i);
-                std::strncpy(_switchNames[i].data(), str.c_str(), 100);
+                std::strncpy(_switchs[i].name.data(), str.c_str(), 100);
                 _isSelectedSwitchName[i] = false;
             }
             _isSelectedSwitchName[_selectedSwitchNameIndex] = true;
-            std::strncpy(_tempSwitchNameForCompareOverlap.data(), _switchNames[_selectedSwitchNameIndex].data(), 100);
+            std::strncpy(_tempSwitchNameForCompareOverlap.data(), _switchs[_selectedSwitchNameIndex].name.data(), 100);
         }
         
         // draw close button
@@ -900,7 +902,7 @@ void TriggerEditLayer::showChangeSwitchName(const char* title, bool& opened)
             _isSelectedSwitchName[_selectedSwitchNameIndex] = false;
             _isSelectedSwitchName[0] = true;
             _oldSelectedSwitchNameIndex = _selectedSwitchNameIndex = 0;
-            std::strncpy(_tempSwitchNameForCompareOverlap.data(), _switchNames[_selectedSwitchNameIndex].data(), 100);
+            std::strncpy(_tempSwitchNameForCompareOverlap.data(), _switchs[_selectedSwitchNameIndex].name.data(), 100);
             
             opened = false;
             ImGui::CloseCurrentPopup();

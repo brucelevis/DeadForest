@@ -16,6 +16,7 @@
 
 #include "GameTrigger.hpp"
 #include "GMXFile_generated.h"
+#include "Types.hpp"
 
 namespace realtrick
 {
@@ -49,8 +50,8 @@ namespace realtrick
             void saveTriggers(flatbuffers::FlatBufferBuilder& builder, std::vector<flatbuffers::Offset<DeadCreator::Trigger>>& out_triggers);
             void addTrigger(GameTrigger* trigger) { if ( trigger ) _triggers.push_back(trigger); }
             
-            const std::vector<std::array<char, 100>>& getSwitchNames() const { return _switchNames; }
-            void setSwitchName(int i, const std::array<char, 100>& name) { CCASSERT((i >= 0 && i < 256), "out of index"); _switchNames[i] = name; }
+            const std::vector<Switch>& getSwitchs() const { return _switchs; }
+            void setSwitch(const Switch& swc) { CCASSERT((swc.index >= 0 && swc.index < 256), "out of index"); _switchs[swc.index] = swc; }
     
         private:
             
@@ -67,7 +68,7 @@ namespace realtrick
             ConditionBase* _modifyingCondition;
             ActionBase* _modifyingAction;
             
-            std::vector<std::array<char, 100>> _switchNames;
+            std::vector<Switch> _switchs;
             std::array<char, 100> _tempSwitchNameForCompareOverlap;
             bool _isSelectedSwitchName[256];
             unsigned short _selectedSwitchNameIndex = 0;

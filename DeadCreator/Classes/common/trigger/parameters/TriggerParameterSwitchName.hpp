@@ -75,15 +75,15 @@ namespace realtrick
                 ImGui::PushItemWidth(600);
                 std::string switchNames;
                 auto triggerEditLayer = _gmxLayer->getTriggerEditLayer();
-                const auto& switchNameList = triggerEditLayer->getSwitchNames();
-                for( const auto& name : switchNameList )
+                const auto& switchs = triggerEditLayer->getSwitchs();
+                for( const auto& swc : switchs )
                 {
-                    switchNames += name.data();
+                    switchNames += swc.name.data();
                     switchNames += '\0';
                 }
                 if ( ImGui::Combo("", &_currIndex, switchNames.c_str(), 16) )
                 {
-                    setSwitchName(switchNameList[_currIndex].data());
+                    setSwitchName(switchs[_currIndex].name.data());
                 }
                 ImGui::PopItemWidth();
                 ImGui::PopStyleColor();
@@ -92,10 +92,10 @@ namespace realtrick
             virtual std::string getParameterName() const override
             {
                 auto triggerEditLayer = _gmxLayer->getTriggerEditLayer();
-                const auto& switchNameList = triggerEditLayer->getSwitchNames();
-                if ( switchNameList[_currIndex].data() != _switchName )
+                const auto& switchs = triggerEditLayer->getSwitchs();
+                if ( switchs[_currIndex].name.data() != _switchName )
                 {
-                    _switchName = switchNameList[_currIndex].data();
+                    _switchName = switchs[_currIndex].name.data();
                     _parameterName = _switchName;
                 }
                 return _parameterName;

@@ -129,6 +129,9 @@ namespace realtrick
             // player info
             PlayerInfo _playerInfos[9];
             
+            // switchs
+            Switch _switchs[256];
+            
         };
         
     }

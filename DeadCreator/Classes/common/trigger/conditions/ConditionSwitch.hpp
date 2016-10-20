@@ -95,11 +95,12 @@ namespace realtrick
             
             virtual flatbuffers::Offset<DeadCreator::Condition> getConditionObject(flatbuffers::FlatBufferBuilder& builder) override
             {
-                auto obj = DeadCreator::CreateSwitch(builder,
-                                                     builder.CreateString(_name.getSwitchName()),
-                                                     _name.getSwitchIndex(),
-                                                     static_cast<DeadCreator::SwitchStatus>(_status.getSwitchStatus()));
+                auto switchInfo = DeadCreator::CreateSwitchInfo(builder,
+                                                                builder.CreateString(_name.getSwitchName()),
+                                                                static_cast<DeadCreator::SwitchStatus>(_status.getSwitchStatus()),
+                                                                _name.getSwitchIndex());
                 
+                auto obj = DeadCreator::CreateSwitch(builder, switchInfo);
                 return DeadCreator::CreateCondition(builder, DeadCreator::ConditionBase_Switch, obj.Union());
             }
             
@@ -116,73 +117,58 @@ namespace realtrick
         
     }
     
-//    namespace client
-//    {
-//        
-//        struct ConditionSwitchData: public TriggerDataBase
-//        {
-//            ApproximationType approximation;
-//            int number;
-//            
-//            ConditionSwitchData() { type = TriggerComponentType::CONDITION_ELAPSED_TIME; }
-//        };
-//        
-//        class ConditionSwitch : public ConditionBase
-//        {
-//            
-//        public:
-//            
-//            explicit ConditionSwitch(Game* game) : ConditionBase(game)
-//            {
-//            }
-//            
-//            virtual ~ConditionSwitch() = default;
-//            
-//            static ConditionSwitch* create(Game* game, ApproximationType appType, int number)
-//            {
-//                auto ret = new (std::nothrow) ConditionSwitch(game);
-//                if ( ret && ret->init(appType, number) )
-//                {
-//                    ret->autorelease();
-//                    return ret;
-//                }
-//                CC_SAFE_DELETE(ret);
-//                return nullptr;
-//            }
-//            
-//            bool init(ApproximationType appType, int number)
-//            {
-//                _params.approximation = appType;
-//                _params.number = number;
-//                
-//                return true;
-//            }
-//            
-//            virtual bool isReady() override
-//            {
-//                auto Switch = _game->getSwitch();
-//                if ( _params.approximation == ApproximationType::AT_LEAST && Switch >= _params.number )
-//                {
-//                    return true;
-//                }
-//                else if ( _params.approximation == ApproximationType::AT_MOST && Switch <= _params.number )
-//                {
-//                    return true;
-//                }
-//                else if ( _params.approximation == ApproximationType::EXACTLY && Switch >= _params.number && Switch <= _params.number + 1 )
-//                {
-//                    return true;
-//                }
-//                
-//                return false;
-//            }
-//            
-//        private:
-//            
-//            ConditionSwitchData _params;
-//            
-//        };
-//        
-//    }
+    namespace client
+    {
+        
+        struct ConditionSwitchData: public TriggerDataBase
+        {
+            Switch info;
+            
+            ConditionSwitchData() { type = TriggerComponentType::CONDITION_SWITCH; }
+        };
+        
+        class ConditionSwitch : public ConditionBase
+        {
+            
+        public:
+            
+            explicit ConditionSwitch(Game* game) : ConditionBase(game)
+            {
+            }
+            
+            virtual ~ConditionSwitch() = default;
+            
+            static ConditionSwitch* create(Game* game, const Switch& switchInfo)
+            {
+                auto ret = new (std::nothrow) ConditionSwitch(game);
+                if ( ret && ret->init(switchInfo) )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
+            bool init(const Switch& switchInfo)
+            {
+                _params.info = switchInfo;
+                
+                return true;
+            }
+            
+            virtual bool isReady() override
+            {
+                if ( _params.info.status == _game->getSwitchStatus(_params.info.index) ) return true;
+                return false;
+            }
+            
+        private:
+            
+            ConditionSwitchData _params;
+            
+        };
+        
+    }
     
 }

@@ -66,9 +66,7 @@ table ElapsedTime
 }
 table Switch
 {
-   switch_name : string;
-   switch_index : int;
-   status : SwitchStatus;
+   info : SwitchInfo;
 }
 
 table DisplayText
@@ -180,6 +178,12 @@ table PlayerInfo
    force : int;
    owner : int;
 }
+table SwitchInfo
+{
+   name : string;
+   status : SwitchStatus;
+   index : int;
+}
 
 table GMXFile
 {
@@ -192,7 +196,7 @@ table GMXFile
    entities : [Entity];
    cell_space_size : Size;
    locations : [Location];
-   switch_names : [string];
+   switch_infos : [SwitchInfo];
    triggers : [Trigger];
    playerInfos : [PlayerInfo];
    force1_info : ForceInfo;

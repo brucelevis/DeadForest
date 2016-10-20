@@ -62,6 +62,13 @@ bool TriggerSystem::initWithResource(GameResource* res)
                 auto condition = ConditionElapsedTime::create(_game, data->approximation, data->number);
                 newTrigger->addCondition(condition);
             }
+            
+            else if ( (*cond)->type == TriggerComponentType::CONDITION_SWITCH )
+            {
+                auto data = static_cast<ConditionSwitchData*>(*cond);
+                auto condition = ConditionSwitch::create(_game, data->info);
+                newTrigger->addCondition(condition);
+            }
         }
         
         // set actions

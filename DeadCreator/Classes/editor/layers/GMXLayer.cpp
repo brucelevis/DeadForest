@@ -2122,12 +2122,13 @@ void GMXLayer::save(const std::string& path)
                                                         &size, &pos));
     }
     
-    // switch names
-    std::vector<flatbuffers::Offset<flatbuffers::String>> switchNames;
-    const auto& names = _triggerEditLayer->getSwitchNames();
-    for( const auto& switchName : names )
+    // switchs
+    std::vector<flatbuffers::Offset<DeadCreator::SwitchInfo>> switchs;
+    const auto& switchInfos = _triggerEditLayer->getSwitchs();
+    for( const auto& swcInfo : switchInfos )
     {
-        switchNames.push_back(builder.CreateString(switchName.data()));
+        auto swcObj = DeadCreator::CreateSwitchInfo(builder, builder.CreateString(swcInfo.name.data()), static_cast<DeadCreator::SwitchStatus>(swcInfo.status), swcInfo.index);
+        switchs.push_back(swcObj);
     }
     
     // triggers
@@ -2164,7 +2165,7 @@ void GMXLayer::save(const std::string& path)
                                            builder.CreateVector(entities),
                                            &cellSpaceSize,
                                            builder.CreateVector(locations),
-                                           builder.CreateVector(switchNames),
+                                           builder.CreateVector(switchs),
                                            builder.CreateVector(triggers),
                                            builder.CreateVector(playerInfos),
                                            force1, force2, force3, force4);

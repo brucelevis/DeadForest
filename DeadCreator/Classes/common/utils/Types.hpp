@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <array>
+
 #include "cocos2d.h"
 
 #define ADD_FAMILY_MASK(src, mask) addMask(src, mask)
@@ -122,6 +124,29 @@ namespace realtrick
         PlayerType playerType;
         EntityType entityType;
         cocos2d::Vec2 position;
+    };
+        
+    struct Switch
+    {
+        std::array<char, 100> name;
+        SwitchStatus status;
+        int index;
+        
+        Switch() = default;
+        Switch(const Switch& rhs) { copyFrom(rhs); }
+        Switch& operator=(const Switch& rhs)
+        {
+            if ( &rhs != this ) copyFrom(rhs);
+            return *this;
+        }
+        
+        void copyFrom(const Switch& rhs)
+        {
+            name.fill('\0');
+            std::strncpy(name.data(), rhs.name.data(), 100);
+            status = rhs.status;
+            index = rhs.index;
+        }
     };
         
     inline void addMask(int& src, int mask)                         { src |= mask; }

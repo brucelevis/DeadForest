@@ -19,17 +19,20 @@
 #include "EntityBase.hpp"
 #include "Types.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ConditionCountdownTimer : public ConditionBase
         {
             
         public:
             
-            ConditionCountdownTimer() { name() = "Countdown Timer"; }
+            explicit ConditionCountdownTimer(GMXLayer* gmxLayer) : ConditionBase(gmxLayer) { name() = "Countdown Timer"; }
             ConditionCountdownTimer(const ConditionCountdownTimer& rhs) : ConditionBase(rhs) { copyFrom(rhs); }
             ConditionCountdownTimer& operator=(const ConditionCountdownTimer& rhs)
             {
@@ -48,7 +51,7 @@ namespace realtrick
             virtual ~ConditionCountdownTimer() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                ImGui::SameLine(); ImGui::Text("Countdown timer is");
+                ImGui::Text("Countdown timer is");
                 
                 // approximation combo box
                 ImGui::PushID(1);

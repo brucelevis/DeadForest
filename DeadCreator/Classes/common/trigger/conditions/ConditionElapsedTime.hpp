@@ -19,17 +19,20 @@
 #include "EntityBase.hpp"
 #include "Types.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
         
+        class GMXLayer;
+        
         class ConditionElapsedTime : public ConditionBase
         {
             
         public:
-            
-            ConditionElapsedTime() { name() = "Elapsed time"; }
+        
+            explicit ConditionElapsedTime(GMXLayer* gmxLayer) : ConditionBase(gmxLayer) { name() = "Elapsed time"; }
             ConditionElapsedTime(const ConditionElapsedTime& rhs) : ConditionBase(rhs) { copyFrom(rhs); }
             ConditionElapsedTime& operator=(const ConditionElapsedTime& rhs)
             {
@@ -48,7 +51,7 @@ namespace realtrick
             virtual ~ConditionElapsedTime() = default;
             virtual bool drawEditMode(void* opt) override
             {
-                ImGui::SameLine(); ImGui::Text("Elapsed scenario time is ");
+                ImGui::Text("Elapsed scenario time is ");
                 
                 // approximation combo box
                 ImGui::PushID(1);

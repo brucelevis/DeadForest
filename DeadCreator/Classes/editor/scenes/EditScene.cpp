@@ -6,6 +6,7 @@
 //
 //
 
+#include <array>
 #include <boost/filesystem.hpp>
 using namespace boost::filesystem;
 
@@ -544,6 +545,17 @@ void EditScene::createGMXLayer(const std::string& filePath)
         }
         
         
+        // switch names
+        int index = 0;
+        for ( auto iter = gmxFile->switch_names()->begin() ; iter != gmxFile->switch_names()->end() ; ++ iter)
+        {
+            std::array<char, 100> name;
+            std::strncpy(name.data(), iter->c_str(), 100);
+            _layer->getTriggerEditLayer()->setSwitchName(index, name);
+            ++index;
+        }
+        
+        
         // triggers
         for ( auto trigger = gmxFile->triggers()->begin(); trigger != gmxFile->triggers()->end() ; ++ trigger )
         {
@@ -564,7 +576,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     case DeadCreator::ConditionBase_Bring:
                     {
                         auto conditionObject = static_cast<const DeadCreator::Bring*>(cond->condition());
-                        auto condition = new ConditionBring();
+                        auto condition = new ConditionBring(_layer);
                         condition->setPlayerType(static_cast<PlayerType>(conditionObject->player()));
                         condition->setApproximation(static_cast<ApproximationType>(conditionObject->approximation()));
                         condition->setEntity(static_cast<EntityType>(conditionObject->entity_type()));
@@ -578,20 +590,22 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     }
                     case DeadCreator::ConditionBase_Always:
                     {
-                        auto condition = new ConditionAlways();
+                        auto condition = new ConditionAlways(_layer);
                         newTrigger->addCondition(condition);
+                        
                         break;
                     }
                     case DeadCreator::ConditionBase_Never:
                     {
-                        auto condition = new ConditionNever();
+                        auto condition = new ConditionNever(_layer);
                         newTrigger->addCondition(condition);
+                        
                         break;
                     }
                     case DeadCreator::ConditionBase_ElapsedTime:
                     {
                         auto conditionObject = static_cast<const DeadCreator::ElapsedTime*>(cond->condition());
-                        auto condition = new ConditionElapsedTime();
+                        auto condition = new ConditionElapsedTime(_layer);
                         condition->setApproximation(static_cast<ApproximationType>(conditionObject->approximation()));
                         condition->setNumber(conditionObject->number());
                         
@@ -602,9 +616,21 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     case DeadCreator::ConditionBase_CountdownTimer:
                     {
                         auto conditionObject = static_cast<const DeadCreator::CountdownTimer*>(cond->condition());
-                        auto condition = new ConditionCountdownTimer();
+                        auto condition = new ConditionCountdownTimer(_layer);
                         condition->setApproximation(static_cast<ApproximationType>(conditionObject->approximation()));
                         condition->setNumber(conditionObject->number());
+                        
+                        newTrigger->addCondition(condition);
+                        
+                        break;
+                    }
+                    case DeadCreator::ConditionBase_Switch:
+                    {
+                        auto conditionObject = static_cast<const DeadCreator::Switch*>(cond->condition());
+                        auto condition = new ConditionSwitch(_layer);
+                        condition->setSwitchName(conditionObject->switch_name()->str());
+                        condition->setSwitchIndex(conditionObject->switch_index());
+                        condition->setStatus(static_cast<SwitchStatus>(conditionObject->status()));
                         
                         newTrigger->addCondition(condition);
                         
@@ -624,7 +650,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     case DeadCreator::ActionBase_DisplayText:
                     {
                         auto actionObject = static_cast<const DeadCreator::DisplayText*>(act->action());
-                        auto action = new ActionDisplayText();
+                        auto action = new ActionDisplayText(_layer);
                         action->setText(actionObject->text()->str());
                         newTrigger->addAction(action);
                         
@@ -632,21 +658,21 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     }
                     case DeadCreator::ActionBase_PreserveTrigger:
                     {
-                        auto action = new ActionPreserveTrigger();
+                        auto action = new ActionPreserveTrigger(_layer);
                         newTrigger->addAction(action);
                         
                         break;
                     }
                     case DeadCreator::ActionBase_Victory:
                     {
-                        auto action = new ActionVictory();
+                        auto action = new ActionVictory(_layer);
                         newTrigger->addAction(action);
                         
                         break;
                     }
                     case DeadCreator::ActionBase_Defeat:
                     {
-                        auto action = new ActionDefeat();
+                        auto action = new ActionDefeat(_layer);
                         newTrigger->addAction(action);
                         
                         break;
@@ -654,7 +680,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     case DeadCreator::ActionBase_KillEntityAtLocation:
                     {
                         auto actionObject = static_cast<const DeadCreator::KillEntityAtLocation*>(act->action());
-                        auto action = new ActionKillEntityAtLocation();
+                        auto action = new ActionKillEntityAtLocation(_layer);
                         
                         auto numberAll = actionObject->numberAll();
                         if ( numberAll  == -1 /* all */) action->setNumberAll( { true, 0 } );
@@ -673,7 +699,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     case DeadCreator::ActionBase_MoveLocation:
                     {
                         auto actionObject = static_cast<const DeadCreator::MoveLocation*>(act->action());
-                        auto action = new ActionMoveLocation();
+                        auto action = new ActionMoveLocation(_layer);
                         
                         LocationNode* destLocationPtr = _layer->findLocation(actionObject->dest_location_name()->str());
                         action->setDestLocation(destLocationPtr);
@@ -691,7 +717,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     case DeadCreator::ActionBase_PlaySound:
                     {
                         auto actionObject = static_cast<const DeadCreator::PlaySound*>(act->action());
-                        auto action = new ActionPlaySound();
+                        auto action = new ActionPlaySound(_layer);
                         
                         action->setFileName(actionObject->file_name()->str());
                         
@@ -702,7 +728,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     case DeadCreator::ActionBase_PlaySoundAtLocation:
                     {
                         auto actionObject = static_cast<const DeadCreator::PlaySoundAtLocation*>(act->action());
-                        auto action = new ActionPlaySoundAtLocation();
+                        auto action = new ActionPlaySoundAtLocation(_layer);
                         
                         action->setFileName(actionObject->file_name()->str());
                         
@@ -715,14 +741,14 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     }
                     case DeadCreator::ActionBase_PauseGame:
                     {
-                        auto action = new ActionPauseGame();
+                        auto action = new ActionPauseGame(_layer);
                         newTrigger->addAction(action);
                         
                         break;
                     }
                     case DeadCreator::ActionBase_ResumeGame:
                     {
-                        auto action = new ActionResumeGame();
+                        auto action = new ActionResumeGame(_layer);
                         newTrigger->addAction(action);
                         
                         break;
@@ -730,7 +756,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     case DeadCreator::ActionBase_SetCountdownTimer:
                     {
                         auto actionObject = static_cast<const DeadCreator::SetCountdownTimer*>(act->action());
-                        auto action = new ActionSetCountdownTimer();
+                        auto action = new ActionSetCountdownTimer(_layer);
                         action->setArithmeticalType(static_cast<ArithmeticalType>(actionObject->arithmetical()));
                         action->setNumber(actionObject->number());
                         
@@ -741,7 +767,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     case DeadCreator::ActionBase_MoveEntity:
                     {
                         auto actionObject = static_cast<const DeadCreator::MoveEntity*>(act->action());
-                        auto action = new ActionMoveEntity();
+                        auto action = new ActionMoveEntity(_layer);
                         
                         auto numberAll = actionObject->numberAll();
                         if ( numberAll  == -1 /* all */) action->setNumberAll( { true, 0 } );

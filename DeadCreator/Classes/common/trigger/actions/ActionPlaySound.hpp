@@ -11,17 +11,20 @@
 #include "ActionBase.hpp"
 #include "TriggerParameters.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ActionPlaySound : public ActionBase
         {
             
         public:
             
-            ActionPlaySound() { name() = "Play Sound"; _fileName.reset(); }
+            explicit ActionPlaySound(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Play Sound"; _fileName.reset(); }
             ActionPlaySound(const ActionPlaySound& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionPlaySound& operator=(const ActionPlaySound& rhs)
             {

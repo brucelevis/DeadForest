@@ -21,17 +21,20 @@
 
 #include "GMXFile_generated.h"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ConditionBase : public TriggerComponentProtocol
         {
             
         public:
             
-            ConditionBase() = default;
+            explicit ConditionBase(GMXLayer* gmxLayer) : TriggerComponentProtocol(gmxLayer) {}
             ConditionBase(const ConditionBase& rhs) : TriggerComponentProtocol(rhs) { copyFrom(rhs); }
             ConditionBase& operator=(const ConditionBase& rhs)
             {

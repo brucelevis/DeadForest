@@ -21,17 +21,20 @@
 
 #include "GMXFile_generated.h"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ActionBase : public TriggerComponentProtocol
         {
             
         public:
             
-            ActionBase() = default;
+            explicit ActionBase(GMXLayer* gmxLayer) : TriggerComponentProtocol(gmxLayer) {}
             ActionBase(const ActionBase& rhs) : TriggerComponentProtocol(rhs) { copyFrom(rhs); }
             ActionBase& operator=(const ActionBase& rhs)
             {

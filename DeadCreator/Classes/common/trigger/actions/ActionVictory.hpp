@@ -11,17 +11,20 @@
 #include "ActionBase.hpp"
 #include "TriggerParameters.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ActionVictory : public ActionBase
         {
             
         public:
             
-            ActionVictory() { name() = "Victory"; }
+            explicit ActionVictory(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Victory"; }
             ActionVictory(const ActionVictory& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionVictory& operator=(const ActionVictory& rhs)
             {

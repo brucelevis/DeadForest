@@ -12,17 +12,20 @@
 #include "TriggerParameters.hpp"
 #include "Game.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ActionSetCountdownTimer : public ActionBase
         {
             
         public:
             
-            ActionSetCountdownTimer() { name() = "Set Countdown Timer"; }
+            explicit ActionSetCountdownTimer(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Set Countdown Timer"; }
             ActionSetCountdownTimer(const ActionSetCountdownTimer& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionSetCountdownTimer& operator=(const ActionSetCountdownTimer& rhs)
             {

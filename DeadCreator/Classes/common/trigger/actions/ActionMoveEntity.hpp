@@ -12,17 +12,20 @@
 #include "TriggerParameters.hpp"
 #include "GameResource.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ActionMoveEntity : public ActionBase
         {
             
         public:
             
-            ActionMoveEntity() { name() = "Move Entity"; }
+            explicit ActionMoveEntity(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Move Entity"; }
             ActionMoveEntity(const ActionMoveEntity& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionMoveEntity& operator=(const ActionMoveEntity& rhs)
             {

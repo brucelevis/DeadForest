@@ -18,12 +18,14 @@ namespace realtrick
     namespace editor
     {
         
+        class GMXLayer;
+        
         class TriggerComponentProtocol
         {
             
         public:
             
-            TriggerComponentProtocol() = default;
+            explicit TriggerComponentProtocol(GMXLayer* gmxLayer) : _gmxLayer(gmxLayer) {}
             TriggerComponentProtocol(const TriggerComponentProtocol& rhs) { copyFrom(rhs); }
             TriggerComponentProtocol& operator=(const TriggerComponentProtocol& rhs)
             {
@@ -34,6 +36,7 @@ namespace realtrick
             
             void copyFrom(const TriggerComponentProtocol& rhs)
             {
+                _gmxLayer = rhs._gmxLayer;
                 _isSelected = rhs._isSelected;
                 _name = rhs._name;
             }
@@ -52,6 +55,8 @@ namespace realtrick
             virtual TriggerComponentProtocol* clone() const = 0;
             
         protected:
+            
+            GMXLayer* _gmxLayer;
             
             bool _isSelected = false;
             std::string _name;

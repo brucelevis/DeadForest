@@ -12,17 +12,20 @@
 #include "TriggerParameters.hpp"
 #include "GameResource.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ActionKillEntityAtLocation : public ActionBase
         {
             
         public:
             
-            ActionKillEntityAtLocation() { name() = "Kill Entity At Location"; }
+            explicit ActionKillEntityAtLocation(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Kill Entity At Location"; }
             ActionKillEntityAtLocation(const ActionKillEntityAtLocation& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionKillEntityAtLocation& operator=(const ActionKillEntityAtLocation& rhs)
             {

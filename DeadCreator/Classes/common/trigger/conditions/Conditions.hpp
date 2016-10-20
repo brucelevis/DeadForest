@@ -13,3 +13,4 @@
 #include "ConditionCountdownTimer.hpp"
 #include "ConditionElapsedTime.hpp"
 #include "ConditionNever.hpp"
+#include "ConditionSwitch.hpp"

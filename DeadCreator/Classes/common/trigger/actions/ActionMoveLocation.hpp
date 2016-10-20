@@ -12,17 +12,20 @@
 #include "TriggerParameters.hpp"
 #include "GameResource.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ActionMoveLocation : public ActionBase
         {
             
         public:
             
-            ActionMoveLocation() { name() = "Move Location"; }
+            explicit ActionMoveLocation(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Move Location"; }
             ActionMoveLocation(const ActionMoveLocation& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionMoveLocation& operator=(const ActionMoveLocation& rhs)
             {

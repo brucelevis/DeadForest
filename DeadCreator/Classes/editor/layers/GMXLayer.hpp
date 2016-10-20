@@ -87,6 +87,7 @@ namespace realtrick
             void undo();
             
             PaletteLayer* getPaletteLayer() const { return _paletteLayer; }
+            TriggerEditLayer* getTriggerEditLayer() const { return _triggerEditLayer; }
             
             void setCommand(CommandBase* newCommand);
             TileToolCommand* getTileToolCommand() const { return _tileToolCommand; }

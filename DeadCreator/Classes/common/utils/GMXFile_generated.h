@@ -31,6 +31,8 @@ namespace DeadCreator {
     
     struct ElapsedTime;
     
+    struct Switch;
+    
     struct DisplayText;
     
     struct PlaySoundAtLocation;
@@ -115,6 +117,20 @@ namespace DeadCreator {
     
     inline const char *EnumNameTileType(TileType e) { return EnumNamesTileType()[static_cast<int>(e)]; }
     
+    enum SwitchStatus {
+        SwitchStatus_Cleared = 0,
+        SwitchStatus_Set = 1,
+        SwitchStatus_MIN = SwitchStatus_Cleared,
+        SwitchStatus_MAX = SwitchStatus_Set
+    };
+    
+    inline const char **EnumNamesSwitchStatus() {
+        static const char *names[] = { "Cleared", "Set", nullptr };
+        return names;
+    }
+    
+    inline const char *EnumNameSwitchStatus(SwitchStatus e) { return EnumNamesSwitchStatus()[static_cast<int>(e)]; }
+    
     enum ConditionBase {
         ConditionBase_NONE = 0,
         ConditionBase_Always = 1,
@@ -123,12 +139,13 @@ namespace DeadCreator {
         ConditionBase_CountdownTimer = 4,
         ConditionBase_Bring = 5,
         ConditionBase_ElapsedTime = 6,
+        ConditionBase_Switch = 7,
         ConditionBase_MIN = ConditionBase_NONE,
-        ConditionBase_MAX = ConditionBase_ElapsedTime
+        ConditionBase_MAX = ConditionBase_Switch
     };
     
     inline const char **EnumNamesConditionBase() {
-        static const char *names[] = { "NONE", "Always", "Never", "Command", "CountdownTimer", "Bring", "ElapsedTime", nullptr };
+        static const char *names[] = { "NONE", "Always", "Never", "Command", "CountdownTimer", "Bring", "ElapsedTime", "Switch", nullptr };
         return names;
     }
     
@@ -527,6 +544,50 @@ namespace DeadCreator {
         ElapsedTimeBuilder builder_(_fbb);
         builder_.add_number(number);
         builder_.add_approximation(approximation);
+        return builder_.Finish();
+    }
+    
+    struct Switch FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_SWITCH_NAME = 4,
+            VT_SWITCH_INDEX = 6,
+            VT_STATUS = 8
+        };
+        const flatbuffers::String *switch_name() const { return GetPointer<const flatbuffers::String *>(VT_SWITCH_NAME); }
+        int32_t switch_index() const { return GetField<int32_t>(VT_SWITCH_INDEX, 0); }
+        SwitchStatus status() const { return static_cast<SwitchStatus>(GetField<int32_t>(VT_STATUS, 0)); }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_SWITCH_NAME) &&
+            verifier.Verify(switch_name()) &&
+            VerifyField<int32_t>(verifier, VT_SWITCH_INDEX) &&
+            VerifyField<int32_t>(verifier, VT_STATUS) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct SwitchBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_switch_name(flatbuffers::Offset<flatbuffers::String> switch_name) { fbb_.AddOffset(Switch::VT_SWITCH_NAME, switch_name); }
+        void add_switch_index(int32_t switch_index) { fbb_.AddElement<int32_t>(Switch::VT_SWITCH_INDEX, switch_index, 0); }
+        void add_status(SwitchStatus status) { fbb_.AddElement<int32_t>(Switch::VT_STATUS, static_cast<int32_t>(status), 0); }
+        SwitchBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        SwitchBuilder &operator=(const SwitchBuilder &);
+        flatbuffers::Offset<Switch> Finish() {
+            auto o = flatbuffers::Offset<Switch>(fbb_.EndTable(start_, 3));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<Switch> CreateSwitch(flatbuffers::FlatBufferBuilder &_fbb,
+                                                    flatbuffers::Offset<flatbuffers::String> switch_name = 0,
+                                                    int32_t switch_index = 0,
+                                                    SwitchStatus status = SwitchStatus_Cleared) {
+        SwitchBuilder builder_(_fbb);
+        builder_.add_status(status);
+        builder_.add_switch_index(switch_index);
+        builder_.add_switch_name(switch_name);
         return builder_.Finish();
     }
     
@@ -1202,12 +1263,13 @@ namespace DeadCreator {
             VT_ENTITIES = 16,
             VT_CELL_SPACE_SIZE = 18,
             VT_LOCATIONS = 20,
-            VT_TRIGGERS = 22,
-            VT_PLAYERINFOS = 24,
-            VT_FORCE1_INFO = 26,
-            VT_FORCE2_INFO = 28,
-            VT_FORCE3_INFO = 30,
-            VT_FORCE4_INFO = 32
+            VT_SWITCH_NAMES = 22,
+            VT_TRIGGERS = 24,
+            VT_PLAYERINFOS = 26,
+            VT_FORCE1_INFO = 28,
+            VT_FORCE2_INFO = 30,
+            VT_FORCE3_INFO = 32,
+            VT_FORCE4_INFO = 34
         };
         TileType default_type() const { return static_cast<TileType>(GetField<int32_t>(VT_DEFAULT_TYPE, 0)); }
         const flatbuffers::Vector<flatbuffers::Offset<TileInfo>> *tiles() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<TileInfo>> *>(VT_TILES); }
@@ -1218,6 +1280,7 @@ namespace DeadCreator {
         const flatbuffers::Vector<flatbuffers::Offset<Entity>> *entities() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Entity>> *>(VT_ENTITIES); }
         const Size *cell_space_size() const { return GetStruct<const Size *>(VT_CELL_SPACE_SIZE); }
         const flatbuffers::Vector<flatbuffers::Offset<Location>> *locations() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Location>> *>(VT_LOCATIONS); }
+        const flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>> *switch_names() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>> *>(VT_SWITCH_NAMES); }
         const flatbuffers::Vector<flatbuffers::Offset<Trigger>> *triggers() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Trigger>> *>(VT_TRIGGERS); }
         const flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>> *playerInfos() const { return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>> *>(VT_PLAYERINFOS); }
         const ForceInfo *force1_info() const { return GetPointer<const ForceInfo *>(VT_FORCE1_INFO); }
@@ -1245,6 +1308,9 @@ namespace DeadCreator {
             VerifyField<flatbuffers::uoffset_t>(verifier, VT_LOCATIONS) &&
             verifier.Verify(locations()) &&
             verifier.VerifyVectorOfTables(locations()) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_SWITCH_NAMES) &&
+            verifier.Verify(switch_names()) &&
+            verifier.VerifyVectorOfStrings(switch_names()) &&
             VerifyField<flatbuffers::uoffset_t>(verifier, VT_TRIGGERS) &&
             verifier.Verify(triggers()) &&
             verifier.VerifyVectorOfTables(triggers()) &&
@@ -1275,6 +1341,7 @@ namespace DeadCreator {
         void add_entities(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Entity>>> entities) { fbb_.AddOffset(GMXFile::VT_ENTITIES, entities); }
         void add_cell_space_size(const Size *cell_space_size) { fbb_.AddStruct(GMXFile::VT_CELL_SPACE_SIZE, cell_space_size); }
         void add_locations(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Location>>> locations) { fbb_.AddOffset(GMXFile::VT_LOCATIONS, locations); }
+        void add_switch_names(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>>> switch_names) { fbb_.AddOffset(GMXFile::VT_SWITCH_NAMES, switch_names); }
         void add_triggers(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Trigger>>> triggers) { fbb_.AddOffset(GMXFile::VT_TRIGGERS, triggers); }
         void add_playerInfos(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>>> playerInfos) { fbb_.AddOffset(GMXFile::VT_PLAYERINFOS, playerInfos); }
         void add_force1_info(flatbuffers::Offset<ForceInfo> force1_info) { fbb_.AddOffset(GMXFile::VT_FORCE1_INFO, force1_info); }
@@ -1284,7 +1351,7 @@ namespace DeadCreator {
         GMXFileBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
         GMXFileBuilder &operator=(const GMXFileBuilder &);
         flatbuffers::Offset<GMXFile> Finish() {
-            auto o = flatbuffers::Offset<GMXFile>(fbb_.EndTable(start_, 15));
+            auto o = flatbuffers::Offset<GMXFile>(fbb_.EndTable(start_, 16));
             return o;
         }
     };
@@ -1299,6 +1366,7 @@ namespace DeadCreator {
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Entity>>> entities = 0,
                                                       const Size *cell_space_size = 0,
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Location>>> locations = 0,
+                                                      flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>>> switch_names = 0,
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Trigger>>> triggers = 0,
                                                       flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<PlayerInfo>>> playerInfos = 0,
                                                       flatbuffers::Offset<ForceInfo> force1_info = 0,
@@ -1312,6 +1380,7 @@ namespace DeadCreator {
         builder_.add_force1_info(force1_info);
         builder_.add_playerInfos(playerInfos);
         builder_.add_triggers(triggers);
+        builder_.add_switch_names(switch_names);
         builder_.add_locations(locations);
         builder_.add_cell_space_size(cell_space_size);
         builder_.add_entities(entities);
@@ -1333,6 +1402,7 @@ namespace DeadCreator {
             case ConditionBase_CountdownTimer: return verifier.VerifyTable(reinterpret_cast<const CountdownTimer *>(union_obj));
             case ConditionBase_Bring: return verifier.VerifyTable(reinterpret_cast<const Bring *>(union_obj));
             case ConditionBase_ElapsedTime: return verifier.VerifyTable(reinterpret_cast<const ElapsedTime *>(union_obj));
+            case ConditionBase_Switch: return verifier.VerifyTable(reinterpret_cast<const Switch *>(union_obj));
             default: return false;
         }
     }

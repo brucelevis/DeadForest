@@ -17,17 +17,20 @@
 #include "Game.hpp"
 #include "EntityBase.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ConditionNever : public ConditionBase
         {
             
         public:
             
-            ConditionNever() { name() = "Never"; }
+            explicit ConditionNever(GMXLayer* gmxLayer) : ConditionBase(gmxLayer) { name() = "Never"; }
             ConditionNever(const ConditionNever& rhs) : ConditionBase(rhs) { copyFrom(rhs); }
             ConditionNever& operator=(const ConditionNever& rhs)
             {

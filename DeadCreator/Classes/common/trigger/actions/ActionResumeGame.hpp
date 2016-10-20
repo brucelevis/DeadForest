@@ -12,17 +12,20 @@
 #include "TriggerParameters.hpp"
 #include "MessageTypes.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ActionResumeGame : public ActionBase
         {
             
         public:
             
-            ActionResumeGame() { name() = "Resume Game"; }
+            explicit ActionResumeGame(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Resume Game"; }
             ActionResumeGame(const ActionResumeGame& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionResumeGame& operator=(const ActionResumeGame& rhs)
             {

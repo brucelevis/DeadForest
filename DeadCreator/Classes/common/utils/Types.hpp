@@ -87,6 +87,13 @@ namespace realtrick
         SUBTRACT = 2
     };
         
+    enum class SwitchStatus : int
+    {
+        INVALID = -1,
+        CLEARED = 0,
+        SET = 1
+    };
+        
     enum class TriggerComponentType : int
     {
         CONDITION_ALWAYS,
@@ -94,6 +101,7 @@ namespace realtrick
         CONDITION_COUNTDOWN_TIMER,
         CONDITION_ELAPSED_TIME,
         CONDITION_NEVER,
+        CONDITION_SWITCH,
         ACTION_DISPLAY_TEXT,
         ACTION_MOVE_LOCATION,
         ACTION_KILL_ENTITY_AT_LOCATION,

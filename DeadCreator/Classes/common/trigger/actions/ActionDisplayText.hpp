@@ -12,17 +12,20 @@
 #include "TriggerParameters.hpp"
 #include "EntityPlayer.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
         
+        class GMXLayer;
+
         class ActionDisplayText : public ActionBase
         {
             
         public:
             
-            ActionDisplayText() { name() = "Display Text"; _text.reset(); }
+            explicit ActionDisplayText(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Display Text"; _text.reset(); }
             ActionDisplayText(const ActionDisplayText& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionDisplayText& operator=(const ActionDisplayText& rhs)
             {

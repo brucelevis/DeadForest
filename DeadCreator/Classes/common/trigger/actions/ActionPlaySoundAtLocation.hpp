@@ -17,12 +17,14 @@ namespace realtrick
     namespace editor
     {
         
+        class GMXLayer;
+        
         class ActionPlaySoundAtLocation : public ActionBase
         {
             
         public:
             
-            ActionPlaySoundAtLocation() { name() = "Play Sound At Location"; _fileName.reset(); }
+            explicit ActionPlaySoundAtLocation(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Play Sound At Location"; _fileName.reset(); }
             ActionPlaySoundAtLocation(const ActionPlaySoundAtLocation& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionPlaySoundAtLocation& operator=(const ActionPlaySoundAtLocation& rhs)
             {

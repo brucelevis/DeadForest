@@ -11,17 +11,20 @@
 #include "ActionBase.hpp"
 #include "TriggerParameters.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
+     
+        class GMXLayer;
         
         class ActionPreserveTrigger : public ActionBase
         {
             
         public:
             
-            ActionPreserveTrigger() { name() = "Preserve Trigger"; }
+            explicit ActionPreserveTrigger(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Preserve Trigger"; }
             ActionPreserveTrigger(const ActionPreserveTrigger& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionPreserveTrigger& operator=(const ActionPreserveTrigger& rhs)
             {

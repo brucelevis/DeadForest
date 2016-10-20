@@ -48,14 +48,7 @@ namespace realtrick
             void setLocation(LocationNode* location)
             {
                 setParameterName(location->getLocationName());
-                
                 _location = location;
-                
-                auto& locations = location->getGMXLayer().getLocations();
-                for(int i = 0 ; i < locations.size() ; ++ i )
-                {
-                    if(  locations[i] == location ) _currLocation = i;
-                }
             }
             
             virtual std::string getParameterName() const override

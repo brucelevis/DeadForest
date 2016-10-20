@@ -17,17 +17,20 @@
 #include "Game.hpp"
 #include "EntityBase.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ConditionAlways : public ConditionBase
         {
             
         public:
             
-            ConditionAlways() { name() = "Always"; }
+            explicit ConditionAlways(GMXLayer* gmxLayer) : ConditionBase(gmxLayer) { name() = "Always"; }
             ConditionAlways(const ConditionAlways& rhs) : ConditionBase(rhs) { copyFrom(rhs); }
             ConditionAlways& operator=(const ConditionAlways& rhs)
             {

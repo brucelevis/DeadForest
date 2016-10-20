@@ -28,6 +28,7 @@ table ForceInfo
 enum Approximation : int { AtLeast = 0, AtMost, Exactly }
 enum Arithmetical : int { Add = 0, SetTo, Subtract }
 enum TileType : int { Dirt = 0, Grass, Water, Hill }
+enum SwitchStatus : int { Cleared = 0, Set }
  
 table TileInfo
 {
@@ -62,6 +63,12 @@ table ElapsedTime
 {
    approximation : Approximation;
    number : int;
+}
+table Switch
+{
+   switch_name : string;
+   switch_index : int;
+   status : SwitchStatus;
 }
 
 table DisplayText
@@ -117,7 +124,8 @@ union ConditionBase
    Command,
    CountdownTimer,
    Bring,
-   ElapsedTime
+   ElapsedTime,
+   Switch
 }
 
 union ActionBase 
@@ -184,6 +192,7 @@ table GMXFile
    entities : [Entity];
    cell_space_size : Size;
    locations : [Location];
+   switch_names : [string];
    triggers : [Trigger];
    playerInfos : [PlayerInfo];
    force1_info : ForceInfo;

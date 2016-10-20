@@ -66,25 +66,27 @@ bool TriggerEditLayer::init()
     _isSelectedPlayer[0] = true;
     _selectedPlayer = 0;
     
-    _conditionList.push_back(new ConditionAlways());
-    _conditionList.push_back(new ConditionBring());
-    _conditionList.push_back(new ConditionCountdownTimer());
-    _conditionList.push_back(new ConditionElapsedTime());
-    _conditionList.push_back(new ConditionNever());
+    _conditionList.push_back(new ConditionAlways(&_gmxLayer));
+    _conditionList.push_back(new ConditionBring(&_gmxLayer));
+    _conditionList.push_back(new ConditionCountdownTimer(&_gmxLayer));
+    _conditionList.push_back(new ConditionElapsedTime(&_gmxLayer));
+    _conditionList.push_back(new ConditionNever(&_gmxLayer));
+    _conditionList.push_back(new ConditionSwitch(&_gmxLayer));
     
-    _actionList.push_back(new ActionDefeat());
-    _actionList.push_back(new ActionDisplayText());
-    _actionList.push_back(new ActionKillEntityAtLocation());
-    _actionList.push_back(new ActionMoveEntity());
-    _actionList.push_back(new ActionMoveLocation());
-    _actionList.push_back(new ActionPauseGame());
-    _actionList.push_back(new ActionPlaySound());
-    _actionList.push_back(new ActionPlaySoundAtLocation());
-    _actionList.push_back(new ActionPreserveTrigger());
-    _actionList.push_back(new ActionResumeGame());
-    _actionList.push_back(new ActionSetCountdownTimer());
-    _actionList.push_back(new ActionVictory());
+    _actionList.push_back(new ActionDefeat(&_gmxLayer));
+    _actionList.push_back(new ActionDisplayText(&_gmxLayer));
+    _actionList.push_back(new ActionKillEntityAtLocation(&_gmxLayer));
+    _actionList.push_back(new ActionMoveEntity(&_gmxLayer));
+    _actionList.push_back(new ActionMoveLocation(&_gmxLayer));
+    _actionList.push_back(new ActionPauseGame(&_gmxLayer));
+    _actionList.push_back(new ActionPlaySound(&_gmxLayer));
+    _actionList.push_back(new ActionPlaySoundAtLocation(&_gmxLayer));
+    _actionList.push_back(new ActionPreserveTrigger(&_gmxLayer));
+    _actionList.push_back(new ActionResumeGame(&_gmxLayer));
+    _actionList.push_back(new ActionSetCountdownTimer(&_gmxLayer));
+    _actionList.push_back(new ActionVictory(&_gmxLayer));
     
+    _switchNames.resize(256);
     for(int i = 0 ; i < 256; ++ i)
     {
         std::string str = "Switch ";
@@ -795,8 +797,7 @@ void TriggerEditLayer::showModifyAction(const char* title, bool& opened, GameTri
 }
 
 
-void TriggerEditLayer::saveTriggers(flatbuffers::FlatBufferBuilder& builder,
-                                    std::vector<flatbuffers::Offset<DeadCreator::Trigger>>& out_triggers)
+void TriggerEditLayer::saveTriggers(flatbuffers::FlatBufferBuilder& builder, std::vector<flatbuffers::Offset<DeadCreator::Trigger>>& out_triggers)
 {
     for (auto& trigger : _triggers)
     {
@@ -873,6 +874,7 @@ void TriggerEditLayer::showChangeSwitchName(const char* title, bool& opened)
         if ( ImGui::ButtonEx("Set Name", ImVec2(145, 25)) && !isOverlapName )
         {
             std::strncpy(_switchNames[_selectedSwitchNameIndex].data(), _tempSwitchNameForCompareOverlap.data(), 100);
+            _isSwitchNameDirty = true;
         }
         ImGui::GetStyle().Colors[ImGuiCol_Button] = backupButton;
         ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = backupHoverColor;

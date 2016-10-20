@@ -19,17 +19,20 @@
 #include "EntityBase.hpp"
 #include "Types.hpp"
 
+
 namespace realtrick
 {
     namespace editor
     {
+        
+        class GMXLayer;
         
         class ConditionBring : public ConditionBase
         {
             
         public:
             
-            ConditionBring() { name() = "Bring"; }
+            explicit ConditionBring(GMXLayer* gmxLayer) : ConditionBase(gmxLayer) { name() = "Bring"; }
             ConditionBring(const ConditionBring& rhs) : ConditionBase(rhs) { copyFrom(rhs); }
             ConditionBring& operator=(const ConditionBring& rhs)
             {

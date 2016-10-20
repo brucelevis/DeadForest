@@ -46,9 +46,13 @@ namespace realtrick
             void showModifyAction(const char* title, bool& opened, GameTrigger* trigger, int actIndex);
             void showChangeSwitchName(const char* title, bool& opened);
             
-            void saveTriggers(flatbuffers::FlatBufferBuilder& builder,
-                              std::vector<flatbuffers::Offset<DeadCreator::Trigger>>& out_triggers);
+            void saveTriggers(flatbuffers::FlatBufferBuilder& builder, std::vector<flatbuffers::Offset<DeadCreator::Trigger>>& out_triggers);
             void addTrigger(GameTrigger* trigger) { if ( trigger ) _triggers.push_back(trigger); }
+            
+            const std::vector<std::array<char, 100>>& getSwitchNames() const { return _switchNames; }
+            void setSwitchName(int i, const std::array<char, 100>& name) { CCASSERT((i >= 0 && i < 256), "out of index"); _switchNames[i] = name; }
+            bool isSwitchNameDirty() const { return _isSwitchNameDirty; }
+            void setSwitchNameDirty(bool dirty) { _isSwitchNameDirty = dirty; }
             
         private:
             
@@ -65,11 +69,12 @@ namespace realtrick
             ConditionBase* _modifyingCondition;
             ActionBase* _modifyingAction;
             
-            std::array<char, 100> _switchNames[256];
+            std::vector<std::array<char, 100>> _switchNames;
             std::array<char, 100> _tempSwitchNameForCompareOverlap;
             bool _isSelectedSwitchName[256];
             unsigned short _selectedSwitchNameIndex = 0;
             unsigned short _oldSelectedSwitchNameIndex = 0;
+            bool _isSwitchNameDirty = false;
             
         };
         

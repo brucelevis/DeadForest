@@ -97,13 +97,13 @@ namespace realtrick
             {
                 std::string ret = "Move ";
                 ret += "'" + _numberAll.getParameterName() + "' ";
-                ret += "'" + _entity.getParameterName() + "'";
+                ret += "'" + _entity.getParameterName() + "' ";
                 ret += "for ";
                 ret += "'" + _playerType.getParameterName() + "' ";
                 ret += "at ";
-                ret += "'" + _sourceLocation.getParameterName() + "'";
+                ret += "'" + _sourceLocation.getParameterName() + "' ";
                 ret += "to ";
-                ret += "'" + _destLocation.getParameterName() + "'";
+                ret += "'" + _destLocation.getParameterName() + "'.";
                 return ret;
             }
             
@@ -222,6 +222,8 @@ namespace realtrick
 //                        break;
 //                    }
 //                }
+                _game->addLog("move entity");
+                
             }
             
         private:

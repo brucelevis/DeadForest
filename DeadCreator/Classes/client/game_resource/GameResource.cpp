@@ -224,6 +224,7 @@ bool GameResource::initWithBinary(const char* buffer)
                 default: { cocos2d::log("invalid condition type"); break;}
             }
         }
+        
         // set actions
         for(auto act = trigger->actions()->begin() ; act != trigger->actions()->end(); ++act)
         {
@@ -415,7 +416,8 @@ bool GameResource::initWithBinary(const char* buffer)
 void GameResource::updateLocation(const std::string& key, const cocos2d::Rect& rect)
 {
     // location is update only. (can't create new one)
-    if ( _locations.count(key) == 0) throw std::runtime_error(cocos2d::StringUtils::format("%s(key) is not exist location", key.c_str()));
+    if ( _locations.count(key) == 0)
+        throw std::runtime_error(cocos2d::StringUtils::format("%s(key) is not exist location", key.c_str()));
     
     _locations[key] = rect;
 }

@@ -6,9 +6,36 @@
 //
 //
 
-#ifndef EntityZombie3_hpp
-#define EntityZombie3_hpp
+#pragma once
 
-#include <stdio.h>
+#include "HumanBase.hpp"
 
-#endif /* EntityZombie3_hpp */
+namespace realtrick
+{
+    namespace client
+    {
+        
+        class EntityZombie3 : public HumanBase
+        {
+            
+        public:
+            
+            explicit EntityZombie3(Game* game);
+            virtual ~EntityZombie3();
+            
+            virtual bool init() override;
+            static EntityZombie3* create(Game* game);
+            
+            virtual bool handleMessage(const Telegram& msg) override;
+            
+            virtual void update(float dt) override;
+            virtual void suicide() override;
+            
+        private:
+            
+            /* ... */
+            
+        };
+        
+    }
+}

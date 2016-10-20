@@ -199,6 +199,13 @@ std::vector<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& positio
 }
 
 
+std::vector<EntityBase*> Game::getNeighborsEntities(const cocos2d::Vec2& pos, const cocos2d::Rect& rect) const
+{
+    std::vector<EntityBase*> ret;
+    return ret;
+}
+
+
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& pos) const
 {
 	std::vector<realtrick::Polygon> ret;
@@ -500,6 +507,20 @@ void Game::killEntity(EntityBase* ent)
 }
 
 
+void Game::teleportEntity(EntityBase* ent, const cocos2d::Rect& rect)
+{
+    auto suitablePosition = getSuiatablePosition(Circle(ent->getWorldPosition(), ent->getBoundingRadius()), rect);
+    ent->setWorldPosition(suitablePosition);
+}
+
+
+cocos2d::Vec2 Game::getSuiatablePosition(const Circle& circle, const cocos2d::Rect& maximumRegion)
+{
+//    const auto& entities = getN
+    return Vec2::ZERO;
+}
+
+
 TileType Game::getStepOnTileType(const cocos2d::Vec2& pos)
 {
     const auto& tileData = _gameResource->getTileData();
@@ -621,10 +642,10 @@ void Game::generateIsometricGridGraph(
 	//	tail == "3"		!D
 	//	tail == "4"		!L
 	//	tail == "12"	!(U, RU, R)
-	//	tail == "13"	°æ·Î x
+	//	tail == "13"	âˆžÃŠâˆ‘Å’ x
 	//	tail == "14"	!(L, LU, U)
 	//	tail == "23"	!(R, RD, D)
-	//	tail == "24"	°æ·Î x
+	//	tail == "24"	âˆžÃŠâˆ‘Å’ x
 	//	tail == "34"	!(L, LD, D)
 	//	tail == "123"	LU, L, LD
 	//	tail == "124"	LD, D, RD

@@ -10,6 +10,7 @@
 #include "GameResource.hpp"
 #include "EntityZombie.hpp"
 #include "EntityZombie2.hpp"
+#include "EntityZombie3.hpp"
 #include "EntityPlayer.hpp"
 #include "Items.hpp"
 #include "Brains.hpp"
@@ -77,7 +78,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
         
         else if ( entityType == EntityType::ENTITY_ZOMBIE3 )
         {
-            EntityZombie* zombie = EntityZombie::create(_game);
+            EntityZombie3* zombie = EntityZombie3::create(_game);
             zombie->setWorldPosition(position);
             zombie->setPlayerType(playerType);
             zombie->setForce(res->_playerInfos[static_cast<int>(playerType)].force);

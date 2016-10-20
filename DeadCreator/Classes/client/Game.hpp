@@ -86,6 +86,8 @@ namespace realtrick
             EntityBase* getEntityFromID(int id) const;
             
             void killEntity(EntityBase* ent);
+            void teleportEntity(EntityBase* ent, const cocos2d::Rect& rect); // todo
+            cocos2d::Vec2 getSuiatablePosition(const Circle& circle, const cocos2d::Rect& maximumRegion); // todo
             
             void loadGMXFileFromPath(const std::string& path);
             void loadGMXFileFromBinary(const char* binary);
@@ -95,6 +97,7 @@ namespace realtrick
             std::vector<EntityBase*> getNeighbors(const cocos2d::Vec2& pos) const;
             std::vector<EntityBase*> getNeighborsOnMove(const cocos2d::Vec2& pos, float speed) const;
             std::vector<EntityBase*> getNeighborsOnAttack(const cocos2d::Vec2& pos, const cocos2d::Vec2& dir, float range) const;
+            std::vector<EntityBase*> getNeighborsEntities(const cocos2d::Vec2& pos, const cocos2d::Rect& rect) const;
             
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos) const;
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, float speed) const;

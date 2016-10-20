@@ -25,7 +25,12 @@ namespace realtrick
             
         public:
             
-            explicit ActionSetCountdownTimer(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Set Countdown Timer"; }
+            explicit ActionSetCountdownTimer(GMXLayer* gmxLayer) : ActionBase(gmxLayer),
+            _arithmetical(gmxLayer),
+            _number(gmxLayer)
+            {
+                name() = "Set Countdown Timer";
+            }
             ActionSetCountdownTimer(const ActionSetCountdownTimer& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionSetCountdownTimer& operator=(const ActionSetCountdownTimer& rhs)
             {

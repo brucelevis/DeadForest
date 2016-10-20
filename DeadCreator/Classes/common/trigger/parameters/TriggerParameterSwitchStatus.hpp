@@ -19,17 +19,20 @@ namespace realtrick
     namespace editor
     {
         
+        class GMXLayer;
+        
         class TriggerParameterSwitchStatus : public TriggerParameterBase
         {
             
         public:
             
-            TriggerParameterSwitchStatus() : TriggerParameterBase()
+            TriggerParameterSwitchStatus() = default;
+            explicit TriggerParameterSwitchStatus(GMXLayer* layer) : TriggerParameterBase(layer)
             {
                 setParameterName("");
             }
             
-            TriggerParameterSwitchStatus(const TriggerParameterSwitchStatus& rhs) { copyFrom(rhs); }
+            TriggerParameterSwitchStatus(const TriggerParameterSwitchStatus& rhs) : TriggerParameterBase(rhs) { copyFrom(rhs); }
             TriggerParameterSwitchStatus& operator=(const TriggerParameterSwitchStatus& rhs)
             {
                 if ( &rhs != this ) copyFrom(rhs);
@@ -40,7 +43,8 @@ namespace realtrick
             {
                 TriggerParameterBase::copyFrom(rhs);
                 _status = rhs._status;
-                _currStatus = rhs._currStatus;
+                if ( _status == SwitchStatus::CLEARED ) _currStatus = 0;
+                else if ( _status == SwitchStatus::SET ) _currStatus = 1;
             }
             
             virtual ~TriggerParameterSwitchStatus() = default;

@@ -51,8 +51,6 @@ namespace realtrick
             
             const std::vector<std::array<char, 100>>& getSwitchNames() const { return _switchNames; }
             void setSwitchName(int i, const std::array<char, 100>& name) { CCASSERT((i >= 0 && i < 256), "out of index"); _switchNames[i] = name; }
-            bool isSwitchNameDirty() const { return _isSwitchNameDirty; }
-            void setSwitchNameDirty(bool dirty) { _isSwitchNameDirty = dirty; }
             
         private:
             
@@ -74,7 +72,6 @@ namespace realtrick
             bool _isSelectedSwitchName[256];
             unsigned short _selectedSwitchNameIndex = 0;
             unsigned short _oldSelectedSwitchNameIndex = 0;
-            bool _isSwitchNameDirty = false;
             
         };
         

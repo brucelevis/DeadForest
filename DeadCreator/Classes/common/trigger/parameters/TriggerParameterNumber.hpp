@@ -16,18 +16,21 @@ namespace realtrick
     namespace editor
     {
         
+        class GMXLayer;
+        
         class TriggerParameterNumber : public TriggerParameterBase
         {
             
         public:
             
-            TriggerParameterNumber() : TriggerParameterBase(),
+            TriggerParameterNumber() = default;
+            explicit TriggerParameterNumber(GMXLayer* layer) : TriggerParameterBase(layer),
             _number(0)
             {
                 setParameterName("0");
             }
             
-            TriggerParameterNumber(const TriggerParameterNumber& rhs) { copyFrom(rhs); }
+            TriggerParameterNumber(const TriggerParameterNumber& rhs) : TriggerParameterBase(rhs) { copyFrom(rhs); }
             TriggerParameterNumber& operator=(const TriggerParameterNumber& rhs)
             {
                 if ( &rhs != this ) copyFrom(rhs);

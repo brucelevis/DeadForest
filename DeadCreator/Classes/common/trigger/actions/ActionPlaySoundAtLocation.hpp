@@ -24,7 +24,13 @@ namespace realtrick
             
         public:
             
-            explicit ActionPlaySoundAtLocation(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Play Sound At Location"; _fileName.reset(); }
+            explicit ActionPlaySoundAtLocation(GMXLayer* gmxLayer) : ActionBase(gmxLayer),
+            _fileName(gmxLayer),
+            _location(gmxLayer)
+            {
+                name() = "Play Sound At Location";
+                _fileName.reset();
+            }
             ActionPlaySoundAtLocation(const ActionPlaySoundAtLocation& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionPlaySoundAtLocation& operator=(const ActionPlaySoundAtLocation& rhs)
             {

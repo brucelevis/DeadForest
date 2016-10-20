@@ -32,7 +32,15 @@ namespace realtrick
             
         public:
             
-            explicit ConditionBring(GMXLayer* gmxLayer) : ConditionBase(gmxLayer) { name() = "Bring"; }
+            explicit ConditionBring(GMXLayer* gmxLayer) : ConditionBase(gmxLayer),
+            _playerType(gmxLayer),
+            _approximation(gmxLayer),
+            _number(gmxLayer),
+            _entity(gmxLayer),
+            _location(gmxLayer)
+            {
+                name() = "Bring";
+            }
             ConditionBring(const ConditionBring& rhs) : ConditionBase(rhs) { copyFrom(rhs); }
             ConditionBring& operator=(const ConditionBring& rhs)
             {

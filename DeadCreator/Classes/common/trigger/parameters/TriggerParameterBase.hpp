@@ -20,12 +20,16 @@ namespace realtrick
     namespace editor
     {
         
+        class GMXLayer;
+        
         class TriggerParameterBase
         {
             
         public:
-            
-            TriggerParameterBase() :
+        
+            TriggerParameterBase() = default;
+            explicit TriggerParameterBase(GMXLayer* gmxLayer) :
+            _gmxLayer(gmxLayer),
             _parameterName("")
             {}
             
@@ -53,6 +57,7 @@ namespace realtrick
             
         protected:
             
+            GMXLayer* _gmxLayer;
             std::string _parameterName;
             
         };

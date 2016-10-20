@@ -32,7 +32,12 @@ namespace realtrick
             
         public:
             
-            explicit ConditionSwitch(GMXLayer* gmxLayer) : ConditionBase(gmxLayer) { name() = "Switch"; }
+            explicit ConditionSwitch(GMXLayer* gmxLayer) : ConditionBase(gmxLayer),
+            _name(gmxLayer),
+            _status(gmxLayer)
+            {
+                name() = "Switch";
+            }
             ConditionSwitch(const ConditionSwitch& rhs) : ConditionBase(rhs) { copyFrom(rhs); }
             ConditionSwitch& operator=(const ConditionSwitch& rhs)
             {

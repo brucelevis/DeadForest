@@ -874,7 +874,6 @@ void TriggerEditLayer::showChangeSwitchName(const char* title, bool& opened)
         if ( ImGui::ButtonEx("Set Name", ImVec2(145, 25)) && !isOverlapName )
         {
             std::strncpy(_switchNames[_selectedSwitchNameIndex].data(), _tempSwitchNameForCompareOverlap.data(), 100);
-            _isSwitchNameDirty = true;
         }
         ImGui::GetStyle().Colors[ImGuiCol_Button] = backupButton;
         ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = backupHoverColor;

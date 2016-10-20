@@ -15,19 +15,22 @@ namespace realtrick
     namespace editor
     {
         
+        class GMXLayer;
+        
         class TriggerParameterArithmetical : public TriggerParameterBase
         {
             
         public:
             
-            TriggerParameterArithmetical() :
-            TriggerParameterBase(),
+            TriggerParameterArithmetical() = default;
+            explicit TriggerParameterArithmetical(GMXLayer* layer) :
+            TriggerParameterBase(layer),
             _arithmetical(ArithmeticalType::INVALID)
             {
                 setParameterName("#invalid");
             }
             
-            TriggerParameterArithmetical(const TriggerParameterArithmetical& rhs) { copyFrom(rhs); }
+            TriggerParameterArithmetical(const TriggerParameterArithmetical& rhs) : TriggerParameterBase(rhs) { copyFrom(rhs); }
             TriggerParameterArithmetical& operator=(const TriggerParameterArithmetical& rhs)
             {
                 if ( &rhs != this ) copyFrom(rhs);

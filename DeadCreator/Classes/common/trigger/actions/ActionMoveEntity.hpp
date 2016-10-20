@@ -25,7 +25,15 @@ namespace realtrick
             
         public:
             
-            explicit ActionMoveEntity(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Move Entity"; }
+            explicit ActionMoveEntity(GMXLayer* gmxLayer) : ActionBase(gmxLayer),
+            _numberAll(gmxLayer),
+            _entity(gmxLayer),
+            _playerType(gmxLayer),
+            _sourceLocation(gmxLayer),
+            _destLocation(gmxLayer)
+            {
+                name() = "Move Entity";
+            }
             ActionMoveEntity(const ActionMoveEntity& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionMoveEntity& operator=(const ActionMoveEntity& rhs)
             {

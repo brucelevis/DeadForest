@@ -25,7 +25,14 @@ namespace realtrick
             
         public:
             
-            explicit ActionKillEntityAtLocation(GMXLayer* gmxLayer) : ActionBase(gmxLayer) { name() = "Kill Entity At Location"; }
+            explicit ActionKillEntityAtLocation(GMXLayer* gmxLayer) : ActionBase(gmxLayer),
+            _numberAll(gmxLayer),
+            _entity(gmxLayer),
+            _playerType(gmxLayer),
+            _location(gmxLayer)
+            {
+                name() = "Kill Entity At Location";
+            }
             ActionKillEntityAtLocation(const ActionKillEntityAtLocation& rhs) : ActionBase(rhs) { copyFrom(rhs); }
             ActionKillEntityAtLocation& operator=(const ActionKillEntityAtLocation& rhs)
             {

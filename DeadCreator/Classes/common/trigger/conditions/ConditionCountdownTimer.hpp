@@ -32,7 +32,12 @@ namespace realtrick
             
         public:
             
-            explicit ConditionCountdownTimer(GMXLayer* gmxLayer) : ConditionBase(gmxLayer) { name() = "Countdown Timer"; }
+            explicit ConditionCountdownTimer(GMXLayer* gmxLayer) : ConditionBase(gmxLayer),
+            _approximation(gmxLayer),
+            _number(gmxLayer)
+            {
+                name() = "Countdown Timer";
+            }
             ConditionCountdownTimer(const ConditionCountdownTimer& rhs) : ConditionBase(rhs) { copyFrom(rhs); }
             ConditionCountdownTimer& operator=(const ConditionCountdownTimer& rhs)
             {

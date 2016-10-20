@@ -32,7 +32,12 @@ namespace realtrick
             
         public:
         
-            explicit ConditionElapsedTime(GMXLayer* gmxLayer) : ConditionBase(gmxLayer) { name() = "Elapsed time"; }
+            explicit ConditionElapsedTime(GMXLayer* gmxLayer) : ConditionBase(gmxLayer),
+            _approximation(gmxLayer),
+            _number(gmxLayer)
+            {
+                name() = "Elapsed time";
+            }
             ConditionElapsedTime(const ConditionElapsedTime& rhs) : ConditionBase(rhs) { copyFrom(rhs); }
             ConditionElapsedTime& operator=(const ConditionElapsedTime& rhs)
             {

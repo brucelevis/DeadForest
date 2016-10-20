@@ -19,17 +19,18 @@ namespace realtrick
     namespace editor
     {
         
+        class GMXLayer;
+        
+        class TriggerEditLayer;
+        
         class TriggerParameterSwitchName : public TriggerParameterBase
         {
             
         public:
             
-            TriggerParameterSwitchName() : TriggerParameterBase()
-            {
-                setParameterName("");
-            }
-            
-            TriggerParameterSwitchName(const TriggerParameterSwitchName& rhs) { copyFrom(rhs); }
+            TriggerParameterSwitchName() = default;
+            explicit TriggerParameterSwitchName(GMXLayer* layer) : TriggerParameterBase(layer) { setParameterName(""); }
+            TriggerParameterSwitchName(const TriggerParameterSwitchName& rhs) : TriggerParameterBase(rhs) { copyFrom(rhs); }
             TriggerParameterSwitchName& operator=(const TriggerParameterSwitchName& rhs)
             {
                 if ( &rhs != this ) copyFrom(rhs);

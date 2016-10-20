@@ -15,19 +15,22 @@ namespace realtrick
     namespace editor
     {
         
+        class GMXLayer;
+        
         class TriggerParameterApproximation : public TriggerParameterBase
         {
             
         public:
             
-            TriggerParameterApproximation() :
-            TriggerParameterBase(),
+            TriggerParameterApproximation() = default;
+            explicit TriggerParameterApproximation(GMXLayer* layer) :
+            TriggerParameterBase(layer),
             _approximation(ApproximationType::INVALID)
             {
                 setParameterName("#invalid");
             }
             
-            TriggerParameterApproximation(const TriggerParameterApproximation& rhs) { copyFrom(rhs); }
+            TriggerParameterApproximation(const TriggerParameterApproximation& rhs) : TriggerParameterBase(rhs) { copyFrom(rhs); }
             TriggerParameterApproximation& operator=(const TriggerParameterApproximation& rhs)
             {
                 if ( &rhs != this ) copyFrom(rhs);

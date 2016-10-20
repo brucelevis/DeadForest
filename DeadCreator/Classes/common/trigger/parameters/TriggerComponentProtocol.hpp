@@ -25,6 +25,7 @@ namespace realtrick
             
         public:
             
+            TriggerComponentProtocol() = default;
             explicit TriggerComponentProtocol(GMXLayer* gmxLayer) : _gmxLayer(gmxLayer) {}
             TriggerComponentProtocol(const TriggerComponentProtocol& rhs) { copyFrom(rhs); }
             TriggerComponentProtocol& operator=(const TriggerComponentProtocol& rhs)

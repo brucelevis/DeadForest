@@ -105,6 +105,7 @@ bool TriggerEditLayer::init()
     return true;
 }
 
+
 void TriggerEditLayer::showLayer(bool& opened)
 {
     ImGuiContext& g = *GImGui;

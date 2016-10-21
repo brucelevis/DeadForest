@@ -20353,27 +20353,6 @@
                 <key>verticesUV</key>
                 <string>1420 193 1414 246 1397 270 1380 262 1361 216 1405 186</string>
             </dict>
-            <key>Zombie3Run10.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{-6.5,0.5}</string>
-                <key>spriteSize</key>
-                <string>{49,73}</string>
-                <key>spriteSourceSize</key>
-                <string>{128,128}</string>
-                <key>textureRect</key>
-                <string>{{666,898},{49,73}}</string>
-                <key>textureRotated</key>
-                <false/>
-                <key>triangles</key>
-                <string>0 3 4 1 2 3 0 1 3</string>
-                <key>vertices</key>
-                <string>82 100 59 100 33 74 56 30 82 27</string>
-                <key>verticesUV</key>
-                <string>715 971 692 971 666 945 689 901 715 898</string>
-            </dict>
             <key>Zombie3Run2.png</key>
             <dict>
                 <key>aliases</key>
@@ -24357,7 +24336,7 @@
             <key>size</key>
             <string>{2047,1533}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:3e9d2d4794fdd0278d53e30055b743f8:55f227fd40407b42e0ebab86b4a98b4a:e1a9b31caf258d7c92150a6ccbde6fbd$</string>
+            <string>$TexturePacker:SmartUpdate:66cab7e4456e889b0ebcd619408696ba:c67c7c91370029274c072d4a261df3ec:e1a9b31caf258d7c92150a6ccbde6fbd$</string>
             <key>textureFileName</key>
             <string>images.png</string>
         </dict>

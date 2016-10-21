@@ -52,6 +52,7 @@ _tileRoot(nullptr),
 _viewX(30),
 _viewY(60)
 {
+    _selectedEntitiesInfomation = "no selection";
 }
 
 
@@ -268,7 +269,65 @@ void GMXLayer::showLayer(bool& opened)
     _tileRoot->setPosition(_layerSize / 2);
     _clipNode->setClippingRegion(cocos2d::Rect(0, 0, _layerSize.width, _layerSize.height));
     
-    if ( !_imguiLayer.isModal() && !_isShowTriggerEdit && !_isShowForceSetting && !_isShowRenameLocationLayer ) updateCocosLogic();
+    auto layer = _imguiLayer.getLayerType();
+    if ( layer == LayerType::ENTITY )
+    {
+        if ( _selectedEntities.empty() )
+        {
+            _selectedEntitiesInfomation = "no selection";
+        }
+        else
+        {
+            _selectedEntitiesInfomation.clear();
+            _selectedEntitiesInfomation += _to_string(_selectedEntities.size());
+            _selectedEntitiesInfomation += " entities selected.";
+            
+            if ( ImGui::GetIO().MouseClicked[1] && ImGui::IsMouseHoveringWindow() )
+            {
+                ImGui::OpenPopup("setting");
+            }
+            
+            if ( ImGui::BeginPopup("setting") )
+            {
+                updateChunk(getCameraPosition());
+                
+                ImGui::TextUnformatted("Set Property");
+                ImGui::Separator();
+                
+                ImGui::PushItemWidth(200);
+                static int currPlayer = -1;
+                static const char* items[8] =
+                {
+                    "Player 1",
+                    "Player 2",
+                    "Player 3",
+                    "Player 4",
+                    "Player 5",
+                    "Player 6",
+                    "Player 7",
+                    "Player 8",
+                };
+                if (ImGui::Combo("Owner", &currPlayer, items, 8, 8))
+                {
+                }
+                
+                if ( ImGui::Button("Ok", ImVec2(100, 20)) )
+                {
+                    ImGui::CloseCurrentPopup();
+                }
+                
+                ImGui::SameLine();
+                if ( ImGui::Button("Close", ImVec2(100, 20)) )
+                {
+                    ImGui::CloseCurrentPopup();
+                }
+                
+                ImGui::EndPopup();
+            }
+        }
+    }
+    
+    if ( !_imguiLayer.isModal() && !_isPopupModal && !_isShowTriggerEdit && !_isShowForceSetting && !_isShowRenameLocationLayer ) updateCocosLogic();
     
     ImGui::End();
     ImGui::PopStyleVar(2);
@@ -464,16 +523,13 @@ void GMXLayer::updateCocosLogic()
         _selectedItemBoundingCircle->clear();
         for ( auto& ent : _entities ) ent.second->setBoundingCircle(false, Color4F(1.00, 0.00, 0.00, 0.50));
     }
-    
-    if ( ImGui::GetIO().MouseClicked[1] && ImGui::IsMouseHoveringWindow() )
-    {
-        _paletteLayer->setSelectedItem(-1);
-        clearSelectedEntites();
-    }
-    
+
     auto layerType = _imguiLayer.getLayerType();
     if ( layerType == LayerType::TILE )
     {
+        if ( ImGui::GetIO().MouseClicked[1] && ImGui::IsMouseHoveringWindow() )
+            _paletteLayer->setSelectedItem(-1);
+        
         TileType selectedTile = static_cast<TileType>(_paletteLayer->getSelectedItem());
         auto indices = getFocusedTileIndex(_mousePosInWorld, _file.tileWidth, _file.tileHeight, DUMMY_TILE_SIZE);
         if ( selectedTile != TileType::INVALID )
@@ -644,6 +700,7 @@ void GMXLayer::updateCocosLogic()
                 }
             }
         }
+        
     }
     
     
@@ -681,22 +738,24 @@ void GMXLayer::updateCocosLogic()
     // back space, delete
     if ( ImGui::IsKeyPressed(259) || ImGui::IsKeyPressed(261) )
     {
-        // remove command
-        auto prevCommand = _currCommand;
-        _currCommand = _removeEntityToolCommand;
-        
-        _currCommand->begin();
-        
-        static_cast<RemoveEntityToolCommand*>(_currCommand)->pushEntity(_selectedEntities);
-        removeSelectedEntities(true);
-        if ( !_currCommand->empty() )
+        if ( !_selectedEntities.empty() )
         {
-            _historyLayer->pushCommand(_currCommand->clone());
+            // remove command
+            auto prevCommand = _currCommand;
+            _currCommand = _removeEntityToolCommand;
+            
+            _currCommand->begin();
+            
+            static_cast<RemoveEntityToolCommand*>(_currCommand)->pushEntity(_selectedEntities);
+            removeSelectedEntities(true);
+            if ( !_currCommand->empty() )
+            {
+                _historyLayer->pushCommand(_currCommand->clone());
+            }
+            
+            _currCommand->end();
+            _currCommand = prevCommand;
         }
-        
-        _currCommand->end();
-        _currCommand = prevCommand;
-        
         
         if ( _imguiLayer.getLayerType() == LayerType::LOCATION )
         {
@@ -708,7 +767,6 @@ void GMXLayer::updateCocosLogic()
             removeLocation(_grabbedLocation);
             _grabbedLocation = nullptr;
         }
-        
     }
     
 }

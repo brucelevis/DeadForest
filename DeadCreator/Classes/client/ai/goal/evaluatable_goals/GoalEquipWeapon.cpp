@@ -149,10 +149,6 @@ void GoalEquipWeapon::makeEquipItemWeight()
 		{
 			_weightEquipItem[EntityType::ITEM_AXE] = kWeightAXE;
 		}
-		else if (EntityType::ITEM_CONSUMPTION == item)
-		{
-			_weightEquipItem[EntityType::ITEM_CONSUMPTION] = 0.0f;
-		}
 		else if (EntityType::ITEM_GLOCK17 == item)
 		{
 			_weightEquipItem[EntityType::ITEM_GLOCK17] = 
@@ -167,10 +163,6 @@ void GoalEquipWeapon::makeEquipItemWeight()
 		{
 			_weightEquipItem[EntityType::ITEM_M1897] = 
 				kWeightM1897 * (float)bulletsByWeapon[EntityType::ITEM_M1897] / 30.0f;
-		}
-		else if (EntityType::ITEM_STUFF == item)
-		{
-			_weightEquipItem[EntityType::ITEM_STUFF] = 0.0f;
 		}
 	}
 

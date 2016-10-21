@@ -143,6 +143,22 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             item->setPlayerType(PlayerType::NEUTRAL);
             addEntity(item, id);
         }
+        
+        else if ( entityType == EntityType::CONSUMABLE_MEATCAN )
+        {
+            ItemMeatcan* item = ItemMeatcan::create(_game);
+            item->setWorldPosition(position);
+            item->setPlayerType(PlayerType::NEUTRAL);
+            addEntity(item, id);
+        }
+        
+        else if ( entityType == EntityType::CONSUMABLE_BANDAGE )
+        {
+            ItemBandage* item = ItemBandage::create(_game);
+            item->setWorldPosition(position);
+            item->setPlayerType(PlayerType::NEUTRAL);
+            addEntity(item, id);
+        }
     }
     
     for ( auto& ent : _entities )

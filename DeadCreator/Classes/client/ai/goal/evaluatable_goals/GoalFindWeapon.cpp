@@ -77,11 +77,9 @@ int GoalFindWeapon::evaluate(HumanBase* const owner)
 void GoalFindWeapon::makeFindItemWeight()
 {
 	_weightFindItem[ITEM_AXE] = 3.0f;
-	_weightFindItem[ITEM_CONSUMPTION] = 0.0f;
 	_weightFindItem[ITEM_GLOCK17] = 5.0f;
 	_weightFindItem[ITEM_M16A2] = 6.0f;
 	_weightFindItem[ITEM_M1897] = 7.0f;
-	_weightFindItem[ITEM_STUFF] = 0.0f;
 	_weightFindItem[BULLET_556MM] = 1.0f;
 	_weightFindItem[BULLET_9MM] = 1.0f;
 	_weightFindItem[BULLET_SHELL] = 1.0f;
@@ -131,10 +129,6 @@ void GoalFindWeapon::makeFindItemWeight()
 		{
 			_weightFindItem[EntityType::ITEM_AXE] = -1.0f;
 		}
-		else if (EntityType::ITEM_CONSUMPTION == item)
-		{
-			_weightFindItem[EntityType::ITEM_CONSUMPTION] = 0.0f;
-		}
 		else if (EntityType::ITEM_GLOCK17 == item)
 		{
 			_weightFindItem[EntityType::ITEM_GLOCK17] = -1.0f;
@@ -149,10 +143,6 @@ void GoalFindWeapon::makeFindItemWeight()
 		{
 			_weightFindItem[EntityType::ITEM_M1897] = -1.0f;
 			_weightFindItem[EntityType::BULLET_SHELL] *= 10.0f;
-		}
-		else if (EntityType::ITEM_STUFF == item)
-		{
-			_weightFindItem[EntityType::ITEM_STUFF] = 0.0f;
 		}
 	}
 

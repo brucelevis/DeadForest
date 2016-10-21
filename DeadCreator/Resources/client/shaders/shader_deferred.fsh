@@ -11,6 +11,7 @@ uniform sampler2D u_dynamicTex;
 uniform sampler2D u_normalTex;
 uniform sampler2D u_occlusionTex;
 
+
 // lights
 vec3 calcAmbient(in vec3 lightColor, in float intensity)
 {
@@ -60,15 +61,14 @@ vec4 blur(sampler2D tex, vec2 p, float blurRadius, float sampleNum)
     return col / count;
 }
 
+
 void main()
 {
     vec4 originColor = texture2D(CC_Texture0, v_texCoord);
     vec4 staticColor = texture2D(u_staticTex, v_texCoord);
     vec4 dynamicColor = texture2D(u_dynamicTex, v_texCoord);
-//    vec4 normalColor = texture2D(u_normalTex, v_texCoord);
-    vec4 occlusionColor = blur(u_occlusionTex, v_texCoord, 10.0 , 2.0);
-//    vec4 occlusionColor = texture2D(u_occlusionTex, v_texCoord);
-//    vec4 occlusionColor = vec4(1.0);
+    vec4 occlusionColor = texture2D(u_occlusionTex, v_texCoord);
+//  vec4 normalColor = texture2D(u_normalTex, v_texCoord);
     
     vec4 visibleStaticColor = staticColor * occlusionColor.r * (1.0 - dynamicColor.a);
     vec4 unvisibleStaticColor = staticColor * (1.0 - occlusionColor.r);
@@ -82,7 +82,7 @@ void main()
 
     vec3 lightPos = vec3(568.0, 320.0, 100.0);
     vec3 pixelPos = vec3(v_texCoord.x * 1136.0, v_texCoord.y * 640.0, 0.0);
-    float lightRange = 600.0;
+    float lightRange = 800.0;
     
     float dist = length(lightPos - pixelPos);
     float t = min(dist / lightRange, 1.0);
@@ -102,6 +102,11 @@ void main()
     vec4 resultColor = vec4(0.0, 0.0, 0.0, 1.0);
     resultColor += staticColor;
     resultColor += dynamicColor;
+    
+//    float g = (resultColor.r * occlusionColor.r * 0.2126) + (resultColor.g * occlusionColor.r * 0.7152) + (resultColor.b * occlusionColor.r * 0.0722);
+//    g *= 1.2;
+//    resultColor = vec4(g, g, g, 1.0);
+    
     
     gl_FragColor = resultColor * identity;
 }

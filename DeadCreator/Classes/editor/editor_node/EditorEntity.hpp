@@ -107,9 +107,9 @@ namespace realtrick
                 if ( isFirstCall )
                 {
                     table[EntityType::ENTITY_PLAYER] = EntityData(EntityType::ENTITY_PLAYER, PaletteType::HUMAN, "Sheriff", "editor/sheriff.png");
-                    table[EntityType::ENTITY_ZOMBIE] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::ENEMY, "Zombie", "editor/zombie1.png");
-                    table[EntityType::ENTITY_ZOMBIE2] = EntityData(EntityType::ENTITY_ZOMBIE2, PaletteType::ENEMY, "Zombie", "editor/zombie2.png");
-                    table[EntityType::ENTITY_ZOMBIE3] = EntityData(EntityType::ENTITY_ZOMBIE3, PaletteType::ENEMY, "Zombie", "editor/zombie3.png");
+                    table[EntityType::ENTITY_ZOMBIE] = EntityData(EntityType::ENTITY_ZOMBIE, PaletteType::ENEMY, "Zombie1", "editor/zombie1.png");
+                    table[EntityType::ENTITY_ZOMBIE2] = EntityData(EntityType::ENTITY_ZOMBIE2, PaletteType::ENEMY, "Zombie2", "editor/zombie2.png");
+                    table[EntityType::ENTITY_ZOMBIE3] = EntityData(EntityType::ENTITY_ZOMBIE3, PaletteType::ENEMY, "Zombie3", "editor/zombie3.png");
                     table[EntityType::ITEM_M16A2] = EntityData(EntityType::ITEM_M16A2, PaletteType::ITEM, "M16A2", "editor/M16A2.png");
                     table[EntityType::ITEM_M1897] = EntityData(EntityType::ITEM_M1897, PaletteType::ITEM,"M1897", "editor/M1897.png");
                     table[EntityType::ITEM_GLOCK17] = EntityData(EntityType::ITEM_GLOCK17, PaletteType::ITEM,"Glock17", "editor/Glock17.png");
@@ -117,6 +117,8 @@ namespace realtrick
                     table[EntityType::BULLET_556MM] = EntityData(EntityType::BULLET_556MM, PaletteType::ITEM,"5.56mm", "editor/5_56mm.png");
                     table[EntityType::BULLET_9MM] = EntityData(EntityType::BULLET_9MM, PaletteType::ITEM,"9mm", "editor/9mm.png");
                     table[EntityType::BULLET_SHELL] = EntityData(EntityType::BULLET_SHELL, PaletteType::ITEM,"Shotgun Shell", "editor/Shell.png");
+                    table[EntityType::CONSUMABLE_BANDAGE] = EntityData(EntityType::CONSUMABLE_BANDAGE, PaletteType::ITEM, "Bandage", "editor/Bandage.png");
+                    table[EntityType::CONSUMABLE_MEATCAN] = EntityData(EntityType::CONSUMABLE_MEATCAN, PaletteType::ITEM, "Meat can", "editor/MeatCan.png");
                     
                     isFirstCall = false;
                 }
@@ -139,7 +141,10 @@ namespace realtrick
                     table["Axe"] = EntityData(EntityType::ITEM_AXE, PaletteType::ITEM,"Axe", "editor/Axe.png");
                     table["5.56mm"] = EntityData(EntityType::BULLET_556MM, PaletteType::ITEM,"5.56mm", "editor/5_56mm.png");
                     table["9mm"] = EntityData(EntityType::BULLET_9MM, PaletteType::ITEM,"9mm", "editor/9mm.png");
-                    table["Shotgun Shell"] = EntityData(EntityType::BULLET_SHELL, PaletteType::ITEM,"Shotgun Shell", "editor/Shell.png");
+                    table["Shotgun Shell"] = EntityData(EntityType::BULLET_SHELL, PaletteType::ITEM, "Shotgun Shell", "editor/Shell.png");
+                    table["Bandage"] = EntityData(EntityType::CONSUMABLE_BANDAGE, PaletteType::ITEM, "Bandage", "editor/Bandage.png");
+                    table["Meat can"] = EntityData(EntityType::CONSUMABLE_MEATCAN, PaletteType::ITEM, "Meat can", "editor/MeatCan.png");
+                    
                     isFirstCall = false;
                 }
                 return table;

@@ -45,6 +45,8 @@ namespace realtrick
         class GMXLayer : public cocos2d::Layer
         {
             
+            friend class EditScene;
+            
         public:
             
             explicit GMXLayer(EditScene& imguiLayer, GMXFile& file);
@@ -174,6 +176,8 @@ namespace realtrick
             bool _isLeftMouseClickEventDone = false;
             
             cocos2d::Vec2 _mousePosInWorld;
+            std::string _selectedEntitiesInfomation;
+            bool _isPopupModal = false;
             
             PaletteLayer* _paletteLayer = nullptr;
             bool _isShowPalette = true;

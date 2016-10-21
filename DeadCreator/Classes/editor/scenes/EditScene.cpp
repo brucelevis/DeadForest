@@ -384,9 +384,16 @@ bool EditScene::init()
                      ImGuiWindowFlags_NoScrollbar |
                      ImGuiWindowFlags_NoSavedSettings);
         
+        ImGui::Columns(4, "info columns3", false);
         static Vec2 worldPosition = Vec2::ZERO;
         if ( _layer ) worldPosition = _layer->getMousePosInWorld();
         ImGui::Text("Mouse Position (World) (%.0f, %.0f)", worldPosition.x, worldPosition.y);
+        ImGui::NextColumn();
+        
+        static std::string info;
+        if ( _layer ) info = _layer->_selectedEntitiesInfomation;
+        ImGui::Text("| %s", info.c_str());
+        ImGui::NextColumn();
         
         ImGui::End();
         ImGui::PopStyleVar(1);

@@ -282,9 +282,20 @@ void GMXLayer::showLayer(bool& opened)
             _selectedEntitiesInfomation += _to_string(_selectedEntities.size());
             _selectedEntitiesInfomation += " entities selected.";
             
+            static int currPlayer = -1;
             if ( ImGui::GetIO().MouseClicked[1] && ImGui::IsMouseHoveringWindow() )
             {
                 ImGui::OpenPopup("setting");
+                if ( _selectedEntities.size() == 1 )
+                {
+                    int playerType = static_cast<int>(_selectedEntities.front()->getPlayerType()) - 1;
+                    if ( playerType < 8 ) currPlayer = playerType;
+                    else currPlayer = -1;
+                }
+                else
+                {
+                    currPlayer = -1;
+                }
             }
             
             if ( ImGui::BeginPopup("setting") )
@@ -294,20 +305,18 @@ void GMXLayer::showLayer(bool& opened)
                 ImGui::TextUnformatted("Set Property");
                 ImGui::Separator();
                 
-                ImGui::PushItemWidth(200);
-                static int currPlayer = -1;
-                static const char* items[8] =
+                std::string players;
+                for(int i = 1 ; i <= 8 ; ++ i)
                 {
-                    "Player 1",
-                    "Player 2",
-                    "Player 3",
-                    "Player 4",
-                    "Player 5",
-                    "Player 6",
-                    "Player 7",
-                    "Player 8",
-                };
-                if (ImGui::Combo("Owner", &currPlayer, items, 8, 8))
+                    if ( _playerInfos[i].owner != Owner::UNUSED )
+                    {
+                        players += "Player ";
+                        players += _to_string(i);
+                        players += '\0';
+                    }
+                }
+                ImGui::PushItemWidth(200);
+                if (ImGui::Combo("Owner", &currPlayer, players.c_str(), 8))
                 {
                 }
                 

@@ -102,31 +102,6 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
         ret = true;
     }
     
-    if ( msg.msg == MessageType::HITTED_BY_GUN || msg.msg == MessageType::HITTED_BY_AXE || msg.msg == MessageType::HITTED_BY_FIST )
-    {
-        ReceiverSenderDamage* d = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
-        if ( _blood > 0 ) _blood -= d->damage;
-        if ( _blood <= 0 && isAlive() )
-        {
-            if ( d->sender->getTag() == _game->getPlayerPtr()->getTag() )
-            {
-                if ( msg.msg == MessageType::HITTED_BY_GUN)
-                {
-                    SoundSource s;
-                    s.fileName = "kill_sound.mp3";
-                    s.position = static_cast<HumanBase*>(d->sender)->getWorldPosition();
-                    s.soundRange = 100.0f;
-                    s.volume = 1.0f;
-                    _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
-                }
-            }
-            
-            this->getFSM()->changeState(&HumanBackDeadState::getInstance());
-        }
-        
-        ret = true;
-    }
-    
     else if ( msg.msg == MessageType::DISPLAY_TEXT )
     {
         // only apply to player

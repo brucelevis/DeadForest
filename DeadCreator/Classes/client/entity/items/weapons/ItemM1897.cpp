@@ -145,6 +145,10 @@ void ItemM1897::attackImpl()
         }
     }
     
+    ReceiverSenderDamage d2;
+    d2.damage = this->getDamage();
+    d2.sender = owner;
+    
     bool isHit = false;
     for(int s = 0 ; s < shootAts.size() ; ++ s)
     {
@@ -164,11 +168,12 @@ void ItemM1897::attackImpl()
                 _game->sendMessage(0.0, collider.second, owner, MessageType::HITTED_BY_GUN, &s);
                 
                 isHit = true;
+                d2.receiver = static_cast<HumanBase*>(collider.second);
             }
         }
     }
     
-    if ( isHit ) _game->sendMessage(0.0, owner, owner, MessageType::HIT, nullptr);
+    if ( isHit ) _game->sendMessage(0.0, owner, owner, MessageType::HIT, &d2);
     else _game->sendMessage(0.0, owner, owner, MessageType::NO_HIT, nullptr);
 }
 

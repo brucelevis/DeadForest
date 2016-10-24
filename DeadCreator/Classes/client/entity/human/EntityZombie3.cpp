@@ -63,63 +63,6 @@ EntityZombie3* EntityZombie3::create(Game* game)
 }
 
 
-void EntityZombie3::update(float dt)
-{
-    HumanBase::update(dt);
-}
-
-
-bool EntityZombie3::handleMessage(const Telegram& msg)
-{
-    bool ret = false;
-    
-    ret = HumanBase::handleMessage(msg);
-    
-    if ( msg.msg == MessageType::HITTED_BY_GUN || msg.msg == MessageType::HITTED_BY_AXE || msg.msg == MessageType::HITTED_BY_FIST )
-    {
-        ReceiverSenderDamage* d = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
-        if ( _blood > 0 ) _blood -= d->damage;
-        if ( _blood <= 0 && isAlive() )
-        {
-            if ( d->sender->getTag() == _game->getPlayerPtr()->getTag() )
-            {
-                if ( msg.msg == MessageType::HITTED_BY_GUN)
-                {
-                    SoundSource s;
-                    s.fileName = "kill_sound.mp3";
-                    s.position = static_cast<HumanBase*>(d->sender)->getWorldPosition();
-                    s.soundRange = 1000.0f;
-                    s.volume = 1.0f;
-                    _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
-                }
-            }
-            
-            this->getFSM()->changeState(&Zombie3Dead::getInstance());
-        }
-        
-        ret = true;
-    }
-    
-    else if ( msg.msg == MessageType::HIT )
-    {
-        // only apply to player
-        if ( _uiLayer ) _uiLayer->runCrossHairEffect("hit");
-        
-        ret = true;
-    }
-    
-    else if ( msg.msg == MessageType::NO_HIT )
-    {
-        // only apply to player
-        if ( _uiLayer ) _uiLayer->runCrossHairEffect("fire");
-        
-        ret = true;
-    }
-    
-    return ret;
-}
-
-
 void EntityZombie3::suicide()
 {
     if ( _FSM ) _FSM->changeState(&Zombie3Dead::getInstance());

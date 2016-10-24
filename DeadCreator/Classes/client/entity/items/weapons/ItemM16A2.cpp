@@ -148,7 +148,11 @@ void ItemM16A2::attackImpl()
             s.soundRange = 2000.0f;
             _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
             
-            _game->sendMessage(0.0, owner, owner, MessageType::HIT, nullptr);
+            ReceiverSenderDamage d2;
+            d2.damage = this->getDamage();
+            d2.receiver = static_cast<HumanBase*>(collider.second);
+            d2.sender = owner;
+            _game->sendMessage(0.0, owner, owner, MessageType::HIT, &d2);
         }
         else
         {

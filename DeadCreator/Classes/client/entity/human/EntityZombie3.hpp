@@ -26,9 +26,6 @@ namespace realtrick
             virtual bool init() override;
             static EntityZombie3* create(Game* game);
             
-            virtual bool handleMessage(const Telegram& msg) override;
-            
-            virtual void update(float dt) override;
             virtual void suicide() override;
             
         private:

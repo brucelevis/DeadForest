@@ -391,7 +391,13 @@ bool HumanBase::handleMessage(const Telegram& msg)
     else if ( msg.msg == MessageType::HIT )
     {
         // only apply to player
-        if ( _uiLayer ) _uiLayer->runCrossHairEffect("hit");
+        if ( _uiLayer )
+        {
+            _uiLayer->runCrossHairEffect("hit");
+            
+            ReceiverSenderDamage* d = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
+            _game->addLog("zombie's blood is " + _to_string(d->receiver->getBlood()) + ".");
+        }
         
         ret = true;
     }
@@ -404,6 +410,39 @@ bool HumanBase::handleMessage(const Telegram& msg)
         ret = true;
     }
 
+    // calc damage
+    if ( msg.msg == MessageType::HITTED_BY_GUN ||
+        msg.msg == MessageType::HITTED_BY_AXE ||
+        msg.msg == MessageType::HITTED_BY_FIST )
+    {
+        ReceiverSenderDamage* d = static_cast<ReceiverSenderDamage*>(msg.extraInfo);
+        if ( _blood > 0 )
+        {
+            _blood -= d->damage;
+            _blood = clampf(_blood, 0.0f, _maxBlood);
+        }
+        
+        if ( _blood <= 0 && isAlive() )
+        {
+            if ( d->sender->getTag() == _game->getPlayerPtr()->getTag() )
+            {
+                if ( msg.msg == MessageType::HITTED_BY_GUN)
+                {
+                    SoundSource s;
+                    s.fileName = "kill_sound.mp3";
+                    s.position = static_cast<HumanBase*>(d->sender)->getWorldPosition();
+                    s.soundRange = 1000.0f;
+                    s.volume = 1.0f;
+                    _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
+                }
+            }
+            
+            this->suicide();
+        }
+        
+        ret = true;
+    }
+    
     
     return ret;
 }

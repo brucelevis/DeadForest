@@ -74,6 +74,11 @@ void ItemAxe::attackImpl()
     Vec2 worldPos = owner->getWorldPosition();
     
     // 엔티티들과의 충돌처리
+    
+    ReceiverSenderDamage d2;
+    d2.damage = this->getDamage();
+    d2.sender = owner;
+    
     bool isHit = false;
     Vec2 shootAt = owner->getHeading();
     const auto& members = _game->getNeighborsOnAttack(worldPos, shootAt, this->getRange());
@@ -93,6 +98,7 @@ void ItemAxe::attackImpl()
                 s.sender = owner;
                 _game->sendMessage(0.0, human, owner, MessageType::HITTED_BY_AXE, &s);
                 
+                d2.receiver = human;
                 isHit = true;
             }
         }
@@ -105,7 +111,8 @@ void ItemAxe::attackImpl()
         s.position = worldPos;
         s.soundRange = 200.0f;
         _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
-        _game->sendMessage(0.0, owner, owner, MessageType::HIT, nullptr);
+        
+        _game->sendMessage(0.0, owner, owner, MessageType::HIT, &d2);
     }
     else
     {

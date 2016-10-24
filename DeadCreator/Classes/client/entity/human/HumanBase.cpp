@@ -38,6 +38,7 @@ _moving(Vec2::UNIT_X),
 _left(Vec2::ZERO),
 _right(Vec2::ZERO),
 _velocity(Vec2::ZERO),
+_dizzyScale(0.0f),
 _turnSpeed(0.0f),
 _speed(0.0f),
 _inputMask(0),
@@ -53,7 +54,8 @@ _footGauge(0.0f),
 _rotation(0.0f),
 _userNickName(""),
 _stateName("idle"),
-_regulator(0.1f)
+_regulator(0.1f),
+_healRegulator(1.0f)
 {
     ADD_FAMILY_MASK(_familyMask, HUMAN_BASE);
     setBoundingRadius(Prm.getValueAsFloat("boundingRadius"));
@@ -119,8 +121,21 @@ void HumanBase::update(float dt)
     
     this->rotateEntity();
     
-    // calculate foot guage to foot step sound.
-//    this->setFootGauge( _footGauge + _speed * dt );
+    // self heal
+    if ( _healRegulator.isReady() )
+        _blood += 1;
+    
+    // only apply to player
+    if ( _uiLayer )
+    {
+        float h = _blood / static_cast<float>(_maxBlood);
+        h = cocos2d::clampf(h, 0.0f, 1.0f);
+        
+        _uiLayer->setHitPoint(h);
+        _dizzyScale = 1.0f - h;
+    }
+    
+    // this->setFootGauge( _footGauge + _speed * dt );
     
     // update animation
     if ( _animator )
@@ -322,7 +337,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
     
     else if ( msg.msg == MessageType::HITTED_BY_FIST )
     {
-        this->hittedVibrate(0.3f);
+        this->hittedVibrate(0.6f);
         
         ret = true;
     }

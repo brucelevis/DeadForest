@@ -398,9 +398,9 @@ bool EditScene::init()
         ImGui::End();
         ImGui::PopStyleVar(1);
         
-        //        static bool isShowDemo = true;
-        //        ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-        //        ImGui::ShowTestWindow(&isShowDemo);
+        static bool isShowDemo = true;
+        ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
+        ImGui::ShowTestWindow(&isShowDemo);
         
     }, "##main menu");
     

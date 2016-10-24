@@ -129,6 +129,8 @@ namespace realtrick
                 EntityBase::setWorldPosition(pos);
                 _balance->setPosition(pos);
             }
+            
+            float getDizzyScale() const { return _dizzyScale; }
         
 
             void reload();
@@ -150,6 +152,7 @@ namespace realtrick
 			SensoryMemory*					_sensory;
 			AbstTargetingSystem*			_targetSystem;
 			Regulator						_regulator;
+            Regulator                       _healRegulator;
 
             UiLayer*                        _uiLayer;
             WeaponBase*                     _equipedWeapon;
@@ -163,6 +166,7 @@ namespace realtrick
             cocos2d::Vec2                   _velocity;
             
             cocos2d::Node*                  _balance;
+            float                           _dizzyScale;
             
             float                           _turnSpeed;
             float                           _speed;

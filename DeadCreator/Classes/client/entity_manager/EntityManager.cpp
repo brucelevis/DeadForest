@@ -48,7 +48,7 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
             
 			if (playerType == ownPlayer) {
 				_player = human;
-				human->setBlood(9999);
+//				human->setBlood(9999);
 			}
         }
         

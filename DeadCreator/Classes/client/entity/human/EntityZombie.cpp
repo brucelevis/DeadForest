@@ -94,14 +94,6 @@ bool EntityZombie::handleMessage(const Telegram& msg)
             this->getFSM()->changeState(&ZombieDead::getInstance());
         }
         
-        // only apply to player
-        if ( _uiLayer )
-        {
-            float h = _blood / static_cast<float>(_maxBlood);
-            h = cocos2d::clampf(h, 0.0f, 1.0f);
-            _uiLayer->setHitPoint(h);
-        }
-        
         ret = true;
     }
     

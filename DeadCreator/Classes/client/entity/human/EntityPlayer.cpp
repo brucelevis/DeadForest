@@ -124,14 +124,6 @@ bool EntityPlayer::handleMessage(const realtrick::client::Telegram &msg)
             this->getFSM()->changeState(&HumanBackDeadState::getInstance());
         }
         
-        // only apply to player
-        if ( _uiLayer )
-        {
-            float h = _blood / static_cast<float>(_maxBlood);
-            h = cocos2d::clampf(h, 0.0f, 1.0f);
-            _uiLayer->setHitPoint(h);
-        }
-        
         ret = true;
     }
     

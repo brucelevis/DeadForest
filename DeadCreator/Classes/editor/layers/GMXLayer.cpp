@@ -315,15 +315,72 @@ void GMXLayer::showLayer(bool& opened)
                         players += '\0';
                     }
                 }
+
                 ImGui::PushItemWidth(200);
-                if (ImGui::Combo("Owner", &currPlayer, players.c_str(), 8))
+                if ( ImGui::Combo("Owner", &currPlayer, players.c_str(), 8) )
                 {
                 }
                 
-                if ( ImGui::Button("Ok", ImVec2(100, 20)) )
+                static bool isInvisible = false;
+                ImGui::Checkbox("invisible", &isInvisible);
+                
+                static int errorCode = ErrorCode::HUMAN_CAN_JUST_ONE_HUMAN_ENTITY;
+                float okButtonTextAlpha = 1.0f;
+                int okButtonFlags = 0;
+                if ( errorCode != ErrorCode::NO_ERROR )
+                {
+                    okButtonTextAlpha = 0.5f;
+                    okButtonFlags = ImGuiButtonFlags_Disabled;
+                }
+                std::string errorMsg;
+                switch ( errorCode )
+                {
+                    case ErrorCode::NO_ERROR:
+                    {
+                        errorMsg = "you can change this entities property.";
+                        break;
+                    }
+                    case ErrorCode::HUMAN_CAN_JUST_ONE_HUMAN_ENTITY:
+                    {
+                        errorMsg = "human can just one human entity. check this.";
+                        break;
+                    }
+                    case ErrorCode::ITEM_CANNOT_OWN_BY_PLAYER:
+                    {
+                        errorMsg = "item can not own by player. check this.";
+                        break;
+                    }
+                    default:
+                    {
+                        errorMsg = "unknowned error occurred.";
+                        break;
+                    }
+                }
+                
+                ImGui::TextUnformatted("Infomation");
+                ImGui::Separator();
+                
+                ImGui::BeginChild("ErrorMsg", ImVec2(0, 60), true);
+                if ( errorCode == ErrorCode::NO_ERROR )
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.05, 0.3, 0.05, 1.0));
+                else
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8, 0.0, 0.0, 1.0));
+                ImGui::TextWrapped("%s", errorMsg.c_str());
+                ImGui::PopStyleColor();
+                
+                ImGui::EndChild();
+                
+                
+                auto style = ImGui::GetStyle();
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(style.Colors[ImGuiCol_Text].x,
+                                                            style.Colors[ImGuiCol_Text].y,
+                                                            style.Colors[ImGuiCol_Text].z,
+                                                            okButtonTextAlpha));
+                if ( ImGui::ButtonEx("Ok", ImVec2(100, 20), okButtonFlags) )
                 {
                     ImGui::CloseCurrentPopup();
                 }
+                ImGui::PopStyleColor();
                 
                 ImGui::SameLine();
                 if ( ImGui::Button("Close", ImVec2(100, 20)) )

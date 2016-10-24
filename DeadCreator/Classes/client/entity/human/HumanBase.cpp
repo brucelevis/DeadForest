@@ -123,7 +123,7 @@ void HumanBase::update(float dt)
     this->rotateEntity();
     
     // self heal
-    if ( _healRegulator.isReady() && _blood < _maxBlood )
+    if ( isAlive() && _healRegulator.isReady() && _blood < _maxBlood )
     {
         _blood += 1;
     }
@@ -173,6 +173,7 @@ bool HumanBase::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase
         
         return (overlap > 0.0f ? true : false);
     }
+    
     return false;
 }
 
@@ -332,6 +333,20 @@ bool HumanBase::handleMessage(const Telegram& msg)
         blood->setScale(0.2f);
         _game->addEntity(blood);
         
+        
+        AnimatedFiniteEntity* bloody = AnimatedFiniteEntity::create(_game, {
+            "bloody1.png",
+            "bloody2.png",
+            "bloody3.png",
+            "bloody4.png",
+            "bloody5.png",
+            "bloody6.png",
+            "bloody7.png"
+        }, 0.0f, cocos2d::ui::Widget::TextureResType::PLIST);
+        bloody->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
+                                     getWorldPosition().y + random(-30, 30)));
+        _game->addEntity(bloody);
+        
         ret = true;
     }
     
@@ -343,6 +358,20 @@ bool HumanBase::handleMessage(const Telegram& msg)
         blood->setWorldPosition(getWorldPosition());
         blood->setScale(0.5f);
         _game->addEntity(blood);
+        
+        AnimatedFiniteEntity* bloody = AnimatedFiniteEntity::create(_game, {
+            "bloody1.png",
+            "bloody2.png",
+            "bloody3.png",
+            "bloody4.png",
+            "bloody5.png",
+            "bloody6.png",
+            "bloody7.png"
+        }, 0.0f, cocos2d::ui::Widget::TextureResType::PLIST);
+        bloody->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
+                                      getWorldPosition().y + random(-30, 30)));
+        _game->addEntity(bloody);
+
         
         ret = true;
     }

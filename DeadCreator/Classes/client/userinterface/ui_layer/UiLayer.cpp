@@ -234,6 +234,7 @@ bool UiLayer::init()
     _countdownTimerView = CountdownTimerView::create(_game);
     _countdownTimerView->setPosition(Vec2(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT - 50));
     addChild(_countdownTimerView);
+
     
     _inGameUiLayer = Node::create();
     _inGameUiLayer->setPosition(GAME_SCREEN_WIDTH / 2, GAME_SCREEN_HEIGHT / 2);

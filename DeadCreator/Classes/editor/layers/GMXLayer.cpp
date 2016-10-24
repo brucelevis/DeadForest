@@ -680,6 +680,11 @@ void GMXLayer::updateCocosLogic()
                 isSelecting = false;
             }
         }
+        else
+        {
+            if ( ImGui::GetIO().MouseClicked[1] && ImGui::IsMouseHoveringWindow() )
+                _paletteLayer->setSelectedItem(-1);
+        }
         
         // put entity
         _selectedItem->setPosition(_mousePosInWorld);
@@ -766,9 +771,7 @@ void GMXLayer::updateCocosLogic()
                 }
             }
         }
-        
     }
-    
     
     // screen move logic
     if ( ImGui::GetIO().KeysDown[262] ) _cameraDirection.x = 1.0f;

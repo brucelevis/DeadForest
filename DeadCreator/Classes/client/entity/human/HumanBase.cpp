@@ -388,6 +388,23 @@ bool HumanBase::handleMessage(const Telegram& msg)
         ret = true;
     }
     
+    else if ( msg.msg == MessageType::HIT )
+    {
+        // only apply to player
+        if ( _uiLayer ) _uiLayer->runCrossHairEffect("hit");
+        
+        ret = true;
+    }
+    
+    else if ( msg.msg == MessageType::NO_HIT )
+    {
+        // only apply to player
+        if ( _uiLayer ) _uiLayer->runCrossHairEffect("fire");
+        
+        ret = true;
+    }
+
+    
     return ret;
 }
 

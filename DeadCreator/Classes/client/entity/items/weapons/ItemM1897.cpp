@@ -125,7 +125,7 @@ void ItemM1897::attackImpl()
     }
     
     // 벽과의 충돌처리
-    const std::vector<Polygon> walls = _game->getNeighborWalls(owner->getWorldPosition(), bulletRay);
+    const std::vector<Polygon> walls = _game->getNeighborSimpleWalls(owner->getWorldPosition(), bulletRay);
     float dist;
     for( const auto& wall : walls )
     {

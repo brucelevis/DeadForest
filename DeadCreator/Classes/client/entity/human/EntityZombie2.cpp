@@ -22,7 +22,7 @@ EntityZombie2::EntityZombie2(Game* game) : HumanBase(game)
     setEntityType(EntityType::ENTITY_ZOMBIE2);
     setRunSpeed(150.0f);
     setWalkSpeed(75.0f);
-    _maxBlood = 100;
+    _maxBlood = 400;
     _blood = _maxBlood;
 }
 

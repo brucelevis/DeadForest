@@ -137,7 +137,6 @@ namespace realtrick
             void attackByWeapon();
             void attackByFist();
             void attackVibrate(float force);
-            void hittedVibrate(float force);
             
         private:
         

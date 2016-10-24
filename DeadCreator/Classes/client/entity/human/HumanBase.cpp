@@ -80,14 +80,14 @@ bool HumanBase::init()
     _inventoryData = new InventoryData(this);
     
     setAlive();
-
-	_pathPlanner = new PathPlanner(*_game->getGraph(), this);
-	_sensory = new SensoryMemory(this, 5);
-	_targetSystem = new AbstTargetingSystem(this);
-
+    
+    _pathPlanner = new PathPlanner(*_game->getGraph(), this);
+    _sensory = new SensoryMemory(this, 5);
+    _targetSystem = new AbstTargetingSystem(this);
+    
     _balance = Node::create();
     addChild(_balance);
-
+    
     return true;
 }
 
@@ -107,12 +107,12 @@ HumanBase* HumanBase::create(Game* game)
 
 void HumanBase::update(float dt)
 {
-	if (_brain && isAlive() && _regulator.isReady())
-	{
-		_brain->think();
-		_sensory->updateVision();
-		_targetSystem->update();
-	}
+    if (_brain && isAlive() && _regulator.isReady())
+    {
+        _brain->think();
+        _sensory->updateVision();
+        _targetSystem->update();
+    }
     
     if ( _FSM ) _FSM->update(dt);
     
@@ -151,15 +151,15 @@ bool HumanBase::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase
     if ( isMasked(other->getFamilyMask(), HUMAN_BASE) )
     {
         HumanBase* human = static_cast<HumanBase*>(other);
-		
-		if (!human->isAlive()) return false;
-
-		cocos2d::Vec2 entityPos = human->getWorldPosition();
-		float overlap = std::max(0.0f, human->getBoundingRadius() + _boundingRadius - entityPos.distance(futurePosition));
-
-		additionalVelocity += (futurePosition - entityPos).getNormalized() * (overlap / 2);
-
-		return (overlap > 0.0f ? true : false);
+        
+        if (!human->isAlive()) return false;
+        
+        cocos2d::Vec2 entityPos = human->getWorldPosition();
+        float overlap = std::max(0.0f, human->getBoundingRadius() + _boundingRadius - entityPos.distance(futurePosition));
+        
+        additionalVelocity += (futurePosition - entityPos).getNormalized() * (overlap / 2);
+        
+        return (overlap > 0.0f ? true : false);
     }
     return false;
 }
@@ -185,73 +185,73 @@ bool HumanBase::isIntersectWall(const cocos2d::Vec2& futurePosition, const realt
 
 void HumanBase::moveEntity()
 {
-	if (getVelocity() == Vec2::ZERO)
-	{
-		_speed = 0.0f;
-		return;
-	}
-
-	float dt = Director::getInstance()->getDeltaTime();
-	cocos2d::Vec2 oldPos = getWorldPosition();
-	cocos2d::Vec2 futurePosition = getWorldPosition() + getVelocity() * dt;
-	_speed = getVelocity().getLength();
-	bool intersectResult = false;
-	cocos2d::Vec2 move;
-
-	// 엔티티들과의 충돌처리
-	const auto& members = _game->getNeighborsOnMove(oldPos, _speed);
-	for (const auto &entity : members)
-	{
-		if (entity == this) continue;
-
-		if (isIntersectOther(futurePosition, entity, move))
-			intersectResult = true;
-	}
-
-	// 벽과의 충돌처리
-	futurePosition += move;
-	float overlap = 0.0f;
-	int collideCnt = 0;
-	Vec2 beginSum, endSum;
-	const std::vector<realtrick::Polygon>& walls = _game->getNeighborSimpleWalls(futurePosition, _speed);
-	for (const auto& wall : walls)
-	{
-		for (int i = 0; i < wall.vertices.size() - 1; ++i)
-		{
-			Vec2 begin(wall.vertices[i]);
-			Vec2 end(wall.vertices[i + 1]);
-
-			float distance = physics::distToSegment(begin, end, futurePosition);
-			if (distance < _boundingRadius)
-			{
-				collideCnt++;
-				overlap += distance;
-				beginSum += begin;
-				endSum += end;
-			}				
-		}
-
-		Vec2 begin(wall.vertices.back());
-		Vec2 end(wall.vertices.front());
-
-		float distance = physics::distToSegment(begin, end, futurePosition);
-		if (distance < _boundingRadius)
-		{
-			collideCnt++;
-			overlap += distance;
-			beginSum += begin;
-			endSum += end;
-		}
-	}
-
-	if (collideCnt > 0)
-	{
-		overlap /= collideCnt;
-		move += (beginSum - endSum).getPerp().getNormalized() * (overlap * 0.33f);
-	}
-	
-	setWorldPosition(futurePosition + move);
-	_game->getCellSpace()->updateEntity(this, oldPos);
+    if (getVelocity() == Vec2::ZERO)
+    {
+        _speed = 0.0f;
+        return;
+    }
+    
+    float dt = Director::getInstance()->getDeltaTime();
+    cocos2d::Vec2 oldPos = getWorldPosition();
+    cocos2d::Vec2 futurePosition = getWorldPosition() + getVelocity() * dt;
+    _speed = getVelocity().getLength();
+    bool intersectResult = false;
+    cocos2d::Vec2 move;
+    
+    // 엔티티들과의 충돌처리
+    const auto& members = _game->getNeighborsOnMove(oldPos, _speed);
+    for (const auto &entity : members)
+    {
+        if (entity == this) continue;
+        
+        if (isIntersectOther(futurePosition, entity, move))
+            intersectResult = true;
+    }
+    
+    // 벽과의 충돌처리
+    futurePosition += move;
+    float overlap = 0.0f;
+    int collideCnt = 0;
+    Vec2 beginSum, endSum;
+    const std::vector<realtrick::Polygon>& walls = _game->getNeighborSimpleWalls(futurePosition, _speed);
+    for (const auto& wall : walls)
+    {
+        for (int i = 0; i < wall.vertices.size() - 1; ++i)
+        {
+            Vec2 begin(wall.vertices[i]);
+            Vec2 end(wall.vertices[i + 1]);
+            
+            float distance = physics::distToSegment(begin, end, futurePosition);
+            if (distance < _boundingRadius)
+            {
+                collideCnt++;
+                overlap += distance;
+                beginSum += begin;
+                endSum += end;
+            }
+        }
+        
+        Vec2 begin(wall.vertices.back());
+        Vec2 end(wall.vertices.front());
+        
+        float distance = physics::distToSegment(begin, end, futurePosition);
+        if (distance < _boundingRadius)
+        {
+            collideCnt++;
+            overlap += distance;
+            beginSum += begin;
+            endSum += end;
+        }
+    }
+    
+    if (collideCnt > 0)
+    {
+        overlap /= collideCnt;
+        move += (beginSum - endSum).getPerp().getNormalized() * (overlap * 0.33f);
+    }
+    
+    setWorldPosition(futurePosition + move);
+    _game->getCellSpace()->updateEntity(this, oldPos);
 }
 
 void HumanBase::rotateEntity()
@@ -337,8 +337,6 @@ bool HumanBase::handleMessage(const Telegram& msg)
     
     else if ( msg.msg == MessageType::HITTED_BY_FIST )
     {
-        this->hittedVibrate(0.6f);
-        
         ret = true;
     }
     
@@ -409,7 +407,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
         
         ret = true;
     }
-
+    
     // calc damage
     if ( msg.msg == MessageType::HITTED_BY_GUN ||
         msg.msg == MessageType::HITTED_BY_AXE ||
@@ -445,7 +443,6 @@ bool HumanBase::handleMessage(const Telegram& msg)
         
         ret = true;
     }
-    
     
     return ret;
 }
@@ -580,16 +577,6 @@ void HumanBase::attackVibrate(float force)
     _game->sendMessage(0.30 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
     _game->sendMessage(0.35 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
     _game->sendMessage(0.40 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
-    _game->sendMessage(0.45 / 3.0, this, this, MessageType::RESET_BALANCE, nullptr);
-}
-
-
-void HumanBase::hittedVibrate(float force)
-{
-    _game->sendMessage(0.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * random(0.0f, 1.0f), force * 4.0f * random(0.0f, 1.0f)));
-    _game->sendMessage(0.05 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * random(0.0f, 1.0f), force * 4.0f * random(0.0f, 1.0f)));
-    _game->sendMessage(0.10 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * random(0.0f, 1.0f), force * 4.0f * random(0.0f, 1.0f)));
-    _game->sendMessage(0.30 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * random(0.0f, 1.0f), force * 4.0f * random(0.0f, 1.0f)));
     _game->sendMessage(0.45 / 3.0, this, this, MessageType::RESET_BALANCE, nullptr);
 }
 

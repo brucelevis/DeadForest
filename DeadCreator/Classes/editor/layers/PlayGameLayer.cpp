@@ -78,7 +78,7 @@ void PlayGameLayer::showLayer(bool& opened)
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 1.00, 1.00));
 
 				auto player = game->getPlayerPtr();
-				ImGui::Text("x: %.0f, y: %.0f", player->getWorldPosition().x, player->getWorldPosition().y);
+				ImGui::Text("x: %.0f, y: %.0f", player->getBalancePosition().x, player->getBalancePosition().y);
 				ImGui::Text("hp: %d", player->getBlood());
 				ImGui::Text("state: %s", player->getStateName().c_str());
 
@@ -106,7 +106,7 @@ void PlayGameLayer::showLayer(bool& opened)
 				}
 
 				// center rect
-				auto indices = getFocusedTileIndex(game->getPlayerPtr()->getWorldPosition(), 128, 128, 4);
+				auto indices = getFocusedTileIndex(game->getPlayerPtr()->getBalancePosition(), 128, 128, 4);
 				const auto& tiles = resource->getTileData();
 				for (int i = indices.second - Prm.getValueAsInt("numOfViewableTileY") / 2;
 					i < indices.second + Prm.getValueAsInt("numOfViewableTileY") / 2; ++i)
@@ -130,7 +130,7 @@ void PlayGameLayer::showLayer(bool& opened)
 			{
 				auto cellSpace = game->getCellSpace();
 
-				auto currCellIndex = cellSpace->positionToIndex(game->getPlayerPtr()->getWorldPosition());
+				auto currCellIndex = cellSpace->positionToIndex(game->getPlayerPtr()->getBalancePosition());
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 0.00, 1.00));
 				ImGui::Text(std::string("current cell: " + _to_string(currCellIndex)).c_str(), NULL);
 				ImGui::PopStyleColor();
@@ -152,7 +152,7 @@ void PlayGameLayer::showLayer(bool& opened)
 			if (isPhysicsViewOn)
 			{
 				auto cellSpace = game->getCellSpace();
-				auto cell = cellSpace->getCell(game->getPlayerPtr()->getWorldPosition());
+				auto cell = cellSpace->getCell(game->getPlayerPtr()->getBalancePosition());
 				for (const auto& ent : cell.members)
 				{
 					if (ent->getEntityType() == EntityType::ENTITY_FINITE)
@@ -163,7 +163,7 @@ void PlayGameLayer::showLayer(bool& opened)
 					drawList->AddCircle(ImVec2(center.x, center.y), rad, ImColor(ImVec4(1.0, 0.0, 1.0, 0.7)), 20, 0.0f);
 				}
 
-				auto walls = game->getNeighborWalls(game->getPlayerPtr()->getWorldPosition(), 0.0f);
+				auto walls = game->getNeighborWalls(game->getPlayerPtr()->getBalancePosition(), 0.0f);
 				for (const auto& wall : walls)
 				{
 					for (int i = 0; i < wall.vertices.size() - 1; ++i)
@@ -177,7 +177,7 @@ void PlayGameLayer::showLayer(bool& opened)
 					drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.5)));
 				}
                 
-                auto simpleWalls = game->getNeighborSimpleWalls(game->getPlayerPtr()->getWorldPosition(), 0.0f);
+                auto simpleWalls = game->getNeighborSimpleWalls(game->getPlayerPtr()->getBalancePosition(), 0.0f);
                 for (const auto& wall : simpleWalls)
                 {
                     for (int i = 0; i < wall.vertices.size() - 1; ++i)
@@ -220,7 +220,7 @@ void PlayGameLayer::showLayer(bool& opened)
                 auto nodes = graph->getNodes();
                 for(const auto& node : nodes)
                 {
-                    auto playerPosition = game->getPlayerPtr()->getWorldPosition();
+                    auto playerPosition = game->getPlayerPtr()->getBalancePosition();
                     if ( playerPosition.distanceSquared(node.getPos()) < 200 * 200 )
                     {
                         Vec2 rectOrigin = worldToLocal(origin, node.getPos());
@@ -316,7 +316,7 @@ void PlayGameLayer::closeLayer()
 cocos2d::Vec2 PlayGameLayer::worldToLocal(const cocos2d::Vec2& p)
 {
 	auto game = _gameLayer->getGame();
-    auto transformedVector =  p - game->getPlayerPtr()->getWorldPosition();
+    auto transformedVector =  p - game->getPlayerPtr()->getBalancePosition();
     auto zoomScale = game->getRenderingSysetm()->getZoomScale();
 	return cocos2d::Vec2(transformedVector.x * zoomScale.x, transformedVector.y * zoomScale.y);
 }

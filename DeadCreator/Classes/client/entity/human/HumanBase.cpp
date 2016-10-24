@@ -435,6 +435,9 @@ bool HumanBase::handleMessage(const Telegram& msg)
                     s.volume = 1.0f;
                     _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
                 }
+                
+                std::string text = "killed! (+100)";
+                _game->sendMessage(0.0, d->sender, nullptr, MessageType::DISPLAY_TEXT, &text);
             }
             
             this->suicide();

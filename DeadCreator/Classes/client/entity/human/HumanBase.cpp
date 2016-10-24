@@ -39,6 +39,7 @@ _left(Vec2::ZERO),
 _right(Vec2::ZERO),
 _velocity(Vec2::ZERO),
 _dizzyScale(0.0f),
+_bloodyScale(0.0f),
 _turnSpeed(0.0f),
 _speed(0.0f),
 _inputMask(0),
@@ -122,8 +123,10 @@ void HumanBase::update(float dt)
     this->rotateEntity();
     
     // self heal
-    if ( _healRegulator.isReady() )
+    if ( _healRegulator.isReady() && _blood < _maxBlood )
+    {
         _blood += 1;
+    }
     
     // only apply to player
     if ( _uiLayer )
@@ -133,6 +136,15 @@ void HumanBase::update(float dt)
         
         _uiLayer->setHitPoint(h);
         _dizzyScale = 1.0f - h;
+        
+        if ( _bloodyScale > 0.0f )
+        {
+            _bloodyScale -= dt;
+        }
+        else
+        {
+            _bloodyScale = 0.0f;
+        }
     }
     
     // this->setFootGauge( _footGauge + _speed * dt );
@@ -418,24 +430,31 @@ bool HumanBase::handleMessage(const Telegram& msg)
         {
             _blood -= d->damage;
             _blood = clampf(_blood, 0.0f, _maxBlood);
+            
+            if ( d->receiver->getTag() == _game->getPlayerPtr()->getTag() )
+            {
+                _bloodyScale = 1.0f;
+                
+                SoundSource s;
+                s.fileName = "PlayerScreamSound_" + _to_string(random(1, 3)) + ".mp3";
+                s.position = static_cast<HumanBase*>(d->sender)->getWorldPosition();
+                s.soundRange = 1000.0f;
+                s.volume = 1.0f;
+                _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
+            }
         }
         
         if ( _blood <= 0 && isAlive() )
         {
             if ( d->sender->getTag() == _game->getPlayerPtr()->getTag() )
             {
-                if ( msg.msg == MessageType::HITTED_BY_GUN)
-                {
-                    SoundSource s;
-                    s.fileName = "kill_sound.mp3";
-                    s.position = static_cast<HumanBase*>(d->sender)->getWorldPosition();
-                    s.soundRange = 1000.0f;
-                    s.volume = 1.0f;
-                    _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
-                }
+                SoundSource s;
+                s.fileName = "kill_ui_sound.mp3";
+                s.position = static_cast<HumanBase*>(d->sender)->getWorldPosition();
+                s.soundRange = 1000.0f;
+                s.volume = 1.0f;
+                _game->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
                 
-                std::string text = "killed! (+100)";
-                _game->sendMessage(0.0, d->sender, nullptr, MessageType::DISPLAY_TEXT, &text);
             }
             
             this->suicide();

@@ -131,7 +131,8 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
     _occlusionBaker->bakeTexture(_occlusionTexture,
                                  player->getWorldPosition(),
                                  zoomScale,
-                                 _game->getNeighborWalls(player->getWorldPosition(), Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT)),
+                                 _game->getNeighborWalls(player->getWorldPosition(),
+                                                         Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT)),
                                  Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT), fov);
     
     getGLProgramState()->setUniformTexture("u_dynamicTex", _dynamicTexture->getSprite()->getTexture());
@@ -139,6 +140,7 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
     getGLProgramState()->setUniformTexture("u_occlusionTex", _occlusionTexture->getSprite()->getTexture());
     
     getGLProgramState()->setUniformFloat("u_dizzy", player->getDizzyScale());
+    getGLProgramState()->setUniformFloat("u_bloody", player->getBloodyScale());
 }
 
 

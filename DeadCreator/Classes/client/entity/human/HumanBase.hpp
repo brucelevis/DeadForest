@@ -131,7 +131,7 @@ namespace realtrick
             }
             
             float getDizzyScale() const { return _dizzyScale; }
-        
+            float getBloodyScale() const { return _bloodyScale; }
 
             void reload();
             void attackByWeapon();
@@ -166,6 +166,7 @@ namespace realtrick
             
             cocos2d::Node*                  _balance;
             float                           _dizzyScale;
+            float                           _bloodyScale;
             
             float                           _turnSpeed;
             float                           _speed;

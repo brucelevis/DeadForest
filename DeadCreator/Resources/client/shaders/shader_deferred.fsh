@@ -11,6 +11,7 @@ uniform sampler2D u_normalTex;
 uniform sampler2D u_occlusionTex;
 
 uniform float u_dizzy;
+uniform float u_bloody;
 
 
 // lights
@@ -80,7 +81,7 @@ void main()
 
     vec3 lightPos = vec3(568.0, 320.0, 100.0);
     vec3 pixelPos = vec3(v_texCoord.x * 1136.0, v_texCoord.y * 640.0, 0.0);
-    float lightRange = 800.0;
+    float lightRange = 600.0;
     
     float dist = length(lightPos - pixelPos);
     float t = min(dist / lightRange, 1.0);
@@ -99,6 +100,9 @@ void main()
     
     unvisibleStaticColor = min((1.5 - u_dizzy), 1.0) * unvisibleStaticColor;
     resultColor += unvisibleStaticColor;
+    resultColor *= identity;
+
+    resultColor += vec4(u_bloody * 0.2, 0.0, 0.0, 0.0);
     
-    gl_FragColor = resultColor * identity;
+    gl_FragColor = resultColor;
 }

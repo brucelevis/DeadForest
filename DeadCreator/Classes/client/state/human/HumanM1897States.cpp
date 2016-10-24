@@ -432,6 +432,7 @@ void HumanM1897AttackAction::enter(HumanBase* human)
     SoundSource s;
     s.fileName = "shotgun.mp3";
     s.position = human->getWorldPosition();
+    s.volume = 0.5f;
     s.soundRange = 2000.0f;
     human->getGame()->pushLogic(0.0, MessageType::PLAY_SOUND, &s);
     

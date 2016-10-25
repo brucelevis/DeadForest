@@ -171,6 +171,7 @@ table Entity
    player_type : int;
    entity_type : int;
    pos : Vector2;
+   name : string;
 }
 
 table Polygon

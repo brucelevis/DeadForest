@@ -69,6 +69,10 @@ HumanBase::~HumanBase()
     CC_SAFE_DELETE(_animator);
     CC_SAFE_DELETE(_inventoryData);
     CC_SAFE_DELETE(_brain);
+    
+    CC_SAFE_DELETE(_pathPlanner);
+    CC_SAFE_DELETE(_sensory);
+    CC_SAFE_DELETE(_targetSystem);
 }
 
 
@@ -88,6 +92,10 @@ bool HumanBase::init()
     
     _balance = Node::create();
     addChild(_balance);
+    
+    _nameTag = ui::Text::create("","fonts/SpecialElite.TTF", 10);
+    _nameTag->setPosition(Vec2(0.0f, -30.0f));
+    addChild(_nameTag);
     
     return true;
 }
@@ -345,7 +353,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
         }, 0.0f, cocos2d::ui::Widget::TextureResType::PLIST);
         bloody->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
                                      getWorldPosition().y + random(-30, 30)));
-        _game->addEntity(bloody);
+        _game->addEntity(bloody, 10);
         
         ret = true;
     }
@@ -370,7 +378,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
         }, 0.0f, cocos2d::ui::Widget::TextureResType::PLIST);
         bloody->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
                                       getWorldPosition().y + random(-30, 30)));
-        _game->addEntity(bloody);
+        _game->addEntity(bloody, 10);
 
         
         ret = true;

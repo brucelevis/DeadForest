@@ -134,6 +134,7 @@ namespace realtrick
         PlayerType playerType;
         EntityType entityType;
         cocos2d::Vec2 position;
+        std::string name;
     };
         
     struct Switch

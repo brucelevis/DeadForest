@@ -31,6 +31,8 @@ namespace realtrick
 		class HumanBase : public EntityBase
 		{
 
+            friend class EntityManager;
+            
 		public:
 
 			explicit HumanBase(Game* game);
@@ -187,6 +189,7 @@ namespace realtrick
         
             std::string                     _userNickName;
             std::string                     _stateName;
+            cocos2d::ui::Text*              _nameTag;
             
         };
         

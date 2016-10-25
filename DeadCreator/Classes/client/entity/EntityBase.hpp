@@ -24,6 +24,8 @@ namespace realtrick
         class EntityBase : public cocos2d::Node, public MessageNode
         {
             
+            friend class EntityManager;
+            
         public:
             
             explicit EntityBase(Game* game);

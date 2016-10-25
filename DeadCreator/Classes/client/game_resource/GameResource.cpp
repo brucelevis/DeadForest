@@ -107,6 +107,7 @@ bool GameResource::initWithBinary(const char* buffer)
         data.playerType = static_cast<PlayerType>(entity->player_type());
         data.entityType = static_cast<EntityType>(entity->entity_type());
         data.position.setPoint(entity->pos()->x(), entity->pos()->y());
+        data.name = entity->name()->str();
         
         _entities.push_back(data);
     }

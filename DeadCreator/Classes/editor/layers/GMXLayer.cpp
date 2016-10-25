@@ -2229,7 +2229,8 @@ void GMXLayer::save(const std::string& path)
                                                ent.second->getID(),
                                                static_cast<int>(ent.second->getPlayerType()),
                                                static_cast<int>(ent.second->getEntityType()),
-                                               &v);
+                                               &v,
+                                               builder.CreateString(ent.second->getEntityName()));
             entities.push_back(e);
         }
     }

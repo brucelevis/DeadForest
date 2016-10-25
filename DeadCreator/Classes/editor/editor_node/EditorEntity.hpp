@@ -100,8 +100,8 @@ namespace realtrick
             
             int getFamilyType() const { return _familyMask; }
             
-            std::string getEntityName() const { return _entityName; }
-            void setEntityName(const std::string& name) { _entityName = name; }
+            char* getEntityName() { return _entityName; }
+            void setEntityName(const char* name) { std::strncpy(_entityName, name, 20); }
             
             static const std::map<EntityType, EntityData>& getEntityTableByType()
             {
@@ -163,7 +163,7 @@ namespace realtrick
             cocos2d::DrawNode* _selectedCircle = nullptr;
             cocos2d::DrawNode* _boundingCircle = nullptr;
             float _boundingRadius = 20.0f;
-            std::string _entityName;
+            char _entityName[20];
             
         };
         

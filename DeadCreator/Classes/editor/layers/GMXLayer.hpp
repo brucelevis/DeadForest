@@ -178,6 +178,8 @@ namespace realtrick
             std::vector< std::vector<TileImage*> > _tileImages;
             std::vector< EditorEntity* > _selectedEntities;
             
+            bool _isPropertyPopupOpened = false;
+            
             
             int _viewX;
             int _viewY;

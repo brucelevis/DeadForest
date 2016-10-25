@@ -296,9 +296,17 @@ void GMXLayer::showLayer(bool& opened)
                 {
                     currPlayer = -1;
                 }
+                
+                _isPropertyPopupOpened = true;
             }
             
-            if ( ImGui::BeginPopup("setting") )
+            bool ret = ImGui::BeginPopup("setting");
+            if ( !ret && _isPropertyPopupOpened )
+            {
+                _isPropertyPopupOpened = false;
+            }
+            
+            if ( ret )
             {
                 updateChunk(getCameraPosition());
                 
@@ -324,6 +332,15 @@ void GMXLayer::showLayer(bool& opened)
                 static bool isInvisible = false;
                 ImGui::Checkbox("invisible", &isInvisible);
                 
+                if ( _selectedEntities.size() == 1 )
+                {
+                    ImGui::InputText("name", _selectedEntities.back()->getEntityName(), 20);
+                }
+                else
+                {
+                    static char name[20] = "";
+                    ImGui::InputText("name", name, 20);
+                }
                 static int errorCode = ErrorCode::HUMAN_CAN_JUST_ONE_HUMAN_ENTITY;
                 float okButtonTextAlpha = 1.0f;
                 int okButtonFlags = 0;
@@ -805,7 +822,7 @@ void GMXLayer::updateCocosLogic()
     _rootNode->setPosition( -_camera->getPosition() + Vec2(_layerSize / 2) );
     
     // back space, delete
-    if ( ImGui::IsKeyPressed(259) || ImGui::IsKeyPressed(261) )
+    if ( !_isPropertyPopupOpened && ( ImGui::IsKeyPressed(259) || ImGui::IsKeyPressed(261) ) )
     {
         if ( !_selectedEntities.empty() )
         {
@@ -936,20 +953,6 @@ void GMXLayer::updateChunk(const cocos2d::Vec2& pivot)
                                                    worldPos.y - _file.tileHeight / 2 + (_file.tileHeight / 4 * i)),
                                               Color4F(1, 1, 1, 0.05f));
                 }
-                
-//                for ( int i = 0 ; i < _file.worldSize.height ; i += _cellSpacePartition->getCellHeight() )
-//                {
-//                    _worldDebugNode->drawLine(Vec2(0, i), Vec2(_file.worldSize.width, i), Color4F(1.0f, 0.0f, 0.0f, 0.4f));
-//                }
-//                
-//                for ( int i = 0 ; i < _file.worldSize.width ; i += _cellSpacePartition->getCellWidth() )
-//                {
-//                    _worldDebugNode->drawLine(Vec2(i, 0), Vec2(i, _file.worldSize.height), Color4F(1.0f, 0.0f, 0.0f, 0.4f));
-//                }
-//                
-//                _localDebugNode->clear();
-//                _localDebugNode->drawDot(Vec2(_layerSize.width / 2, _layerSize.height / 2), 5.0f, Color4F(1.0f, 1.0f, 0.0f, 1.0f));
-                
             }
         }
     }
@@ -2276,14 +2279,10 @@ void GMXLayer::save(const std::string& path)
     }
     
     // force info
-    auto force1 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force1.name.data()),
-                                               _file.force1.isAlly, _file.force1.isVision);
-    auto force2 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force2.name.data()),
-                                               _file.force2.isAlly, _file.force2.isVision);
-    auto force3 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force3.name.data()),
-                                               _file.force3.isAlly, _file.force3.isVision);
-    auto force4 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force4.name.data()),
-                                               _file.force4.isAlly, _file.force4.isVision);
+    auto force1 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force1.name.data()), _file.force1.isAlly, _file.force1.isVision);
+    auto force2 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force2.name.data()), _file.force2.isAlly, _file.force2.isVision);
+    auto force3 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force3.name.data()), _file.force3.isAlly, _file.force3.isVision);
+    auto force4 = DeadCreator::CreateForceInfo(builder, builder.CreateString(_file.force4.name.data()), _file.force4.isAlly, _file.force4.isVision);
     
     auto file = DeadCreator::CreateGMXFile(builder,
                                            static_cast<DeadCreator::TileType>(_file.defaultTile),

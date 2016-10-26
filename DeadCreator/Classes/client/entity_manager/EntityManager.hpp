@@ -25,6 +25,8 @@ namespace realtrick
         class EntityManager : public cocos2d::Ref
         {
             
+            friend class Game;
+            
         public:
         
             explicit EntityManager(Game* game) :
@@ -78,6 +80,8 @@ namespace realtrick
             Game* _game;
             std::map<int, EntityBase*> _entities;
             HumanBase* _player;
+            
+            std::vector<EntityBase*> _allyEntities;
             
         };
         

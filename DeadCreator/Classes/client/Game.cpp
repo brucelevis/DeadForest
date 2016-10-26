@@ -76,7 +76,10 @@ Game* Game::create()
 
 Scene* Game::createScene()
 {
-    auto scene = Scene::create();
+    auto scene = Scene::createWithPhysics();
+    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    scene->getPhysicsWorld()->setAutoStep(true);
+    
     auto node = Game::create();
     scene->addChild(node);
     return scene;
@@ -516,7 +519,7 @@ void Game::teleportEntity(EntityBase* ent, const cocos2d::Rect& rect)
 
 cocos2d::Vec2 Game::getSuiatablePosition(const Circle& circle, const cocos2d::Rect& maximumRegion)
 {
-//    const auto& entities = getN
+//    const auto& entities = getNeighbors(<#const cocos2d::Vec2 &position#>)
     return Vec2::ZERO;
 }
 
@@ -651,40 +654,23 @@ void Game::generateIsometricGridGraph(
 	//	tail == "124"	LD, D, RD
 	//	tail == "134"	RU, R, RD
 	//	tail == "234"	LU, U, RU
-	std::map<std::string, std::vector<bool> > pushByTypeMap;
-
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"1", { true, true, false, true, true, true, true, true }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"2", { true, true, true, true, false, true, true, true }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"3", { true, true, true, true, true, true, false, true }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"4", { false, true, true, true, true, true, true, true }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"12", { true, true, false, false, false, true, true, true }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"13", { false, false, false, false, false, false, false, false }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"14", { false, false, false, true, true, true, true, true }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"23", { true, true, true, true, false, false, false, true }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"24", { false, false, false, false, false, false, false, false }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"34", { false, true, true, true, true, true, false, false }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"123", { true, true, false, false, false, false, false, true }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"124", { false, false, false, false, false, true, true, true }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"134", { false, false, false, true, true, true, false, false }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"234", { false, true, true, true, false, false, false, false }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"1234", { false, false, false, false, false, false, false, false }));
-	pushByTypeMap.emplace(std::make_pair<std::string, std::vector <bool> >(
-		"not_hill", { true, true, true, true, true, true, true, true }));
+    std::map<std::string, std::vector<bool> > pushByTypeMap;
+    pushByTypeMap.insert({"1", { true, true, false, true, true, true, true, true } });
+    pushByTypeMap.insert({"2", { true, true, true, true, false, true, true, true } });
+    pushByTypeMap.insert({"3", { true, true, true, true, true, true, false, true } });
+    pushByTypeMap.insert({"4", { false, true, true, true, true, true, true, true } });
+    pushByTypeMap.insert({"12", { true, true, false, false, false, true, true, true }});
+    pushByTypeMap.insert({"13", { false, false, false, false, false, false, false, false }});
+    pushByTypeMap.insert({"14", { false, false, false, true, true, true, true, true }});
+    pushByTypeMap.insert({"23", { true, true, true, true, false, false, false, true }});
+    pushByTypeMap.insert({"24", { false, false, false, false, false, false, false, false }});
+    pushByTypeMap.insert({"34", { false, true, true, true, true, true, false, false }});
+    pushByTypeMap.insert({"123", { true, true, false, false, false, false, false, true }});
+    pushByTypeMap.insert({"124", { false, false, false, false, false, true, true, true }});
+    pushByTypeMap.insert({"134", { false, false, false, true, true, true, false, false }});
+    pushByTypeMap.insert({"234", { false, true, true, true, false, false, false, false }});
+    pushByTypeMap.insert({"1234", { false, false, false, false, false, false, false, false }});
+    pushByTypeMap.insert({"not_hill", { true, true, true, true, true, true, true, true }});
 
 	const auto& tileData = _gameResource->getTileData();
 

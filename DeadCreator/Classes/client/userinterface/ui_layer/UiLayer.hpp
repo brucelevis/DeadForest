@@ -14,6 +14,8 @@
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 
+#include "Types.hpp"
+
 namespace realtrick
 {
     namespace client
@@ -52,7 +54,7 @@ namespace realtrick
             void setCountdownTimer(unsigned int seconds);
             void addCountdownTimer(unsigned int seconds);
             void subtractCountdownTimer(unsigned int seconds);
-            const int getCountdownTimer() const;
+            int getCountdownTimer() const;
             
         private:
             

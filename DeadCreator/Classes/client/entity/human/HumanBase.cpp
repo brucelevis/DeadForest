@@ -334,11 +334,11 @@ bool HumanBase::handleMessage(const Telegram& msg)
     
     if ( msg.msg  == MessageType::HITTED_BY_GUN )
     {
-        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"blood" + _to_string(random(1, 5)) + ".png"},
+        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"bloody" + _to_string(random(1, 6)) + ".png"},
                                                                    random(5, 10), cocos2d::ui::Widget::TextureResType::PLIST);
+        blood->setRotation(random(0.0f, 360.f));
         blood->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
                                      getWorldPosition().y + random(-30, 30)));
-        blood->setScale(0.2f);
         _game->addEntity(blood);
         
         
@@ -360,11 +360,11 @@ bool HumanBase::handleMessage(const Telegram& msg)
     
     else if ( msg.msg == MessageType::HITTED_BY_AXE )
     {
-        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"big_blood.PNG"},
+        AnimatedFiniteEntity* blood = AnimatedFiniteEntity::create(_game, {"bloody" + _to_string(random(2, 4)) + ".png"},
                                                                    random(5.0f, 10.0f), cocos2d::ui::Widget::TextureResType::PLIST);
         blood->setRotation(random(0.0f, 360.f));
-        blood->setWorldPosition(getWorldPosition());
-        blood->setScale(0.5f);
+        blood->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
+                                     getWorldPosition().y + random(-30, 30)));
         _game->addEntity(blood);
         
         AnimatedFiniteEntity* bloody = AnimatedFiniteEntity::create(_game, {

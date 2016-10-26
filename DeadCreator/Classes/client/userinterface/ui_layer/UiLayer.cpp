@@ -241,6 +241,7 @@ bool UiLayer::init()
     _inGameUiLayer->setScale(_game->getRenderingSysetm()->getZoomScale().x, _game->getRenderingSysetm()->getZoomScale().y);
     addChild(_inGameUiLayer);
     
+    
     _crossHair = CrossHair::create("client/ui/aim_point.png");
     _crossHair->setScale(0.8f);
     _crossHair->setRange(90.0f);
@@ -423,10 +424,13 @@ void UiLayer::subtractCountdownTimer(unsigned int seconds)
 }
 
 
-const int UiLayer::getCountdownTimer() const
+int UiLayer::getCountdownTimer() const
 {
     return _countdownTimerView->getCountdownTimer();
 }
+
+
+
 
 
 

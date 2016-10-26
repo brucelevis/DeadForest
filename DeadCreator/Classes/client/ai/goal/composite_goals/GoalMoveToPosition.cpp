@@ -71,7 +71,6 @@ GoalStatus GoalMoveToPosition::process()
 	if (_goalStatus == GoalStatus::FAILED)
 	{
 		setGoalStatus(GoalStatus::INACTIVE);
-		log("GoalMoveToPosition FAILED");
 	}
 
 	return _goalStatus;

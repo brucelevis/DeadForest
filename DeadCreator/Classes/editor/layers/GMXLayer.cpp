@@ -235,33 +235,6 @@ void GMXLayer::showLayer(bool& opened)
     auto canvasSize = Size(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
     ImGui::InvisibleButton("##dummy", ImVec2(canvasSize.width, canvasSize.height));
     
-    bool positionDirty = false;
-    
-    if ( _layerPosition.x < WINDOW_PADDING )
-    {
-        _layerPosition.x = WINDOW_PADDING * 1.5f;
-        positionDirty = true;
-    }
-    else if ( _layerPosition.x + _layerSize.width > g.IO.DisplaySize.x - WINDOW_PADDING )
-    {
-        _layerPosition.x = g.IO.DisplaySize.x - _layerSize.width - WINDOW_PADDING * 1.5f;
-        positionDirty = true;
-    }
-    
-    if ( _layerPosition.y < height + WINDOW_PADDING + ICONBAR_HEIGHT )
-    {
-        _layerPosition.y = height + WINDOW_PADDING  * 1.5f + ICONBAR_HEIGHT;
-        positionDirty = true;
-    }
-    
-    else if ( _layerPosition.y + _layerSize.height > g.IO.DisplaySize.y - WINDOW_PADDING - STATUSBAR_HEIGHT )
-    {
-        _layerPosition.y = g.IO.DisplaySize.y - _layerSize.height - WINDOW_PADDING* 1.5f - STATUSBAR_HEIGHT;
-        positionDirty = true;
-    }
-    
-    if ( positionDirty ) ImGui::SetWindowPos(ImVec2(_layerPosition.x, _layerPosition.y));
-    
     _layerPosition.setPoint(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
     _layerSize.setSize(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
     
@@ -282,135 +255,151 @@ void GMXLayer::showLayer(bool& opened)
             _selectedEntitiesInfomation += _to_string(_selectedEntities.size());
             _selectedEntitiesInfomation += " entities selected.";
             
-            static int currPlayer = -1;
-            if ( ImGui::GetIO().MouseClicked[1] && ImGui::IsMouseHoveringWindow() )
-            {
-                ImGui::OpenPopup("setting");
-                if ( _selectedEntities.size() == 1 )
-                {
-                    int playerType = static_cast<int>(_selectedEntities.front()->getPlayerType()) - 1;
-                    if ( playerType < 8 ) currPlayer = playerType;
-                    else currPlayer = -1;
-                }
-                else
-                {
-                    currPlayer = -1;
-                }
-                
-                _isPropertyPopupOpened = true;
-            }
-            
-            bool ret = ImGui::BeginPopup("setting");
-            if ( !ret && _isPropertyPopupOpened )
-            {
-                _isPropertyPopupOpened = false;
-            }
-            
-            if ( ret )
-            {
-                updateChunk(getCameraPosition());
-                
-                ImGui::TextUnformatted("Set Property");
-                ImGui::Separator();
-                
-                std::string players;
-                for(int i = 1 ; i <= 8 ; ++ i)
-                {
-                    if ( _playerInfos[i].owner != Owner::UNUSED )
-                    {
-                        players += "Player ";
-                        players += _to_string(i);
-                        players += '\0';
-                    }
-                }
-
-                ImGui::PushItemWidth(200);
-                if ( ImGui::Combo("Owner", &currPlayer, players.c_str(), 8) )
-                {
-                }
-                
-                static bool isInvisible = false;
-                ImGui::Checkbox("invisible", &isInvisible);
-                
-                if ( _selectedEntities.size() == 1 )
-                {
-                    ImGui::InputText("name", _selectedEntities.back()->getEntityName(), 20);
-                }
-                else
-                {
-                    static char name[20] = "";
-                    ImGui::InputText("name", name, 20);
-                }
-                static int errorCode = ErrorCode::HUMAN_CAN_JUST_ONE_HUMAN_ENTITY;
-                float okButtonTextAlpha = 1.0f;
-                int okButtonFlags = 0;
-                if ( errorCode != ErrorCode::NO_ERROR )
-                {
-                    okButtonTextAlpha = 0.5f;
-                    okButtonFlags = ImGuiButtonFlags_Disabled;
-                }
-                std::string errorMsg;
-                switch ( errorCode )
-                {
-                    case ErrorCode::NO_ERROR:
-                    {
-                        errorMsg = "you can change this entities property.";
-                        break;
-                    }
-                    case ErrorCode::HUMAN_CAN_JUST_ONE_HUMAN_ENTITY:
-                    {
-                        errorMsg = "human can just one human entity. check this.";
-                        break;
-                    }
-                    case ErrorCode::ITEM_CANNOT_OWN_BY_PLAYER:
-                    {
-                        errorMsg = "item can not own by player. check this.";
-                        break;
-                    }
-                    default:
-                    {
-                        errorMsg = "unknowned error occurred.";
-                        break;
-                    }
-                }
-                
-                ImGui::TextUnformatted("Infomation");
-                ImGui::Separator();
-                
-                ImGui::BeginChild("ErrorMsg", ImVec2(0, 60), true);
-                if ( errorCode == ErrorCode::NO_ERROR )
-                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.05, 0.3, 0.05, 1.0));
-                else
-                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8, 0.0, 0.0, 1.0));
-                ImGui::TextWrapped("%s", errorMsg.c_str());
-                ImGui::PopStyleColor();
-                
-                ImGui::EndChild();
-                
-                
-                auto style = ImGui::GetStyle();
-                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(style.Colors[ImGuiCol_Text].x,
-                                                            style.Colors[ImGuiCol_Text].y,
-                                                            style.Colors[ImGuiCol_Text].z,
-                                                            okButtonTextAlpha));
-                if ( ImGui::ButtonEx("Ok", ImVec2(100, 20), okButtonFlags) )
-                {
-                    ImGui::CloseCurrentPopup();
-                }
-                ImGui::PopStyleColor();
-                
-                ImGui::SameLine();
-                if ( ImGui::Button("Close", ImVec2(100, 20)) )
-                {
-                    ImGui::CloseCurrentPopup();
-                }
-                
-                ImGui::EndPopup();
-            }
+//            static int currPlayer = -1;
+//            if ( ImGui::GetIO().MouseClicked[1] && ImGui::IsMouseHoveringWindow() )
+//            {
+//                ImGui::OpenPopup("setting");
+//                if ( _selectedEntities.size() == 1 )
+//                {
+//                    int playerType = static_cast<int>(_selectedEntities.front()->getPlayerType()) - 1;
+//                    if ( playerType < 8 ) currPlayer = playerType;
+//                    else currPlayer = -1;
+//                }
+//                else
+//                {
+//                    currPlayer = -1;
+//                }
+//                
+//                _isPropertyPopupOpened = true;
+//            }
+//            
+//            bool ret = ImGui::BeginPopup("setting");
+//            if ( !ret && _isPropertyPopupOpened )
+//            {
+//                _isPropertyPopupOpened = false;
+//            }
+//            
+//            if ( ret )
+//            {
+//                updateChunk(getCameraPosition());
+//                
+//                ImGui::TextUnformatted("Set Property");
+//                ImGui::Separator();
+//                
+//                std::string players;
+//                for(int i = 1 ; i <= 8 ; ++ i)
+//                {
+//                    if ( _playerInfos[i].owner != Owner::UNUSED )
+//                    {
+//                        players += "Player ";
+//                        players += _to_string(i);
+//                        players += '\0';
+//                    }
+//                }
+//
+//                ImGui::PushItemWidth(200);
+//                if ( ImGui::Combo("Owner", &currPlayer, players.c_str(), 8) )
+//                {
+//                    if ( _playerInfos[currPlayer + 1].owner == Owner::HUMAN )
+//                    {
+//                        auto numOfEntities = 0;
+//                        for( const auto& entity : _entities )
+//                        {
+//                            if ( entity.second->getPlayerType() == static_cast<PlayerType>(currPlayer + 1) )
+//                            {
+//                                numOfEntities++;
+//                            }
+//                        }
+//                        
+//                        if ( numOfEntities >= 1 )
+//                        {
+//                            
+//                        }
+//                    }
+//                }
+//                
+//                if ( _selectedEntities.size() == 1 )
+//                {
+//                    ImGui::InputText("name", _selectedEntities.back()->getEntityName(), 20);
+//                }
+//                else
+//                {
+//                    static char name[20] = "";
+//                    ImGui::InputText("name", name, 20);
+//                }
+//                static int errorCode = ErrorCode::HUMAN_CAN_JUST_ONE_HUMAN_ENTITY;
+//                float okButtonTextAlpha = 1.0f;
+//                int okButtonFlags = 0;
+//                if ( errorCode != ErrorCode::NO_ERROR )
+//                {
+//                    okButtonTextAlpha = 0.5f;
+//                    okButtonFlags = ImGuiButtonFlags_Disabled;
+//                }
+//                std::string errorMsg;
+//                switch ( errorCode )
+//                {
+//                    case ErrorCode::NO_ERROR:
+//                    {
+//                        errorMsg = "you can change this entities property.";
+//                        break;
+//                    }
+//                    case ErrorCode::HUMAN_CAN_JUST_ONE_HUMAN_ENTITY:
+//                    {
+//                        errorMsg = "human can just one human entity. check this.";
+//                        break;
+//                    }
+//                    case ErrorCode::ITEM_CANNOT_OWN_BY_PLAYER:
+//                    {
+//                        errorMsg = "item can not own by player. check this.";
+//                        break;
+//                    }
+//                    default:
+//                    {
+//                        errorMsg = "unknowned error occurred.";
+//                        break;
+//                    }
+//                }
+//                
+//                ImGui::TextUnformatted("Infomation");
+//                ImGui::Separator();
+//                
+//                ImGui::BeginChild("ErrorMsg", ImVec2(0, 60), true);
+//                if ( errorCode == ErrorCode::NO_ERROR )
+//                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.05, 0.3, 0.05, 1.0));
+//                else
+//                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8, 0.0, 0.0, 1.0));
+//                ImGui::TextWrapped("%s", errorMsg.c_str());
+//                ImGui::PopStyleColor();
+//                
+//                ImGui::EndChild();
+//                
+//                
+//                auto style = ImGui::GetStyle();
+//                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(style.Colors[ImGuiCol_Text].x,
+//                                                            style.Colors[ImGuiCol_Text].y,
+//                                                            style.Colors[ImGuiCol_Text].z,
+//                                                            okButtonTextAlpha));
+//                if ( ImGui::ButtonEx("Ok", ImVec2(100, 20), okButtonFlags) )
+//                {
+//                    ImGui::CloseCurrentPopup();
+//                }
+//                ImGui::PopStyleColor();
+//                
+//                ImGui::SameLine();
+//                if ( ImGui::Button("Close", ImVec2(100, 20)) )
+//                {
+//                    ImGui::CloseCurrentPopup();
+//                }
+//                
+//                ImGui::EndPopup();
+//            }
         }
     }
     
-    if ( !_imguiLayer.isModal() && !_isPopupModal && !_isShowTriggerEdit && !_isShowForceSetting && !_isShowRenameLocationLayer ) updateCocosLogic();
+    if ( !_imguiLayer.isModal() && !_isPopupModal && !_isShowTriggerEdit && !_isShowForceSetting && !_isShowRenameLocationLayer )
+    {
+        updateCocosLogic();
+    }
     
     ImGui::End();
     ImGui::PopStyleVar(2);
@@ -457,6 +446,7 @@ void GMXLayer::updateCocosLogic()
     static Vec2 mousePosInCocos2dMatrix;
     mousePosInCocos2dMatrix = Vec2(ImGui::GetIO().MousePos.x, ImGui::GetIO().DisplaySize.y - ImGui::GetIO().MousePos.y);
     
+    // is title clicked?
     if ( ImGui::IsMouseHoveringWindow() && ImGui::GetIO().MouseClicked[0] )
     {
         cocos2d::Rect boundingBox(_layerPosition.x, ImGui::GetIO().DisplaySize.y - _layerPosition.y - height, _layerSize.width, height);
@@ -465,6 +455,7 @@ void GMXLayer::updateCocosLogic()
             GMXLayer::enableTitleClicked();
         }
     }
+    
     if ( ImGui::GetIO().MouseReleased[0] )
     {
         GMXLayer::disableTitleClicked();
@@ -791,70 +782,72 @@ void GMXLayer::updateCocosLogic()
     }
     
     // screen move logic
-    if ( ImGui::GetIO().KeysDown[262] ) _cameraDirection.x = 1.0f;
-    else if ( ImGui::GetIO().KeysDown[263] ) _cameraDirection.x = -1.0f;
-    else _cameraDirection.x = 0.0f;
-    
-    if ( ImGui::GetIO().KeysDown[265] ) _cameraDirection.y = 1.0f;
-    else if ( ImGui::GetIO().KeysDown[264] ) _cameraDirection.y = -1.0f;
-    else _cameraDirection.y = 0.0f;
-    
-    auto dt = Director::getInstance()->getDeltaTime();
-    _centerViewParam.x += (_cameraDirection.x * _windowSpeed * dt) / (_file.worldSize.width - _layerSize.width);
-    _centerViewParam.y += (_cameraDirection.y * _windowSpeed * dt) / (_file.worldSize.height - _layerSize.height);
-    _centerViewParam.clamp(Vec2::ZERO, Vec2::ONE);
-    
-    Vec2 oldPosition = _camera->getPosition();
-    Vec2 newPosition = Vec2( _layerSize.width / 2 + (_file.worldSize.width - _layerSize.width) * _centerViewParam.x,
-                            _layerSize.height / 2 + (_file.worldSize.height - _layerSize.height) * _centerViewParam.y);
-    
-    _camera->setPosition(newPosition);
-    auto cameraPos = _camera->getPosition();
-    cameraPos.clamp(Vec2(_layerSize / 2), Vec2(_file.worldSize) - Vec2(_layerSize / 2));
-    _camera->setPosition(cameraPos);
-    
-    if ( _cellSpacePartition->isUpdateChunk(oldPosition, newPosition) )
+    if ( !_isPropertyPopupOpened )
     {
-        updateChunk(newPosition);
-    }
-    
-    _tileRoot->setPosition( Vec2(_layerSize / 2) + _tileRootWorldPosition - _camera->getPosition() );
-    _rootNode->setPosition( -_camera->getPosition() + Vec2(_layerSize / 2) );
-    
-    // back space, delete
-    if ( !_isPropertyPopupOpened && ( ImGui::IsKeyPressed(259) || ImGui::IsKeyPressed(261) ) )
-    {
-        if ( !_selectedEntities.empty() )
+        if ( ImGui::GetIO().KeysDown[262] ) _cameraDirection.x = 1.0f;
+        else if ( ImGui::GetIO().KeysDown[263] ) _cameraDirection.x = -1.0f;
+        else _cameraDirection.x = 0.0f;
+        
+        if ( ImGui::GetIO().KeysDown[265] ) _cameraDirection.y = 1.0f;
+        else if ( ImGui::GetIO().KeysDown[264] ) _cameraDirection.y = -1.0f;
+        else _cameraDirection.y = 0.0f;
+        
+        auto dt = Director::getInstance()->getDeltaTime();
+        _centerViewParam.x += (_cameraDirection.x * _windowSpeed * dt) / (_file.worldSize.width - _layerSize.width);
+        _centerViewParam.y += (_cameraDirection.y * _windowSpeed * dt) / (_file.worldSize.height - _layerSize.height);
+        _centerViewParam.clamp(Vec2::ZERO, Vec2::ONE);
+        
+        Vec2 oldPosition = _camera->getPosition();
+        Vec2 newPosition = Vec2( _layerSize.width / 2 + (_file.worldSize.width - _layerSize.width) * _centerViewParam.x,
+                                _layerSize.height / 2 + (_file.worldSize.height - _layerSize.height) * _centerViewParam.y);
+        
+        _camera->setPosition(newPosition);
+        auto cameraPos = _camera->getPosition();
+        cameraPos.clamp(Vec2(_layerSize / 2), Vec2(_file.worldSize) - Vec2(_layerSize / 2));
+        _camera->setPosition(cameraPos);
+        
+        if ( _cellSpacePartition->isUpdateChunk(oldPosition, newPosition) )
         {
-            // remove command
-            auto prevCommand = _currCommand;
-            _currCommand = _removeEntityToolCommand;
-            
-            _currCommand->begin();
-            
-            static_cast<RemoveEntityToolCommand*>(_currCommand)->pushEntity(_selectedEntities);
-            removeSelectedEntities(true);
-            if ( !_currCommand->empty() )
-            {
-                _historyLayer->pushCommand(_currCommand->clone());
-            }
-            
-            _currCommand->end();
-            _currCommand = prevCommand;
+            updateChunk(newPosition);
         }
         
-        if ( _imguiLayer.getLayerType() == LayerType::LOCATION )
+        _tileRoot->setPosition( Vec2(_layerSize / 2) + _tileRootWorldPosition - _camera->getPosition() );
+        _rootNode->setPosition( -_camera->getPosition() + Vec2(_layerSize / 2) );
+        
+        // back space, delete
+        if ( ( ImGui::IsKeyPressed(259) || ImGui::IsKeyPressed(261) ) )
         {
-            // remove location
-            for (auto& loc : _locations)
+            if ( !_selectedEntities.empty() )
             {
-                loc->setSelected(false);
+                // remove command
+                auto prevCommand = _currCommand;
+                _currCommand = _removeEntityToolCommand;
+                
+                _currCommand->begin();
+                
+                static_cast<RemoveEntityToolCommand*>(_currCommand)->pushEntity(_selectedEntities);
+                removeSelectedEntities(true);
+                if ( !_currCommand->empty() )
+                {
+                    _historyLayer->pushCommand(_currCommand->clone());
+                }
+                
+                _currCommand->end();
+                _currCommand = prevCommand;
             }
-            removeLocation(_grabbedLocation);
-            _grabbedLocation = nullptr;
+            
+            if ( _imguiLayer.getLayerType() == LayerType::LOCATION )
+            {
+                // remove location
+                for (auto& loc : _locations)
+                {
+                    loc->setSelected(false);
+                }
+                removeLocation(_grabbedLocation);
+                _grabbedLocation = nullptr;
+            }
         }
     }
-    
 }
 
 
@@ -2027,8 +2020,9 @@ void GMXLayer::updateCollisionRegion()
         }
     }
     
+    // render hard walls
     _collisionNode->clear();
-    for(auto& poly : _collisionRegions)
+    for(const auto& poly : _collisionRegions)
     {
         for(int i = 0 ; i < poly.size()-1; ++ i)
         {
@@ -2038,7 +2032,8 @@ void GMXLayer::updateCollisionRegion()
         _collisionNode->drawSegment(poly.back(), poly.front(), 1.0f, Color4F(1.0f, 1.0f, 1.0f, 0.5f));
     }
     
-    for(auto& poly : _simpleCollisionRegions)
+    // render simple walls
+    for(const auto& poly : _simpleCollisionRegions)
     {
         for(int i = 0 ; i < poly.size()-1; ++ i)
         {

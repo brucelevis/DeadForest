@@ -160,24 +160,6 @@ bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
         }
     }
     
-    for ( auto& ent : _entities )
-    {
-        auto currentEntity = ent.second;
-        auto familyMask = currentEntity->getFamilyMask();
-        if ( isMasked(familyMask, FamilyMask::HUMAN_BASE) )
-        {
-            if ( _player->getTag() == currentEntity->getTag()) continue;
-            
-            if ( _player->getForce() == currentEntity->getForce() )
-            {
-                auto human = static_cast<HumanBase*>(currentEntity);
-                human->_nameTag->setString("Nick");
-                human->_nameTag->setColor(Color3B(10, 150, 10));
-            }
-        }
-    }
-    
-    
     return true;
 }
 

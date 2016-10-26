@@ -19,7 +19,10 @@ ShaderTestScene::ShaderTestScene()
 
 Scene* ShaderTestScene::createScene()
 {
-    auto scene = Scene::create();
+    auto scene = Scene::createWithPhysics();
+    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    scene->getPhysicsWorld()->setGravity(Vec2::ZERO);
+    
     auto node = ShaderTestScene::create();
     scene->addChild(node);
     return scene;
@@ -33,59 +36,64 @@ bool ShaderTestScene::init()
     
     this->scheduleUpdate();
     
-    _human = Sprite::create("client/sample/grossini.png");
-    _human->setPosition(800, 480);
-    addChild(_human);
-    
-    auto joystick = JoystickEx::create("client/ui/wooden_handle_n.png", "client/ui/wooden_handle_n.png");
-    joystick->setJoystickPad("client/ui/wooden_pad.png");
-    joystick->setRotationType(JoystickEx::RotationType::ROTATION_8);
-    joystick->setPosition(Vec2(300, 300));
-    joystick->enableDoubleClick(false);
-    joystick->setChangedDirectionAndStatusCallback([this, joystick](Ref* ref, const Vec2& dir, JoystickEx::ClickEventType type) {
+    auto contactListener = EventListenerPhysicsContact::create();
+    contactListener->onContactBegin = [this](PhysicsContact& contact)->bool{
         
-        if ( type == JoystickEx::ClickEventType::BEGAN || type == JoystickEx::ClickEventType::MOVED ) {
-            _humanHeading = joystick->getDirection();
-            _humanSpeed = 100.0f;
-        }
-        else {
-            _humanSpeed = 0.0f;
-        }
+        auto a = contact.getShapeA()->getBody();
+        auto b = contact.getShapeB()->getBody();
         
-    });
-    addChild(joystick);
-    
-    auto bezel = CircularBezel::create("client/ui/wooden_attack_pad.png");
-    bezel->setPosition(Vec2(1300, 300));
-    bezel->setTriggerRadius( {40.0f, 250.0f} );
-    bezel->enableBezelMode(true);
-    bezel->enableDebugNode(true);
-    bezel->addTriggerCallback([this](Ref* ref, const Vec2& dir, cocos2d::ui::Widget::TouchEventType type) {
-        
-        if ( type == ui::Widget::TouchEventType::BEGAN || type == ui::Widget::TouchEventType::MOVED ){
-            _humanRotation += 10.0f;
-        }
-        
-    });
-    addChild(bezel);
-    
-    auto keyboard = cocos2d::EventListenerKeyboard::create();
-    keyboard->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode k, cocos2d::Event* e){
-        if (k == cocos2d::EventKeyboard::KeyCode::KEY_0)
+        if ( (1 == a->getCollisionBitmask() && 2 == b->getCollisionBitmask()) ||
+            (2 == a->getCollisionBitmask() && 1 == b->getCollisionBitmask()) )
         {
-            cocos2d::log("0 pressed");
+            log("collision has occured %d", random(0,100));
         }
+        
+        return true;
     };
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboard, this);
-
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+    
+    auto edgeBody = PhysicsBody::createEdgeBox(Size(1136, 640), PHYSICSBODY_MATERIAL_DEFAULT, 1);
+    auto edgeNode = Node::create();
+    edgeNode->setPosition(800, 490);
+    edgeNode->setPhysicsBody(edgeBody);
+    addChild(edgeNode);
+    
+    
+    auto spr = Sprite::create("client/sample/grossini.png");
+    spr->setPosition(850, 500);
+    addChild(spr);
+    
+    auto physicsBody = PhysicsBody::createBox(spr->getContentSize(), PhysicsMaterial(0, 1, 0));
+    physicsBody->setDynamic(true);
+    physicsBody->setCollisionBitmask(1);
+    physicsBody->setContactTestBitmask(true);
+//    physicsBody->setVelocity(Vec2(500, 547));
+//    physicsBody->setVelocityLimit( 500 );
+    physicsBody->setLinearDamping(0.5);
+//    physicsBody->applyForce( Vec2(100, 78) );
+    physicsBody->applyImpulse(Vec2(400, 700));
+    spr->setPhysicsBody(physicsBody);
+    
+    {
+        auto spr = Sprite::create("client/sample/grossini.png");
+        spr->setPosition(850, 300);
+        addChild(spr);
+        
+        auto physicsBody = PhysicsBody::createBox(spr->getContentSize(), PhysicsMaterial(0, 1, 0));
+        physicsBody->setCollisionBitmask(2);
+        physicsBody->setContactTestBitmask(true);
+        physicsBody->setDynamic(false);
+        
+        spr->setPhysicsBody(physicsBody);
+    }
+    
     return true;
 }
 
 
 void ShaderTestScene::update(float dt)
 {
-    _human->setPosition ( _human->getPosition() + _humanHeading * +_humanSpeed * dt );
-    _human->setRotation( _humanRotation );
+    
 }
 
 

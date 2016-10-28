@@ -27,6 +27,9 @@
 
 #include "PathEdge.h"
 
+#include "PhysicsWorld.hpp"
+
+
 #define Z_ORDER_GAME_MAP    0
 #define Z_ORDER_SHADOW      1
 #define Z_ORDER_LIGHT       2
@@ -153,36 +156,19 @@ namespace realtrick
         private:
             
             cocos2d::Size _winSize;
-            SimpleReleasePool _releasePool;
+            SimpleReleasePool _releasePool; // memory release manager
             
-            // map data
-            GameResource* _gameResource;
-            
-            // entitiy manager
-            EntityManager* _entityManager;
-            
-            // cell space
-            CellSpacePartition* _cellSpace;
-            
-            // trigger system
-            TriggerSystem* _triggerSystem;
-            
-            // rendering system
-            RenderingSystem* _renderingSystem;
-            
-            // message system
-            MessageDispatcher* _messenger;
-            
-            // ui layer
-            UiLayer* _uiLayer;
-            
-            // camera
-            Camera2D* _camera;
-            
-            LogicStream* _logicStream;
-
-			// graph
-			Graph*		_graph;
+            GameResource* _gameResource; // map data
+            EntityManager* _entityManager; // entitiy manager
+            CellSpacePartition* _cellSpace; // cell space
+            TriggerSystem* _triggerSystem; // trigger system
+            RenderingSystem* _renderingSystem; // rendering system
+            MessageDispatcher* _messenger; // message system
+            UiLayer* _uiLayer; // ui layer
+            Camera2D* _camera; // camera
+            LogicStream* _logicStream; // stream mediator
+			Graph* _graph; // graph
+            PhysicsWorld* _physicsWorld; // physics world
             
             bool _isPaused;
             float _elapsedTime;

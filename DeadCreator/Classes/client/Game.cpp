@@ -57,6 +57,7 @@ void Game::clear()
 {
     CC_SAFE_DELETE(_logicStream);
 	CC_SAFE_DELETE(_graph);
+    CC_SAFE_DELETE(_physicsWorld);
     experimental::AudioEngine::stop(_bgmID);
 }
 
@@ -76,10 +77,7 @@ Game* Game::create()
 
 Scene* Game::createScene()
 {
-    auto scene = Scene::createWithPhysics();
-    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
-    scene->getPhysicsWorld()->setAutoStep(true);
-    
+    auto scene = Scene::create();
     auto node = Game::create();
     scene->addChild(node);
     return scene;
@@ -97,8 +95,16 @@ bool Game::init()
     _camera = Camera2D::create();
     addChild(_camera);
     
-    if ( UserDefault::getInstance()->getBoolForKey("useNetwork", false) ) _logicStream = new ServerStream(this);
-    else _logicStream = new SingleStream(this);
+    if ( UserDefault::getInstance()->getBoolForKey("useNetwork", false) )
+    {
+        _logicStream = new ServerStream(this);
+    }
+    else
+    {
+        _logicStream = new SingleStream(this);
+    }
+    
+    _physicsWorld = new PhysicsWorld(this);
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     

@@ -9,7 +9,8 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "JoystickEx.hpp"
+#include "Box2D/Box2D.h"
+
 
 namespace realtrick
 {
@@ -32,7 +33,12 @@ namespace realtrick
             
         private:
             
-           
+            b2World* _world;
+            b2Body* _body;
+            cocos2d::Sprite* _sprite;
+            
+            bool _isMoved;
+            cocos2d::Vec2 _dir;
             
         };
     }

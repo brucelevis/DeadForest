@@ -61,8 +61,8 @@ bool AppDelegate::applicationDidFinishLaunching()
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("images.plist");
     
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
-    auto scene = realtrick::editor::EditScene::createScene();
-//    auto scene = realtrick::client::ShaderTestScene::createScene();
+//    auto scene = realtrick::editor::EditScene::createScene();
+    auto scene = realtrick::client::ShaderTestScene::createScene();
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
     auto scene = realtrick::client::Game::createScene();
 #endif

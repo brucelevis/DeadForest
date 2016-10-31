@@ -35,14 +35,7 @@ void GameServer::connect(const std::string& ip, const std::string& port)
                                {
                                    if ( !ec )
                                    {
-                                       flatbuffers::FlatBufferBuilder builder;
-                                       auto obj = fpacket::CreatePacketLogin(builder, cocos2d::UserDefault::getInstance()->getIntegerForKey("pid", -1));
-                                       builder.Finish(obj);
-                                       
-                                       Packet* packet = new Packet();
-                                       packet->encode(builder.GetBufferPointer(), builder.GetSize(), PacketType::LOGIN);
-                                       GameServer::getInstance().write(packet);
-                                       
+                                       log("GameServer::doConnet> connected!");
                                        doReadHeader();
                                    }
                                    else
@@ -119,7 +112,8 @@ void GameServer::doReadHeader()
                                 {
                                     close();
                                 }
-                            });}
+                            });
+}
 
 
 void GameServer::doReadBody()

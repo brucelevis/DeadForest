@@ -104,7 +104,7 @@ bool Game::init()
         _logicStream = new SingleStream(this);
     }
     
-    _physicsWorld = new PhysicsWorld(this);
+    _physicsWorld = new b2World(b2Vec2(0.0f, -100.0f));
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     

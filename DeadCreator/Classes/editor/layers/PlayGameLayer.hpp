@@ -15,6 +15,9 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
+#include "GameServer.hpp"
+
+
 namespace realtrick
 {
 	namespace client
@@ -33,7 +36,9 @@ namespace realtrick
 		public:
 
 			explicit PlayGameLayer(EditScene* layer) : _imguiLayer(layer)
-			{}
+			{
+                client::GameServer::getInstance().connect("127.0.0.1", "4242");
+            }
 			virtual ~PlayGameLayer() = default;
 
 			static PlayGameLayer* create(EditScene* layer)
@@ -57,6 +62,7 @@ namespace realtrick
 			}
 
 			void showLayer(bool& opened);
+            void receiveProfileData();
 
 			void playGame();
 			void closeLayer();

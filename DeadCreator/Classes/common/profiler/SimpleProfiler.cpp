@@ -6,7 +6,10 @@
 //  Copyright © 2016년 realtrick. All rights reserved.
 //
 
+#include <thread>
+#include <functional>
 #include <exception>
+#include <iostream>
 using namespace std;
 using namespace std::chrono;
 
@@ -24,8 +27,11 @@ using namespace flatbuffers;
 SimpleProfiler::SimpleProfiler() :
 _blockStack(),
 _blocks(),
-_mainLoopBlock(nullptr)
+_mainLoopBlock(nullptr),
+_socket(_io),
+_acceptor(_io, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 4242))
 {
+    doAccept();
 }
 
 
@@ -43,19 +49,16 @@ SimpleProfiler& SimpleProfiler::getInstance()
 
 void SimpleProfiler::beginFrame()
 {
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     if ( !_mainLoopBlock )
         _mainLoopBlock = Block::create("main_loop");
     
     _blockStack.push_back(_mainLoopBlock);
     _mainLoopBlock->begin();
-#endif
 }
 
 
 void SimpleProfiler::endFrame()
 {
-    #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     if ( !_mainLoopBlock )
         throw std::runtime_error("main_loop block is not exist so can not call endFrame().");
     
@@ -64,13 +67,11 @@ void SimpleProfiler::endFrame()
     
     _blockStack.pop_back();
     _mainLoopBlock->end();
-#endif
 }
 
 
 void SimpleProfiler::begin(const std::string& name)
 {
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     if ( _blockStack.front()->getName() != "main_loop" )
         throw std::runtime_error("main_loop block is not exist. please call 'PROFILE_BEGIN_FRAME'");
     
@@ -87,13 +88,11 @@ void SimpleProfiler::begin(const std::string& name)
     auto cachedBlock = _blocks.at(name);
     _blockStack.push_back(cachedBlock);
     cachedBlock->begin();
-#endif
 }
 
 
 void SimpleProfiler::end(const std::string& name)
 {
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     if ( _blockStack.empty() )
         throw std::runtime_error("block stack is empty so can not call end().");
     
@@ -105,45 +104,41 @@ void SimpleProfiler::end(const std::string& name)
     
     _blockStack.pop_back();
     _blocks.at(name)->end();
-#endif
 }
 
 
 void SimpleProfiler::reset()
 {
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
     if ( _mainLoopBlock ) _mainLoopBlock->reset();
-#endif
 }
 
 
-std::string SimpleProfiler::prettyWriter()
+void SimpleProfiler::prettyWriter(std::string& out)
 {
+    CCASSERT(_mainLoopBlock, "main loop block is not exist");
+    
     if ( _mainLoopBlock )
     {
-        std::string out;
+        out.clear();
+        
         out += "+-----------------------------+---------+-----------+-----------+-----------+------------+\n";
         out += "|name                         | calls   | avg time  | min time  | max time  | usage(%)   |\n";
         out += "+-----------------------------+---------+-----------+-----------+-----------+------------+\n";
         _mainLoopBlock->prettyWrite(0, out);
         out += "+-----------------------------+---------+-----------+-----------+-----------+------------+\n";
-        
-        return out;
     }
-    return "##main_loop is not exist!";
+    
 }
 
 
-std::string SimpleProfiler::jsonWriter()
+void SimpleProfiler::jsonWriter(std::string& out)
 {
-    return "";
 }
 
 
-std::string SimpleProfiler::xmlWriter()
+void SimpleProfiler::xmlWriter(std::string& out)
 {
     //    tinyxml2::XMLDocument doc;
-    return "";
 }
 
 
@@ -219,10 +214,26 @@ void SimpleProfiler::flatbufferWriteHelper(int depth, std::string& out, const El
 }
 
 
+void SimpleProfiler::doAccept()
+{
+    std::cout << "ready to accept" <<std::endl;
+    
+//    _acceptor.async_accept(_socket, [this](const boost::system::error_code& ec){
+    
+//        if ( !ec )
+//        {
+//            std::cout << "client connected." << std::endl;
+//            auto session = make_shared<Session>(move(_socket));
+//            session->start();
+//            _sessions.push_back(session);
+//            
+//            cout << "sesison size: " << _sessions.size() << endl;
+//        }
+        
+//        doAccept();
+        
+//    });
 
-
-
-
-
+}
 
 

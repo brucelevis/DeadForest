@@ -25,6 +25,10 @@ using namespace cocos2d;
 
 void PlayGameLayer::showLayer(bool& opened)
 {
+    
+    receiveProfileData();
+    
+    
 	static bool isStatusOn = true;
 	static bool isPlayerInfo = true;
 	static bool isGridOn = false;
@@ -329,7 +333,10 @@ cocos2d::Vec2 PlayGameLayer::worldToLocal(const cocos2d::Vec2& origin, const coc
 }
 
 
-
+void PlayGameLayer::receiveProfileData()
+{
+    
+}
 
 
 

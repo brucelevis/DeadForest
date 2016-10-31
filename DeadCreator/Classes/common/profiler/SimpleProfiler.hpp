@@ -13,6 +13,9 @@
 #include <string>
 #include <chrono>
 
+
+#include <boost/asio.hpp>
+
 #define PROFILE_BEGIN_FRAME realtrick::profiler::SimpleProfiler::getInstance().beginFrame()
 #define PROFILE_END_FRAME realtrick::profiler::SimpleProfiler::getInstance().endFrame()
 
@@ -43,9 +46,9 @@ namespace realtrick
             void begin(const std::string& name);
             void end(const std::string& name);
             
-            std::string prettyWriter();
-            std::string jsonWriter();
-            std::string xmlWriter();
+            void prettyWriter(std::string& out);
+            void jsonWriter(std::string& out);
+            void xmlWriter(std::string& out);
             std::pair<uint8_t*, uint32_t> flatbufferWriter();
             
             std::string flatbufferWriteHelper(uint8_t* pointer);
@@ -57,12 +60,18 @@ namespace realtrick
             
             SimpleProfiler();
             
+            void doAccept();
+            
         private:
             
             std::vector<Block*> _blockStack;
             std::map<std::string, Block*> _blocks;
 
             Block* _mainLoopBlock;
+            
+            boost::asio::io_service _io;
+            boost::asio::ip::tcp::socket _socket;
+            boost::asio::ip::tcp::acceptor _acceptor;
             
         };
         

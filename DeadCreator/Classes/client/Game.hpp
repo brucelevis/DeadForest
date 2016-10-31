@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <Box2D/Box2D.h>
+
 #include "audio/include/AudioEngine.h"
 
 #include "cocos2d.h"
@@ -26,8 +28,6 @@
 #include "GraphEdgeTypes.h"
 
 #include "PathEdge.h"
-
-#include "PhysicsWorld.hpp"
 
 
 #define Z_ORDER_GAME_MAP    0
@@ -153,6 +153,8 @@ namespace realtrick
             SwitchStatus getSwitchStatus(int index) const;
             void setSwitchStatus(int index, SwitchStatus status);
             
+            b2World* getPhysicsWorld() const { return _physicsWorld; }
+            
         private:
             
             cocos2d::Size _winSize;
@@ -168,7 +170,7 @@ namespace realtrick
             Camera2D* _camera; // camera
             LogicStream* _logicStream; // stream mediator
 			Graph* _graph; // graph
-            PhysicsWorld* _physicsWorld; // physics world
+            b2World* _physicsWorld; // physics world
             
             bool _isPaused;
             float _elapsedTime;

@@ -859,7 +859,7 @@ void Game::addWall(const realtrick::Polygon& wall)
                 
                 b2FixtureDef groundFixture;
                 groundFixture.shape = &chain;
-                groundFixture.restitution = 0.5f;
+                groundFixture.restitution = 0.1f;
                 
                 ground->CreateFixture(&groundFixture);
             }

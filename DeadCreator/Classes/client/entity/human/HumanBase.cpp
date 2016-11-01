@@ -102,13 +102,12 @@ bool HumanBase::init()
     _body = _game->getPhysicsWorld()->CreateBody(&bd);
     
     b2CircleShape shape;
-    shape.m_p = b2Vec2(0.0f, 0.0f);
     shape.m_radius = _boundingRadius;
     
     b2FixtureDef fd;
     fd.shape = &shape;
-    fd.density = 20.0f;
-    fd.friction = 1.0f;
+    fd.density = 10.0f;
+    fd.friction = 0.5f;
     fd.restitution = 0.0f;
     fd.isSensor = false;
     _body->CreateFixture(&fd);
@@ -143,7 +142,6 @@ void HumanBase::update(float dt)
     
     // move and rotate
     this->moveEntity();
-    
     this->rotateEntity();
     
     // self heal
@@ -222,97 +220,33 @@ bool HumanBase::isIntersectWall(const cocos2d::Vec2& futurePosition, const realt
 
 void HumanBase::moveEntity()
 {
-//    if (getVelocity() == Vec2::ZERO)
-//    {
-//        _speed = 0.0f;
-//        return;
-//    }
-//    
-//    float dt = Director::getInstance()->getDeltaTime();
-//    cocos2d::Vec2 oldPos = getWorldPosition();
-//    cocos2d::Vec2 futurePosition = getWorldPosition() + getVelocity() * dt;
-//    _speed = getVelocity().getLength();
-//    bool intersectResult = false;
-//    cocos2d::Vec2 move;
-//    
-//    // 엔티티들과의 충돌처리
-//    const auto& members = _game->getNeighborsOnMove(oldPos, _speed);
-//    for (const auto &entity : members)
-//    {
-//        if (entity == this) continue;
-//        
-//        if (isIntersectOther(futurePosition, entity, move))
-//            intersectResult = true;
-//    }
-//    
-//    // 벽과의 충돌처리
-//    futurePosition += move;
-//    float overlap = 0.0f;
-//    int collideCnt = 0;
-//    Vec2 beginSum, endSum;
-//    const std::vector<realtrick::Polygon>& walls = _game->getNeighborSimpleWalls(futurePosition, _speed);
-//    for (const auto& wall : walls)
-//    {
-//        for (int i = 0; i < wall.vertices.size() - 1; ++i)
-//        {
-//            Vec2 begin(wall.vertices[i]);
-//            Vec2 end(wall.vertices[i + 1]);
-//            
-//            float distance = physics::distToSegment(begin, end, futurePosition);
-//            if (distance < _boundingRadius)
-//            {
-//                collideCnt++;
-//                overlap += distance;
-//                beginSum += begin;
-//                endSum += end;
-//            }
-//        }
-//        
-//        Vec2 begin(wall.vertices.back());
-//        Vec2 end(wall.vertices.front());
-//        
-//        float distance = physics::distToSegment(begin, end, futurePosition);
-//        if (distance < _boundingRadius)
-//        {
-//            collideCnt++;
-//            overlap += distance;
-//            beginSum += begin;
-//            endSum += end;
-//        }
-//    }
-//    
-//    if (collideCnt > 0)
-//    {
-//        overlap /= collideCnt;
-//        move += (beginSum - endSum).getPerp().getNormalized() * (overlap * 0.33f);
-//    }
-//    
-//    setWorldPosition(futurePosition + move);
-//    _game->getCellSpace()->updateEntity(this, oldPos);
+    _body->SetLinearVelocity(b2Vec2(getVelocity().x * 100, getVelocity().y * 100));
 }
 
 void HumanBase::rotateEntity()
 {
-//    if ( _heading.dot(_targetHeading) < 0.982546f )
-//    {
-//        float dt = Director::getInstance()->getDeltaTime();
-//        
-//        float d = getHeading().cross(_targetHeading);
-//        if( d > 0 )
-//        {
-//            Mat3 rotMat;
-//            rotMat.rotate(MATH_DEG_TO_RAD(_turnSpeed * dt));
-//            setHeading(rotMat.getTransformedVector(getHeading()));
-//        }
-//        else
-//        {
-//            Mat3 rotMat;
-//            rotMat.rotate(-MATH_DEG_TO_RAD(_turnSpeed * dt));
-//            setHeading(rotMat.getTransformedVector(getHeading()));
-//        }
-//        
-//        setRotationZ(-physics::getAngleFromZero(getHeading()));
-//    }
+    if ( getHeading().dot(_targetHeading) < 0.982546f )
+    {
+        float dt = Director::getInstance()->getDeltaTime();
+        
+        float d = getHeading().cross(_targetHeading);
+        if( d > 0 )
+        {
+            Mat3 rotMat;
+            rotMat.rotate(MATH_DEG_TO_RAD(_turnSpeed * dt));
+            setHeading(rotMat.getTransformedVector(getHeading()));
+        }
+        else
+        {
+            Mat3 rotMat;
+            rotMat.rotate(-MATH_DEG_TO_RAD(_turnSpeed * dt));
+            setHeading(rotMat.getTransformedVector(getHeading()));
+        }
+        
+        setRotationZ(physics::getAngleFromZero(getHeading()));
+    }
+    
+    _body->SetAngularVelocity(0);
 }
 
 

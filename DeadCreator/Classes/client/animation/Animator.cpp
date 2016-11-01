@@ -127,9 +127,9 @@ void Animator::processAnimation(float dt)
 
 void Animator::setRotation(float rotation)
 {
-    _baseSprite->setRotation(rotation);
-    _normalSprite->setRotation(rotation);
-    _shadowSprite->setRotation(rotation);
+    _baseSprite->setRotation(-rotation);
+    _normalSprite->setRotation(-rotation);
+    _shadowSprite->setRotation(-rotation);
 }
 
 

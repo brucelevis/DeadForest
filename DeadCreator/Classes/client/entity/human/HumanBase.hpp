@@ -147,7 +147,11 @@ namespace realtrick
             
         private:
         
-            void setHeading(const cocos2d::Vec2 heading) { _heading = heading; _heading.normalize(); }
+            void setHeading(const cocos2d::Vec2 heading)
+            {
+                _heading = heading;
+                _heading.normalize();
+            }
             
         protected:
             

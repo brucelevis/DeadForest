@@ -2,7 +2,7 @@
 //  SimpleProfiler.cpp
 //  profiler_test
 //
-//  Created by mac on 2016. 9. 8..
+//  Created by NamJunHyeon on 2016. 9. 8..
 //  Copyright © 2016년 realtrick. All rights reserved.
 //
 

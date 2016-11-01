@@ -2,7 +2,7 @@
 //  ShaderTestScene.cpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 8. 18..
+//  Created by NamJunHyeon on 2016. 8. 18..
 //
 //
 

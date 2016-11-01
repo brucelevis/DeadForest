@@ -24,7 +24,7 @@ namespace realtrick
         class SaveAsLayer;
         class OpenLayer;
         class SaveQueryLayer;
-        class PlayGameLayer;
+        class SimulatorLayer;
         
         class EditScene : public ImGuiLayer
         {
@@ -80,14 +80,14 @@ namespace realtrick
             SaveAsLayer* _saveAsLayer = nullptr;
             OpenLayer* _openLayer = nullptr;
             SaveQueryLayer* _saveQueryLayer = nullptr;
-            PlayGameLayer* _playGameLayer = nullptr;
+            SimulatorLayer* _simulatorLayer = nullptr;
             
             bool _showGMXLayer = false;
             bool _showNewMap = false;
             bool _showSaveAs = false;
             bool _showOpenMap = false;
             bool _showSaveQueryLayer = false;
-            bool _showPlayGameLayer = false;
+            bool _showSimulatorLayer = false;
             
             bool _isEditMode = false;
             

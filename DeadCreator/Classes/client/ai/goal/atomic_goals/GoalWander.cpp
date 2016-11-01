@@ -2,7 +2,7 @@
 //  GoalWander.cpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 8. 10..
+//  Created by NamJunHyeon on 2016. 8. 10..
 //
 //
 

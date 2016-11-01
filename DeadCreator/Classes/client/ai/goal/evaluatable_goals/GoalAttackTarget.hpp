@@ -2,7 +2,7 @@
 //  GoalAttackTarget.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 8. 17..
+//  Created by NamJunHyeon on 2016. 8. 17..
 //
 //
 

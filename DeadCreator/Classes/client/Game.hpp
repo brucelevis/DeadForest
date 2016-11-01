@@ -28,7 +28,6 @@
 #include "GraphEdgeTypes.h"
 
 #include "PathEdge.h"
-#include "PhysicsManager.hpp"
 
 
 #define Z_ORDER_GAME_MAP    0
@@ -43,6 +42,8 @@
 
 namespace realtrick
 {
+    namespace editor { class SimulatorLayer; }
+    
     namespace client
     {
         
@@ -77,8 +78,7 @@ namespace realtrick
             
             GameResource* getGameResource() const { return _gameResource; }
             EntityManager* getEntityManager() const { return _entityManager; }
-            RenderingSystem* getRenderingSysetm() const { return _renderingSystem; }
-            CellSpacePartition* getCellSpace() const { return _cellSpace; }
+            RenderingSystem* getRenderingSysetm() const { return _renderingSystem; } 
             TriggerSystem* getTriggerSystem() const { return _triggerSystem; }
 			Graph* getGraph() const { return _graph; }
             
@@ -156,6 +156,10 @@ namespace realtrick
             
             b2World* getPhysicsWorld() const { return _physicsWorld; }
             
+            void initCell(GameResource* res);
+            void addWall(const realtrick::Polygon& wall);
+            void setSimulator(realtrick::editor::SimulatorLayer* layer) { _simulator = layer; }
+            
         private:
             
             cocos2d::Size _winSize;
@@ -163,7 +167,6 @@ namespace realtrick
             
             GameResource* _gameResource; // map data
             EntityManager* _entityManager; // entitiy manager
-            CellSpacePartition* _cellSpace; // cell space
             TriggerSystem* _triggerSystem; // trigger system
             RenderingSystem* _renderingSystem; // rendering system
             MessageDispatcher* _messenger; // message system
@@ -184,6 +187,9 @@ namespace realtrick
       
             bool _isGameEnded = false;
 
+            std::vector<cocos2d::Rect> _cellAABBs;
+            realtrick::editor::SimulatorLayer* _simulator;
+            
         };
         
     }

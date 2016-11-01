@@ -2,7 +2,7 @@
 //  ActionSetCountdownTimer.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 9. 5..
+//  Created by NamJunHyeon on 2016. 9. 5..
 //
 //
 

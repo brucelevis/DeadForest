@@ -2,7 +2,7 @@
 //  InputBezelEnd.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 8. 4..
+//  Created by NamJunHyeon on 2016. 8. 4..
 //
 //
 

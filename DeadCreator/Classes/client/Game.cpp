@@ -27,6 +27,7 @@
 #include "RewardScene.hpp"
 #include "SensoryMemory.h"
 #include "GoalNetwork.h"
+#include "ClipperWrapper.hpp"
 
 using namespace cocos2d;
 using namespace realtrick;
@@ -38,7 +39,6 @@ using namespace realtrick::client;
 
 Game::Game() :
 _winSize(Size::ZERO),
-_cellSpace(nullptr),
 _triggerSystem(nullptr),
 _bgmID(0),
 _isPaused(true),
@@ -106,27 +106,6 @@ bool Game::init()
     
     _physicsWorld = new b2World(b2Vec2(0.0f, -100.0f));
     
-    // ground
-    b2BodyDef groundDef;
-    groundDef.type = b2BodyType::b2_staticBody;
-    
-    auto ground = _physicsWorld->CreateBody(&groundDef);
-    
-    b2Vec2 v[4];
-    v[0].Set(0.0f, 0.0f);
-    v[1].Set(1600.0f, 0.0f);
-    v[2].Set(1600.0f, 980.0f);
-    v[3].Set(0.0f, 980.0f);
-    
-    b2ChainShape chain;
-    chain.CreateChain(v, 4);
-    
-    b2FixtureDef groundFixture;
-    groundFixture.shape = &chain;
-    groundFixture.restitution = 0.5f;
-    
-    ground->CreateFixture(&groundFixture);
-    
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
 	GoalNetwork::staticInitConstants();
@@ -186,19 +165,6 @@ std::vector<EntityBase*> Game::getNeighbors(const cocos2d::Vec2& position) const
 std::vector<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const
 {
     std::vector<EntityBase*> ret;
-    std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
-    for ( const int idx : cellIndices )
-    {
-        const Cell& currCell = _cellSpace->getCell(idx);
-        if ( currCell.boundingBox.intersectsRect(cocos2d::Rect(position.x - speed / 2, position.y - speed / 2, speed, speed)) )
-        {
-            for ( const auto &entity : currCell.members )
-            {
-				
-                ret.push_back(entity);
-            }
-        }
-    }
     return ret;
 }
 
@@ -206,28 +172,6 @@ std::vector<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position,
 std::vector<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const
 {
     std::vector<EntityBase*> ret;
-    std::vector<int> cellIndices = _cellSpace->getNeighborCellsNotCurrent(position);
-    for ( const int idx : cellIndices )
-    {
-        const Cell& currCell = _cellSpace->getCell(idx);
-        if ( physics::intersect(realtrick::Rect(currCell.boundingBox.origin.x,
-                                                currCell.boundingBox.origin.y,
-                                                currCell.boundingBox.size.width,
-                                                currCell.boundingBox.size.height), Segment(position, position + dir * range)) )
-        {
-            for ( const auto &entity : currCell.members )
-            {
-                ret.push_back(entity);
-            }
-        }
-    }
-    
-    const Cell& myCell = _cellSpace->getCell(_cellSpace->positionToIndex(position));
-    for( const auto& entity : myCell.members )
-    {
-        ret.push_back(entity);
-    }
-    
     return ret;
 }
 
@@ -242,12 +186,6 @@ std::vector<EntityBase*> Game::getNeighborsEntities(const cocos2d::Vec2& pos, co
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& pos) const
 {
 	std::vector<realtrick::Polygon> ret;
-	const Cell& myCell = _cellSpace->getCell(_cellSpace->positionToIndex(pos));
-	for (const auto& wall : myCell.walls)
-	{
-		ret.push_back(wall);
-	}
-
 	return ret;
 }
 
@@ -255,18 +193,6 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& pos)
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, float speed) const
 {
     std::vector<realtrick::Polygon> ret;
-    std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
-    for ( const int idx : cellIndices )
-    {
-        const Cell& currCell = _cellSpace->getCell(idx);
-        if ( currCell.boundingBox.intersectsRect(cocos2d::Rect(position.x - speed / 2, position.y - speed / 2, speed, speed)) )
-        {
-            for ( const auto &wall : currCell.walls )
-            {
-                ret.push_back(wall);
-            }
-        }
-    }
     return ret;
 }
 
@@ -274,18 +200,6 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const
 {
     std::vector<realtrick::Polygon> ret;
-    std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
-    for ( const int idx : cellIndices )
-    {
-        const Cell& currCell = _cellSpace->getCell(idx);
-        if ( currCell.boundingBox.intersectsRect(cocos2d::Rect(position - screenSize / 2, screenSize)) )
-        {
-            for ( const auto &wall : currCell.walls )
-            {
-                ret.push_back(wall);
-            }
-        }
-    }
     return ret;
 }
 
@@ -293,25 +207,6 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const Segment& ray) const
 {
     std::vector<realtrick::Polygon> ret;
-    std::vector<int> cellIndices = _cellSpace->getNeighborCellsNotCurrent(position);
-    for ( const int idx : cellIndices )
-    {
-        const Cell& currCell = _cellSpace->getCell(idx);
-        if ( physics::intersect(realtrick::Rect(currCell.boundingBox.origin, currCell.boundingBox.size.width, currCell.boundingBox.size.height), ray) )
-        {
-            for ( const auto &wall : currCell.walls )
-            {
-                ret.push_back(wall);
-            }
-        }
-    }
-    
-    const Cell& myCell = _cellSpace->getCell(_cellSpace->positionToIndex(position));
-    for( const auto& wall : myCell.walls )
-    {
-        ret.push_back(wall);
-    }
-    
     return ret;
 }
 
@@ -319,32 +214,13 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
 std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& pos) const
 {
 	std::vector<realtrick::Polygon> ret;
-	const Cell& myCell = _cellSpace->getCell(_cellSpace->positionToIndex(pos));
-
-	for (const auto& wall : myCell.simpleWalls)
-	{
-		ret.push_back(wall);
-	}
-
-	return ret;
+    return ret;
 }
 
 
 std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& position, float speed) const
 {
     std::vector<realtrick::Polygon> ret;
-    std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
-    for ( const int idx : cellIndices )
-    {
-        const Cell& currCell = _cellSpace->getCell(idx);
-        if ( currCell.boundingBox.intersectsRect(cocos2d::Rect(position.x - speed / 2, position.y - speed / 2, speed, speed)) )
-        {
-            for ( const auto &wall : currCell.simpleWalls )
-            {
-                ret.push_back(wall);
-            }
-        }
-    }
     return ret;
 }
 
@@ -352,18 +228,6 @@ std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2
 std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const
 {
     std::vector<realtrick::Polygon> ret;
-    std::vector<int> cellIndices = _cellSpace->getNeighborCells(position);
-    for ( const int idx : cellIndices )
-    {
-        const Cell& currCell = _cellSpace->getCell(idx);
-        if ( currCell.boundingBox.intersectsRect(cocos2d::Rect(position - screenSize / 2, screenSize)) )
-        {
-            for ( const auto &wall : currCell.simpleWalls )
-            {
-                ret.push_back(wall);
-            }
-        }
-    }
     return ret;
 }
 
@@ -371,25 +235,6 @@ std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2
 std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& position, const Segment& ray) const
 {
     std::vector<realtrick::Polygon> ret;
-    std::vector<int> cellIndices = _cellSpace->getNeighborCellsNotCurrent(position);
-    for ( const int idx : cellIndices )
-    {
-        const Cell& currCell = _cellSpace->getCell(idx);
-        if ( physics::intersect(realtrick::Rect(currCell.boundingBox.origin, currCell.boundingBox.size.width, currCell.boundingBox.size.height), ray) )
-        {
-            for ( const auto &wall : currCell.simpleWalls )
-            {
-                ret.push_back(wall);
-            }
-        }
-    }
-    
-    const Cell& myCell = _cellSpace->getCell(_cellSpace->positionToIndex(position));
-    for( const auto& wall : myCell.walls )
-    {
-        ret.push_back(wall);
-    }
-    
     return ret;
 }
 
@@ -446,26 +291,22 @@ void Game::loadGameContents(PlayerType ownPlayer)
     _triggerSystem = TriggerSystem::createWithResouce(this, _gameResource);
     _releasePool.addObject(_triggerSystem);
     
-    _cellSpace = CellSpacePartition::createWithResource(_gameResource);
-    _releasePool.addObject(_cellSpace);
-    
+    initCell(_gameResource);
     const auto& walls = _gameResource->getCollisionData();
     for (const auto& wall : walls )
     {
-        _cellSpace->addWall(wall);
+        addWall(wall);
     }
     
-    const auto& simpleWalls = _gameResource->getSimpleCollisionData();
-    for (const auto& wall : simpleWalls )
-    {
-        _cellSpace->addSimpleWall(wall);
-    }
+//    const auto& simpleWalls = _gameResource->getSimpleCollisionData();
+//    for (const auto& wall : simpleWalls )
+//    {
+//        _cellSpace->addSimpleWall(wall);
+//    }
     
     const auto& entities = _entityManager->getEntities();
     for ( const auto& entity : entities )
     {
-        _cellSpace->addEntity(entity.second);
-        
         int zOrder = 0;
         if ( isMasked(entity.second->getFamilyMask(), FamilyMask::ITEM_BASE) )
         {
@@ -493,7 +334,6 @@ void Game::sendMessage(double delaySeconds, MessageNode* receiver, MessageNode* 
 
 void Game::addEntity(EntityBase* ent, int zOrder)
 {
-    _cellSpace->addEntity(ent);
     _entityManager->addEntity(ent);
     _renderingSystem->addEntity(ent, zOrder);
 }
@@ -520,7 +360,6 @@ void Game::removeEntity(EntityBase* ent)
 		}
 	}
 
-	_cellSpace->removeEntityFromCell(ent);
 	_entityManager->removeEntity(ent);
 	_renderingSystem->removeEntity(ent);
 }
@@ -909,6 +748,106 @@ bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B, float radius) const
 }
 
 
+void Game::initCell(GameResource* res)
+{
+    auto worldWidth = res->getTileWidth() * res->getNumOfTileX();
+    auto worldHeight = res->getTileHeight() * res->getNumOfTileY();
+    auto cellWidth = res->getCellWidth();
+    auto cellHeight = res->getCellHeight();
+    
+    auto numOfCellsX = (worldWidth  / cellWidth) + 2;
+    auto numOfCellsY = (worldHeight / cellHeight) + 2;
+    
+    for (int y = 0; y < numOfCellsY; ++y)
+    {
+        for (int x = 0; x < numOfCellsX; ++x)
+        {
+            float left  = x * cellWidth;
+            float bot   = y * cellHeight;
+            _cellAABBs.push_back(cocos2d::Rect(left - cellWidth, bot - cellHeight, cellWidth, cellHeight));
+        }
+    }
+}
+
+
+void Game::addWall(const realtrick::Polygon& wall)
+{
+    //
+    //      -------- -------- --------
+    //     | 1      | 2      | 3      |
+    //     |        |  ------|-. max  |                      _____       _
+    //     |       -|-       | |      |            -        -     |     | |
+    //     |      | |        | |      |        1: |_|    2:|______|  3: |_|
+    //      -------- -------- --------             _                     _
+    //     | 4    | | 5      |6|      |        4: |_|    5: ------   6: | |
+    //     |       -|----    | |      |                    |      |     | |
+    //     |        |    |   | |      |                     ---   |     | |
+    //     |        |    |   | |      |                        |__|     |_|
+    //      -------- -------- --------                          __       _
+    //     | 7      | 8  |   |9|      |        7:        8:    |  |  9: | |
+    //     |      . |     ---|-       |                         --       -
+    //     |     min|        |        |
+    //     |        |        |        |
+    //      -------- -------- --------
+    //
+    //      해당 벽의 최대 최소 x, y를 각각 구해 AABB 를 만든다.
+    //      공간들을 순회하면서 겹치는 공간이 있다면, 클리핑한다.
+    //      그리고 해당 공간에 클리핑된 벽들을 각각 저장해 놓는다.
+    
+    float minx = std::min_element(std::begin(wall.vertices), std::end(wall.vertices), [](const cocos2d::Vec2& v1, const cocos2d::Vec2& v2) {
+        return (v1.x < v2.x);
+    })->x;
+    
+    float miny = std::min_element(std::begin(wall.vertices), std::end(wall.vertices), [](const cocos2d::Vec2& v1, const cocos2d::Vec2& v2) {
+        return (v1.y < v2.y);
+    })->y;
+    
+    float maxx = std::max_element(std::begin(wall.vertices), std::end(wall.vertices), [](const cocos2d::Vec2& v1, const cocos2d::Vec2& v2) {
+        return (v1.x < v2.x);
+    })->x;
+    
+    float maxy = std::max_element(std::begin(wall.vertices), std::end(wall.vertices), [](const cocos2d::Vec2& v1, const cocos2d::Vec2& v2) {
+        return (v1.y < v2.y);
+    })->y;
+    
+    cocos2d::Vec2 minVertex = cocos2d::Vec2(minx, miny);
+    cocos2d::Vec2 maxVertex = cocos2d::Vec2(maxx, maxy);
+    cocos2d::Rect wallAABB = cocos2d::Rect(minVertex, cocos2d::Size(maxVertex - minVertex));
+    
+    for( auto& aabb : _cellAABBs )
+    {
+        if ( aabb.intersectsRect(wallAABB) )
+        {
+            std::vector<realtrick::Polygon> clippedWalls = clipping::getClippedPolygons(wall, aabb);
+            for( const auto& clippedWall : clippedWalls )
+            {
+                // add box2d polygons
+                b2BodyDef groundDef;
+                groundDef.type = b2BodyType::b2_staticBody;
+                
+                auto ground = _physicsWorld->CreateBody(&groundDef);
+                
+                int32 size = static_cast<int32>(clippedWall.vertices.size());
+                b2Vec2 *v = new b2Vec2[size];
+                for(int i = 0 ; i < size ; ++ i)
+                {
+                    v[i].Set(clippedWall.vertices[i].x, clippedWall.vertices[i].y);
+                }
+                
+                b2PolygonShape poly;
+                poly.Set(v, size);
+                
+                delete[] v;
+                
+                b2FixtureDef groundFixture;
+                groundFixture.shape = &poly;
+                groundFixture.restitution = 0.5f;
+                
+                ground->CreateFixture(&groundFixture);
+            }
+        }
+    }
+}
 
 
 

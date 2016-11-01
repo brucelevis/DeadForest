@@ -2,7 +2,7 @@
 //  ConditionSwitch.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 10. 20..
+//  Created by NamJunHyeon on 2016. 10. 20..
 //
 //
 

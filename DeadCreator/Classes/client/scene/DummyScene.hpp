@@ -6,7 +6,7 @@
 #include "Game.hpp"
 #include "MainMenu3.hpp"
 #include "ConnectScene.hpp"
-#include "PlayGameLayer.hpp"
+#include "SimulatorLayer.hpp"
 
 namespace realtrick
 {
@@ -26,7 +26,7 @@ namespace realtrick
                 _gameLayer->setGameStart(false);
             }
             
-            static DummyScene* create(realtrick::editor::PlayGameLayer* layer)
+            static DummyScene* create(realtrick::editor::SimulatorLayer* layer)
             {
                 auto ret = new (std::nothrow) DummyScene();
                 if ( ret && ret->init(layer) )
@@ -38,7 +38,7 @@ namespace realtrick
                 return nullptr;
             }
             
-            bool init(realtrick::editor::PlayGameLayer* layer)
+            bool init(realtrick::editor::SimulatorLayer* layer)
             {
                 if ( !Layer::init() )
                     return false;
@@ -57,6 +57,7 @@ namespace realtrick
                                                          cocos2d::CallFunc::create([this]{
                     
                     _game = realtrick::client::Game::create();
+                    _game->setSimulator(_gameLayer);
                     addChild(_game);
                     
                     _gameLayer->setGameStart(true);
@@ -74,7 +75,7 @@ namespace realtrick
         private:
             
             Game* _game = nullptr;
-            realtrick::editor::PlayGameLayer* _gameLayer;
+            realtrick::editor::SimulatorLayer* _gameLayer;
             
         };
         

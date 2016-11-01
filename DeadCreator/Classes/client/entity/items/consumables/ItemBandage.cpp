@@ -2,7 +2,7 @@
 //  ItemBandage.cpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 10. 21..
+//  Created by NamJunHyeon on 2016. 10. 21..
 //
 //
 

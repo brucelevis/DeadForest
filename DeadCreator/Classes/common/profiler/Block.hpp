@@ -2,7 +2,7 @@
 //  Block.hpp
 //  profiler_test
 //
-//  Created by mac on 2016. 9. 9..
+//  Created by NamJunHyeon on 2016. 9. 9..
 //  Copyright © 2016년 realtrick. All rights reserved.
 //
 

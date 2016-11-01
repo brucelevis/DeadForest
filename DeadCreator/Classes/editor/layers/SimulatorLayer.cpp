@@ -1,5 +1,5 @@
 //
-//  PlayGameLayer.cpp
+//  SimulatorLayer.cpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2016. 7. 28..
@@ -9,6 +9,7 @@
 
 #include "DummyScene.hpp"
 #include "EditScene.hpp"
+#include "SimulatorLayer.hpp"
 using namespace realtrick::editor;
 
 #include "Game.hpp"
@@ -23,11 +24,9 @@ using namespace cocos2d;
 #include "profiling_schema_generated.h"
 
 
-void PlayGameLayer::showLayer(bool& opened)
+void SimulatorLayer::showLayer(bool& opened)
 {
-    
     receiveProfileData();
-    
     
 	static bool isStatusOn = true;
 	static bool isPlayerInfo = true;
@@ -132,68 +131,68 @@ void PlayGameLayer::showLayer(bool& opened)
 
 			if (isCellSpaceOn)
 			{
-				auto cellSpace = game->getCellSpace();
-
-				auto currCellIndex = cellSpace->positionToIndex(game->getPlayerPtr()->getWorldPosition());
-				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 0.00, 1.00));
-				ImGui::Text(std::string("current cell: " + _to_string(currCellIndex)).c_str(), NULL);
-				ImGui::PopStyleColor();
-
-				const auto& cells = cellSpace->getCells();
-				for (const auto& cell : cells)
-				{
-					const auto& cellSize = cell.boundingBox.size;
-
-					const auto cellOrigin = worldToLocal(origin, cell.boundingBox.origin);
-					const auto top = worldToLocal(origin, cell.boundingBox.origin + Vec2(0, cellSize.height));
-					const auto right = worldToLocal(origin, cell.boundingBox.origin + Vec2(cellSize.width, 0));
-
-					drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(top.x, top.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
-					drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(right.x, right.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
-				}
+//				auto cellSpace = game->getCellSpace();
+//
+//				auto currCellIndex = cellSpace->positionToIndex(game->getPlayerPtr()->getWorldPosition());
+//				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 0.00, 1.00));
+//				ImGui::Text(std::string("current cell: " + _to_string(currCellIndex)).c_str(), NULL);
+//				ImGui::PopStyleColor();
+//
+//				const auto& cells = cellSpace->getCells();
+//				for (const auto& cell : cells)
+//				{
+//					const auto& cellSize = cell.boundingBox.size;
+//
+//					const auto cellOrigin = worldToLocal(origin, cell.boundingBox.origin);
+//					const auto top = worldToLocal(origin, cell.boundingBox.origin + Vec2(0, cellSize.height));
+//					const auto right = worldToLocal(origin, cell.boundingBox.origin + Vec2(cellSize.width, 0));
+//
+//					drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(top.x, top.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
+//					drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(right.x, right.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
+//				}
 			}
 
 			if (isPhysicsViewOn)
 			{
-				auto cellSpace = game->getCellSpace();
-				auto cell = cellSpace->getCell(game->getPlayerPtr()->getWorldPosition());
-				for (const auto& ent : cell.members)
-				{
-					if (ent->getEntityType() == EntityType::ENTITY_FINITE)
-						continue;
-
-					auto rad = ent->getBoundingRadius() * game->getRenderingSysetm()->getZoomScale().x;
-					auto center = worldToLocal(origin, ent->getWorldPosition());
-					drawList->AddCircle(ImVec2(center.x, center.y), rad, ImColor(ImVec4(1.0, 0.0, 1.0, 0.7)), 20, 0.0f);
-				}
-
-				auto walls = game->getNeighborWalls(game->getPlayerPtr()->getWorldPosition(), 0.0f);
-				for (const auto& wall : walls)
-				{
-					for (int i = 0; i < wall.vertices.size() - 1; ++i)
-					{
-						auto a = worldToLocal(origin, wall.vertices[i]);
-						auto b = worldToLocal(origin, wall.vertices[i + 1]);
-						drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.5)));
-					}
-					auto a = worldToLocal(origin, wall.vertices.back());
-					auto b = worldToLocal(origin, wall.vertices.front());
-					drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.5)));
-				}
-                
-                auto simpleWalls = game->getNeighborSimpleWalls(game->getPlayerPtr()->getWorldPosition(), 0.0f);
-                for (const auto& wall : simpleWalls)
-                {
-                    for (int i = 0; i < wall.vertices.size() - 1; ++i)
-                    {
-                        auto a = worldToLocal(origin, wall.vertices[i]);
-                        auto b = worldToLocal(origin, wall.vertices[i + 1]);
-                        drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.5)));
-                    }
-                    auto a = worldToLocal(origin, wall.vertices.back());
-                    auto b = worldToLocal(origin, wall.vertices.front());
-                    drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.5)));
-                }
+//				auto cellSpace = game->getCellSpace();
+//				auto cell = cellSpace->getCell(game->getPlayerPtr()->getWorldPosition());
+//				for (const auto& ent : cell.members)
+//				{
+//					if (ent->getEntityType() == EntityType::ENTITY_FINITE)
+//						continue;
+//
+//					auto rad = ent->getBoundingRadius() * game->getRenderingSysetm()->getZoomScale().x;
+//					auto center = worldToLocal(origin, ent->getWorldPosition());
+//					drawList->AddCircle(ImVec2(center.x, center.y), rad, ImColor(ImVec4(1.0, 0.0, 1.0, 0.7)), 20, 0.0f);
+//				}
+//
+//				auto walls = game->getNeighborWalls(game->getPlayerPtr()->getWorldPosition(), 0.0f);
+//				for (const auto& wall : walls)
+//				{
+//					for (int i = 0; i < wall.vertices.size() - 1; ++i)
+//					{
+//						auto a = worldToLocal(origin, wall.vertices[i]);
+//						auto b = worldToLocal(origin, wall.vertices[i + 1]);
+//						drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.5)));
+//					}
+//					auto a = worldToLocal(origin, wall.vertices.back());
+//					auto b = worldToLocal(origin, wall.vertices.front());
+//					drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.5)));
+//				}
+//                
+//                auto simpleWalls = game->getNeighborSimpleWalls(game->getPlayerPtr()->getWorldPosition(), 0.0f);
+//                for (const auto& wall : simpleWalls)
+//                {
+//                    for (int i = 0; i < wall.vertices.size() - 1; ++i)
+//                    {
+//                        auto a = worldToLocal(origin, wall.vertices[i]);
+//                        auto b = worldToLocal(origin, wall.vertices[i + 1]);
+//                        drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.5)));
+//                    }
+//                    auto a = worldToLocal(origin, wall.vertices.back());
+//                    auto b = worldToLocal(origin, wall.vertices.front());
+//                    drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.5)));
+//                }
 			}
 
 			if (isLocationViewOn)
@@ -303,21 +302,21 @@ void PlayGameLayer::showLayer(bool& opened)
 }
 
 
-void PlayGameLayer::playGame()
+void SimulatorLayer::playGame()
 {
 	_gameLayer = realtrick::client::DummyScene::create(this);
 	addChild(_gameLayer);
 }
 
 
-void PlayGameLayer::closeLayer()
+void SimulatorLayer::closeLayer()
 {
 	_gameLayer->removeFromParentAndCleanup(true);
 	_imguiLayer->stopGame();
 }
 
 
-cocos2d::Vec2 PlayGameLayer::worldToLocal(const cocos2d::Vec2& p)
+cocos2d::Vec2 SimulatorLayer::worldToLocal(const cocos2d::Vec2& p)
 {
 	auto game = _gameLayer->getGame();
     auto transformedVector =  p - game->getPlayerPtr()->getWorldPosition();
@@ -326,20 +325,79 @@ cocos2d::Vec2 PlayGameLayer::worldToLocal(const cocos2d::Vec2& p)
 }
 
 
-cocos2d::Vec2 PlayGameLayer::worldToLocal(const cocos2d::Vec2& origin, const cocos2d::Vec2& p)
+cocos2d::Vec2 SimulatorLayer::worldToLocal(const cocos2d::Vec2& origin, const cocos2d::Vec2& p)
 {
 	auto local = worldToLocal(p);
 	return cocos2d::Vec2(origin.x + local.x + GAME_SCREEN_WIDTH / 2, origin.y - local.y + GAME_SCREEN_HEIGHT / 2);
 }
 
 
-void PlayGameLayer::receiveProfileData()
+void SimulatorLayer::receiveProfileData()
 {
     
 }
 
 
+//
+void SimulatorLayer::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
+{
+    auto origin = Vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+    auto drawList = ImGui::GetWindowDrawList();
+    
+    for (size_t i = 0; i < vertexCount; i++)
+    {
+        size_t j = (i + 1) % vertexCount;
+        
+        auto a = worldToLocal(origin, toVec(vertices[i]));
+        auto b = worldToLocal(origin, toVec(vertices[j]));
+        drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.5)));
+    }
+}
 
+/// Draw a solid closed polygon provided in CCW order.
+void SimulatorLayer::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
+{
+    DrawPolygon(vertices, vertexCount, color);
+}
+
+
+void SimulatorLayer::DrawCircle(const b2Vec2& center, float32 radius, const b2Color& color)
+{
+    auto origin = Vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+    auto drawList = ImGui::GetWindowDrawList();
+    auto rad = radius * _gameLayer->getGame()->getRenderingSysetm()->getZoomScale().x;
+    auto pos = worldToLocal(origin, toVec(center));
+    drawList->AddCircle(ImVec2(pos.x, pos.y), rad, ImColor(ImVec4(1.0, 0.0, 1.0, 0.7)), 20, 0.0f);
+}
+
+
+void SimulatorLayer::DrawSolidCircle(const b2Vec2& center, float32 radius, const b2Vec2& axis, const b2Color& color)
+{
+    DrawCircle(center, radius, color);
+}
+
+
+void SimulatorLayer::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color)
+{
+    auto origin = Vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+    auto drawList = ImGui::GetWindowDrawList();
+    auto a = worldToLocal(origin, toVec(p1));
+    auto b = worldToLocal(origin, toVec(p2));
+    drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.5)));
+}
+
+
+void SimulatorLayer::DrawPoint(const b2Vec2& p, float32 size, const b2Color& color)
+{
+    auto origin = Vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+    auto drawList = ImGui::GetWindowDrawList();
+    Vec2 rectOrigin = worldToLocal(origin, toVec(p));
+    Vec2 rectDest = worldToLocal(origin, Vec2(p.x + size, p.y + size));
+    
+    drawList->AddRectFilled(ImVec2(rectOrigin.x, rectOrigin.y),
+                            ImVec2(rectDest.x, rectDest.y),
+                            ImColor(ImVec4(0.2, 0.2, 0.8, 0.2)));
+}
 
 
 

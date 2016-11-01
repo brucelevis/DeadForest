@@ -2,7 +2,7 @@
 //  InventoryView.cpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 9. 2..
+//  Created by NamJunHyeon on 2016. 9. 2..
 //
 //
 

@@ -22,7 +22,7 @@ using namespace cocos2d;
 #include "OpenLayer.hpp"
 #include "SaveQueryLayer.hpp"
 #include "PaletteLayer.hpp"
-#include "PlayGameLayer.hpp"
+#include "SimulatorLayer.hpp"
 #include "LocationNode.hpp"
 #include "GameTrigger.hpp"
 #include "Conditions.hpp"
@@ -63,23 +63,23 @@ bool EditScene::init()
     _saveQueryLayer = SaveQueryLayer::create(this);
     addChild(_saveQueryLayer);
     
-    _playGameLayer = PlayGameLayer::create(this);
-    addChild(_playGameLayer);
+    _simulatorLayer = SimulatorLayer::create(this);
+    addChild(_simulatorLayer);
     
     addImGUI([this] {
         
-        _isEditMode = (_layer && !_showPlayGameLayer);
+        _isEditMode = (_layer && !_showSimulatorLayer);
         
         if ( _showNewMap ) _newFileLayer->showLayer(_showNewMap);
         if ( _showSaveAs ) _saveAsLayer->showLayer(_showSaveAs);
         if ( _showOpenMap ) _openLayer->showLayer(_showOpenMap);
         if ( _showSaveQueryLayer ) _saveQueryLayer->showLayer(_showSaveQueryLayer);
-        if ( _showPlayGameLayer ) _playGameLayer->showLayer(_showPlayGameLayer);
-        if ( _layer && _showGMXLayer && !_showPlayGameLayer ) _layer->showLayer(_showGMXLayer);
+        if ( _showSimulatorLayer ) _simulatorLayer->showLayer(_showSimulatorLayer);
+        if ( _layer && _showGMXLayer && !_showSimulatorLayer ) _layer->showLayer(_showGMXLayer);
         
         if (ImGui::BeginMainMenuBar())
         {
-            if (ImGui::BeginMenu("File", _isFileEnable && !_showPlayGameLayer))
+            if (ImGui::BeginMenu("File", _isFileEnable && !_showSimulatorLayer))
             {
                 if (ImGui::MenuItem("New", "Ctrl+N", &_showNewMap, isNew() )) { doNewButton(); }
                 if (ImGui::MenuItem("Open", "Ctrl+O", false, isOpen() )) { doOpenButton(); }
@@ -92,7 +92,7 @@ bool EditScene::init()
                 ImGui::EndMenu();
             }
             
-            if (ImGui::BeginMenu("Edit", _isEditEnable && !_showPlayGameLayer))
+            if (ImGui::BeginMenu("Edit", _isEditEnable && !_showSimulatorLayer))
             {
                 if ( ImGui::MenuItem("Undo", "CTRL+Z", false, isUndo()) ) { _layer->undo(); }
                 if ( ImGui::MenuItem("Redo", "CTRL+Y", false, isRedo()) ) { _layer->redo(); }
@@ -105,7 +105,7 @@ bool EditScene::init()
                 ImGui::EndMenu();
             }
             
-            if (ImGui::BeginMenu("Windows", _isWindowEnable && !_showPlayGameLayer))
+            if (ImGui::BeginMenu("Windows", _isWindowEnable && !_showSimulatorLayer))
             {
                 ImGui::MenuItem("Navigator", "SHIFT+N", &_layer->isShowNavigator());
                 ImGui::MenuItem("Palette", "SHIFT+P", &_layer->isShowPalette());
@@ -190,7 +190,7 @@ bool EditScene::init()
         {
             if ( isOpen() ) doOpenButton();
         }
-        if ( _enableOpenMap && !_showPlayGameLayer && ImGui::IsItemHovered()) ImGui::SetTooltip("open");
+        if ( _enableOpenMap && !_showSimulatorLayer && ImGui::IsItemHovered()) ImGui::SetTooltip("open");
         ImGui::PopStyleColor(2);
         
         static float saveAlpha;
@@ -323,9 +323,9 @@ bool EditScene::init()
         {
             if ( _isEditMode )
             {
-                _showPlayGameLayer = !_showPlayGameLayer;
+                _showSimulatorLayer = !_showSimulatorLayer;
                 
-                if ( _showPlayGameLayer ) playGame();
+                if ( _showSimulatorLayer ) playGame();
                 else stopGame();
             }
         }
@@ -333,7 +333,7 @@ bool EditScene::init()
         
         ImGui::PopStyleColor(2);
         
-        if ( _layer && !_showPlayGameLayer )
+        if ( _layer && !_showSimulatorLayer )
         {
             ImGui::SameLine();
             ImGui::PushItemWidth(250);
@@ -874,13 +874,13 @@ void EditScene::changeLayerType(LayerType type)
 
 bool EditScene::isNew()
 {
-    return !_showPlayGameLayer;
+    return !_showSimulatorLayer;
 }
 
 
 bool EditScene::isOpen()
 {
-    return _enableOpenMap && !_showPlayGameLayer;
+    return _enableOpenMap && !_showSimulatorLayer;
 }
 
 
@@ -929,7 +929,7 @@ void EditScene::playGame()
 {
     _layer->save("temp_game_map");
     
-    _playGameLayer->playGame();
+    _simulatorLayer->playGame();
     _layer->setVisible(false);
     enableModal(true);
 }

@@ -20,12 +20,12 @@
 #include "ModifyStartingPointCommand.hpp"
 #include "AddEntityToolCommand.hpp"
 #include "RemoveEntityToolCommand.hpp"
-#include "CellSpacePartition.hpp"
 #include "MainMenu3.hpp"
 #include "LocationNode.hpp"
 #include "RenameLocationLayer.hpp"
 #include "ForceSettingLayer.hpp"
 #include "StringHelper.hpp"
+#include "Physics.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::editor;

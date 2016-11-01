@@ -2,7 +2,7 @@
 //  InputPressInventoryButton.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 9. 6..
+//  Created by NamJunHyeon on 2016. 9. 6..
 //
 //
 

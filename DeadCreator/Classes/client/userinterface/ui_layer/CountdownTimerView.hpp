@@ -2,7 +2,7 @@
 //  CountdownTimerView.hpp
 //  DeadCreator
 //
-//  Created by mac on 2016. 10. 19..
+//  Created by NamJunHyeon on 2016. 10. 19..
 //
 //
 

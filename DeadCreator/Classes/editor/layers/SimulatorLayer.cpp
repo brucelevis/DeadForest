@@ -31,7 +31,6 @@ void SimulatorLayer::showLayer(bool& opened)
 	static bool isStatusOn = true;
 	static bool isPlayerInfo = true;
 	static bool isGridOn = false;
-	static bool isCellSpaceOn = false;
 	static bool isLocationViewOn = false;
 	static bool isGraphNodeViewOn = false;
 
@@ -132,35 +131,6 @@ void SimulatorLayer::showLayer(bool& opened)
 						drawList->AddLine(ImVec2(bottom.x, bottom.y), ImVec2(left.x, left.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
 					}
 				}
-			}
-
-			if (isCellSpaceOn)
-			{
-//				auto cellSpace = game->getCellSpace();
-//
-//				auto currCellIndex = cellSpace->positionToIndex(game->getPlayerPtr()->getWorldPosition());
-//				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 0.00, 1.00));
-//				ImGui::Text(std::string("current cell: " + _to_string(currCellIndex)).c_str(), NULL);
-//				ImGui::PopStyleColor();
-//
-//				const auto& cells = cellSpace->getCells();
-//				for (const auto& cell : cells)
-//				{
-//					const auto& cellSize = cell.boundingBox.size;
-//
-//					const auto cellOrigin = worldToLocal(origin, cell.boundingBox.origin);
-//					const auto top = worldToLocal(origin, cell.boundingBox.origin + Vec2(0, cellSize.height));
-//					const auto right = worldToLocal(origin, cell.boundingBox.origin + Vec2(cellSize.width, 0));
-//
-//					drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(top.x, top.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
-//					drawList->AddLine(ImVec2(cellOrigin.x, cellOrigin.y), ImVec2(right.x, right.y), ImColor(ImVec4(1.0, 0.0, 0.0, 0.5)));
-//				}
-			}
-
-            
-            if ( isPhysicsShape || isPhysicsJoint || isPhysicsAABB || isPhysicsPair || isPhysicsCenterOfMass )
-            {
-                game->getPhysicsWorld()->DrawDebugData();
             }
 
 			if (isLocationViewOn)
@@ -215,6 +185,11 @@ void SimulatorLayer::showLayer(bool& opened)
                 }
 			}
             
+            if ( isPhysicsShape || isPhysicsJoint || isPhysicsAABB || isPhysicsPair || isPhysicsCenterOfMass )
+            {
+                game->getPhysicsWorld()->DrawDebugData();
+            }
+            
 		}
 	}
 	ImGui::End();
@@ -242,7 +217,6 @@ void SimulatorLayer::showLayer(bool& opened)
 				ImGui::Checkbox("status", &isStatusOn);
 				ImGui::Checkbox("player info", &isPlayerInfo);
 				ImGui::Checkbox("grid", &isGridOn);
-				ImGui::Checkbox("cell", &isCellSpaceOn);
 				ImGui::Checkbox("location", &isLocationViewOn);
 				ImGui::Checkbox("graph", &isGraphNodeViewOn);
 				ImGui::TreePop();
@@ -255,15 +229,15 @@ void SimulatorLayer::showLayer(bool& opened)
                     if ( isPhysicsShape ) AppendFlags(b2Draw::e_shapeBit);
                     else ClearFlags(b2Draw::e_shapeBit);
                 }
-                if ( ImGui::Checkbox("joint", &isPhysicsJoint) )
-                {
-                    if ( isPhysicsJoint ) AppendFlags(b2Draw::e_jointBit);
-                    else ClearFlags(b2Draw::e_jointBit);
-                }
                 if ( ImGui::Checkbox("aabb", &isPhysicsAABB) )
                 {
                     if ( isPhysicsAABB ) AppendFlags(b2Draw::e_aabbBit);
                     else ClearFlags(b2Draw::e_aabbBit);
+                }
+                if ( ImGui::Checkbox("joint", &isPhysicsJoint) )
+                {
+                    if ( isPhysicsJoint ) AppendFlags(b2Draw::e_jointBit);
+                    else ClearFlags(b2Draw::e_jointBit);
                 }
                 if ( ImGui::Checkbox("pair", &isPhysicsPair) )
                 {
@@ -331,6 +305,14 @@ void SimulatorLayer::receiveProfileData()
 }
 
 
+bool SimulatorLayer::isNeighborPoint(const cocos2d::Vec2& p)
+{
+    auto game = _gameLayer->getGame();
+    auto worldPosition = game->getPlayerPtr()->getWorldPosition();
+    return (p.distanceSquared(worldPosition) < 300 * 300);
+}
+
+
 //
 void SimulatorLayer::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
 {
@@ -338,15 +320,12 @@ void SimulatorLayer::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, cons
     for (size_t i = 0; i < vertexCount; i++)
     {
         size_t j = (i + 1) % vertexCount;
-        auto a = worldToLocal(_debugOrigin, toVec(vertices[i]));
-        auto b = worldToLocal(_debugOrigin, toVec(vertices[j]));
-        
-        auto game = _gameLayer->getGame();
-        auto worldPosition = game->getPlayerPtr()->getWorldPosition();
-        if ( a.distanceSquared(worldPosition) > 400 * 400 && b.distanceSquared(worldPosition) > 400 * 400 )
-            return ;
-        
-        drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.5)));
+        if ( isNeighborPoint(toVec(vertices[i])) && isNeighborPoint(toVec(vertices[j])) )
+        {
+            auto a = worldToLocal(_debugOrigin, toVec(vertices[i]));
+            auto b = worldToLocal(_debugOrigin, toVec(vertices[j]));
+            drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.5)));
+        }
     }
 }
 
@@ -361,14 +340,11 @@ void SimulatorLayer::DrawCircle(const b2Vec2& center, float32 radius, const b2Co
 {
     auto drawList = ImGui::GetWindowDrawList();
     auto rad = radius * _gameLayer->getGame()->getRenderingSysetm()->getZoomScale().x;
-    auto pos = worldToLocal(_debugOrigin, toVec(center));
-    
-    auto game = _gameLayer->getGame();
-    auto worldPosition = game->getPlayerPtr()->getWorldPosition();
-    if ( pos.distanceSquared(worldPosition) > 400 * 400 )
-        return ;
-    
-    drawList->AddCircle(ImVec2(pos.x, pos.y), rad, ImColor(ImVec4(1.0, 0.0, 1.0, 0.7)), 20, 0.0f);
+    if ( isNeighborPoint(toVec(center)) )
+    {
+        auto pos = worldToLocal(_debugOrigin, toVec(center));
+        drawList->AddCircle(ImVec2(pos.x, pos.y), rad, ImColor(ImVec4(1.0, 0.0, 1.0, 0.7)), 20, 0.0f);
+    }
 }
 
 
@@ -381,32 +357,26 @@ void SimulatorLayer::DrawSolidCircle(const b2Vec2& center, float32 radius, const
 void SimulatorLayer::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color)
 {
     auto drawList = ImGui::GetWindowDrawList();
-    auto a = worldToLocal(_debugOrigin, toVec(p1));
-    auto b = worldToLocal(_debugOrigin, toVec(p2));
-    
-    auto game = _gameLayer->getGame();
-    auto worldPosition = game->getPlayerPtr()->getWorldPosition();
-    if ( a.distanceSquared(worldPosition) > 400 * 400 && b.distanceSquared(worldPosition) > 400 * 400 )
-        return ;
-    
-    drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.5)));
+    if ( isNeighborPoint(toVec(p1)) && isNeighborPoint(toVec(p2)) )
+    {
+        auto a = worldToLocal(_debugOrigin, toVec(p1));
+        auto b = worldToLocal(_debugOrigin, toVec(p2));
+        drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 0.0, 0.5)));
+    }
 }
 
 
 void SimulatorLayer::DrawPoint(const b2Vec2& p, float32 size, const b2Color& color)
 {
     auto drawList = ImGui::GetWindowDrawList();
-    Vec2 rectOrigin = worldToLocal(_debugOrigin, toVec(p));
-    Vec2 rectDest = worldToLocal(_debugOrigin, Vec2(p.x + size, p.y + size));
-    
-    auto game = _gameLayer->getGame();
-    auto worldPosition = game->getPlayerPtr()->getWorldPosition();
-    if ( rectOrigin.distanceSquared(worldPosition) > 400 * 400 && rectOrigin.distanceSquared(worldPosition) > 400 * 400 )
-        return ;
-    
-    drawList->AddRectFilled(ImVec2(rectOrigin.x, rectOrigin.y),
+    if ( isNeighborPoint(toVec(p)) && isNeighborPoint(toVec(b2Vec2(p.x + size, p.y + size))) )
+    {
+        Vec2 rectOrigin = worldToLocal(_debugOrigin, toVec(p));
+        Vec2 rectDest = worldToLocal(_debugOrigin, Vec2(p.x + size, p.y + size));
+        drawList->AddRectFilled(ImVec2(rectOrigin.x, rectOrigin.y),
                             ImVec2(rectDest.x, rectDest.y),
                             ImColor(ImVec4(0.2, 0.2, 0.8, 0.2)));
+    }
 }
 
 

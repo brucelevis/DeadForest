@@ -118,7 +118,7 @@ bool Game::init()
         _logicStream = new SingleStream(this);
     }
     
-    _physicsWorld = new b2World(b2Vec2(0.0f, -100.0f));
+    _physicsWorld = new b2World(b2Vec2(0.0f, 0.0f));
     
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
@@ -321,12 +321,6 @@ void Game::loadGameContents(PlayerType ownPlayer)
     {
         addWall(wall);
     }
-    
-//    const auto& simpleWalls = _gameResource->getSimpleCollisionData();
-//    for (const auto& wall : simpleWalls )
-//    {
-//        _cellSpace->addSimpleWall(wall);
-//    }
     
     const auto& entities = _entityManager->getEntities();
     for ( const auto& entity : entities )

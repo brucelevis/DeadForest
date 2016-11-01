@@ -72,7 +72,7 @@ namespace realtrick
             client::DummyScene* getGameLayer() const { return _gameLayer; }
             cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& p);
 			cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& origin, const cocos2d::Vec2& p);
-
+            bool isNeighborPoint(const cocos2d::Vec2& p);
             
             // override funcs to draw box2d debug node
             virtual void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) override;

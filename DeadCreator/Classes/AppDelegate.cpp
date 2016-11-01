@@ -1,3 +1,4 @@
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
 #include "AppDelegate.h"
 #include "EditScene.hpp"
 #include "MainMenu3.hpp"

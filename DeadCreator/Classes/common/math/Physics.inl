@@ -363,6 +363,15 @@ namespace realtrick
             return MATH_RAD_TO_DEG(acosf(dir.dot(-cocos2d::Vec2::UNIT_X)) + 3.141592f);
         }
         
+		inline float getRadFromZero(const cocos2d::Vec2& dir)
+		{
+			if (dir.y >= 0.0f)
+			{
+				return (acosf(dir.dot(cocos2d::Vec2::UNIT_X)));
+			}
+			return (acosf(dir.dot(-cocos2d::Vec2::UNIT_X)) + 3.141592f);
+		}
+
         inline float getAngleFromAxis(const cocos2d::Vec2& dir, const cocos2d::Vec2& axis)
         {
             cocos2d::Vec2 a = axis.getNormalized();

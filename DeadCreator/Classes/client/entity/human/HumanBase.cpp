@@ -78,41 +78,40 @@ HumanBase::~HumanBase()
 
 bool HumanBase::init()
 {
-    if ( !Node::init() )
-        return false;
-    
-    _animator = new Animator(this);
-    _inventoryData = new InventoryData(this);
-    
-    setAlive();
-    
-    _pathPlanner = new PathPlanner(*_game->getGraph(), this);
-    _sensory = new SensoryMemory(this, 5);
-    _targetSystem = new AbstTargetingSystem(this);
-    
-    _nameTag = ui::Text::create("","fonts/SpecialElite.TTF", 10);
-    _nameTag->setPosition(Vec2(0.0f, -30.0f));
-    addChild(_nameTag);
-    
-    // create box2d's physics body
-    b2BodyDef bd;
-    bd.type = b2BodyType::b2_dynamicBody;
-    bd.allowSleep = false;
-    
-    _body = _game->getPhysicsWorld()->CreateBody(&bd);
-    
-    b2CircleShape shape;
-    shape.m_radius = _boundingRadius;
-    
-    b2FixtureDef fd;
-    fd.shape = &shape;
-    fd.density = 10.0f;
-    fd.friction = 0.5f;
-    fd.restitution = 0.0f;
-    fd.isSensor = false;
-    _body->CreateFixture(&fd);
-    
-    return true;
+	b2BodyDef bd;
+	bd.allowSleep = false;
+	bd.type = b2_dynamicBody;
+	
+	b2CircleShape shape;
+	shape.m_radius = _boundingRadius;
+
+	b2FixtureDef fd;
+	fd.shape = &shape;
+	fd.density = 5.0f;
+	fd.friction = 0.1f;
+	fd.restitution = 0.0f;
+	fd.userData = this;
+	fd.isSensor = false;
+
+	if ( !PhysicsBase::initWithPhysicsBody(_game->getPhysicsWorld(), bd, fd) )
+		return false;
+
+	_body->SetUserData(this);
+
+	_animator = new Animator(this);
+	_inventoryData = new InventoryData(this);
+
+	setAlive();
+
+	_pathPlanner = new PathPlanner(*_game->getGraph(), this);
+	_sensory = new SensoryMemory(this, 5);
+	_targetSystem = new AbstTargetingSystem(this);
+
+	_nameTag = ui::Text::create("", "fonts/SpecialElite.TTF", 10);
+	_nameTag->setPosition(Vec2(0.0f, -30.0f));
+	addChild(_nameTag);
+
+	return true;
 }
 
 
@@ -141,7 +140,6 @@ void HumanBase::update(float dt)
     if ( _FSM ) _FSM->update(dt);
     
     // move and rotate
-    this->moveEntity();
     this->rotateEntity();
     
     // self heal
@@ -174,7 +172,7 @@ void HumanBase::update(float dt)
     // update animation
     if ( _animator )
     {
-        _animator->setRotation(_rotation);
+        _animator->setRotation(getRotationZ());
         _animator->processAnimation(dt);
     }
 }
@@ -218,14 +216,9 @@ bool HumanBase::isIntersectWall(const cocos2d::Vec2& futurePosition, const realt
 }
 
 
-void HumanBase::moveEntity()
-{
-    _body->SetLinearVelocity(b2Vec2(getVelocity().x * 100, getVelocity().y * 100));
-}
-
 void HumanBase::rotateEntity()
 {
-    if ( getHeading().dot(_targetHeading) < 0.982546f )
+    /*if ( getHeading().dot(_targetHeading) < 0.982546f )
     {
         float dt = Director::getInstance()->getDeltaTime();
         
@@ -244,9 +237,25 @@ void HumanBase::rotateEntity()
         }
         
         setRotationZ(physics::getAngleFromZero(getHeading()));
-    }
-    
-    _body->SetAngularVelocity(0);
+		cocos2d::log("rot z : %f", getRotationZ());
+    }*/
+	if (getHeading().dot(_targetHeading) < 0.982546f)
+	{
+		float d = getHeading().cross(_targetHeading);
+		float dt = Director::getInstance()->getDeltaTime();
+
+		if (d > 0)
+			_body->SetAngularVelocity(MATH_DEG_TO_RAD(_turnSpeed * dt * 100.0f));
+		
+		else
+			_body->SetAngularVelocity(-MATH_DEG_TO_RAD(_turnSpeed * dt * 100.0f));
+	}
+	else
+	{
+		_body->SetAngularVelocity(0.0f);
+	}
+
+	//setRotationZ(physics::getAngleFromZero(getHeading()));
 }
 
 

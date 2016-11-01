@@ -7,7 +7,7 @@
 //
 
 #pragma once
-
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
 #include "cocos2d.h"
 #include "Mat3.hpp"
 #include "SizeProtocol.h"

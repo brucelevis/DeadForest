@@ -7,7 +7,7 @@
 //
 
 #pragma once
-
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
 #include <Box2D/Box2D.h>
 
 #include "audio/include/AudioEngine.h"
@@ -56,7 +56,67 @@ namespace realtrick
         class HumanBase;
         class UiLayer;
         class Camera2D;
+		class Wall;
         
+		struct QueryWallByAABB : public b2QueryCallback
+		{
+			std::vector<b2Body*> walls;
+
+			virtual bool ReportFixture(b2Fixture* fixture) override
+			{
+				if(fixture->GetBody()->GetUserData() == nullptr)
+					walls.push_back(fixture->GetBody());
+				return true;
+			}
+		};
+
+		struct QueryEntityByAABB : public b2QueryCallback
+		{
+			std::vector<EntityBase*> entities;
+
+			virtual bool ReportFixture(b2Fixture* fixture) override
+			{
+				if (fixture->GetBody()->GetUserData())
+					entities.push_back(static_cast<EntityBase*>(fixture->GetBody()->GetUserData()));
+				return true;
+			}
+		};
+
+
+		struct QueryWallByRayCast : public b2RayCastCallback
+		{
+			std::vector<b2Body*> walls;
+
+			virtual float32 ReportFixture(
+				b2Fixture* fixture,
+				const b2Vec2& point,
+				const b2Vec2& normal,
+				float32 fraction) override
+			{
+				if (fixture->GetBody()->GetUserData() == nullptr)
+					walls.push_back(fixture->GetBody());
+				return true;
+			}
+		};
+
+		struct QueryEntityByRayCast : public b2RayCastCallback
+		{
+			std::vector<EntityBase*> entities;
+
+			virtual float32 ReportFixture(
+				b2Fixture* fixture,
+				const b2Vec2& point,
+				const b2Vec2& normal,
+				float32 fraction) override
+			{
+				if (fixture->GetBody()->GetUserData())
+					entities.push_back(static_cast<EntityBase*>(fixture->GetBody()->GetUserData()));
+				return true;
+			}
+		};
+
+
+
         class Game : public cocos2d::Node
         {
             
@@ -105,7 +165,7 @@ namespace realtrick
             std::vector<EntityBase*> getNeighborsOnMove(const cocos2d::Vec2& pos, float speed) const;
             std::vector<EntityBase*> getNeighborsOnAttack(const cocos2d::Vec2& pos, const cocos2d::Vec2& dir, float range) const;
             std::vector<EntityBase*> getNeighborsEntities(const cocos2d::Vec2& pos, const cocos2d::Rect& rect) const;
-            
+
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos) const;
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, float speed) const;
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
@@ -114,7 +174,7 @@ namespace realtrick
             std::vector<realtrick::Polygon> getNeighborSimpleWalls(const cocos2d::Vec2& pos, float speed) const;
             std::vector<realtrick::Polygon> getNeighborSimpleWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
             std::vector<realtrick::Polygon> getNeighborSimpleWalls(const cocos2d::Vec2& pos, const Segment& ray) const;
-
+			
 			bool isCollideSimpleWalls(const cocos2d::Vec2& pos) const;
 
             TileType getStepOnTileType(const cocos2d::Vec2& pos);
@@ -177,7 +237,7 @@ namespace realtrick
             LogicStream* _logicStream; // stream mediator
 			Graph* _graph; // graph
             b2World* _physicsWorld; // physics world
-            
+
             bool _isPaused;
             float _elapsedTime;
             int _bgmID;
@@ -190,6 +250,7 @@ namespace realtrick
             bool _isGameEnded = false;
 
             std::vector<cocos2d::Rect> _cellAABBs;
+			cocos2d::Vector<Wall*> _walls;
             
         };
         

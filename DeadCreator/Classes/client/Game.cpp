@@ -29,6 +29,7 @@
 #include "GoalNetwork.h"
 #include "ClipperWrapper.hpp"
 #include "SimulatorLayer.hpp"
+#include "Wall.hpp"
 
 using namespace cocos2d;
 using namespace realtrick;
@@ -58,7 +59,7 @@ void Game::clear()
 {
     CC_SAFE_DELETE(_logicStream);
 	CC_SAFE_DELETE(_graph);
-    CC_SAFE_DELETE(_physicsWorld);
+	CC_SAFE_DELETE(_physicsWorld);
     experimental::AudioEngine::stop(_bgmID);
 }
 
@@ -170,6 +171,21 @@ void Game::update(float dt)
         
         _messenger->dispatchDelayedMessages();
     }
+
+	// #test print
+	const auto& entitiesAABB = getNeighborsOnMove(_entityManager->getPlayerPtr()->getWorldPosition(), 100.0f);
+	cocos2d::log("query AABB");
+	for (const auto& e : entitiesAABB)
+	{
+		cocos2d::log("%d", e->getEntityType());
+	}
+
+	const auto& entitiesRayCast = getNeighborsOnAttack(_entityManager->getPlayerPtr()->getWorldPosition(), _entityManager->getPlayerPtr()->getHeading(), 500.0f);
+	cocos2d::log("query Ray Cast");
+	for (const auto& e : entitiesRayCast)
+	{
+		cocos2d::log("%d", e->getEntityType());
+	}
 }
 
 
@@ -182,21 +198,31 @@ void Game::loadBGM()
 
 std::vector<EntityBase*> Game::getNeighbors(const cocos2d::Vec2& position) const
 {
-    return getNeighborsOnMove(position, 0.0f);
+    return getNeighborsOnMove(position, 0.001f);
 }
 
 
 std::vector<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const
 {
-    std::vector<EntityBase*> ret;
-    return ret;
+	QueryEntityByAABB query;
+	b2AABB aabb;
+	aabb.lowerBound = b2Vec2(position.x, position.y) - b2Vec2(speed, speed);
+	aabb.upperBound = b2Vec2(position.x, position.y) + b2Vec2(speed, speed);
+	_physicsWorld->QueryAABB(&query, aabb);
+	
+    return query.entities;
 }
 
 
 std::vector<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const
 {
-    std::vector<EntityBase*> ret;
-    return ret;
+	QueryEntityByRayCast query;
+	_physicsWorld->RayCast(
+		&query,
+		b2Vec2(position.x, position.y),
+		b2Vec2(position.x + range * dir.x, position.y + range * dir.y));
+
+    return query.entities;
 }
 
 
@@ -216,7 +242,31 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& pos)
 
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, float speed) const
 {
-    std::vector<realtrick::Polygon> ret;
+	QueryWallByAABB query;
+	b2AABB aabb;
+	aabb.lowerBound = b2Vec2(position.x, position.y) - b2Vec2(speed, speed);
+	aabb.upperBound = b2Vec2(position.x, position.y) + b2Vec2(speed, speed);
+	_physicsWorld->QueryAABB(&query, aabb);
+
+	std::vector<realtrick::Polygon> ret;
+
+	// #복사를 해야하는지?
+	for (auto w : query.walls)
+	{
+		for (b2Fixture* f = w->GetFixtureList(); f; f = f->GetNext())
+		{
+			if (f->GetShape()->GetType() == b2Shape::Type::e_chain)
+			{
+				b2ChainShape* chain = static_cast<b2ChainShape*>(f->GetShape());
+
+				ret.resize(chain->m_count);
+			}
+			else if (f->GetShape()->GetType() == b2Shape::Type::e_circle)
+			{
+			}
+		}
+	}
+    
     return ret;
 }
 
@@ -839,29 +889,8 @@ void Game::addWall(const realtrick::Polygon& wall)
             std::vector<realtrick::Polygon> clippedWalls = clipping::getClippedPolygons(wall, aabb);
             for( const auto& clippedWall : clippedWalls )
             {
-                // add box2d polygons
-                b2BodyDef groundDef;
-                groundDef.type = b2BodyType::b2_staticBody;
-                
-                auto ground = _physicsWorld->CreateBody(&groundDef);
-                
-                int32 size = static_cast<int32>(clippedWall.vertices.size());
-                b2Vec2 *v = new b2Vec2[size];
-                for(int i = 0 ; i < size ; ++ i)
-                {
-                    v[i].Set(clippedWall.vertices[i].x, clippedWall.vertices[i].y);
-                }
-                
-                b2ChainShape chain;
-                chain.CreateChain(v, size);
-                
-                delete[] v;
-                
-                b2FixtureDef groundFixture;
-                groundFixture.shape = &chain;
-                groundFixture.restitution = 0.1f;
-                
-                ground->CreateFixture(&groundFixture);
+				auto wall = Wall::create(_physicsWorld, clippedWall.vertices);
+				_walls.pushBack(wall);
             }
         }
     }

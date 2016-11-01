@@ -6,6 +6,8 @@
 //
 //
 
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
+
 #include <array>
 #include <boost/filesystem.hpp>
 using namespace boost::filesystem;

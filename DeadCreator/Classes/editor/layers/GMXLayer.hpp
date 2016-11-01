@@ -46,16 +46,7 @@ namespace realtrick
         {
             
             friend class EditScene;
-            
-        private:
-            
-            enum ErrorCode
-            {
-                NO_ERROR = 0,
-                HUMAN_CAN_JUST_ONE_HUMAN_ENTITY,
-                ITEM_CANNOT_OWN_BY_PLAYER
-            };
-            
+                   
         public:
             
             explicit GMXLayer(EditScene& imguiLayer, GMXFile& file);

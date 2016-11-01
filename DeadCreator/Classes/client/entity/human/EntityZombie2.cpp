@@ -42,7 +42,7 @@ bool EntityZombie2::init()
     _FSM = new StateMachine(this);
     _FSM->setCurrState(&Zombie2IdleLoop::getInstance());
     _FSM->changeState(&Zombie2IdleLoop::getInstance());
-    
+
     return true;
 }
 

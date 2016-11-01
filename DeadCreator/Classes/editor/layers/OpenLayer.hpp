@@ -8,6 +8,7 @@
 
 #pragma once
 
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
 #include <boost/filesystem.hpp>
 
 #include "cocos2d.h"

@@ -81,8 +81,6 @@ namespace realtrick
             std::map<int, EntityBase*> _entities;
             HumanBase* _player;
             
-            std::vector<EntityBase*> _allyEntities;
-            
         };
         
     }

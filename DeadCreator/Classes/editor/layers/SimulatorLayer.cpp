@@ -6,7 +6,7 @@
 //
 //
 
-
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
 #include "DummyScene.hpp"
 #include "EditScene.hpp"
 #include "SimulatorLayer.hpp"

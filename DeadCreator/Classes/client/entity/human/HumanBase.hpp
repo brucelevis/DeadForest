@@ -11,10 +11,10 @@
 #include "StateMachine.hpp"
 #include "Animator.hpp"
 #include "Physics.hpp"
+#include "PhysicsBase.hpp"
 #include "Types.hpp"
 #include "Regulator.h"
-
-#include "Box2D/Box2D.h"
+#include "Interfaces.hpp"
 
 namespace realtrick
 {
@@ -30,7 +30,7 @@ namespace realtrick
         class InventoryData;
         class UiLayer;
         
-		class HumanBase : public EntityBase
+		class HumanBase : public EntityBase, public PhysicsBase
 		{
 
             friend class EntityManager;
@@ -50,7 +50,6 @@ namespace realtrick
 			virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other, cocos2d::Vec2& additionalVelocity);
 			virtual bool isIntersectWall(const cocos2d::Vec2& futurePosition, const realtrick::Polygon& wall);
 			virtual void rotateEntity();
-			virtual void moveEntity();
 			virtual void suicide() {}
 
 			virtual bool handleMessage(const Telegram& msg) override;
@@ -61,8 +60,6 @@ namespace realtrick
 			SensoryMemory* getSensoryMemory() const { return _sensory; }
 			AbstTargetingSystem* getTargetSys() const { return _targetSystem; }
             
-            cocos2d::Vec2 getHeading() const { return _heading; }
-            
             cocos2d::Vec2 getTargetHeading() const { return _targetHeading; }
             void setTargetHeading(const cocos2d::Vec2& target) { _targetHeading = target; }
             
@@ -72,9 +69,37 @@ namespace realtrick
             cocos2d::Vec2 getMoving() const { return _moving; }
             void setMoving(const cocos2d::Vec2& moving) { _moving = moving; }
             
-            cocos2d::Vec2 getVelocity() const { return _velocity; }
-            void setVelocity(const cocos2d::Vec2 velocity) { _velocity = velocity; }
+			virtual cocos2d::Vec2 getWorldPosition() const override
+			{
+				auto bodyPos = _body->GetPosition();
+				return cocos2d::Vec2(bodyPos.x, bodyPos.y);
+			}
+
+			virtual void setWorldPosition(const cocos2d::Vec2& pos) override
+			{
+				_body->SetTransform(b2Vec2(pos.x, pos.y), _body->GetAngle());
+			}
+
+			virtual cocos2d::Vec2 getVelocity() const override
+			{
+				return cocos2d::Vec2(_body->GetLinearVelocity().x, _body->GetLinearVelocity().y);
+			}
+
+			virtual void setVelocity(const cocos2d::Vec2& velocity) override
+			{
+				_body->SetLinearVelocity(b2Vec2(velocity.x, velocity.y));
+			}
             
+			virtual cocos2d::Vec2 getHeading() const override
+			{
+				return cocos2d::Vec2(cos(_body->GetAngle()), sin(_body->GetAngle()));
+			}
+
+			virtual float getRotationZ() const override
+			{
+				return MATH_RAD_TO_DEG(_body->GetAngle());
+			}
+
             float getTurnSpeed() const { return _turnSpeed; }
             void setTurnSpeed(float speed) { _turnSpeed = speed; }
             
@@ -97,8 +122,6 @@ namespace realtrick
             float getRunSpeed() const { return _runSpeed; }
             void setRunSpeed(float speed) { _runSpeed = speed; }
             
-            void setRotationZ(float rot) { _rotation = rot; }
-            float getRotationZ() const { return _rotation; }
             
             void setRunStats(bool enable) { _isRun = enable; }
             bool isRun() const { return _isRun; }
@@ -126,18 +149,7 @@ namespace realtrick
             void hittedByWeapon(EntityType type, int damage);
             
             InventoryData* getInventoryData() const { return _inventoryData; }
-        
-            virtual cocos2d::Vec2 getWorldPosition() const override
-            {
-                auto bodyPos = _body->GetPosition();
-                return cocos2d::Vec2(bodyPos.x, bodyPos.y);
-            }
-            
-            virtual void setWorldPosition(const cocos2d::Vec2& pos) override
-            {
-                _body->SetTransform(b2Vec2(pos.x, pos.y), _body->GetAngle());
-            }
-            
+
             float getDizzyScale() const { return _dizzyScale; }
             float getBloodyScale() const { return _bloodyScale; }
 
@@ -147,10 +159,9 @@ namespace realtrick
             
         private:
         
-            void setHeading(const cocos2d::Vec2 heading)
+            virtual void setHeading(const cocos2d::Vec2& heading) override
             {
-                _heading = heading;
-                _heading.normalize();
+				_body->SetTransform(_body->GetPosition(), physics::getRadFromZero(heading));
             }
             
         protected:
@@ -198,8 +209,6 @@ namespace realtrick
             std::string                     _userNickName;
             std::string                     _stateName;
             cocos2d::ui::Text*              _nameTag;
-            
-            b2Body*                         _body;
             
         };
         

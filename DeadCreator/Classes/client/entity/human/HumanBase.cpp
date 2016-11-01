@@ -90,12 +90,28 @@ bool HumanBase::init()
     _sensory = new SensoryMemory(this, 5);
     _targetSystem = new AbstTargetingSystem(this);
     
-    _balance = Node::create();
-    addChild(_balance);
-    
     _nameTag = ui::Text::create("","fonts/SpecialElite.TTF", 10);
     _nameTag->setPosition(Vec2(0.0f, -30.0f));
     addChild(_nameTag);
+    
+    // create box2d's physics body
+    b2BodyDef bd;
+    bd.type = b2BodyType::b2_dynamicBody;
+    bd.allowSleep = false;
+    
+    _body = _game->getPhysicsWorld()->CreateBody(&bd);
+    
+    b2CircleShape shape;
+    shape.m_p = b2Vec2(0.0f, 0.0f);
+    shape.m_radius = _boundingRadius;
+    
+    b2FixtureDef fd;
+    fd.shape = &shape;
+    fd.density = 20.0f;
+    fd.friction = 1.0f;
+    fd.restitution = 0.0f;
+    fd.isSensor = false;
+    _body->CreateFixture(&fd);
     
     return true;
 }
@@ -206,97 +222,97 @@ bool HumanBase::isIntersectWall(const cocos2d::Vec2& futurePosition, const realt
 
 void HumanBase::moveEntity()
 {
-    if (getVelocity() == Vec2::ZERO)
-    {
-        _speed = 0.0f;
-        return;
-    }
-    
-    float dt = Director::getInstance()->getDeltaTime();
-    cocos2d::Vec2 oldPos = getWorldPosition();
-    cocos2d::Vec2 futurePosition = getWorldPosition() + getVelocity() * dt;
-    _speed = getVelocity().getLength();
-    bool intersectResult = false;
-    cocos2d::Vec2 move;
-    
-    // 엔티티들과의 충돌처리
-    const auto& members = _game->getNeighborsOnMove(oldPos, _speed);
-    for (const auto &entity : members)
-    {
-        if (entity == this) continue;
-        
-        if (isIntersectOther(futurePosition, entity, move))
-            intersectResult = true;
-    }
-    
-    // 벽과의 충돌처리
-    futurePosition += move;
-    float overlap = 0.0f;
-    int collideCnt = 0;
-    Vec2 beginSum, endSum;
-    const std::vector<realtrick::Polygon>& walls = _game->getNeighborSimpleWalls(futurePosition, _speed);
-    for (const auto& wall : walls)
-    {
-        for (int i = 0; i < wall.vertices.size() - 1; ++i)
-        {
-            Vec2 begin(wall.vertices[i]);
-            Vec2 end(wall.vertices[i + 1]);
-            
-            float distance = physics::distToSegment(begin, end, futurePosition);
-            if (distance < _boundingRadius)
-            {
-                collideCnt++;
-                overlap += distance;
-                beginSum += begin;
-                endSum += end;
-            }
-        }
-        
-        Vec2 begin(wall.vertices.back());
-        Vec2 end(wall.vertices.front());
-        
-        float distance = physics::distToSegment(begin, end, futurePosition);
-        if (distance < _boundingRadius)
-        {
-            collideCnt++;
-            overlap += distance;
-            beginSum += begin;
-            endSum += end;
-        }
-    }
-    
-    if (collideCnt > 0)
-    {
-        overlap /= collideCnt;
-        move += (beginSum - endSum).getPerp().getNormalized() * (overlap * 0.33f);
-    }
-    
-    setWorldPosition(futurePosition + move);
-    _game->getCellSpace()->updateEntity(this, oldPos);
+//    if (getVelocity() == Vec2::ZERO)
+//    {
+//        _speed = 0.0f;
+//        return;
+//    }
+//    
+//    float dt = Director::getInstance()->getDeltaTime();
+//    cocos2d::Vec2 oldPos = getWorldPosition();
+//    cocos2d::Vec2 futurePosition = getWorldPosition() + getVelocity() * dt;
+//    _speed = getVelocity().getLength();
+//    bool intersectResult = false;
+//    cocos2d::Vec2 move;
+//    
+//    // 엔티티들과의 충돌처리
+//    const auto& members = _game->getNeighborsOnMove(oldPos, _speed);
+//    for (const auto &entity : members)
+//    {
+//        if (entity == this) continue;
+//        
+//        if (isIntersectOther(futurePosition, entity, move))
+//            intersectResult = true;
+//    }
+//    
+//    // 벽과의 충돌처리
+//    futurePosition += move;
+//    float overlap = 0.0f;
+//    int collideCnt = 0;
+//    Vec2 beginSum, endSum;
+//    const std::vector<realtrick::Polygon>& walls = _game->getNeighborSimpleWalls(futurePosition, _speed);
+//    for (const auto& wall : walls)
+//    {
+//        for (int i = 0; i < wall.vertices.size() - 1; ++i)
+//        {
+//            Vec2 begin(wall.vertices[i]);
+//            Vec2 end(wall.vertices[i + 1]);
+//            
+//            float distance = physics::distToSegment(begin, end, futurePosition);
+//            if (distance < _boundingRadius)
+//            {
+//                collideCnt++;
+//                overlap += distance;
+//                beginSum += begin;
+//                endSum += end;
+//            }
+//        }
+//        
+//        Vec2 begin(wall.vertices.back());
+//        Vec2 end(wall.vertices.front());
+//        
+//        float distance = physics::distToSegment(begin, end, futurePosition);
+//        if (distance < _boundingRadius)
+//        {
+//            collideCnt++;
+//            overlap += distance;
+//            beginSum += begin;
+//            endSum += end;
+//        }
+//    }
+//    
+//    if (collideCnt > 0)
+//    {
+//        overlap /= collideCnt;
+//        move += (beginSum - endSum).getPerp().getNormalized() * (overlap * 0.33f);
+//    }
+//    
+//    setWorldPosition(futurePosition + move);
+//    _game->getCellSpace()->updateEntity(this, oldPos);
 }
 
 void HumanBase::rotateEntity()
 {
-    if ( _heading.dot(_targetHeading) < 0.982546f )
-    {
-        float dt = Director::getInstance()->getDeltaTime();
-        
-        float d = getHeading().cross(_targetHeading);
-        if( d > 0 )
-        {
-            Mat3 rotMat;
-            rotMat.rotate(MATH_DEG_TO_RAD(_turnSpeed * dt));
-            setHeading(rotMat.getTransformedVector(getHeading()));
-        }
-        else
-        {
-            Mat3 rotMat;
-            rotMat.rotate(-MATH_DEG_TO_RAD(_turnSpeed * dt));
-            setHeading(rotMat.getTransformedVector(getHeading()));
-        }
-        
-        setRotationZ(-physics::getAngleFromZero(getHeading()));
-    }
+//    if ( _heading.dot(_targetHeading) < 0.982546f )
+//    {
+//        float dt = Director::getInstance()->getDeltaTime();
+//        
+//        float d = getHeading().cross(_targetHeading);
+//        if( d > 0 )
+//        {
+//            Mat3 rotMat;
+//            rotMat.rotate(MATH_DEG_TO_RAD(_turnSpeed * dt));
+//            setHeading(rotMat.getTransformedVector(getHeading()));
+//        }
+//        else
+//        {
+//            Mat3 rotMat;
+//            rotMat.rotate(-MATH_DEG_TO_RAD(_turnSpeed * dt));
+//            setHeading(rotMat.getTransformedVector(getHeading()));
+//        }
+//        
+//        setRotationZ(-physics::getAngleFromZero(getHeading()));
+//    }
 }
 
 
@@ -415,22 +431,6 @@ bool HumanBase::handleMessage(const Telegram& msg)
         
         // ui 갱신
         _game->sendMessage(0.0, this, nullptr, MessageType::SYNC_INVENTORY_WEAPON_VIEW, nullptr);
-        
-        ret = true;
-    }
-    
-    else if ( msg.msg == MessageType::MOVE_BALANCE )
-    {
-        auto offset = static_cast<Vec2*>(msg.extraInfo);
-        _balance->setPosition( _balance->getPosition() - *offset );
-        CC_SAFE_DELETE(offset);
-        
-        ret = true;
-    }
-    
-    else if ( msg.msg == MessageType::RESET_BALANCE )
-    {
-        _balance->setPosition( getWorldPosition() );
         
         ret = true;
     }
@@ -622,18 +622,6 @@ void HumanBase::attackByFist()
             _game->sendMessage(0.0, this, this, MessageType::NO_HIT, nullptr);
         }
     }
-}
-
-
-void HumanBase::attackVibrate(float force)
-{
-    _game->sendMessage(0.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * getHeading()));
-    _game->sendMessage(0.05 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * getHeading()));
-    _game->sendMessage(0.10 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * 4.0f * getHeading()));
-    _game->sendMessage(0.30 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
-    _game->sendMessage(0.35 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
-    _game->sendMessage(0.40 / 3.0, this, this, MessageType::MOVE_BALANCE, new Vec2(force * -4.0f * getHeading()));
-    _game->sendMessage(0.45 / 3.0, this, this, MessageType::RESET_BALANCE, nullptr);
 }
 
 

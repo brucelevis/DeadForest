@@ -82,7 +82,6 @@ void ItemM16A2::attackImpl()
     this->setNumOfLeftRounds( getNumOfLeftRounds() - 1 );
     
     auto owner = _owner;
-    owner->attackVibrate(0.5f);
     
     std::vector<std::pair<float, EntityBase*>> closestIntersectPoint;
     Vec2 worldPos = owner->getWorldPosition();

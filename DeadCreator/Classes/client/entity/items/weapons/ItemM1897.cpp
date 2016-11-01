@@ -88,7 +88,6 @@ void ItemM1897::attackImpl()
     this->setNumOfLeftRounds( getNumOfLeftRounds() - 1 );
     
     auto owner = _owner;
-    owner->attackVibrate(1.0f);
     
     int numOfShells = getNumOfShells();
     vector<vector<pair<float, EntityBase*>>> closestIntersectPoint(numOfShells);

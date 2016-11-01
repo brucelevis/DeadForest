@@ -106,6 +106,27 @@ bool Game::init()
     
     _physicsWorld = new b2World(b2Vec2(0.0f, -100.0f));
     
+    // ground
+    b2BodyDef groundDef;
+    groundDef.type = b2BodyType::b2_staticBody;
+    
+    auto ground = _physicsWorld->CreateBody(&groundDef);
+    
+    b2Vec2 v[4];
+    v[0].Set(0.0f, 0.0f);
+    v[1].Set(1600.0f, 0.0f);
+    v[2].Set(1600.0f, 980.0f);
+    v[3].Set(0.0f, 980.0f);
+    
+    b2ChainShape chain;
+    chain.CreateChain(v, 4);
+    
+    b2FixtureDef groundFixture;
+    groundFixture.shape = &chain;
+    groundFixture.restitution = 0.5f;
+    
+    ground->CreateFixture(&groundFixture);
+    
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
 	GoalNetwork::staticInitConstants();
@@ -117,6 +138,9 @@ bool Game::init()
 void Game::update(float dt)
 {
     _elapsedTime += dt;
+    
+    // update physics
+    _physicsWorld->Step(0.016f, 8, 3);
     
     // update logic stream
     _logicStream->update(dt);
@@ -135,7 +159,7 @@ void Game::update(float dt)
         _entityManager->update(dt);
         
         // set game camera position and chunk update (if cell space is changed)
-        _camera->setCameraPos(_entityManager->getPlayerPtr()->getBalancePosition());
+        _camera->setCameraPos(_entityManager->getPlayerPtr()->getWorldPosition());
         if ( oldIndex != getFocusedTileIndex(_camera->getCameraPos(), _gameResource->getTileWidth(), _gameResource->getTileHeight(), DUMMY_TILE_SIZE) )
         {
             _renderingSystem->updateChunk(_camera);

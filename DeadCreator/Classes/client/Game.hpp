@@ -28,6 +28,7 @@
 #include "GraphEdgeTypes.h"
 
 #include "PathEdge.h"
+#include "PhysicsManager.hpp"
 
 
 #define Z_ORDER_GAME_MAP    0

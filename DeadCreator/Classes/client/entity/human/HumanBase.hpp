@@ -14,6 +14,8 @@
 #include "Types.hpp"
 #include "Regulator.h"
 
+#include "Box2D/Box2D.h"
+
 namespace realtrick
 {
     namespace client
@@ -125,11 +127,15 @@ namespace realtrick
             
             InventoryData* getInventoryData() const { return _inventoryData; }
         
-            cocos2d::Vec2 getBalancePosition() const { return _balance->getPosition(); }
+            virtual cocos2d::Vec2 getWorldPosition() const override
+            {
+                auto bodyPos = _body->GetPosition();
+                return cocos2d::Vec2(bodyPos.x, bodyPos.y);
+            }
+            
             virtual void setWorldPosition(const cocos2d::Vec2& pos) override
             {
-                EntityBase::setWorldPosition(pos);
-                _balance->setPosition(pos);
+                _body->SetTransform(b2Vec2(pos.x, pos.y), _body->GetAngle());
             }
             
             float getDizzyScale() const { return _dizzyScale; }
@@ -138,7 +144,6 @@ namespace realtrick
             void reload();
             void attackByWeapon();
             void attackByFist();
-            void attackVibrate(float force);
             
         private:
         
@@ -166,7 +171,6 @@ namespace realtrick
             cocos2d::Vec2                   _right;
             cocos2d::Vec2                   _velocity;
             
-            cocos2d::Node*                  _balance;
             float                           _dizzyScale;
             float                           _bloodyScale;
             
@@ -190,6 +194,8 @@ namespace realtrick
             std::string                     _userNickName;
             std::string                     _stateName;
             cocos2d::ui::Text*              _nameTag;
+            
+            b2Body*                         _body;
             
         };
         

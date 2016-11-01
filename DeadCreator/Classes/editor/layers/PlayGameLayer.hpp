@@ -67,8 +67,8 @@ namespace realtrick
 			void playGame();
 			void closeLayer();
 			void setGameStart(bool enable) { _isGameStarted = enable; }
-
-			cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& p);
+            client::DummyScene* getGameLayer() const { return _gameLayer; }
+            cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& p);
 			cocos2d::Vec2 worldToLocal(const cocos2d::Vec2& origin, const cocos2d::Vec2& p);
 
 		private:

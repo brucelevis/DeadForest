@@ -94,6 +94,8 @@ namespace realtrick
 
 			bool _isGameStarted = false;
 			realtrick::Mat3 _cameraTransform;
+            
+            cocos2d::Vec2 _debugOrigin;
 
 		};
 

@@ -28,6 +28,7 @@
 #include "SensoryMemory.h"
 #include "GoalNetwork.h"
 #include "ClipperWrapper.hpp"
+#include "SimulatorLayer.hpp"
 
 using namespace cocos2d;
 using namespace realtrick;
@@ -75,6 +76,19 @@ Game* Game::create()
 }
 
 
+Game* Game::createWithSimulator(editor::SimulatorLayer* simulator)
+{
+    auto ret = new (std::nothrow) Game();
+    if ( ret && ret->initWithSimulator(simulator) )
+    {
+        ret->autorelease();
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
+
+
 Scene* Game::createScene()
 {
     auto scene = Scene::create();
@@ -110,6 +124,16 @@ bool Game::init()
     
 	GoalNetwork::staticInitConstants();
 
+    return true;
+}
+
+
+bool Game::initWithSimulator(editor::SimulatorLayer* simulator)
+{
+    if ( !init() ) return false;
+    
+    _physicsWorld->SetDebugDraw(simulator);
+    
     return true;
 }
 
@@ -834,13 +858,13 @@ void Game::addWall(const realtrick::Polygon& wall)
                     v[i].Set(clippedWall.vertices[i].x, clippedWall.vertices[i].y);
                 }
                 
-                b2PolygonShape poly;
-                poly.Set(v, size);
+                b2ChainShape chain;
+                chain.CreateChain(v, size);
                 
                 delete[] v;
                 
                 b2FixtureDef groundFixture;
-                groundFixture.shape = &poly;
+                groundFixture.shape = &chain;
                 groundFixture.restitution = 0.5f;
                 
                 ground->CreateFixture(&groundFixture);

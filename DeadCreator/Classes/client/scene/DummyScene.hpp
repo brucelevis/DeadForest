@@ -23,7 +23,7 @@ namespace realtrick
             
             virtual ~DummyScene()
             {
-                _gameLayer->setGameStart(false);
+                _simulator->setGameStart(false);
             }
             
             static DummyScene* create(realtrick::editor::SimulatorLayer* layer)
@@ -45,7 +45,7 @@ namespace realtrick
                 
                 auto winSize = cocos2d::Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
                 
-                _gameLayer = layer;
+                _simulator = layer;
                 
                 auto spr = cocos2d::Sprite::create("editor/HelloWorld.png");
                 spr->setPosition( winSize / 2 );
@@ -56,11 +56,10 @@ namespace realtrick
                                                          cocos2d::FadeTo::create(0.5f, 0),
                                                          cocos2d::CallFunc::create([this]{
                     
-                    _game = realtrick::client::Game::create();
-                    _game->setSimulator(_gameLayer);
+                    _game = realtrick::client::Game::createWithSimulator(_simulator);
                     addChild(_game);
                     
-                    _gameLayer->setGameStart(true);
+                    _simulator->setGameStart(true);
                     
                 }),
                                                          cocos2d::RemoveSelf::create(),
@@ -75,7 +74,7 @@ namespace realtrick
         private:
             
             Game* _game = nullptr;
-            realtrick::editor::SimulatorLayer* _gameLayer;
+            realtrick::editor::SimulatorLayer* _simulator;
             
         };
         

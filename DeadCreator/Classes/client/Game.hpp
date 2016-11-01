@@ -69,8 +69,11 @@ namespace realtrick
             Game();
             virtual ~Game();
             
-            bool init() override;
+            virtual bool init() override;
+            bool initWithSimulator(editor::SimulatorLayer* simulator);
+            
             static Game* create();
+            static Game* createWithSimulator(editor::SimulatorLayer* simulator);
             static cocos2d::Scene* createScene();
             
             void clear();
@@ -158,7 +161,6 @@ namespace realtrick
             
             void initCell(GameResource* res);
             void addWall(const realtrick::Polygon& wall);
-            void setSimulator(realtrick::editor::SimulatorLayer* layer) { _simulator = layer; }
             
         private:
             
@@ -188,7 +190,6 @@ namespace realtrick
             bool _isGameEnded = false;
 
             std::vector<cocos2d::Rect> _cellAABBs;
-            realtrick::editor::SimulatorLayer* _simulator;
             
         };
         

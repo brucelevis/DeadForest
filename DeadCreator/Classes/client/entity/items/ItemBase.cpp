@@ -7,8 +7,10 @@
 //
 
 #include "ItemBase.hpp"
+#include "Game.hpp"
 using namespace cocos2d;
 using namespace realtrick::client;
+
 
 ItemBase::ItemBase(Game* game) :
 EntityBase(game),
@@ -52,7 +54,8 @@ ItemBase::ItemBase(const ItemBase& rhs) : EntityBase(rhs)
 }
 
 
-bool ItemBase::init(const std::string& inGameImage_n, const std::string& inGameImage_s, const std::string& inSlotImage, cocos2d::ui::Widget::TextureResType texResType)
+bool ItemBase::init(const std::string& inGameImage_n, const std::string& inGameImage_s, const std::string& inSlotImage,
+                    cocos2d::ui::Widget::TextureResType texResType)
 {
     auto normalName = _spriteName;
     for(int i = 0 ; i < 4 ; ++ i) normalName.pop_back(); // remove ".png"
@@ -85,6 +88,24 @@ bool ItemBase::init(const std::string& inGameImage_n, const std::string& inGameI
     setInSlotSpriteSize(_inSlotImage->getContentSize());
     
     _texType = texResType;
+    
+    // create box2d's physics body
+    b2BodyDef bd;
+    bd.type = b2BodyType::b2_staticBody;
+    bd.allowSleep = false;
+    
+    _body = _game->getPhysicsWorld()->CreateBody(&bd);
+    
+    b2CircleShape shape;
+    shape.m_radius = 15;
+    
+    b2FixtureDef fd;
+    fd.shape = &shape;
+    fd.density = 10.0f;
+    fd.friction = 0.5f;
+    fd.restitution = 0.0f;
+    fd.isSensor = true;
+    _body->CreateFixture(&fd);
     
     return true;
 }

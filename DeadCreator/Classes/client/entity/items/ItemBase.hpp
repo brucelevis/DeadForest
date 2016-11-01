@@ -10,6 +10,7 @@
 
 #include "EntityBase.hpp"
 #include "ui/CocosGUI.h"
+#include "Box2D/Box2D.h"
 
 namespace realtrick
 {
@@ -43,6 +44,17 @@ namespace realtrick
             
             cocos2d::ui::Widget::TextureResType getTexType() const { return _texType; }
             
+            virtual cocos2d::Vec2 getWorldPosition() const override
+            {
+                auto bodyPos = _body->GetPosition();
+                return cocos2d::Vec2(bodyPos.x, bodyPos.y);
+            }
+            
+            virtual void setWorldPosition(const cocos2d::Vec2& pos) override
+            {
+                _body->SetTransform(b2Vec2(pos.x, pos.y), _body->GetAngle());
+            }
+
             virtual ItemBase* clone() const = 0;
             virtual void use() = 0;
             virtual void discard() = 0;
@@ -66,6 +78,8 @@ namespace realtrick
             cocos2d::Sprite*                        _inSlotImage;
             
             cocos2d::ui::Widget::TextureResType     _texType;
+            
+            b2Body*                                 _body;
             
         protected:
             

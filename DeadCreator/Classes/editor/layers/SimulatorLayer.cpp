@@ -187,7 +187,7 @@ void SimulatorLayer::showLayer(bool& opened)
             
             if ( isPhysicsShape || isPhysicsJoint || isPhysicsAABB || isPhysicsPair || isPhysicsCenterOfMass )
             {
-                game->getPhysicsWorld()->DrawDebugData();
+                game->getPhysicsManager()->GetPhysicsWorld()->DrawDebugData();
             }
             
 		}

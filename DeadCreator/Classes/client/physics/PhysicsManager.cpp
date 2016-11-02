@@ -2,7 +2,7 @@
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
 #include <iostream>
 #include "Game.hpp"
-#include "PhysicsDraw.h"
+#include "EntityBase.hpp"
 
 using namespace realtrick;
 using namespace realtrick::client;
@@ -40,7 +40,7 @@ PhysicsManager::PhysicsManager(float worldX, float worldY)
 	_destruction_listener.physics = this;
 	_world->SetDestructionListener(&_destruction_listener);
 	_world->SetContactListener(this);
-	_world->SetDebugDraw(editor::PhysicsDraw::instance.get());
+	_world->SetDebugDraw(nullptr);
 
 	// Ground body
 	{
@@ -68,72 +68,17 @@ PhysicsManager::PhysicsManager(float worldX, float worldY)
 
 void PhysicsManager::Step()
 {
-	uint32 flags = 0;
-	flags += _settings.drawShapes		* b2Draw::e_shapeBit;
-	flags += _settings.drawJoints		* b2Draw::e_jointBit;
-	flags += _settings.drawAABBs		* b2Draw::e_aabbBit;
-	flags += _settings.drawCOMs			* b2Draw::e_centerOfMassBit;
-	editor::PhysicsDraw::instance->SetFlags(flags);
-	//editor::PhysicsDraw::instance->ClearFlags();
-
-	float32 timeStep = _settings.hz > 0.0f ? 1.0f / _settings.hz : float32(0.0f);
-	_pointCount = 0;
-
 	_world->Step(
-		timeStep,
+		_settings.hz,
 		_settings.velocityIterations,
 		_settings.positionIterations);
 }
 
-void PhysicsManager::Render()
-{
-	_world->DrawDebugData();
-
-	if (_settings.drawContactPoints)
-	{
-		const float32 k_impulseScale = 0.1f;
-		const float32 k_axisScale = 0.3f;
-
-		for (int32 i = 0; i < _pointCount; ++i)
-		{
-			ContactPoint* point = _points + i;
-
-			if (point->state == b2_addState)
-			{
-				editor::PhysicsDraw::instance->DrawPoint(point->position, 10.0f, b2Color(0.3f, 0.95f, 0.3f));
-			}
-			else if (point->state == b2_persistState)
-			{
-				editor::PhysicsDraw::instance->DrawPoint(point->position, 5.0f, b2Color(0.3f, 0.3f, 0.95f));
-			}
-
-			if (_settings.drawContactNormals)
-			{
-				b2Vec2 p1 = point->position;
-				b2Vec2 p2 = p1 + k_axisScale * point->normal;
-				editor::PhysicsDraw::instance->DrawSegment(p1, p2, b2Color(0.9f, 0.9f, 0.9f));
-			}
-			else if (_settings.drawContactImpulse)
-			{
-				b2Vec2 p1 = point->position;
-				b2Vec2 p2 = p1 + k_impulseScale * point->normalImpulse * point->normal;
-				editor::PhysicsDraw::instance->DrawSegment(p1, p2, b2Color(0.9f, 0.9f, 0.3f));
-			}
-
-			if (_settings.drawFrictionImpulse)
-			{
-				b2Vec2 tangent = b2Cross(point->normal, 1.0f);
-				b2Vec2 p1 = point->position;
-				b2Vec2 p2 = p1 + k_impulseScale * point->tangentImpulse * tangent;
-				editor::PhysicsDraw::instance->DrawSegment(p1, p2, b2Color(0.9f, 0.9f, 0.3f));
-			}
-		}
-	}
-}
 
 
 void PhysicsManager::BeginContact(b2Contact* contact)
 {
+	// 충돌처리 ~
 	/*
 	//check if both fixtures were balls
 	void* bodyUserDataA = contact->GetFixtureA()->GetBody()->GetUserData();
@@ -264,3 +209,56 @@ void PhysicsManager::RemoveBody(b2Body* body)
 	body->GetWorld()->DestroyBody(body);
 }
 
+std::vector<EntityBase*> PhysicsManager::queryEntitiesAABB(
+	const cocos2d::Vec2& position,
+	float halfWidth,
+	float halfHeight) const
+{
+	QueryEntityByAABB query;
+	b2AABB aabb;
+	aabb.lowerBound = b2Vec2(position.x, position.y) - b2Vec2(halfWidth, halfHeight);
+	aabb.upperBound = b2Vec2(position.x, position.y) + b2Vec2(halfWidth, halfHeight);
+	_world->QueryAABB(&query, aabb);
+
+	return query.entities;
+}
+
+std::vector<b2Body*> PhysicsManager::queryWallsAABB(
+	const cocos2d::Vec2& pos,
+	float halfWidth,
+	float halfHeight) const
+{
+	QueryWallByAABB query;
+	b2AABB aabb;
+	aabb.lowerBound = b2Vec2(pos.x, pos.y) - b2Vec2(halfWidth, halfHeight);
+	aabb.upperBound = b2Vec2(pos.x, pos.y) + b2Vec2(halfWidth, halfHeight);
+	_world->QueryAABB(&query, aabb);
+
+	return query.walls;
+}
+
+std::vector<EntityBase*> PhysicsManager::queryEntitiesRayCast(
+	const cocos2d::Vec2& start,
+	const cocos2d::Vec2& finish) const
+{
+	QueryEntityByRayCast query;
+	_world->RayCast(
+		&query,
+		b2Vec2(start.x, start.y),
+		b2Vec2(finish.x, finish.y));
+
+	return query.entities;
+}
+
+std::vector<b2Body*> PhysicsManager::queryWallsRayCast(
+	const cocos2d::Vec2& start,
+	const cocos2d::Vec2& finish) const
+{
+	QueryWallByRayCast query;
+	_world->RayCast(
+		&query,
+		b2Vec2(start.x, start.y),
+		b2Vec2(finish.x, finish.y));
+
+	return query.walls;
+}

@@ -94,7 +94,7 @@ bool ItemBase::init(const std::string& inGameImage_n, const std::string& inGameI
     bd.type = b2BodyType::b2_staticBody;
     bd.allowSleep = false;
     
-    _body = _game->getPhysicsWorld()->CreateBody(&bd);
+    _body = _game->getPhysicsManager()->GetPhysicsWorld()->CreateBody(&bd);
     
     b2CircleShape shape;
     shape.m_radius = 15;

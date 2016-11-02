@@ -59,7 +59,7 @@ void Game::clear()
 {
     CC_SAFE_DELETE(_logicStream);
 	CC_SAFE_DELETE(_graph);
-	CC_SAFE_DELETE(_physicsWorld);
+	CC_SAFE_DELETE(_physicsMgr);
     experimental::AudioEngine::stop(_bgmID);
 }
 
@@ -119,8 +119,10 @@ bool Game::init()
         _logicStream = new SingleStream(this);
     }
     
-    _physicsWorld = new b2World(b2Vec2(0.0f, 0.0f));
-    
+	const float kWorldX = 4000.0f;
+	const float kWorldY = 4000.0f;
+	_physicsMgr = new PhysicsManager(kWorldX, kWorldY);
+
     this->pushLogic(0.0, MessageType::LOAD_GAME_PLAYER, nullptr);
     
 	GoalNetwork::staticInitConstants();
@@ -133,7 +135,7 @@ bool Game::initWithSimulator(editor::SimulatorLayer* simulator)
 {
     if ( !init() ) return false;
     
-    _physicsWorld->SetDebugDraw(simulator);
+	_physicsMgr->GetPhysicsWorld()->SetDebugDraw(simulator);
     
     return true;
 }
@@ -144,7 +146,7 @@ void Game::update(float dt)
     _elapsedTime += dt;
     
     // update physics
-    _physicsWorld->Step(0.016f, 8, 3);
+	_physicsMgr->Step();
     
     // update logic stream
     _logicStream->update(dt);
@@ -208,43 +210,25 @@ void Game::loadBGM()
 
 std::vector<EntityBase*> Game::getNeighbors(const cocos2d::Vec2& position) const
 {
-    return getNeighborsOnMove(position, 0.001f);
+    return _physicsMgr->queryEntitiesAABB(position, 0.001f, 0.001f);
 }
 
 
 std::vector<EntityBase*> Game::getNeighborsOnMove(const cocos2d::Vec2& position, float speed) const
 {
-	QueryEntityByAABB query;
-	b2AABB aabb;
-	aabb.lowerBound = b2Vec2(position.x, position.y) - b2Vec2(speed, speed);
-	aabb.upperBound = b2Vec2(position.x, position.y) + b2Vec2(speed, speed);
-	_physicsWorld->QueryAABB(&query, aabb);
-	
-    return query.entities;
+	return _physicsMgr->queryEntitiesAABB(position, speed, speed);
 }
 
 
 std::vector<EntityBase*> Game::getNeighborsOnAttack(const cocos2d::Vec2& position, const cocos2d::Vec2& dir, float range) const
 {
-	QueryEntityByRayCast query;
-	_physicsWorld->RayCast(
-		&query,
-		b2Vec2(position.x, position.y),
-		b2Vec2(position.x + range * dir.x, position.y + range * dir.y));
-
-    return query.entities;
+	return _physicsMgr->queryEntitiesRayCast(position, Vec2(position.x + range * dir.x, position.y + range * dir.y));
 }
 
 
 std::vector<EntityBase*> Game::getNeighborsEntities(const cocos2d::Vec2& pos, const cocos2d::Rect& rect) const
 {
-	QueryEntityByAABB query;
-	b2AABB aabb;
-	aabb.lowerBound = b2Vec2(rect.origin.x, rect.origin.y);
-	aabb.upperBound = b2Vec2(rect.getMaxX(), rect.getMaxY());
-	_physicsWorld->QueryAABB(&query, aabb);
-
-	return query.entities;
+	return _physicsMgr->queryEntitiesAABB(pos, (rect.getMaxX() - rect.getMinX()) / 2, (rect.getMaxY() - rect.getMinY()) / 2);
 }
 
 
@@ -261,7 +245,7 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
 	b2AABB aabb;
 	aabb.lowerBound = b2Vec2(position.x, position.y) - b2Vec2(speed, speed);
 	aabb.upperBound = b2Vec2(position.x, position.y) + b2Vec2(speed, speed);
-	_physicsWorld->QueryAABB(&query, aabb);
+	_physicsMgr->GetPhysicsWorld()->QueryAABB(&query, aabb);
 
 	std::vector<realtrick::Polygon> ret;
 
@@ -335,40 +319,22 @@ std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2
 
 std::vector<b2Body*> Game::queryWalls(const cocos2d::Vec2& pos) const
 {
-	return queryWalls(pos, 0.001f);
+	return _physicsMgr->queryWallsAABB(pos, 0.001f, 0.001f);
 }
 
 std::vector<b2Body*> Game::queryWalls(const cocos2d::Vec2& pos, float radius) const
 {
-	QueryWallByAABB query;
-	b2AABB aabb;
-	aabb.lowerBound = b2Vec2(pos.x, pos.y) - b2Vec2(radius, radius);
-	aabb.upperBound = b2Vec2(pos.x, pos.y) + b2Vec2(radius, radius);
-	_physicsWorld->QueryAABB(&query, aabb);
-
-	return query.walls;
+	return _physicsMgr->queryWallsAABB(pos, radius, radius);
 }
 
 std::vector<b2Body*> Game::queryWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const
 {
-	QueryWallByAABB query;
-	b2AABB aabb;
-	aabb.lowerBound = b2Vec2(pos.x, pos.y) - b2Vec2(screenSize.width / 2, screenSize.height / 2);
-	aabb.upperBound = b2Vec2(pos.x, pos.y) + b2Vec2(screenSize.width / 2, screenSize.height / 2);
-	_physicsWorld->QueryAABB(&query, aabb);
-
-	return query.walls;
+	return _physicsMgr->queryWallsAABB(pos, screenSize.width / 2, screenSize.height / 2);
 }
 
 std::vector<b2Body*> Game::queryWalls(const cocos2d::Vec2& pos, const Segment& ray) const
 {
-	QueryWallByRayCast query;
-	_physicsWorld->RayCast(
-		&query,
-		b2Vec2(ray.start.x, ray.start.y),
-		b2Vec2(ray.end.x, ray.end.y));
-
-	return query.walls;
+	return _physicsMgr->queryWallsRayCast(ray.start, ray.end);
 }
 
 bool Game::isCollideSimpleWalls(const cocos2d::Vec2& pos) const
@@ -949,7 +915,7 @@ void Game::addWall(const realtrick::Polygon& wall)
             std::vector<realtrick::Polygon> clippedWalls = clipping::getClippedPolygons(wall, aabb);
             for( const auto& clippedWall : clippedWalls )
             {
-				auto wall = Wall::create(_physicsWorld, clippedWall.vertices);
+				auto wall = Wall::create(_physicsMgr->GetPhysicsWorld(), clippedWall.vertices);
 				_walls.pushBack(wall);
             }
         }

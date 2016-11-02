@@ -29,6 +29,8 @@
 
 #include "PathEdge.h"
 
+#include "PhysicsManager.h"
+
 
 #define Z_ORDER_GAME_MAP    0
 #define Z_ORDER_SHADOW      1
@@ -57,65 +59,7 @@ namespace realtrick
         class UiLayer;
         class Camera2D;
 		class Wall;
-        
-		struct QueryWallByAABB : public b2QueryCallback
-		{
-			std::vector<b2Body*> walls;
-
-			virtual bool ReportFixture(b2Fixture* fixture) override
-			{
-				if(fixture->GetBody()->GetUserData() == nullptr)
-					walls.push_back(fixture->GetBody());
-				return true;
-			}
-		};
-
-		struct QueryEntityByAABB : public b2QueryCallback
-		{
-			std::vector<EntityBase*> entities;
-
-			virtual bool ReportFixture(b2Fixture* fixture) override
-			{
-				if (fixture->GetBody()->GetUserData())
-					entities.push_back(static_cast<EntityBase*>(fixture->GetBody()->GetUserData()));
-				return true;
-			}
-		};
-
-
-		struct QueryWallByRayCast : public b2RayCastCallback
-		{
-			std::vector<b2Body*> walls;
-
-			virtual float32 ReportFixture(
-				b2Fixture* fixture,
-				const b2Vec2& point,
-				const b2Vec2& normal,
-				float32 fraction) override
-			{
-				if (fixture->GetBody()->GetUserData() == nullptr)
-					walls.push_back(fixture->GetBody());
-				return true;
-			}
-		};
-
-		struct QueryEntityByRayCast : public b2RayCastCallback
-		{
-			std::vector<EntityBase*> entities;
-
-			virtual float32 ReportFixture(
-				b2Fixture* fixture,
-				const b2Vec2& point,
-				const b2Vec2& normal,
-				float32 fraction) override
-			{
-				if (fixture->GetBody()->GetUserData())
-					entities.push_back(static_cast<EntityBase*>(fixture->GetBody()->GetUserData()));
-				return true;
-			}
-		};
-
-
+     
 
         class Game : public cocos2d::Node
         {
@@ -223,7 +167,8 @@ namespace realtrick
             SwitchStatus getSwitchStatus(int index) const;
             void setSwitchStatus(int index, SwitchStatus status);
             
-            b2World* getPhysicsWorld() const { return _physicsWorld; }
+			PhysicsManager* getPhysicsManager() const { return _physicsMgr; }
+            //b2World* getPhysicsWorld() const { return _physicsWorld; }
             
             void initCell(GameResource* res);
             void addWall(const realtrick::Polygon& wall);
@@ -242,7 +187,8 @@ namespace realtrick
             Camera2D* _camera; // camera
             LogicStream* _logicStream; // stream mediator
 			Graph* _graph; // graph
-            b2World* _physicsWorld; // physics world
+            
+			PhysicsManager* _physicsMgr;
 
             bool _isPaused;
             float _elapsedTime;

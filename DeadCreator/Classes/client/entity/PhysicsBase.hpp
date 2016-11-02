@@ -25,7 +25,7 @@ namespace realtrick
 			virtual ~PhysicsBase();
 
 			virtual bool initWithPhysicsBody(
-				b2World* world, const b2BodyDef& bd, const b2FixtureDef& fd);
+				b2World* world, const b2BodyDef& bd, const b2FixtureDef& fd, int type);
 
 			virtual cocos2d::Vec2 getWorldPosition() const = 0;
 			virtual void setWorldPosition(const cocos2d::Vec2& pos) = 0;
@@ -37,9 +37,12 @@ namespace realtrick
 
 			virtual float getRotationZ() const = 0;
 
+			inline int getType() const { return _type; }
+
 		protected:
 
 			b2Body* _body;
+			int _type;
 
 		private:
 

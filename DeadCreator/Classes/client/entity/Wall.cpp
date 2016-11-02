@@ -1,5 +1,6 @@
 #include "Wall.hpp"
 #include "Physics.hpp"
+#include "Types.hpp"
 
 using namespace cocos2d;
 using namespace realtrick;
@@ -50,7 +51,7 @@ bool Wall::init(const std::vector<cocos2d::Vec2>& vertices)
 
 	ground->CreateFixture(&groundFixture);
 
-	if (!PhysicsBase::initWithPhysicsBody(_world, groundDef, groundFixture))
+	if (!PhysicsBase::initWithPhysicsBody(_world, groundDef, groundFixture, EntityType::ENTITY_WALL))
 		return false;
 	return true;
 }

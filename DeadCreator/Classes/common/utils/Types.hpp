@@ -46,7 +46,8 @@ namespace realtrick
 		ENTITY_ZOMBIE2 = 12,
 		ENTITY_ZOMBIE3 = 13,
 		ENTITY_FINITE = 14,
-		MAX = 15
+		ENTITY_WALL = 15,
+		MAX = 16
     };
     
     enum class PlayerType : int

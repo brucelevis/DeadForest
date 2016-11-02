@@ -93,7 +93,7 @@ bool HumanBase::init()
 	fd.userData = this;
 	fd.isSensor = false;
 
-	if ( !PhysicsBase::initWithPhysicsBody(_game->getPhysicsWorld(), bd, fd) )
+	if ( !PhysicsBase::initWithPhysicsBody(_game->getPhysicsWorld(), bd, fd, _entityType) )
 		return false;
 
 	_body->SetUserData(this);

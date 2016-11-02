@@ -122,7 +122,6 @@ namespace realtrick
             float getRunSpeed() const { return _runSpeed; }
             void setRunSpeed(float speed) { _runSpeed = speed; }
             
-            
             void setRunStats(bool enable) { _isRun = enable; }
             bool isRun() const { return _isRun; }
             

@@ -126,17 +126,21 @@ namespace realtrick
             {
                 doAccept();
                 
-                _networkThread = new boost::thread(boost::bind(&boost::asio::io_service::run, &_io));
+                if ( !_networkThread.joinable() )
+                    _networkThread = boost::thread(boost::bind(&boost::asio::io_service::run, &_io));
             }
+            
             virtual ~NetworkWriter()
             {
-                _io.stop();
-                _socket.close();
-                
-                
-                _networkThread->join();
-                delete _networkThread;
-                _networkThread = nullptr;
+                close();
+            }
+            
+            void deliveryPacket(Packet* packet)
+            {
+                for( const auto& session : _sessions )
+                {
+                    session.lock()->write(packet->clone());
+                }
             }
             
         private:
@@ -157,11 +161,20 @@ namespace realtrick
                 });
             }
             
+            void close()
+            {
+                _io.stop();
+                _socket.close();
+                if (_networkThread.joinable())
+                    _networkThread.join();
+            }
+            
         private:
             
-            boost::thread* _networkThread;
+            boost::thread _networkThread;
             
             boost::asio::io_service _io;
+            
             boost::asio::ip::tcp::socket _socket;
             boost::asio::ip::tcp::acceptor _acceptor;
             

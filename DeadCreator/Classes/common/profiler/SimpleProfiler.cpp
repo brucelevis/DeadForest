@@ -234,6 +234,12 @@ void SimpleProfiler::writeToNetwork(WriteType type)
         }
         case WriteType::FLATBUFFERS:
         {
+            auto flatbufferData = flatbufferWriter();
+            
+            Packet packet;
+            packet.encode(flatbufferData.first, flatbufferData.second, PacketType::PROFILE_INFO_FLATBUFFERS);
+            _networkWriter->deliveryPacket(&packet);
+            
             break;
         }
         default:

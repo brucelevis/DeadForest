@@ -59,7 +59,7 @@ namespace realtrick
             
         private:
             
-            boost::thread* _thread;
+            boost::thread _thread;
             boost::asio::io_service _io;
             boost::asio::ip::tcp::socket _socket;
             

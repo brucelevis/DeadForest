@@ -26,7 +26,7 @@ using namespace cocos2d;
 
 void SimulatorLayer::showLayer(bool& opened)
 {
-    receiveProfileData();
+    receiveProfileDataAndRender();
     
 	static bool isStatusOn = true;
 	static bool isPlayerInfo = true;
@@ -299,9 +299,28 @@ cocos2d::Vec2 SimulatorLayer::worldToLocal(const cocos2d::Vec2& origin, const co
 }
 
 
-void SimulatorLayer::receiveProfileData()
+void SimulatorLayer::receiveProfileDataAndRender()
 {
-    
+    if ( !GameServer::getInstance().isQueueEmpty() )
+    {
+        Packet* packet = nullptr;
+        GameServer::getInstance().dequeue(packet);
+        packet->decode();
+        
+        switch ( packet->type() )
+        {
+            case PacketType::PROFILE_INFO_FLATBUFFERS:
+            {
+                log("received profile info with flatbuffers %d", cocos2d::random(0, 100));
+                
+                break;
+            }
+            default: break;
+        }
+        
+        delete packet;
+        packet = nullptr;
+    }
 }
 
 

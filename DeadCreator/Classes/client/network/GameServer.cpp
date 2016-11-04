@@ -92,10 +92,6 @@ void GameServer::doWrite()
                                          doWrite();
                                      }
                                  }
-                                 else if (boost::asio::error::eof == ec || boost::asio::error::connection_reset == ec)
-                                 {
-                                     close();
-                                 }
                              });
 }
 
@@ -109,10 +105,6 @@ void GameServer::doReadHeader()
                                 if (!ec && _recvBuf.decode())
                                 {
                                     doReadBody();
-                                }
-                                else if (boost::asio::error::eof == ec || boost::asio::error::connection_reset == ec)
-                                {
-                                    close();
                                 }
                             });
 }
@@ -131,10 +123,6 @@ void GameServer::doReadBody()
                                     enqueue(packet);
                                     
                                     doReadHeader();
-                                }
-                                else if (boost::asio::error::eof == ec || boost::asio::error::connection_reset == ec)
-                                {
-                                    close();
                                 }
                             });
     

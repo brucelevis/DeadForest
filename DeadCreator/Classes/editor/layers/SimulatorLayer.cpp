@@ -26,8 +26,6 @@ using namespace cocos2d;
 
 void SimulatorLayer::showLayer(bool& opened)
 {
-    receiveProfileDataAndRender();
-    
 	static bool isStatusOn = true;
 	static bool isPlayerInfo = true;
 	static bool isGridOn = false;
@@ -222,7 +220,7 @@ void SimulatorLayer::showLayer(bool& opened)
 				ImGui::TreePop();
 			}
             
-            if (ImGui::TreeNode("physics"))
+            if ( ImGui::TreeNode("physics") )
             {
                 if ( ImGui::Checkbox("shape", &isPhysicsShape) )
                 {
@@ -252,18 +250,19 @@ void SimulatorLayer::showLayer(bool& opened)
                 
                 ImGui::TreePop();
             }
-            
-            if (ImGui::TreeNode("logger"))
-            {
-                ImGui::BeginChild("scrolling", ImVec2(0, 80), true, ImGuiWindowFlags_HorizontalScrollbar);
-                ImGui::TextUnformatted(game->getLogString().c_str());
-                if (game->isLogAdded()) ImGui::SetScrollHere(1.0f);
-                game->isLogAdded() = false;
-                ImGui::EndChild();
-                ImGui::TreePop();
-            }
-
 			ImGui::End();
+            
+            // profiler
+            receiveProfileDataAndRender();
+            
+            // logger
+            ImGui::SetNextWindowPos(ImVec2(100,600), ImGuiSetCond_Once);
+            ImGui::SetNextWindowSize(ImVec2(500, 300), ImGuiSetCond_Once);
+            ImGui::Begin("logger", NULL, ImGuiWindowFlags_ShowBorders);
+            ImGui::TextUnformatted(game->getLogString().c_str());
+            if (game->isLogAdded()) ImGui::SetScrollHere(1.0f);
+            game->isLogAdded() = false;
+            ImGui::End();
 		}
 	}
 }
@@ -301,6 +300,16 @@ cocos2d::Vec2 SimulatorLayer::worldToLocal(const cocos2d::Vec2& origin, const co
 
 void SimulatorLayer::receiveProfileDataAndRender()
 {
+    ImGui::SetNextWindowPos(ImVec2(100,100), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiSetCond_Once);
+    ImGui::Begin("profiler", NULL, ImGuiWindowFlags_ShowBorders);
+    
+    static const ImVec4 BLACK(0.0, 0.0, 0.0, 1.0);
+    static const ImVec4 GRAYLISH_GREEN(0.2, 0.5, 0.2, 1.0);
+    static const ImVec4 GRAYLISH_RED(0.5, 0.2, 0.2, 1.0);
+    
+    auto drawList = ImGui::GetWindowDrawList();
+    
     if ( !GameServer::getInstance().isQueueEmpty() )
     {
         Packet* packet = nullptr;
@@ -311,7 +320,48 @@ void SimulatorLayer::receiveProfileDataAndRender()
         {
             case PacketType::PROFILE_INFO_FLATBUFFERS:
             {
-                log("received profile info with flatbuffers %d", cocos2d::random(0, 100));
+                auto obj = realtrick::profiler::GetData(packet->body());
+                
+                const char* tabNames[] = {"fps", "cpu usage", "events"};
+                const int numTabs = 3;
+                const char* tabTooltips[numTabs] = {"total fps", "cpu usages...", "events at time"};
+                static int selectedTab = 0;
+                static int optionalHoveredTab = 0;
+                ImGui::TabLabels(numTabs, tabNames, selectedTab, tabTooltips, false, &optionalHoveredTab);
+                
+                ImGui::BeginChild("##diagram wrapper", ImVec2(0, 200), false);
+                
+                auto origin = ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + ImGui::GetWindowSize().y);
+                drawList->AddLine(ImVec2(origin.x + 35, origin.y - 20),
+                                  ImVec2(origin.x + ImGui::GetWindowSize().x - 10, origin.y - 20),
+                                  ImColor(BLACK));
+                
+                drawList->AddLine(ImVec2(origin.x + 35, origin.y - 20),
+                                  ImVec2(origin.x + 35, origin.y - ImGui::GetWindowSize().y + 10),
+                                  ImColor(BLACK));
+                
+                drawList->AddText(ImVec2(origin.x + 35, origin.y - 20), ImColor(BLACK), "0 tick");
+                
+                if ( selectedTab == 0 )
+                {
+                    drawList->AddText(ImVec2(origin.x, origin.y - ImGui::GetWindowSize().y + 10), ImColor(BLACK), " 60\nfps");
+                    ImGui::EndChild();
+                    
+                    ImGui::Text("  avg: "); ImGui::SameLine(); ImGui::TextColored(GRAYLISH_GREEN, "%.1f", obj->fps());
+                    ImGui::Text("  max: "); ImGui::SameLine(); ImGui::TextColored(GRAYLISH_GREEN, "%.1f", obj->fps());
+                    ImGui::Text("  min: "); ImGui::SameLine(); ImGui::TextColored(GRAYLISH_RED, "%d", obj->tick());
+                    ImGui::SameLine(); ImGui::Text(" (at '%d' tick)", obj->tick());
+                }
+                
+                else if ( selectedTab == 1 )
+                {
+                    ImGui::EndChild();
+                }
+                
+                else if ( selectedTab == 2 )
+                {
+                    ImGui::EndChild();
+                }
                 
                 break;
             }
@@ -321,6 +371,8 @@ void SimulatorLayer::receiveProfileDataAndRender()
         delete packet;
         packet = nullptr;
     }
+    
+    ImGui::End();
 }
 
 

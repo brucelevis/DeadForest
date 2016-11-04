@@ -28,6 +28,7 @@ using namespace flatbuffers;
 SimpleProfiler::SimpleProfiler() :
 _blockStack(),
 _blocks(),
+_tick(0),
 _mainLoopBlock(nullptr),
 _networkWriter(nullptr)
 {
@@ -69,6 +70,8 @@ void SimpleProfiler::endFrame()
     
     _blockStack.pop_back();
     _mainLoopBlock->end();
+    
+    _tick ++;
 }
 
 
@@ -155,7 +158,9 @@ std::pair<uint8_t*, uint32_t> SimpleProfiler::flatbufferWriter()
                                                              _mainLoopBlock->getMinTime(),
                                                              _mainLoopBlock->getMaxTime(),
                                                              _mainLoopBlock->getUsageFromParent(),
-                                                             _mainLoopBlock->getChildrenFlatbuffers(builder)));
+                                                             _mainLoopBlock->getChildrenFlatbuffers(builder)),
+                                               _tick, /* tick */
+                                               1000.0f / _mainLoopBlock->_lastDuration /* fps */);
     builder.Finish(obj);
     return std::make_pair(builder.GetBufferPointer(), builder.GetSize());
 }

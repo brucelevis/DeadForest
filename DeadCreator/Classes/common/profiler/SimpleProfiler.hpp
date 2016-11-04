@@ -85,7 +85,8 @@ namespace realtrick
             
             std::vector<Block*> _blockStack;
             std::map<std::string, Block*> _blocks;
-
+            uint32_t _tick;
+            
             Block* _mainLoopBlock;
             boost::thread* _networkThread;
             NetworkWriter* _networkWriter;

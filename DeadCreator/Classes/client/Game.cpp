@@ -175,19 +175,16 @@ void Game::update(float dt)
     }
 
 	// #test print
-	const auto& entitiesAABB = getNeighborsOnMove(_entityManager->getPlayerPtr()->getWorldPosition(), 100.0f);
-	cocos2d::log("query AABB");
-	for (const auto& e : entitiesAABB)
-	{
-		cocos2d::log("%d", e->getEntityType());
-	}
+//	const auto& entitiesAABB = getNeighborsOnMove(_entityManager->getPlayerPtr()->getWorldPosition(), 100.0f);
+//	for (const auto& e : entitiesAABB)
+//	{
+//	}
 
-	const auto& entitiesRayCast = getNeighborsOnAttack(_entityManager->getPlayerPtr()->getWorldPosition(), _entityManager->getPlayerPtr()->getHeading(), 500.0f);
-	cocos2d::log("query Ray Cast");
-	for (const auto& e : entitiesRayCast)
-	{
-		cocos2d::log("%d", e->getEntityType());
-	}
+//	const auto& entitiesRayCast = getNeighborsOnAttack(_entityManager->getPlayerPtr()->getWorldPosition(),
+//                                                       _entityManager->getPlayerPtr()->getHeading(), 500.0f);
+//	for (const auto& e : entitiesRayCast)
+//	{
+//	}
 
 //	const auto& wallsAABB = getNeighborWalls(
 //		_entityManager->getPlayerPtr()->getWorldPosition(),

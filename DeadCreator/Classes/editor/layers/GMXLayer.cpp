@@ -2033,15 +2033,15 @@ void GMXLayer::updateCollisionRegion()
     }
     
     // render simple walls
-    for(const auto& poly : _simpleCollisionRegions)
-    {
-        for(int i = 0 ; i < poly.size()-1; ++ i)
-        {
-            _collisionNode->drawDot(poly[i], 3.0f, Color4F(0.85f, 0.85f, 0.0f, 0.5f));
-            _collisionNode->drawSegment(poly[i], poly[i+1], 1.0f, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
-        }
-        _collisionNode->drawSegment(poly.back(), poly.front(), 1.0f, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
-    }
+//    for(const auto& poly : _simpleCollisionRegions)
+//    {
+//        for(int i = 0 ; i < poly.size()-1; ++ i)
+//        {
+//            _collisionNode->drawDot(poly[i], 3.0f, Color4F(0.85f, 0.85f, 0.0f, 0.5f));
+//            _collisionNode->drawSegment(poly[i], poly[i+1], 1.0f, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
+//        }
+//        _collisionNode->drawSegment(poly.back(), poly.front(), 1.0f, Color4F(1.0f, 1.0f, 0.0f, 0.5f));
+//    }
 }
 
 

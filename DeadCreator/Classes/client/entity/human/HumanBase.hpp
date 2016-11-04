@@ -104,8 +104,20 @@ namespace realtrick
             void setTurnSpeed(float speed) { _turnSpeed = speed; }
             
             bool isAlive() const { return _isAlive; }
-            void setDead() { setVelocity(cocos2d::Vec2::ZERO); _isAlive = false; }
-            void setAlive() { _isAlive = true; _blood = _maxBlood; }
+            void setDead() 
+			{
+				setVelocity(cocos2d::Vec2::ZERO);
+				_isAlive = false;
+				for (auto f = _body->GetFixtureList(); f; f = f->GetNext())
+					f->SetSensor(true);
+			}
+            void setAlive() 
+			{
+				_isAlive = true; 
+				_blood = _maxBlood; 
+				for (auto f = _body->GetFixtureList(); f; f = f->GetNext())
+					f->SetSensor(false);
+			}
             
             int getBlood() const { return _blood; }
             void setBlood(int blood) { _blood = blood; }

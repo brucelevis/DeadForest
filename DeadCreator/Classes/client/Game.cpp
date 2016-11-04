@@ -174,6 +174,7 @@ void Game::update(float dt)
         _messenger->dispatchDelayedMessages();
     }
 
+	/*
 	// #test print
 	const auto& entitiesAABB = getNeighborsOnMove(_entityManager->getPlayerPtr()->getWorldPosition(), 100.0f);
 	cocos2d::log("query AABB");
@@ -196,7 +197,7 @@ void Game::update(float dt)
 	for (const auto& w : wallsAABB)
 	{
 		
-	}
+	}*/
 
 }
 
@@ -248,30 +249,6 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
 	_physicsMgr->GetPhysicsWorld()->QueryAABB(&query, aabb);
 
 	std::vector<realtrick::Polygon> ret;
-
-	// #복사를 해야하는지?
-	for (auto w : query.walls)
-	{
-		for (b2Fixture* f = w->GetFixtureList(); f; f = f->GetNext())
-		{
-			if (f->GetShape()->GetType() == b2Shape::Type::e_chain)
-			{
-				b2ChainShape* chain = static_cast<b2ChainShape*>(f->GetShape());
-				Polygon poly;
-
-				for (int i = 0; i < chain->m_count; i++)
-				{
-					poly.pushVertex(Vec2(chain->m_vertices[i].x, chain->m_vertices[i].y));
-				}
-				ret.push_back(poly);
-
-			}
-			else if (f->GetShape()->GetType() == b2Shape::Type::e_circle)
-			{
-			}
-		}
-	}
-    
     return ret;
 }
 
@@ -317,22 +294,22 @@ std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2
     return ret;
 }
 
-std::vector<b2Body*> Game::queryWalls(const cocos2d::Vec2& pos) const
+std::vector<Wall*> Game::queryWalls(const cocos2d::Vec2& pos) const
 {
 	return _physicsMgr->queryWallsAABB(pos, 0.001f, 0.001f);
 }
 
-std::vector<b2Body*> Game::queryWalls(const cocos2d::Vec2& pos, float radius) const
+std::vector<Wall*> Game::queryWalls(const cocos2d::Vec2& pos, float radius) const
 {
 	return _physicsMgr->queryWallsAABB(pos, radius, radius);
 }
 
-std::vector<b2Body*> Game::queryWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const
+std::vector<Wall*> Game::queryWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const
 {
 	return _physicsMgr->queryWallsAABB(pos, screenSize.width / 2, screenSize.height / 2);
 }
 
-std::vector<b2Body*> Game::queryWalls(const cocos2d::Vec2& pos, const Segment& ray) const
+std::vector<Wall*> Game::queryWalls(const cocos2d::Vec2& pos, const Segment& ray) const
 {
 	return _physicsMgr->queryWallsRayCast(ray.start, ray.end);
 }

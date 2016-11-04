@@ -20,7 +20,8 @@ bool PhysicsBase::initWithPhysicsBody(
 	_body->CreateFixture(&fd);
 	_body->SetLinearDamping(10.0f);
 	_body->SetAngularDamping(20.0f);
-	_body->SetUserData(nullptr);
+	_body->SetUserData(this);
+	cocos2d::log("type : %d  body : %d",type, _body);
 	_type = type;
 
 	return true;

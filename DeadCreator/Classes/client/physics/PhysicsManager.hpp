@@ -23,7 +23,8 @@
 #include <Box2D/Dynamics/b2WorldCallbacks.h>
 #include <Box2D/Box2D.h>
 #include <vector>
-#include "EntityBase.hpp"
+#include "cocos2d.h"
+
 
 namespace realtrick
 {
@@ -98,45 +99,28 @@ namespace realtrick
 		};
 
 		class EntityBase;
+		class Wall;
 		struct QueryWallByAABB : public b2QueryCallback
 		{
-			std::vector<b2Body*> walls;
-
-			virtual bool ReportFixture(b2Fixture* fixture) override
-			{
-				if (fixture->GetBody()->GetUserData() == nullptr)
-					walls.push_back(fixture->GetBody());
-				return true;
-			}
+			std::vector<Wall*> walls;
+			virtual bool ReportFixture(b2Fixture* fixture) override;
 		};
 
 		struct QueryEntityByAABB : public b2QueryCallback
 		{
 			std::vector<EntityBase*> entities;
-
-			virtual bool ReportFixture(b2Fixture* fixture) override
-			{
-				if (fixture->GetBody()->GetUserData())
-					entities.push_back(static_cast<EntityBase*>(fixture->GetBody()->GetUserData()));
-				return true;
-			}
+			virtual bool ReportFixture(b2Fixture* fixture) override;
 		};
 
 
 		struct QueryWallByRayCast : public b2RayCastCallback
 		{
-			std::vector<b2Body*> walls;
-
+			std::vector<Wall*> walls;
 			virtual float32 ReportFixture(
 				b2Fixture* fixture,
 				const b2Vec2& point,
 				const b2Vec2& normal,
-				float32 fraction) override
-			{
-				if (fixture->GetBody()->GetUserData() == nullptr)
-					walls.push_back(fixture->GetBody());
-				return true;
-			}
+				float32 fraction) override;
 		};
 
 		struct QueryEntityByRayCast : public b2RayCastCallback
@@ -147,12 +131,7 @@ namespace realtrick
 				b2Fixture* fixture,
 				const b2Vec2& point,
 				const b2Vec2& normal,
-				float32 fraction) override
-			{
-				if (fixture->GetBody()->GetUserData())
-					entities.push_back(static_cast<EntityBase*>(fixture->GetBody()->GetUserData()));
-				return true;
-			}
+				float32 fraction) override;
 		};
 
 
@@ -190,7 +169,7 @@ namespace realtrick
 				float halfWidth, 
 				float halfHeight) const;
 
-			std::vector<b2Body*> queryWallsAABB(
+			std::vector<Wall*> queryWallsAABB(
 				const cocos2d::Vec2& pos,
 				float halfWidth,
 				float halfHeight) const;
@@ -199,7 +178,7 @@ namespace realtrick
 				const cocos2d::Vec2& start,
 				const cocos2d::Vec2& finish) const;
 
-			std::vector<b2Body*> queryWallsRayCast(
+			std::vector<Wall*> queryWallsRayCast(
 				const cocos2d::Vec2& start,
 				const cocos2d::Vec2& finish) const;
 

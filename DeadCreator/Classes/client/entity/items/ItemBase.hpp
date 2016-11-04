@@ -11,6 +11,8 @@
 #include "EntityBase.hpp"
 #include "ui/CocosGUI.h"
 #include "Box2D/Box2D.h"
+#include "PhysicsBase.hpp"
+#include "Physics.hpp"
 
 namespace realtrick
 {
@@ -20,7 +22,7 @@ namespace realtrick
         class EntityPlayer;
         class Game;
         
-        class ItemBase : public EntityBase
+        class ItemBase : public EntityBase, public PhysicsBase
         {
             
         public:
@@ -62,6 +64,33 @@ namespace realtrick
             
             virtual void enableNormal(bool enable) override;
             
+			virtual cocos2d::Vec2 getVelocity() const override
+			{
+				return cocos2d::Vec2(_body->GetLinearVelocity().x, _body->GetLinearVelocity().y);
+			}
+
+			virtual void setVelocity(const cocos2d::Vec2& velocity) override
+			{
+				_body->SetLinearVelocity(b2Vec2(velocity.x, velocity.y));
+			}
+
+			virtual cocos2d::Vec2 getHeading() const override
+			{
+				return cocos2d::Vec2(cos(_body->GetAngle()), sin(_body->GetAngle()));
+			}
+
+			virtual float getRotationZ() const override
+			{
+				return MATH_RAD_TO_DEG(_body->GetAngle());
+			}
+
+		private:
+
+			virtual void setHeading(const cocos2d::Vec2& heading) override
+			{
+				_body->SetTransform(_body->GetPosition(), physics::getRadFromZero(heading));
+			}
+
         protected:
             
             HumanBase*                              _owner;
@@ -78,8 +107,6 @@ namespace realtrick
             cocos2d::Sprite*                        _inSlotImage;
             
             cocos2d::ui::Widget::TextureResType     _texType;
-            
-            b2Body*                                 _body;
             
         protected:
             

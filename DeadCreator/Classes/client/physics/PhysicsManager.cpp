@@ -1,10 +1,89 @@
 #include "PhysicsManager.hpp"
 #include "Game.hpp"
 #include "EntityBase.hpp"
+#include "ItemBase.hpp"
+#include "HumanBase.hpp"
+#include "PhysicsBase.hpp"
+#include "Wall.hpp"
 
 using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
+
+
+bool QueryWallByAABB::ReportFixture(b2Fixture* fixture)
+{
+	auto userData = fixture->GetBody()->GetUserData();
+	if (userData)
+	{
+		PhysicsBase* physic = static_cast<PhysicsBase*>(userData);
+		if (physic->getType() == PhysicsBase::kWall)
+		{
+			walls.push_back(static_cast<Wall*>(physic));
+		}
+	}
+	return true;
+}
+
+bool QueryEntityByAABB::ReportFixture(b2Fixture* fixture)
+{
+	auto userData = fixture->GetBody()->GetUserData();
+	if (userData)
+	{
+		PhysicsBase* physic = static_cast<PhysicsBase*>(userData);
+		if (physic->getType() == PhysicsBase::kHuman)
+		{
+			entities.push_back(static_cast<HumanBase*>(physic));
+		}
+		else if (physic->getType() == PhysicsBase::kItem)
+		{
+			entities.push_back(static_cast<ItemBase*>(physic));
+		}
+	}
+	return true;
+}
+
+float32 QueryWallByRayCast::ReportFixture(
+	b2Fixture* fixture,
+	const b2Vec2& point,
+	const b2Vec2& normal,
+	float32 fraction)
+{
+	auto userData = fixture->GetBody()->GetUserData();
+	if (userData)
+	{
+		PhysicsBase* physic = static_cast<PhysicsBase*>(userData);
+		if (physic->getType() == PhysicsBase::kWall)
+		{
+			walls.push_back(static_cast<Wall*>(physic));
+		}
+	}
+	return true;
+}
+
+
+float32 QueryEntityByRayCast::ReportFixture(
+	b2Fixture* fixture,
+	const b2Vec2& point,
+	const b2Vec2& normal,
+	float32 fraction)
+{
+	auto userData = fixture->GetBody()->GetUserData();
+	if (userData)
+	{
+		PhysicsBase* physic = static_cast<PhysicsBase*>(userData);
+		if (physic->getType() == PhysicsBase::kHuman)
+		{
+			entities.push_back(static_cast<HumanBase*>(physic));
+		}
+		else if (physic->getType() == PhysicsBase::kItem)
+		{
+			entities.push_back(static_cast<ItemBase*>(physic));
+		}
+	}
+	return true;
+}
+
 
 bool PhysicsManager::CheckContact(
 	const b2Shape* shapeA, int32 indexA,
@@ -76,38 +155,60 @@ void PhysicsManager::Step()
 
 void PhysicsManager::BeginContact(b2Contact* contact)
 {
-	// √Êµπ√≥∏Æ ~
-	/*
 	//check if both fixtures were balls
 	void* bodyUserDataA = contact->GetFixtureA()->GetBody()->GetUserData();
 	void* bodyUserDataB = contact->GetFixtureB()->GetBody()->GetUserData();
 	if (bodyUserDataA && bodyUserDataB)
 	{
-		Entity* entA = static_cast<Entity*>(bodyUserDataA);
-		Entity* entB = static_cast<Entity*>(bodyUserDataB);
+		PhysicsBase* a = static_cast<PhysicsBase*>(bodyUserDataA);
+		PhysicsBase* b = static_cast<PhysicsBase*>(bodyUserDataB);
 
-		if (entA->getType() == Entity::Type::kHunter && entB->getType() == Entity::Type::kHunter)
-			World::collide(*static_cast<Hunter*>(entA), *static_cast<Hunter*>(entB));
+		if (a->getType() == PhysicsBase::kHuman && b->getType() == PhysicsBase::kHuman)
+		{
+			auto humanA = static_cast<HumanBase*>(a);
+			auto humanB = static_cast<HumanBase*>(b);
+		}
 
-		else if (entA->getType() == Entity::Type::kHunter && entB->getType() == Entity::Type::kProjectile)
-			World::collide(*static_cast<Hunter*>(entA), *static_cast<Projectile*>(entB));
+		else if (a->getType() == PhysicsBase::kHuman && b->getType() == PhysicsBase::kItem)
+		{
+			auto human = static_cast<HumanBase*>(a);
+			auto item = static_cast<ItemBase*>(b);
 
-		else if (entA->getType() == Entity::Type::kProjectile && entB->getType() == Entity::Type::kHunter)
-			World::collide(*static_cast<Hunter*>(entB), *static_cast<Projectile*>(entA));
+			if (human->getEntityType() == EntityType::ENTITY_PLAYER)
+			{
+				ItemAndOwner data;
+				data.owner = human;
+				data.item = item;
+				human->getGame()->pushLogic(0.0, MessageType::PUSH_ITEM_TO_INVENTORY, &data);
+			}
+		}
 
-		else if (entA->getType() == Entity::Type::kProjectile && entB->getType() == Entity::Type::kPrey)
-			World::collide(*static_cast<Projectile*>(entA), *static_cast<Prey*>(entB));
+		else if (a->getType() == PhysicsBase::kHuman && b->getType() == PhysicsBase::kWall)
+		{
+			auto human = static_cast<HumanBase*>(a);
+			auto wall = static_cast<Wall*>(b);
+		}
 
-		else if (entA->getType() == Entity::Type::kPrey && entB->getType() == Entity::Type::kProjectile)
-			World::collide(*static_cast<Projectile*>(entB), *static_cast<Prey*>(entA));
+		else if (a->getType() == PhysicsBase::kWall && b->getType() == PhysicsBase::kHuman)
+		{
+			auto wall = static_cast<Wall*>(a);
+			auto human = static_cast<HumanBase*>(b);
+		}
 
-		else if (entA->getType() == Entity::Type::kHunter && entB->getType() == Entity::Type::kWall)
-			World::collide(*static_cast<Hunter*>(entA), *static_cast<Wall*>(entB));
+		else if (a->getType() == PhysicsBase::kItem && b->getType() == PhysicsBase::kHuman)
+		{
+			auto item = static_cast<ItemBase*>(a);
+			auto human = static_cast<HumanBase*>(b);
 
-		else if (entA->getType() == Entity::Type::kWall && entB->getType() == Entity::Type::kHunter)
-			World::collide(*static_cast<Hunter*>(entB), *static_cast<Wall*>(entA));
+			if (human->getEntityType() == EntityType::ENTITY_PLAYER)
+			{
+				ItemAndOwner data;
+				data.owner = human;
+				data.item = item;
+				human->getGame()->pushLogic(0.0, MessageType::PUSH_ITEM_TO_INVENTORY, &data);
+			}
+		}
 	}
-	*/
 }
 
 void PhysicsManager::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
@@ -221,7 +322,7 @@ std::vector<EntityBase*> PhysicsManager::queryEntitiesAABB(
 	return query.entities;
 }
 
-std::vector<b2Body*> PhysicsManager::queryWallsAABB(
+std::vector<Wall*> PhysicsManager::queryWallsAABB(
 	const cocos2d::Vec2& pos,
 	float halfWidth,
 	float halfHeight) const
@@ -248,7 +349,7 @@ std::vector<EntityBase*> PhysicsManager::queryEntitiesRayCast(
 	return query.entities;
 }
 
-std::vector<b2Body*> PhysicsManager::queryWallsRayCast(
+std::vector<Wall*> PhysicsManager::queryWallsRayCast(
 	const cocos2d::Vec2& start,
 	const cocos2d::Vec2& finish) const
 {

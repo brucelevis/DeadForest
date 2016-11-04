@@ -90,13 +90,10 @@ bool HumanBase::init()
 	fd.density = 5.0f;
 	fd.friction = 0.1f;
 	fd.restitution = 0.0f;
-	fd.userData = this;
 	fd.isSensor = false;
 
-	if ( !PhysicsBase::initWithPhysicsBody(_game->getPhysicsManager()->GetPhysicsWorld(), bd, fd, _entityType) )
+	if (!PhysicsBase::initWithPhysicsBody(_game->getPhysicsManager()->GetPhysicsWorld(), bd, fd, PhysicsBase::kHuman) )
 		return false;
-
-	_body->SetUserData(this);
 
 	_animator = new Animator(this);
 	_inventoryData = new InventoryData(this);
@@ -218,27 +215,6 @@ bool HumanBase::isIntersectWall(const cocos2d::Vec2& futurePosition, const realt
 
 void HumanBase::rotateEntity()
 {
-    /*if ( getHeading().dot(_targetHeading) < 0.982546f )
-    {
-        float dt = Director::getInstance()->getDeltaTime();
-        
-        float d = getHeading().cross(_targetHeading);
-        if( d > 0 )
-        {
-            Mat3 rotMat;
-            rotMat.rotate(MATH_DEG_TO_RAD(_turnSpeed * dt));
-            setHeading(rotMat.getTransformedVector(getHeading()));
-        }
-        else
-        {
-            Mat3 rotMat;
-            rotMat.rotate(-MATH_DEG_TO_RAD(_turnSpeed * dt));
-            setHeading(rotMat.getTransformedVector(getHeading()));
-        }
-        
-        setRotationZ(physics::getAngleFromZero(getHeading()));
-		cocos2d::log("rot z : %f", getRotationZ());
-    }*/
 	if (getHeading().dot(_targetHeading) < 0.982546f)
 	{
 		float d = getHeading().cross(_targetHeading);
@@ -254,8 +230,6 @@ void HumanBase::rotateEntity()
 	{
 		_body->SetAngularVelocity(0.0f);
 	}
-
-	//setRotationZ(physics::getAngleFromZero(getHeading()));
 }
 
 

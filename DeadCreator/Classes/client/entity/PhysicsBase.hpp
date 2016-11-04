@@ -21,6 +21,11 @@ namespace realtrick
 
 		public:
 
+			enum Type
+			{
+				kHuman, kWall, kItem
+			};
+
 			PhysicsBase();
 			virtual ~PhysicsBase();
 

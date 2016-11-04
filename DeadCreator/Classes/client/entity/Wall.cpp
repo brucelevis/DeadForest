@@ -48,10 +48,10 @@ bool Wall::init(const std::vector<cocos2d::Vec2>& vertices)
 	b2FixtureDef groundFixture;
 	groundFixture.shape = &chain;
 	groundFixture.restitution = 0.1f;
-
+	groundFixture.friction = 0.0f;
 	ground->CreateFixture(&groundFixture);
 
-	if (!PhysicsBase::initWithPhysicsBody(_world, groundDef, groundFixture, EntityType::ENTITY_WALL))
+	if (!PhysicsBase::initWithPhysicsBody(_world, groundDef, groundFixture, PhysicsBase::kWall))
 		return false;
 	return true;
 }

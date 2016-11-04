@@ -71,25 +71,19 @@ public:
     }
     
     char* body() { return _data + HEADER_LENGTH; }
-    
     const char* body() const { return _data + HEADER_LENGTH; }
     
     char* data() { return _data; }
-    
     const char* data() const { return _data; }
     
     PacketType type() const { return _type; }
-    
     uint32_t bodyLength() const { return _bodyLength; }
-    
     uint32_t length() const { return _bodyLength + HEADER_LENGTH; }
     
 private:
     
     char _data[HEADER_LENGTH + MAX_BODY_LENGTH];
-    
     PacketType _type;
-    
     uint32_t _bodyLength;
     
 };

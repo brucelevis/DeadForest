@@ -15,6 +15,7 @@ using namespace std::chrono;
 
 #include "SimpleProfiler.hpp"
 #include "Block.hpp"
+#include "NetworkWriter.hpp"
 using namespace realtrick::profiler;
 
 #include "tinyxml2.h"
@@ -28,15 +29,16 @@ SimpleProfiler::SimpleProfiler() :
 _blockStack(),
 _blocks(),
 _mainLoopBlock(nullptr),
-_socket(_io),
-_acceptor(_io, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 4242))
+_networkWriter(nullptr)
 {
-    doAccept();
+    _networkWriter = new NetworkWriter();
 }
 
 
 SimpleProfiler::~SimpleProfiler()
 {
+    delete _networkWriter;
+    _networkWriter = nullptr;
 }
 
 
@@ -214,26 +216,39 @@ void SimpleProfiler::flatbufferWriteHelper(int depth, std::string& out, const El
 }
 
 
-void SimpleProfiler::doAccept()
+void SimpleProfiler::writeToNetwork(WriteType type)
 {
-    std::cout << "ready to accept" <<std::endl;
+    switch (type)
+    {
+        case WriteType::PRETTY:
+        {
+            break;
+        }
+        case WriteType::JSON:
+        {
+            break;
+        }
+        case WriteType::XML:
+        {
+            break;
+        }
+        case WriteType::FLATBUFFERS:
+        {
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
     
-//    _acceptor.async_accept(_socket, [this](const boost::system::error_code& ec){
-    
-//        if ( !ec )
-//        {
-//            std::cout << "client connected." << std::endl;
-//            auto session = make_shared<Session>(move(_socket));
-//            session->start();
-//            _sessions.push_back(session);
-//            
-//            cout << "sesison size: " << _sessions.size() << endl;
-//        }
-        
-//        doAccept();
-        
-//    });
-
 }
+
+
+
+
+
+
+
 
 

@@ -31,7 +31,7 @@ void GameServer::connect(const std::string& ip, const std::string& port)
     boost::asio::ip::tcp::resolver resolver(_io);
     auto endpoint = resolver.resolve( { ip, port } );
     boost::asio::async_connect(_socket, endpoint,
-                               [this](boost::system::error_code ec, boost::asio::ip::tcp::resolver::iterator)
+                               [this, ip, port](boost::system::error_code ec, boost::asio::ip::tcp::resolver::iterator)
                                {
                                    if ( !ec )
                                    {
@@ -40,8 +40,7 @@ void GameServer::connect(const std::string& ip, const std::string& port)
                                    }
                                    else
                                    {
-                                       log("<GameServer::doConnect> error code: [%d]", ec.value());
-                                       close();
+                                       connect(ip, port);
                                    }
                                });
     
@@ -51,12 +50,12 @@ void GameServer::connect(const std::string& ip, const std::string& port)
 
 void GameServer::close()
 {
-    _io.post([this] {
-        _io.stop();
-        _socket.close();
-        _isConnected = false;
-        CC_SAFE_DELETE(_thread);
-    });
+    _io.stop();
+    _socket.close();
+    _isConnected = false;
+    
+    _thread->join();
+    CC_SAFE_DELETE(_thread);
 }
 
 

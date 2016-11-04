@@ -189,14 +189,13 @@ void Game::update(float dt)
 		cocos2d::log("%d", e->getEntityType());
 	}
 
-	const auto& wallsAABB = getNeighborWalls(
-		_entityManager->getPlayerPtr()->getWorldPosition(),
-		_entityManager->getPlayerPtr()->getBoundingRadius());
-
-	for (const auto& w : wallsAABB)
-	{
-		
-	}
+//	const auto& wallsAABB = getNeighborWalls(
+//		_entityManager->getPlayerPtr()->getWorldPosition(),
+//		_entityManager->getPlayerPtr()->getBoundingRadius());
+//	for (const auto& w : wallsAABB)
+//	{
+//		
+//	}
 
 }
 

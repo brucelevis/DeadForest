@@ -1,7 +1,6 @@
 #include "SensoryMemory.hpp"
 #include "Game.hpp"
 #include "EntityBase.hpp"
-#include "CellSpacePartition.hpp"
 #include "InventoryData.hpp"
 #include "AbstTargetingSystem.hpp"
 #include <sstream>

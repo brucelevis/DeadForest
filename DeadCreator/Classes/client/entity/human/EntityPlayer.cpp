@@ -62,12 +62,6 @@ EntityPlayer* EntityPlayer::create(Game* game)
 }
 
 
-void EntityPlayer::update(float dt)
-{
-    HumanBase::update(dt);
-}
-
-
 bool EntityPlayer::isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other, cocos2d::Vec2& additionalVelocity)
 {
     bool ret = HumanBase::isIntersectOther(futurePosition, other, additionalVelocity);

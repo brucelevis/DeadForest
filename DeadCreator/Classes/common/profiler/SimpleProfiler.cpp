@@ -121,7 +121,8 @@ void SimpleProfiler::reset()
 
 void SimpleProfiler::prettyWriter(std::string& out)
 {
-    assert(_mainLoopBlock, "main loop block is not exist");
+    if ( !_mainLoopBlock )
+        throw std::runtime_error("main loop block is not exist");
     
     if ( _mainLoopBlock )
     {
@@ -133,7 +134,6 @@ void SimpleProfiler::prettyWriter(std::string& out)
         _mainLoopBlock->prettyWrite(0, out);
         out += "+-----------------------------+---------+-----------+-----------+-----------+------------+\n";
     }
-    
 }
 
 

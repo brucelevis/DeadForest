@@ -29,8 +29,7 @@ namespace realtrick
 			PhysicsBase();
 			virtual ~PhysicsBase();
 
-			virtual bool initWithPhysicsBody(
-				b2World* world, const b2BodyDef& bd, const b2FixtureDef& fd, int type);
+			virtual bool initWithPhysicsBody(b2World* world, const b2BodyDef& bd, const b2FixtureDef& fd, int type);
 
 			virtual cocos2d::Vec2 getWorldPosition() const = 0;
 			virtual void setWorldPosition(const cocos2d::Vec2& pos) = 0;

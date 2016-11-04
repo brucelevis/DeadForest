@@ -27,7 +27,8 @@ ItemGlock17::ItemGlock17(Game* game) : WeaponBase(game)
 
 
 ItemGlock17::~ItemGlock17()
-{}
+{
+}
 
 
 ItemGlock17* ItemGlock17::create(Game* game)

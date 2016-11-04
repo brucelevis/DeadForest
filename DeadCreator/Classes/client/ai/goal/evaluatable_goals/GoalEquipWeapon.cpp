@@ -42,14 +42,7 @@ void GoalEquipWeapon::activate()
 
 	_startTime = system_clock::now().time_since_epoch();
 
-	_owner->useItem(_weaponType);
-
-	// #bug
-	// 무기 장착 시 공격범위가 예상과 다름(샷건인데 0이 나옴)
-	//if (_owner->getEquipedWeapon() != nullptr)
-	//	cocos2d::log(" weapon range : %d   weapon type : %d %d",
-	//		_owner->getEquipedWeapon()->getRange(),
-	//		_owner->getEquipedWeapon()->getEntityType(), _weaponType);
+    _owner->useItem(_weaponType);
 
 	int range = 55;
 	if (_weaponType == ITEM_AXE)

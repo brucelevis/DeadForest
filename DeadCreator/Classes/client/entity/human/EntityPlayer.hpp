@@ -29,7 +29,6 @@ namespace realtrick
             virtual bool handleMessage(const Telegram& msg) override;
             virtual bool isIntersectOther(const cocos2d::Vec2& futurePosition, EntityBase* other, cocos2d::Vec2& additionalVelocity) override;
             
-            virtual void update(float dt) override;
             virtual void suicide() override;
             
         };

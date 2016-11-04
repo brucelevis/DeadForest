@@ -41,7 +41,7 @@ bool Wall::init(const std::vector<cocos2d::Vec2>& vertices)
 	}
 
 	b2ChainShape chain;
-	chain.CreateChain(v, vertices.size());
+	chain.CreateChain(v, static_cast<int32>(vertices.size()));
 
 	delete[] v;
 

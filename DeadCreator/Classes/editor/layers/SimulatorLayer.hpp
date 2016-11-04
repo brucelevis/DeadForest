@@ -64,7 +64,7 @@ namespace realtrick
 			}
 
 			void showLayer(bool& opened);
-            void receiveProfileData();
+            void receiveProfileDataAndRender();
 
 			void playGame();
 			void closeLayer();

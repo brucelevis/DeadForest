@@ -10,11 +10,13 @@
 #include <functional>
 #include <exception>
 #include <iostream>
+#include <cassert>
 using namespace std;
 using namespace std::chrono;
 
 #include "SimpleProfiler.hpp"
 #include "Block.hpp"
+#include "NetworkWriter.hpp"
 using namespace realtrick::profiler;
 
 #include "tinyxml2.h"
@@ -27,16 +29,18 @@ using namespace flatbuffers;
 SimpleProfiler::SimpleProfiler() :
 _blockStack(),
 _blocks(),
+_tick(0),
 _mainLoopBlock(nullptr),
-_socket(_io),
-_acceptor(_io, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 4242))
+_networkWriter(nullptr)
 {
-    doAccept();
+    _networkWriter = new NetworkWriter();
 }
 
 
 SimpleProfiler::~SimpleProfiler()
 {
+    delete _networkWriter;
+    _networkWriter = nullptr;
 }
 
 
@@ -67,6 +71,8 @@ void SimpleProfiler::endFrame()
     
     _blockStack.pop_back();
     _mainLoopBlock->end();
+    
+    _tick ++;
 }
 
 
@@ -115,7 +121,7 @@ void SimpleProfiler::reset()
 
 void SimpleProfiler::prettyWriter(std::string& out)
 {
-    CCASSERT(_mainLoopBlock, "main loop block is not exist");
+    assert(_mainLoopBlock, "main loop block is not exist");
     
     if ( _mainLoopBlock )
     {
@@ -153,7 +159,9 @@ std::pair<uint8_t*, uint32_t> SimpleProfiler::flatbufferWriter()
                                                              _mainLoopBlock->getMinTime(),
                                                              _mainLoopBlock->getMaxTime(),
                                                              _mainLoopBlock->getUsageFromParent(),
-                                                             _mainLoopBlock->getChildrenFlatbuffers(builder)));
+                                                             _mainLoopBlock->getChildrenFlatbuffers(builder)),
+                                               _tick, /* tick */
+                                               1000.0f / _mainLoopBlock->_lastDuration /* fps */);
     builder.Finish(obj);
     return std::make_pair(builder.GetBufferPointer(), builder.GetSize());
 }
@@ -214,26 +222,45 @@ void SimpleProfiler::flatbufferWriteHelper(int depth, std::string& out, const El
 }
 
 
-void SimpleProfiler::doAccept()
+void SimpleProfiler::writeToNetwork(WriteType type)
 {
-    std::cout << "ready to accept" <<std::endl;
+    switch (type)
+    {
+        case WriteType::PRETTY:
+        {
+            break;
+        }
+        case WriteType::JSON:
+        {
+            break;
+        }
+        case WriteType::XML:
+        {
+            break;
+        }
+        case WriteType::FLATBUFFERS:
+        {
+            auto flatbufferData = flatbufferWriter();
+            
+            Packet packet;
+            packet.encode(flatbufferData.first, flatbufferData.second, PacketType::PROFILE_INFO_FLATBUFFERS);
+            _networkWriter->deliveryPacket(&packet);
+            
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
     
-//    _acceptor.async_accept(_socket, [this](const boost::system::error_code& ec){
-    
-//        if ( !ec )
-//        {
-//            std::cout << "client connected." << std::endl;
-//            auto session = make_shared<Session>(move(_socket));
-//            session->start();
-//            _sessions.push_back(session);
-//            
-//            cout << "sesison size: " << _sessions.size() << endl;
-//        }
-        
-//        doAccept();
-        
-//    });
-
 }
+
+
+
+
+
+
+
 
 

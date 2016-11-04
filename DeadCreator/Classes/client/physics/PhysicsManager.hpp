@@ -18,13 +18,13 @@
 
 #pragma once
 
+#include <vector>
+
+#include "Box2D/Box2D.h"
 #include "Box2D/Collision/b2Collision.h"
 #include "Box2D/Dynamics/Contacts/b2PolygonAndCircleContact.h"
-#include <Box2D/Dynamics/b2WorldCallbacks.h>
-#include <Box2D/Box2D.h>
-#include <vector>
-#include "cocos2d.h"
-
+#include "Box2D/Dynamics/b2WorldCallbacks.h"
+#include "EntityBase.hpp"
 
 namespace realtrick
 {

@@ -14,6 +14,7 @@
 
 enum class PacketType : int
 {
+    INVALID = -1,
     LOGIN = 1000,
     LOGIN_SUCCESS,         //sc
     LOGIN_FAIL,            //sc
@@ -27,6 +28,11 @@ enum class PacketType : int
     GAME_START,            //sc
     MOVE_JOYSTICK,         //sc,cs
     LOAD_GMXFILE,
+    
+    PROFILE_INFO_PRETTY,
+    PROFILE_INFO_JSON,
+    PROFILE_INFO_XML,
+    PROFILE_INFO_FLATBUFFERS,
 };
 
 class Packet
@@ -36,6 +42,22 @@ public:
     
     enum { HEADER_LENGTH = 8 };
     enum { MAX_BODY_LENGTH = 4096};
+    
+    Packet()
+    {
+        _data[0] = '\0';
+        _type = PacketType::INVALID;
+        _bodyLength = 0;
+    }
+    Packet(const Packet& rhs) { copyFrom(rhs); }
+    Packet& operator=(const Packet& rhs)
+    {
+        if ( &rhs != this )
+        {
+            copyFrom(rhs);
+        }
+        return *this;
+    }
     
     void encode(void* body, uint32_t size, PacketType type)
     {
@@ -71,25 +93,30 @@ public:
     }
     
     char* body() { return _data + HEADER_LENGTH; }
-    
     const char* body() const { return _data + HEADER_LENGTH; }
     
     char* data() { return _data; }
-    
     const char* data() const { return _data; }
     
     PacketType type() const { return _type; }
-    
     uint32_t bodyLength() const { return _bodyLength; }
-    
     uint32_t length() const { return _bodyLength + HEADER_LENGTH; }
+    
+    Packet* clone() { return new Packet(*this); };
+    
+private:
+    
+    void copyFrom(const Packet& rhs)
+    {
+        memcpy(_data, rhs._data, HEADER_LENGTH + MAX_BODY_LENGTH);
+        _type = rhs._type;
+        _bodyLength = rhs._bodyLength;
+    }
     
 private:
     
     char _data[HEADER_LENGTH + MAX_BODY_LENGTH];
-    
     PacketType _type;
-    
     uint32_t _bodyLength;
     
 };

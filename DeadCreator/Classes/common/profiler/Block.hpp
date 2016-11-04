@@ -24,6 +24,8 @@ namespace realtrick
         
         class Block
         {
+         
+            friend class SimpleProfiler;
             
         public:
             
@@ -44,10 +46,10 @@ namespace realtrick
             const std::vector<Block*>& getChildren() const { return _children; }
             void addChild(Block* child) { child->setParent(this); _children.push_back(child); }
             
-            long long getAvgTime() const { return _avgTime; }
-            long long getMinTime() const { return _minTime; }
-            long long getMaxTime() const { return _maxTime; }
-            long long getTotalCall() const { return _numberOfCalls; }
+            int32_t getAvgTime() const { return _avgTime; }
+            int32_t getMinTime() const { return _minTime; }
+            int32_t getMaxTime() const { return _maxTime; }
+            int32_t getTotalCall() const { return _numberOfCalls; }
             
             void prettyWrite(int depth, std::string& out) const;
             Offset<Vector<Offset<Element>>> getChildrenFlatbuffers(FlatBufferBuilder& builder) const;
@@ -61,11 +63,12 @@ namespace realtrick
             
             Block* _parent;
             std::vector<Block*> _children;
-            long long _totalTime;
-            long long _avgTime;
-            long long _maxTime;
-            long long _minTime;
-            long long _numberOfCalls;
+            int32_t _lastDuration;
+            int32_t _totalTime;
+            int32_t _avgTime;
+            int32_t _maxTime;
+            int32_t _minTime;
+            int32_t _numberOfCalls;
             std::chrono::high_resolution_clock::time_point _beginPoint;
             std::string _name;
             

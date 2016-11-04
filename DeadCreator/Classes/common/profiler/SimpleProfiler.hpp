@@ -14,6 +14,12 @@
 #include <chrono>
 
 
+#ifndef _ENABLE_ATOMIC_ALIGNMENT_FIX
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
+#endif
+
+#include <boost/thread.hpp>
+#include <boost/bind.hpp>
 #include <boost/asio.hpp>
 
 #define PROFILE_BEGIN_FRAME realtrick::profiler::SimpleProfiler::getInstance().beginFrame()
@@ -30,9 +36,20 @@ namespace realtrick
         
         class Block;
         class Element;
+        class NetworkWriter;
         
         class SimpleProfiler
         {
+            
+        public:
+            
+            enum class WriteType : int
+            {
+                PRETTY,
+                JSON,
+                XML,
+                FLATBUFFERS
+            };
             
         public:
             
@@ -49,10 +66,12 @@ namespace realtrick
             void prettyWriter(std::string& out);
             void jsonWriter(std::string& out);
             void xmlWriter(std::string& out);
-            std::pair<uint8_t*, uint32_t> flatbufferWriter();
             
+            std::pair<uint8_t*, uint32_t> flatbufferWriter();
             std::string flatbufferWriteHelper(uint8_t* pointer);
             void flatbufferWriteHelper(int depth, std::string& out, const Element* elem);
+            
+            void writeToNetwork(WriteType type);
 
             void reset();
             
@@ -66,12 +85,11 @@ namespace realtrick
             
             std::vector<Block*> _blockStack;
             std::map<std::string, Block*> _blocks;
-
-            Block* _mainLoopBlock;
+            uint32_t _tick;
             
-            boost::asio::io_service _io;
-            boost::asio::ip::tcp::socket _socket;
-            boost::asio::ip::tcp::acceptor _acceptor;
+            Block* _mainLoopBlock;
+            boost::thread* _networkThread;
+            NetworkWriter* _networkWriter;
             
         };
         

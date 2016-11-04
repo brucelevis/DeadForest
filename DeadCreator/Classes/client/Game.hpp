@@ -7,13 +7,13 @@
 //
 
 #pragma once
+#ifndef _ENABLE_ATOMIC_ALIGNMENT_FIX
 #define _ENABLE_ATOMIC_ALIGNMENT_FIX
-#include <Box2D/Box2D.h>
+#endif
 
 #include "audio/include/AudioEngine.h"
 
 #include "cocos2d.h"
-#include "CellSpacePartition.hpp"
 #include "EntityPlayer.hpp"
 #include "SoundSource.hpp"
 #include "StringHelper.hpp"
@@ -26,7 +26,6 @@
 #include "SparseGraph.hpp"
 #include "GraphNodeTypes.hpp"
 #include "GraphEdgeTypes.hpp"
-
 #include "PathEdge.hpp"
 
 #include "PhysicsManager.hpp"

@@ -21,9 +21,9 @@
 #include <queue>
 #include <stack>
 
-#include "SparseGraph.h"
-#include "PriorityQueue.h"
-#include "PathEdge.h"
+#include "SparseGraph.hpp"
+#include "PriorityQueue.hpp"
+#include "PathEdge.hpp"
 
 
 namespace realtrick

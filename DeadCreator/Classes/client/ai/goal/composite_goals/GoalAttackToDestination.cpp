@@ -6,10 +6,8 @@
 //
 //
 
-#include "GoalAttackToDestination.hpp"
-#include "GoalAttackTarget.hpp"
-#include "GoalMoveToPosition.hpp"
-#include "AbstTargetingSystem.h"
+#include "Goals.hpp"
+#include "AbstTargetingSystem.hpp"
 #include "HumanBase.hpp"
 
 using namespace realtrick;

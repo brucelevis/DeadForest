@@ -8,8 +8,8 @@
 
 #include "GoalTraverseEdge.hpp"
 #include "InputCommands.hpp"
-#include "GraphEdgeTypes.h"
-#include "PathPlanner.h"
+#include "GraphEdgeTypes.hpp"
+#include "PathPlanner.hpp"
 
 using namespace realtrick;
 using namespace realtrick::client;

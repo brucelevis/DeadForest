@@ -1,6 +1,4 @@
-#include "PhysicsManager.h"
-#include <Box2D/Dynamics/Contacts/b2Contact.h>
-#include <iostream>
+#include "PhysicsManager.hpp"
 #include "Game.hpp"
 #include "EntityBase.hpp"
 
@@ -78,7 +76,7 @@ void PhysicsManager::Step()
 
 void PhysicsManager::BeginContact(b2Contact* contact)
 {
-	// �浹ó�� ~
+	// √Êµπ√≥∏Æ ~
 	/*
 	//check if both fixtures were balls
 	void* bodyUserDataA = contact->GetFixtureA()->GetBody()->GetUserData();

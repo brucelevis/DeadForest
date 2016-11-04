@@ -6,6 +6,9 @@
 //
 //
 
+#pragma once
+
+
 #include <chrono>
 #include "GoalEvaluatable.hpp"
 
@@ -34,5 +37,12 @@ namespace realtrick
         };
     }
 }
+
+
+
+
+
+
+
 
 

@@ -1,8 +1,8 @@
-#include "AbstTargetingSystem.h"
+#include "AbstTargetingSystem.hpp"
 #include "HumanBase.hpp"
-#include "SensoryMemory.h"
+#include "SensoryMemory.hpp"
 #include "Game.hpp"
-#include "GoalNetwork.h"
+#include "GoalNetwork.hpp"
 
 USING_NS_CC;
 using namespace realtrick::client;

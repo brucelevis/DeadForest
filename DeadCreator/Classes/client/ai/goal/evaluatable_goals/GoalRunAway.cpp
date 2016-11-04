@@ -1,8 +1,7 @@
-#include "GoalRunAway.h"
-#include "GoalSeekToPosition.hpp"
+#include "Goals.hpp"
 #include "HumanBase.hpp"
-#include "AbstTargetingSystem.h"
-#include "SensoryMemory.h"
+#include "AbstTargetingSystem.hpp"
+#include "SensoryMemory.hpp"
 #include "InventoryData.hpp"
 
 using namespace realtrick::client;

@@ -1,6 +1,4 @@
-#ifndef GOAL_RELOAD_H
-#define GOAL_RELOAD_H
-#pragma warning (disable:4786)
+#pragma once
 
 #include "GoalEvaluatable.hpp"
 #include "Types.hpp"
@@ -11,27 +9,28 @@ namespace realtrick
 	{
 		class HumanBase;
 
-		class GoalReload : public GoalEvaluatable
+		class GoalRunAway : public GoalEvaluatable
 		{
 
 		public:
 
-			GoalReload(HumanBase* owner, float character_bias = 0.0f);
-			virtual ~GoalReload() override
+			GoalRunAway(HumanBase* owner, float character_bias = 0.0f);
+			virtual ~GoalRunAway() override
 			{}
 
 			virtual int evaluate(HumanBase* const owner) override;
 			virtual void activate() override;
 			virtual GoalStatus process() override;
 			virtual void terminate() override;
-
-		private:
-			std::chrono::duration<double> _startTime;
 		};
 	}
 }
 
 
 
-#endif
+
+
+
+
+
 

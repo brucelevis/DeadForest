@@ -6,21 +6,22 @@
 //
 //
 
+#include <set>
+
 #include "GoalFindWeapon.hpp"
 #include "HumanBase.hpp"
 #include "Game.hpp"
 #include "EntityManager.hpp"
 #include "EntityBase.hpp"
 #include "GoalMoveToPosition.hpp"
-#include "GoalEquipWeapon.h"
-#include "SensoryMemory.h"
+#include "GoalEquipWeapon.hpp"
+#include "SensoryMemory.hpp"
 #include "InventoryData.hpp"
 #include "InputCommands.hpp"
-#include <set>
 
 using namespace realtrick::client;
 using namespace realtrick;
-USING_NS_CC;
+using namespace cocos2d;
 
 
 GoalFindWeapon::GoalFindWeapon(HumanBase* owner, float character_bias)

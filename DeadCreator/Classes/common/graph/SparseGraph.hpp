@@ -1,6 +1,6 @@
-#ifndef SPARSEGRAPH_H
-#define SPARSEGRAPH_H
-#pragma warning (disable:4786)
+#pragma once
+
+
 //------------------------------------------------------------------------
 //
 //  Name:   SparseGraph.h
@@ -259,4 +259,3 @@ namespace realtrick
 	}
 }
 
-#endif

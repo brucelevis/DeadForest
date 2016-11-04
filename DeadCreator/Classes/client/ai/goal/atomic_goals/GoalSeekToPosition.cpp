@@ -8,9 +8,9 @@
 
 #include "GoalSeekToPosition.hpp"
 #include "InputCommands.hpp"
-#include "GraphEdgeTypes.h"
-#include "PathPlanner.h"
-#include "PathEdge.h"
+#include "GraphEdgeTypes.hpp"
+#include "PathPlanner.hpp"
+#include "PathEdge.hpp"
 
 
 using namespace realtrick;

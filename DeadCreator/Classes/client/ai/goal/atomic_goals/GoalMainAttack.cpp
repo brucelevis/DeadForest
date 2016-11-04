@@ -1,14 +1,9 @@
-#include "GoalMainAttack.h"
-#include "AbstTargetingSystem.h"
-#include "SensoryMemory.h"
+#include "GoalMainAttack.hpp"
+#include "AbstTargetingSystem.hpp"
+#include "SensoryMemory.hpp"
 #include "HumanBase.hpp"
 #include "InventoryData.hpp"
-#include "InputAttackBegin.hpp"
-#include "InputAttackEnd.hpp"
-#include "InputBezelBegin.hpp"
-#include "InputBezelEnd.hpp"
-#include "InputMoveBegin.hpp"
-#include "InputMoveEnd.hpp"
+#include "InputCommands.hpp"
 #include "StateMachine.hpp"
 
 using namespace realtrick::client;

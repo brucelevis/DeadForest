@@ -1,14 +1,14 @@
-#include "GoalMakeFormation.h"
+#include "GoalMakeFormation.hpp"
 #include "GoalSeekToPosition.hpp"
 #include "HumanBase.hpp"
-#include "AbstTargetingSystem.h"
-#include "SensoryMemory.h"
+#include "AbstTargetingSystem.hpp"
+#include "SensoryMemory.hpp"
 #include "InputMoveBegin.hpp"
 #include "InputMoveEnd.hpp"
 #include "InputBezelBegin.hpp"
 #include "InputBezelEnd.hpp"
 
-#include "GoalNetwork.h"
+#include "GoalNetwork.hpp"
 
 
 using namespace realtrick::client;

@@ -14,9 +14,9 @@
 #include <list>
 #include <memory>
 #include "cocos2d.h"
-#include "GraphAlgorithms.h"
-#include "SparseGraph.h"
-#include "PathEdge.h"
+#include "GraphAlgorithms.hpp"
+#include "SparseGraph.hpp"
+#include "PathEdge.hpp"
 #include "Game.hpp"
 
 namespace realtrick

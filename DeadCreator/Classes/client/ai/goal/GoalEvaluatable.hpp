@@ -21,12 +21,12 @@ namespace realtrick
             
         public:
             
-			inline float getCharacterBias() const { return _character_bias; };
+			inline float getCharacterBias() const { return _characterBias; };
 
-            explicit GoalEvaluatable(HumanBase* owner, float character_bias) 
+            explicit GoalEvaluatable(HumanBase* owner, float _characterBias)
 				:
 				GoalCompositeBase(owner),
-				_character_bias(character_bias)
+				_characterBias(_characterBias)
             {
                 setGoalType(GoalType::INVALID);
             }
@@ -37,7 +37,9 @@ namespace realtrick
 			virtual int evaluate(HumanBase* const owner) = 0;
 
         protected:
-			float _character_bias;
+            
+			float _characterBias;
+            
         };
         
     }

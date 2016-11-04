@@ -6,6 +6,8 @@
 //
 //
 
+#pragma once
+
 #include <chrono>
 
 #include "GoalBase.hpp"

@@ -6,16 +6,11 @@
 //
 //
 
-#include "GoalFollowLeader.hpp"
-#include "GoalAttackTarget.hpp"
-#include "GoalMoveToPosition.hpp"
-#include "AbstTargetingSystem.h"
-#include "SensoryMemory.h"
+#include "Goals.hpp"
+#include "AbstTargetingSystem.hpp"
+#include "SensoryMemory.hpp"
 #include "HumanBase.hpp"
 #include "Game.hpp"
-#include "GoalRangeAttack.h"
-#include "GoalNetwork.h"
-#include "GoalWalkWithAim.h"
 #include "InputCommands.hpp"
 
 using namespace realtrick;

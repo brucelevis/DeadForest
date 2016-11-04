@@ -8,9 +8,9 @@
 
 #include "GoalFollowPath.hpp"
 #include "GoalTraverseEdge.hpp"
-#include "GraphEdgeTypes.h"
+#include "GraphEdgeTypes.hpp"
 #include "InputCommands.hpp"
-#include "PathEdge.h"
+#include "PathEdge.hpp"
 
 
 using namespace realtrick;

@@ -14,9 +14,9 @@
 #include "ZombieBrain.hpp"
 #include "AnimatedFiniteEntity.hpp"
 #include "GameResource.hpp"
-#include "PathPlanner.h"
-#include "SensoryMemory.h"
-#include "AbstTargetingSystem.h"
+#include "PathPlanner.hpp"
+#include "SensoryMemory.hpp"
+#include "AbstTargetingSystem.hpp"
 #include "InventoryData.hpp"
 #include "UiLayer.hpp"
 using namespace cocos2d;

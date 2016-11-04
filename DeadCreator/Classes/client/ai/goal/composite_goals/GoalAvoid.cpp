@@ -1,10 +1,8 @@
-#include "GoalAvoid.h"
-#include "GoalSeekToPosition.hpp"
+#include "Goals.hpp"
 #include "HumanBase.hpp"
-#include "AbstTargetingSystem.h"
-#include "SensoryMemory.h"
-#include "InputMoveBegin.hpp"
-#include "InputMoveEnd.hpp"
+#include "AbstTargetingSystem.hpp"
+#include "SensoryMemory.hpp"
+#include "InputCommands.hpp"
 
 namespace
 {

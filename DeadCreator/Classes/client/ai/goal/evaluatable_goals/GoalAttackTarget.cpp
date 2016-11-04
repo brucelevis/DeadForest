@@ -6,18 +6,14 @@
 //
 //
 
-#include "GoalAttackTarget.hpp"
-#include "GoalMoveToPosition.hpp"
-#include "GraphEdgeTypes.h"
+#include "GraphEdgeTypes.hpp"
 #include "InputCommands.hpp"
-#include "PathEdge.h"
+#include "PathEdge.hpp"
 #include "HumanBase.hpp"
-#include "PathPlanner.h"
-#include "AbstTargetingSystem.h"
-#include "GoalMainAttack.h"
-#include "GoalRangeAttack.h"
-#include "GoalHuntTarget.hpp"
-#include "SensoryMemory.h"
+#include "PathPlanner.hpp"
+#include "AbstTargetingSystem.hpp"
+#include "Goals.hpp"
+#include "SensoryMemory.hpp"
 #include "InventoryData.hpp"
 
 namespace
@@ -128,7 +124,7 @@ GoalStatus GoalAttackTarget::process()
 int GoalAttackTarget::evaluate(HumanBase* const owner) 
 {
 	if (_owner->getTargetSys()->isTargetPresent())
-		return kWeightForAttack * _character_bias;
+		return kWeightForAttack * getCharacterBias();
 	else
 		return 0;
 }

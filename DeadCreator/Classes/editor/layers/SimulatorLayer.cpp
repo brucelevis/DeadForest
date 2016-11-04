@@ -16,7 +16,7 @@ using namespace realtrick::editor;
 #include "Camera2D.hpp"
 #include "GameResource.hpp"
 #include "RenderingSystem.hpp"
-#include "SparseGraph.h"
+#include "SparseGraph.hpp"
 using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;

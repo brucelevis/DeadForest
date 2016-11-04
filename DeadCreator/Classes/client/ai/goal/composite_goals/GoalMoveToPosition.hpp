@@ -6,10 +6,12 @@
 //
 //
 
+#pragma once
+
 #include <chrono>
 #include <memory>
 #include "GoalCompositeBase.hpp"
-#include "PathEdge.h"
+#include "PathEdge.hpp"
 
 namespace realtrick
 {
@@ -42,5 +44,12 @@ namespace realtrick
         };
     }
 }
+
+
+
+
+
+
+
 
 

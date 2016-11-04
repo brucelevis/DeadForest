@@ -23,13 +23,13 @@
 #include "SimpleReleasePool.hpp"
 #include "Physics.hpp"
 
-#include "SparseGraph.h"
-#include "GraphNodeTypes.h"
-#include "GraphEdgeTypes.h"
+#include "SparseGraph.hpp"
+#include "GraphNodeTypes.hpp"
+#include "GraphEdgeTypes.hpp"
 
-#include "PathEdge.h"
+#include "PathEdge.hpp"
 
-#include "PhysicsManager.h"
+#include "PhysicsManager.hpp"
 
 
 #define Z_ORDER_GAME_MAP    0

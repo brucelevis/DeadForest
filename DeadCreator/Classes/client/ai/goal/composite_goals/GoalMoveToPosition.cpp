@@ -6,14 +6,12 @@
 //
 //
 
-#include "GoalMoveToPosition.hpp"
-#include "GoalFollowPath.hpp"
-#include "GoalSeekToPosition.hpp"
-#include "GraphEdgeTypes.h"
+#include "Goals.hpp"
+#include "GraphEdgeTypes.hpp"
 #include "InputCommands.hpp"
-#include "PathEdge.h"
+#include "PathEdge.hpp"
 #include "HumanBase.hpp"
-#include "PathPlanner.h"
+#include "PathPlanner.hpp"
 
 using namespace realtrick;
 using namespace realtrick::client;

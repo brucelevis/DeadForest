@@ -8,15 +8,33 @@
 
 #pragma once
 
-#include "GoalThink.hpp"
-#include "GoalWander.hpp"
-#include "GoalHuntTarget.hpp"
+
+// atomic goals
+#include "GoalMainAttack.hpp"
+#include "GoalRangeAttack.hpp"
+#include "GoalSeekToPosition.hpp"
 #include "GoalTraverseEdge.hpp"
-#include "GoalFindWeapon.hpp"
+#include "GoalWalkWithAim.hpp"
+#include "GoalWander.hpp"
+
+// composite golas
+#include "GoalAttackToDestination.hpp"
+#include "GoalAvoid.hpp"
 #include "GoalFollowPath.hpp"
+#include "GoalHuntTarget.hpp"
+#include "GoalMoveToPosition.hpp"
+#include "GoalThink.hpp"
+
+// evaluatable goals
+#include "GoalAttackTarget.hpp"
+#include "GoalEquipWeapon.hpp"
+#include "GoalFindWeapon.hpp"
+#include "GoalFollowLeader.hpp"
+#include "GoalReload.hpp"
+#include "GoalRunAway.hpp"
 
 
-
+#include "GoalNetwork.hpp"
 
 
 

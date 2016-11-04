@@ -1,9 +1,10 @@
-#include "GoalEquipWeapon.h"
+#include <set>
+
+#include "GoalEquipWeapon.hpp"
 #include "InventoryData.hpp"
 #include "HumanBase.hpp"
-#include "SensoryMemory.h"
-#include "GoalAvoid.h"
-#include <set>
+#include "SensoryMemory.hpp"
+#include "GoalAvoid.hpp"
 
 namespace
 {
@@ -19,7 +20,7 @@ namespace
 using namespace realtrick::client;
 using namespace realtrick;
 using namespace std::chrono;
-USING_NS_CC;
+using namespace cocos2d;
 
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------

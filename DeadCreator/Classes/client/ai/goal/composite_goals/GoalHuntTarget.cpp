@@ -9,9 +9,9 @@
 #include "GoalHuntTarget.hpp"
 #include "Goals.hpp"
 #include "HumanBase.hpp"
-#include "AbstTargetingSystem.h"
+#include "AbstTargetingSystem.hpp"
 #include "GoalMoveToPosition.hpp"
-#include "SensoryMemory.h"
+#include "SensoryMemory.hpp"
 using namespace realtrick::client;
 
 

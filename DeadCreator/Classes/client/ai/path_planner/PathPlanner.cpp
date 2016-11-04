@@ -1,11 +1,11 @@
-#include "PathPlanner.h"
+#include "PathPlanner.hpp"
 #include "HumanBase.hpp"
 #include "TileHelperFunctions.hpp"
-#include "AStarHeuristicPolicies.h"
+#include "AStarHeuristicPolicies.hpp"
 #include "Game.hpp"
 #include "GameResource.hpp"
 #include "Tileset.hpp"
-#include "SparseGraph.h"
+#include "SparseGraph.hpp"
 
 using namespace realtrick;
 using namespace client;

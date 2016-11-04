@@ -1,6 +1,4 @@
-#ifndef GOAL_EQUIP_WEAPON_H
-#define GOAL_EQUIP_WEAPON_H
-#pragma warning (disable:4786)
+#pragma once
 
 #include "GoalEvaluatable.hpp"
 #include "Types.hpp"
@@ -37,5 +35,9 @@ namespace realtrick
 
 
 
-#endif
+
+
+
+
+
 

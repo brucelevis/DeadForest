@@ -16,13 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef MYTEST1_H
-#define MYTEST1_H
+#pragma once
 
 #include "Box2D/Collision/b2Collision.h"
 #include "Box2D/Dynamics/Contacts/b2PolygonAndCircleContact.h"
 #include <Box2D/Dynamics/b2WorldCallbacks.h>
-#include <Box2D\Box2D.h>
+#include <Box2D/Box2D.h>
 #include <vector>
 #include "EntityBase.hpp"
 
@@ -219,4 +218,10 @@ namespace realtrick
 }
 
 
-#endif
+
+
+
+
+
+
+

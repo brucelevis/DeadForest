@@ -1,6 +1,4 @@
-#ifndef GOAL_WALK_WITH_AIM_H
-#define GOAL_WALK_WITH_AIM_H
-#pragma warning (disable:4786)
+#pragma once
 
 #include "GoalBase.hpp"
 
@@ -39,5 +37,9 @@ namespace realtrick
 
 
 
-#endif
+
+
+
+
+
 

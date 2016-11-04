@@ -1,6 +1,4 @@
-#ifndef GOAL_RANGE_ATTACK_H
-#define GOAL_RANGE_ATTACK_H
-#pragma warning (disable:4786)
+#pragma once
 
 #include "GoalBase.hpp"
 
@@ -10,19 +8,19 @@ namespace realtrick
 	{
 		class HumanBase;
 
-		class GoalRangeAttack : public GoalBase
+		class GoalMainAttack : public GoalBase
 		{
 
 		public:
 			static cocos2d::Vec2 smartMoving(HumanBase* owner);
-			static cocos2d::Vec2 dealCrowdMoving(HumanBase* owner);
-			static cocos2d::Vec2 makeFormationMoving(HumanBase* owner);
+			static cocos2d::Vec2 roughMoving(HumanBase* owner);
 
-			GoalRangeAttack(
+			GoalMainAttack(
 				HumanBase* owner,
 				const cocos2d::Vec2& target,
-				std::function<cocos2d::Vec2(HumanBase*)> _movingStrategy);
-			virtual ~GoalRangeAttack() override
+				std::function<cocos2d::Vec2(HumanBase*)> movingStrategy);
+
+			virtual ~GoalMainAttack() override
 			{}
 
 			virtual void activate() override;
@@ -32,8 +30,7 @@ namespace realtrick
 		public:
 
 			cocos2d::Vec2 _target;
-			std::chrono::duration<double> _startTime;
-			bool _attacked;
+			std::chrono::duration<double>	_startTime;
 			std::function<cocos2d::Vec2(HumanBase*)> _movingStrategy;
 		};
 	}
@@ -41,5 +38,9 @@ namespace realtrick
 
 
 
-#endif
+
+
+
+
+
 

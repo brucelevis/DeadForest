@@ -92,7 +92,7 @@ bool HumanBase::init()
 	fd.restitution = 0.0f;
 	fd.isSensor = false;
 
-	if (!PhysicsBase::initWithPhysicsBody(_game->getPhysicsManager()->GetPhysicsWorld(), bd, fd, PhysicsBase::kHuman) )
+	if (!PhysicsBase::initWithPhysicsBody(_game->getPhysicsManager(), bd, fd, PhysicsBase::kHuman) )
 		return false;
 
 	_animator = new Animator(this);

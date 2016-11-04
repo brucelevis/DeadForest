@@ -303,10 +303,21 @@ b2Body* PhysicsManager::CreateBody(float x, float y, b2BodyType type, b2Shape* s
 	return body;
 }
 
-void PhysicsManager::RemoveBody(b2Body* body)
+
+void PhysicsManager::ReserveRemoveBody(b2Body* body)
 {
-	body->GetWorld()->DestroyBody(body);
+    body->SetUserData(nullptr);
+    _removedBodies.push_back(body);
 }
+
+
+void PhysicsManager::RemoveReservedBodies()
+{
+    for ( auto& body : _removedBodies )
+        _world->DestroyBody(body);
+    _removedBodies.clear();
+}
+
 
 std::vector<EntityBase*> PhysicsManager::queryEntitiesAABB(
 	const cocos2d::Vec2& position,

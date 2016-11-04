@@ -166,8 +166,7 @@ namespace realtrick
             SwitchStatus getSwitchStatus(int index) const;
             void setSwitchStatus(int index, SwitchStatus status);
             
-			PhysicsManager* getPhysicsManager() const { return _physicsMgr; }
-            //b2World* getPhysicsWorld() const { return _physicsWorld; }
+            PhysicsManager* getPhysicsManager() const { return _physicsMgr; }
             
             void initCell(GameResource* res);
             void addWall(const realtrick::Polygon& wall);

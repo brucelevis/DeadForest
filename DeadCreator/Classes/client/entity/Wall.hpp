@@ -16,16 +16,18 @@ namespace realtrick
     namespace client
     {
 
+        class PhysicsManager;
+        
         class Wall : public cocos2d::Ref, public PhysicsBase
         {
 
 		public:
 
-			explicit Wall(b2World* world);
+			Wall();
 			virtual ~Wall();
 
-			static Wall* create(b2World* world, const std::vector<cocos2d::Vec2>& vertices);
-			bool init(const std::vector<cocos2d::Vec2>& vertices);
+			static Wall* create(PhysicsManager* mgr, const std::vector<cocos2d::Vec2>& vertices);
+			bool init(PhysicsManager* mgr, const std::vector<cocos2d::Vec2>& vertices);
 
 			virtual cocos2d::Vec2 getVelocity() const override;
 			virtual void setVelocity(const cocos2d::Vec2& velocity) override;
@@ -39,11 +41,7 @@ namespace realtrick
 		private:
 
 			virtual void setHeading(const cocos2d::Vec2& heading) override;
-
-		protected:
-
-			b2World* _world;
-			b2Body* _body;
+            
         };
         
     }

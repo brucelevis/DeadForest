@@ -182,7 +182,8 @@ namespace realtrick
 				const cocos2d::Vec2& start,
 				const cocos2d::Vec2& finish) const;
 
-			void RemoveBody(b2Body* body);
+            void ReserveRemoveBody(b2Body* body);
+            void RemoveReservedBodies();
 
 			DestructionListener _destruction_listener;
 			b2Body* _character;
@@ -192,6 +193,9 @@ namespace realtrick
 
 			ContactPoint _points[2048];
 			int32 _pointCount;
+            
+            std::vector<b2Body*> _removedBodies;
+            
 		};
 	}
 }

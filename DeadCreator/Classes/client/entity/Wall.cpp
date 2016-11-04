@@ -1,13 +1,13 @@
 #include "Wall.hpp"
 #include "Physics.hpp"
 #include "Types.hpp"
-
+#include "PhysicsManager.hpp"
 using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
 
 
-Wall::Wall(b2World* world) : _world(world)
+Wall::Wall()
 {}
 
 
@@ -15,10 +15,10 @@ Wall::~Wall()
 {}
 
 
-Wall * Wall::create(b2World* world, const std::vector<cocos2d::Vec2>& vertices)
+Wall * Wall::create(PhysicsManager* mgr, const std::vector<cocos2d::Vec2>& vertices)
 {
-	auto ret = new (std::nothrow) Wall(world);
-	if ( ret && ret->init(vertices) )
+	auto ret = new (std::nothrow) Wall();
+	if ( ret && ret->init(mgr, vertices) )
 	{
 		ret->autorelease();
 		return ret;
@@ -27,12 +27,11 @@ Wall * Wall::create(b2World* world, const std::vector<cocos2d::Vec2>& vertices)
 	return nullptr;
 }
 
-bool Wall::init(const std::vector<cocos2d::Vec2>& vertices)
+bool Wall::init(PhysicsManager* mgr, const std::vector<cocos2d::Vec2>& vertices)
 {
 	// add box2d polygons
 	b2BodyDef groundDef;
 	groundDef.type = b2BodyType::b2_staticBody;
-	auto ground = _world->CreateBody(&groundDef);
 
 	b2Vec2* v = new b2Vec2[vertices.size()];
 	for (int i = 0; i < vertices.size(); ++i)
@@ -49,10 +48,10 @@ bool Wall::init(const std::vector<cocos2d::Vec2>& vertices)
 	groundFixture.shape = &chain;
 	groundFixture.restitution = 0.1f;
 	groundFixture.friction = 0.0f;
-	ground->CreateFixture(&groundFixture);
 
-	if (!PhysicsBase::initWithPhysicsBody(_world, groundDef, groundFixture, PhysicsBase::kWall))
+	if (!PhysicsBase::initWithPhysicsBody(mgr, groundDef, groundFixture, PhysicsBase::kWall))
 		return false;
+    
 	return true;
 }
 
@@ -91,3 +90,12 @@ void Wall::setHeading(const cocos2d::Vec2& heading)
 {
 	_body->SetTransform(_body->GetPosition(), physics::getRadFromZero(heading));
 }
+
+
+
+
+
+
+
+
+

@@ -68,7 +68,7 @@ bool ItemBase::init(const std::string& inGameImage_n, const std::string& inGameI
 	fd.shape = &shape;
 	fd.isSensor = true;
 
-	if (!PhysicsBase::initWithPhysicsBody(_game->getPhysicsManager()->GetPhysicsWorld(), bd, fd, PhysicsBase::kItem))
+	if (!PhysicsBase::initWithPhysicsBody(_game->getPhysicsManager(), bd, fd, PhysicsBase::kItem))
 		return false;
 
     auto normalName = _spriteName;

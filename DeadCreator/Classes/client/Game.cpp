@@ -148,6 +148,9 @@ void Game::update(float dt)
     // update physics
 	_physicsMgr->Step();
     
+    // late remove
+    _physicsMgr->RemoveReservedBodies();
+    
     // update logic stream
     _logicStream->update(dt);
     
@@ -866,7 +869,7 @@ void Game::addWall(const realtrick::Polygon& wall)
             std::vector<realtrick::Polygon> clippedWalls = clipping::getClippedPolygons(wall, aabb);
             for( const auto& clippedWall : clippedWalls )
             {
-				auto wall = Wall::create(_physicsMgr->GetPhysicsWorld(), clippedWall.vertices);
+				auto wall = Wall::create(_physicsMgr, clippedWall.vertices);
 				_walls.pushBack(wall);
             }
         }

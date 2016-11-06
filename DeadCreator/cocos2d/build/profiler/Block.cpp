@@ -2,7 +2,7 @@
 //  Block.cpp
 //  profiler_test
 //
-//  Created by mac on 2016. 9. 9..
+//  Created by NamJunHyeon on 2016. 9. 9..
 //  Copyright © 2016년 realtrick. All rights reserved.
 //
 
@@ -16,7 +16,11 @@ using namespace realtrick::profiler;
 Block::Block() :
 _parent(nullptr),
 _children(),
-_interval(),
+_totalTime(0),
+_avgTime(0),
+_maxTime(0),
+_minTime(1000000000),
+_numberOfCalls(0),
 _beginPoint(),
 _name("")
 {
@@ -53,15 +57,14 @@ bool Block::init(const std::string& name)
 }
 
 
-std::chrono::duration<long long, micro>::rep Block::getInterval() const
+float Block::getUsageFromParent() const
 {
-    return _interval;
-}
-
-
-float Block::getCpuUsageFromParent() const
-{
-    if ( _parent ) return (_interval / static_cast<float>(_parent->getInterval())) * 100.0f;
+    if ( _parent )
+    {
+        auto entryTime = static_cast<float>(_parent->getAvgTime());
+        if ( entryTime != 0.0f )
+            return (_avgTime / entryTime) * 100.0f;
+    }
     return 100.0f;
 }
 
@@ -74,23 +77,92 @@ void Block::begin()
 
 void Block::end()
 {
+    _numberOfCalls ++;
+    
     auto curr = chrono::high_resolution_clock::now();
-    _interval = chrono::duration_cast<chrono::milliseconds>(curr - _beginPoint).count();
+    _lastDuration = static_cast<int32_t>(chrono::duration_cast<chrono::milliseconds>(curr - _beginPoint).count());
+    _totalTime += _lastDuration;
+    _avgTime = _totalTime  / _numberOfCalls;
+    _minTime = std::min(_minTime, _lastDuration);
+    _maxTime = std::max(_maxTime, _lastDuration);
 }
 
 
-void Block::writeConsole(int depth) const
+void Block::prettyWrite(int depth, std::string& out) const
 {
     std::string name;
-    for( int i = 0 ; i < depth ; ++ i )
-        name.push_back(' ');
+    for( int i = 0 ; i < depth ; ++ i ) name.push_back(' ');
     name.insert(depth, _name);
-    printf("%-26s%-26s%-26s\n",name.c_str(), std::to_string(_interval).c_str(), std::to_string(getCpuUsageFromParent()).c_str());
+    for(auto i = _name.size() + depth; i < 29; ++ i) name.push_back(' ');
+    name.push_back('|');
+    
+    std::string calls(to_string(_numberOfCalls));
+    for(auto i = calls.size() ; i < 9; ++ i) calls.push_back(' ');
+    calls.push_back('|');
+    
+    std::string avgTime(to_string(_avgTime));
+    for(auto i = avgTime.size() ; i < 11; ++ i) avgTime.push_back(' ');
+    avgTime.push_back('|');
+    
+    std::string minTime(to_string(_minTime));
+    for(auto i = minTime.size() ; i < 11; ++ i) minTime.push_back(' ');
+    minTime.push_back('|');
+    
+    std::string maxTime(to_string(_maxTime));
+    for(auto i = maxTime.size() ; i < 11; ++ i) maxTime.push_back(' ');
+    maxTime.push_back('|');
+    
+    std::string usage(to_string(getUsageFromParent()));
+    for(auto i = usage.size() ; i < 12; ++ i) usage.push_back(' ');
+    usage.push_back('|');
+    
+    if ( calls.front() == '0' ) return ;
+    
+    out += '|';
+    out += (name + calls + avgTime + minTime + maxTime + usage);
+    out += '\n';
+    
     for ( const auto& child : _children )
-    {
-        child->writeConsole(depth + 1);
-    }
+        child->prettyWrite(depth + 1, out);
 }
+
+
+Offset<Vector<Offset<Element>>> Block::getChildrenFlatbuffers(FlatBufferBuilder& builder) const
+{
+    std::vector<Offset<Element>> children;
+    for ( const auto& child : getChildren() )
+    {
+        if ( child->getTotalCall() == 0 ) continue;
+        
+        auto elem = CreateElement(builder,
+                                  builder.CreateString(child->getName()),
+                                  child->getTotalCall(),
+                                  child->getAvgTime(),
+                                  child->getMinTime(),
+                                  child->getMaxTime(),
+                                  child->getUsageFromParent(),
+                                  child->getChildrenFlatbuffers(builder));
+        
+        children.push_back(elem);
+    }
+    return builder.CreateVector(children);
+}
+
+
+void Block::reset()
+{
+    _totalTime = 0;
+    _numberOfCalls = 0;
+    _avgTime = 0;
+    _maxTime = 0;
+    _minTime = 1000000000;
+    _beginPoint = chrono::high_resolution_clock::now();
+    
+    for( const auto& child : _children )
+        child->reset();
+}
+
+
 
 
 

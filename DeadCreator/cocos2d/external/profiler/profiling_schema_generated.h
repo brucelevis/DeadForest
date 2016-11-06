@@ -3,7 +3,7 @@
 #ifndef FLATBUFFERS_GENERATED_PROFILINGSCHEMA_REALTRICK_PROFILER_H_
 #define FLATBUFFERS_GENERATED_PROFILINGSCHEMA_REALTRICK_PROFILER_H_
 
-#include "flatbuffers.h"
+#include "flatbuffers/flatbuffers.h"
 
 namespace realtrick {
     namespace profiler {

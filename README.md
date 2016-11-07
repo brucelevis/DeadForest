@@ -35,7 +35,7 @@ How to build
 
 1. Download and build [cocos2d-x](http://cocos2d-x.org) project, [boost](http://boost.org) library.
 2. Clone the repository.
-3. Paste to Classes, Resource folders.
+3. Paste to Classes, Resource, cocos folders.
 4. play.
 
 

@@ -6,16 +6,18 @@
 //
 //
 
-#include <iostream>
 #include "Session.hpp"
+#include "Packet.hpp"
+#include "GeneratedPackets.hpp"
+#include "ParamLoader.hpp"
+#include "cocos2d.h"
+using namespace cocos2d;
 using namespace realtrick::network;
 using namespace realtrick::network::tcp;
 
 
-Session::Session() :
-_socket(_io),
-_queue(512),
-_isConnected(false)
+
+Session::Session() : _socket(_io), _queue(512), _isConnected(false)
 {
 }
 
@@ -35,12 +37,12 @@ void Session::connect(const std::string& ip, const std::string& port)
                                {
                                    if ( !ec )
                                    {
-                                       std::cout << "Session::doConnet> connected!" << std::endl;
+                                       log("Session::doConnet> connected!");
                                        doReadHeader();
                                    }
                                    else
                                    {
-                                       std::cout << "Session::doConnet> connect retry..." << std::endl;
+                                       log("Session::doConnet> connect retry...");
                                        connect(ip, port);
                                    }
                                });
@@ -84,9 +86,7 @@ void Session::doWrite()
                                  if (!ec)
                                  {
                                      Packet* packet = _writeBuf.front();
-                                     delete packet;
-                                     packet = nullptr;
-                                     
+                                     CC_SAFE_DELETE(packet);
                                      _writeBuf.pop_front();
                                      
                                      if (!_writeBuf.empty())

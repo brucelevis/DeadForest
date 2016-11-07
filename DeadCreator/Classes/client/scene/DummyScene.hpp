@@ -4,8 +4,6 @@
 
 #include "SizeProtocol.h"
 #include "Game.hpp"
-#include "MainMenu3.hpp"
-#include "ConnectScene.hpp"
 #include "SimulatorLayer.hpp"
 
 namespace realtrick

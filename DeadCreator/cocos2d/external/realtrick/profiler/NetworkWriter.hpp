@@ -22,10 +22,12 @@
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 
-#include "Packet.hpp"
+#include "realtrick/network/Packet.hpp"
 
 namespace realtrick
 {
+    namespace network { class Packet; }
+    
     namespace profiler
     {
         
@@ -44,7 +46,7 @@ namespace realtrick
                 doReadBody();
             }
             
-            void write(Packet* packet)
+            void write(network::Packet* packet)
             {
                 bool isEmpty = _writeBuffer.empty();
                 _writeBuffer.push_back(packet);
@@ -59,7 +61,7 @@ namespace realtrick
             void doReadHeader()
             {
                 auto self(shared_from_this());
-                async_read(_socket, boost::asio::buffer(_recvBuffer.data(), Packet::HEADER_LENGTH),
+                async_read(_socket, boost::asio::buffer(_recvBuffer.data(), network::Packet::HEADER_LENGTH),
                            [this, self] (const boost::system::error_code& ec, size_t length)
                            {
                                if ( !ec && _recvBuffer.decode() )
@@ -78,10 +80,6 @@ namespace realtrick
                            {
                                if ( !ec && _recvBuffer.decode() )
                                {
-                                   PacketType type = _recvBuffer.type();
-                                   if ( type == PacketType::LOGIN )
-                                   {}
-                                   
                                    doReadHeader();
                                }
                            });
@@ -93,7 +91,7 @@ namespace realtrick
                 async_write(_socket, boost::asio::buffer(_writeBuffer.front()->data(), _writeBuffer.front()->length()),
                             [this, self](const boost::system::error_code& ec, size_t length)
                             {
-                                Packet* packet = _writeBuffer.front();
+                                network::Packet* packet = _writeBuffer.front();
                                 delete packet;
                                 packet = nullptr;
                                 
@@ -108,8 +106,8 @@ namespace realtrick
         private:
             
             boost::asio::ip::tcp::socket _socket;
-            Packet _recvBuffer;
-            std::deque<Packet*> _writeBuffer;
+            network::Packet _recvBuffer;
+            std::deque<network::Packet*> _writeBuffer;
             
         };
         
@@ -135,7 +133,7 @@ namespace realtrick
                 close();
             }
             
-            void deliveryPacket(Packet* packet)
+            void deliveryPacket(network::Packet* packet)
             {
                 for( const auto& session : _sessions )
                 {

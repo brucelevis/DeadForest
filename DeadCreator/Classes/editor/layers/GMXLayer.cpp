@@ -20,7 +20,6 @@
 #include "ModifyStartingPointCommand.hpp"
 #include "AddEntityToolCommand.hpp"
 #include "RemoveEntityToolCommand.hpp"
-#include "MainMenu3.hpp"
 #include "LocationNode.hpp"
 #include "RenameLocationLayer.hpp"
 #include "ForceSettingLayer.hpp"
@@ -30,7 +29,7 @@ using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::editor;
 
-#include "util.h"
+#include "flatbuffers/util.h"
 #include "GMXFile_generated.h"
 
 

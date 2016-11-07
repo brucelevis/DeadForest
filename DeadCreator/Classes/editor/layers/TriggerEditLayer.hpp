@@ -11,8 +11,8 @@
 #include <array>
 
 #include "cocos2d.h"
-#include "imgui.h"
-#include "imgui_internal.h"
+#include "realtrick/imgui/imgui.h"
+#include "realtrick/imgui/imgui_internal.h"
 
 #include "GameTrigger.hpp"
 #include "GMXFile_generated.h"

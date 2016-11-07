@@ -1,3 +1,4 @@
+#include "CCPlatformConfig.h"
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 )
 
 // ImGui GLFW binding with OpenGL

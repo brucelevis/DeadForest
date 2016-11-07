@@ -23,7 +23,7 @@ using namespace cocos2d;
 using namespace realtrick::client;
 using namespace realtrick;
 
-#include "SimpleProfiler.hpp"
+#include "realtrick/profiler/SimpleProfiler.hpp"
 
 HumanBase::HumanBase(Game* game) : EntityBase(game),
 _animator(nullptr),

@@ -9,7 +9,7 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "ImGuiLayer.h"
+#include "realtrick/imgui/ImGuiLayer.h"
 #include "EditorEntity.hpp"
 #include "EditorType.hpp"
 

@@ -17,14 +17,11 @@
 #include "TriggerSystem.hpp"
 #include "RenderingSystem.hpp"
 #include "SingleStream.hpp"
-#include "ServerStream.hpp"
 #include "GameResource.hpp"
 #include "EntityManager.hpp"
 #include "Tileset.hpp"
 #include "TileHelperFunctions.hpp"
 #include "PathPlanner.hpp"
-#include "MainMenu3.hpp"
-#include "RewardScene.hpp"
 #include "SensoryMemory.hpp"
 #include "GoalNetwork.hpp"
 #include "ClipperWrapper.hpp"
@@ -36,7 +33,7 @@ using namespace realtrick;
 using namespace realtrick::client;
 
 #include "GMXFile_generated.h"
-#include "util.h"
+#include "flatbuffers/util.h"
 
 
 Game::Game() :
@@ -110,14 +107,7 @@ bool Game::init()
     _camera = Camera2D::create();
     addChild(_camera);
     
-    if ( UserDefault::getInstance()->getBoolForKey("useNetwork", false) )
-    {
-        _logicStream = new ServerStream(this);
-    }
-    else
-    {
-        _logicStream = new SingleStream(this);
-    }
+    _logicStream = new SingleStream(this);
     
 	const float kWorldX = 4000.0f;
 	const float kWorldY = 4000.0f;
@@ -661,7 +651,7 @@ void Game::replaceVictoryScene(float delay)
                                                             CallFunc::create([this]{
                                             
                                                UserDefault::getInstance()->setBoolForKey("isVictory", true);
-                                               Director::getInstance()->replaceScene(RewardScene::createScene());
+//                                               Director::getInstance()->replaceScene(RewardScene::createScene());
                                                
                                            }),
                                                             RemoveSelf::create(),
@@ -685,7 +675,7 @@ void Game::replaceDefeatScene(float delay)
                                                             CallFunc::create([this]{
                                                
                                                UserDefault::getInstance()->setBoolForKey("isVictory", false);
-                                               Director::getInstance()->replaceScene(RewardScene::createScene());
+//                                               Director::getInstance()->replaceScene(RewardScene::createScene());
                                                
                                            }),
                                                             RemoveSelf::create(),

@@ -12,7 +12,7 @@
 using namespace realtrick::client;
 using namespace cocos2d;
 
-#include "util.h"
+#include "flatbuffers/util.h"
 
 #include <iostream>
 

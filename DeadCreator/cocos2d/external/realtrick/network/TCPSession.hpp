@@ -1,5 +1,5 @@
 //
-//  Session.hpp
+//  TCPSession.hpp
 //  DeadCreator
 //
 //  Created by NamJunHyeon on 2016. 5. 3..
@@ -28,48 +28,45 @@ namespace realtrick
 {
     namespace network
     {
-        namespace tcp
+        
+        class TCPSession
         {
             
-            class Session
-            {
-                
-            public:
-                
-                Session();
-                virtual ~Session();
-                
-                void write(Packet* packet);
-                void close();
-                
-                void connect(const std::string& ip, const std::string& port);
-                bool isConnected() const { return _isConnected; }
-                
-                void enqueue(Packet* packet) { while (!_queue.push(packet)); }
-                void dequeue(Packet*& packet) { while (!_queue.pop(packet)); }
-                bool isQueueEmpty() { return _queue.empty(); }
-                
-            private:
-                
-                void doReadHeader();
-                void doReadBody();
-                void doWrite();
-                
-            private:
-                
-                boost::thread _thread;
-                boost::asio::io_service _io;
-                boost::asio::ip::tcp::socket _socket;
-                
-                Packet _recvBuf;
-                
-                std::deque<Packet*> _writeBuf;
-                boost::lockfree::queue<Packet*> _queue;
-                bool _isConnected;
-                
-            };
+        public:
             
-        }
+            TCPSession();
+            virtual ~TCPSession();
+            
+            void write(Packet* packet);
+            void close();
+            
+            void connect(const std::string& ip, const std::string& port);
+            bool isConnected() const { return _isConnected; }
+            
+            void enqueue(Packet* packet) { while (!_queue.push(packet)); }
+            void dequeue(Packet*& packet) { while (!_queue.pop(packet)); }
+            bool isQueueEmpty() { return _queue.empty(); }
+            
+        private:
+            
+            void doReadHeader();
+            void doReadBody();
+            void doWrite();
+            
+        private:
+            
+            boost::thread _thread;
+            boost::asio::io_service _io;
+            boost::asio::ip::tcp::socket _socket;
+            
+            Packet _recvBuf;
+            
+            std::deque<Packet*> _writeBuf;
+            boost::lockfree::queue<Packet*> _queue;
+            bool _isConnected;
+            
+        };
+        
     }
 }
 

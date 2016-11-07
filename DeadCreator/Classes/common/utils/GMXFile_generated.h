@@ -3,7 +3,7 @@
 #ifndef FLATBUFFERS_GENERATED_GMXFILE_DEADCREATOR_H_
 #define FLATBUFFERS_GENERATED_GMXFILE_DEADCREATOR_H_
 
-#include "flatbuffers.h"
+#include "flatbuffers/flatbuffers.h"
 
 namespace DeadCreator {
     

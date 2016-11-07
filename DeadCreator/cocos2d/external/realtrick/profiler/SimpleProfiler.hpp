@@ -13,14 +13,7 @@
 #include <string>
 #include <chrono>
 
-
-#ifndef _ENABLE_ATOMIC_ALIGNMENT_FIX
-#define _ENABLE_ATOMIC_ALIGNMENT_FIX
-#endif
-
-#include <boost/thread.hpp>
-#include <boost/bind.hpp>
-#include <boost/asio.hpp>
+#include "NetworkWriter.hpp"
 
 #define PROFILE_BEGIN_FRAME realtrick::profiler::SimpleProfiler::getInstance().beginFrame()
 #define PROFILE_END_FRAME realtrick::profiler::SimpleProfiler::getInstance().endFrame()
@@ -36,7 +29,6 @@ namespace realtrick
         
         class Block;
         class Element;
-        class NetworkWriter;
         
         class SimpleProfiler
         {

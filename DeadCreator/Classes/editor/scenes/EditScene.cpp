@@ -6,7 +6,9 @@
 //
 //
 
+#ifndef _ENABLE_ATOMIC_ALIGNMENT_FIX
 #define _ENABLE_ATOMIC_ALIGNMENT_FIX
+#endif
 
 #include <array>
 #include <boost/filesystem.hpp>
@@ -36,7 +38,7 @@ using namespace realtrick;
 using namespace realtrick::editor;
 
 #include "GMXFile_generated.h"
-#include "util.h"
+#include "flatbuffers/util.h"
 
 
 Scene* EditScene::createScene()

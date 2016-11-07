@@ -12,10 +12,9 @@
 #include "Mat3.hpp"
 #include "SizeProtocol.h"
 
-#include "imgui.h"
-#include "imgui_internal.h"
-
-#include "GameServer.hpp"
+#include "realtrick/imgui/imgui.h"
+#include "realtrick/imgui/imgui_internal.h"
+#include "realtrick/network/TCPSession.hpp"
 
 #include "Box2D/Box2D.h"
 #include "Box2D/Common/b2Draw.h"
@@ -39,7 +38,7 @@ namespace realtrick
 
 			explicit SimulatorLayer(EditScene* layer) : _imguiLayer(layer)
 			{
-                client::GameServer::getInstance().connect("127.0.0.1", "4242");
+                _tcpSession.connect("127.0.0.1", "4242");
             }
 			virtual ~SimulatorLayer() = default;
 
@@ -96,6 +95,7 @@ namespace realtrick
 			realtrick::Mat3 _cameraTransform;
             
             cocos2d::Vec2 _debugOrigin;
+            realtrick::network::TCPSession _tcpSession;
 
 		};
 

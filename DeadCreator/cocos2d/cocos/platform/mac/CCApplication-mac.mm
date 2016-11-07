@@ -34,7 +34,7 @@ THE SOFTWARE.
 #include "math/CCGeometry.h"
 #include "base/CCDirector.h"
 
-#include "SimpleProfiler.hpp"
+#include "realtrick/profiler/SimpleProfiler.hpp"
 
 NS_CC_BEGIN
 

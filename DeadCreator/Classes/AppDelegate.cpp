@@ -1,13 +1,12 @@
 #define _ENABLE_ATOMIC_ALIGNMENT_FIX
 #include "AppDelegate.h"
 #include "EditScene.hpp"
-#include "MainMenu3.hpp"
 #include "DummyScene.hpp"
 #include "ShaderTestScene.hpp"
 
 #if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
-#include "ImGuiGLViewImpl.h"
-#include "ImGuiLayer.h"
+#include "realtrick/imgui/ImGuiGLViewImpl.h"
+#include "realtrick/imgui/ImGuiLayer.h"
 #endif
 
 #include "SizeProtocol.h"

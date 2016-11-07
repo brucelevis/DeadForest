@@ -9,8 +9,8 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "imgui.h"
-#include "imgui_internal.h"
+#include "realtrick/imgui/imgui.h"
+#include "realtrick/imgui/imgui_internal.h"
 #include "GMXLayer.hpp"
 #include "LocationNode.hpp"
 

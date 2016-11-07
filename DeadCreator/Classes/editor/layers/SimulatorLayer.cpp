@@ -21,7 +21,7 @@ using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
 
-#include "profiling_schema_generated.h"
+#include "realtrick/profiler/profiling_schema_generated.h"
 
 
 void SimulatorLayer::showLayer(bool& opened)
@@ -310,15 +310,15 @@ void SimulatorLayer::receiveProfileDataAndRender()
     
     auto drawList = ImGui::GetWindowDrawList();
     
-    if ( !GameServer::getInstance().isQueueEmpty() )
+    if ( !_tcpSession.isQueueEmpty() )
     {
-        Packet* packet = nullptr;
-        GameServer::getInstance().dequeue(packet);
+        network::Packet* packet = nullptr;
+        _tcpSession.dequeue(packet);
         packet->decode();
         
         switch ( packet->type() )
         {
-            case PacketType::PROFILE_INFO_FLATBUFFERS:
+            case network::PacketType::PROFILE_INFO_FLATBUFFERS:
             {
                 auto obj = realtrick::profiler::GetData(packet->body());
                 

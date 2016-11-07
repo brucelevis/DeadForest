@@ -16,7 +16,6 @@ using namespace std::chrono;
 
 #include "SimpleProfiler.hpp"
 #include "Block.hpp"
-#include "NetworkWriter.hpp"
 using namespace realtrick::profiler;
 
 #include "tinyxml2.h"
@@ -242,8 +241,8 @@ void SimpleProfiler::writeToNetwork(WriteType type)
         {
             auto flatbufferData = flatbufferWriter();
             
-            Packet packet;
-            packet.encode(flatbufferData.first, flatbufferData.second, PacketType::PROFILE_INFO_FLATBUFFERS);
+            network::Packet packet;
+            packet.encode(flatbufferData.first, flatbufferData.second, network::PacketType::PROFILE_INFO_FLATBUFFERS);
             _networkWriter->deliveryPacket(&packet);
             
             break;

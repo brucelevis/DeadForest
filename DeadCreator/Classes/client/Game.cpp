@@ -396,7 +396,6 @@ void Game::removeEntity(EntityBase* ent)
 		}
 	}
     
-    
     if ( isMasked(ent->getFamilyMask(), FamilyMask::ITEM_BASE) )
     {
         static_cast<ItemBase*>(ent)->removeFromWorld();

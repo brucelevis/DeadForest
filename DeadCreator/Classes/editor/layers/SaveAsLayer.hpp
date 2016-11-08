@@ -7,7 +7,10 @@
 //
 
 #pragma once
+
+#ifndef _ENABLE_ATOMIC_ALIGNMENT_FIX
 #define _ENABLE_ATOMIC_ALIGNMENT_FIX
+#endif
 
 #include <boost/filesystem.hpp>
 

@@ -18,7 +18,7 @@ PhysicsBase::~PhysicsBase()
 }
 
 
-bool PhysicsBase::initWithPhysicsBody(PhysicsManager* mgr, const b2BodyDef & bd, const b2FixtureDef & fd, int type)
+bool PhysicsBase::initWithPhysicsBody(PhysicsManager* mgr, const b2BodyDef & bd, const b2FixtureDef & fd, Type type)
 {
     _physicsManager = mgr;
     

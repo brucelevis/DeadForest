@@ -6,13 +6,14 @@
 //
 //
 
-#define _ENABLE_ATOMIC_ALIGNMENT_FIX
 #include "DummyScene.hpp"
 #include "EditScene.hpp"
 #include "SimulatorLayer.hpp"
 using namespace realtrick::editor;
 
 #include "Game.hpp"
+#include "PhysicsManager.hpp"
+#include "Wall.hpp"
 #include "Camera2D.hpp"
 #include "GameResource.hpp"
 #include "RenderingSystem.hpp"
@@ -37,6 +38,7 @@ void SimulatorLayer::showLayer(bool& opened)
     static bool isPhysicsAABB = false;
     static bool isPhysicsPair = false;
     static bool isPhysicsCenterOfMass = false;
+    static bool isQueryWall = false;
 
 	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2 - GAME_SCREEN_WIDTH / 2,
 		ImGui::GetIO().DisplaySize.y / 2 - GAME_SCREEN_HEIGHT / 2), ImGuiSetCond_Once);
@@ -199,7 +201,10 @@ void SimulatorLayer::showLayer(bool& opened)
 			opened = false;
 	}
 
-	if (!opened) closeLayer();
+    if (!opened)
+    {
+        closeLayer();
+    }
 
 	// setting layer
 	if (_isGameStarted)
@@ -246,6 +251,16 @@ void SimulatorLayer::showLayer(bool& opened)
                 {
                     if ( isPhysicsCenterOfMass ) AppendFlags(b2Draw::e_centerOfMassBit);
                     else ClearFlags(b2Draw::e_centerOfMassBit);
+                }
+                if ( ImGui::Checkbox("queried walls", &isQueryWall) )
+                {
+                    auto physics = game->getPhysicsManager();
+                    auto walls = physics->queryWallsAABB(game->getPlayerPtr()->getWorldPosition(), 500, 300);
+                    for(auto& wall : walls)
+                    {
+//                        auto body = wall->getBody();
+//                        body->
+                    }
                 }
                 
                 ImGui::TreePop();

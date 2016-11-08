@@ -23,33 +23,27 @@ namespace realtrick
 
 		public:
 
-			enum Type
-			{
-				kHuman, kWall, kItem
-			};
+			enum class Type { kHuman, kWall, kItem };
 
 			PhysicsBase();
 			virtual ~PhysicsBase();
 
-			virtual bool initWithPhysicsBody(PhysicsManager* mgr, const b2BodyDef& bd, const b2FixtureDef& fd, int type);
-
+			virtual bool initWithPhysicsBody(PhysicsManager* mgr, const b2BodyDef& bd, const b2FixtureDef& fd, Type type);
+            Type getType() const { return _type; }
+            b2Body* getBody() const { return _body; }
+            
 			virtual cocos2d::Vec2 getWorldPosition() const = 0;
 			virtual void setWorldPosition(const cocos2d::Vec2& pos) = 0;
-
 			virtual cocos2d::Vec2 getVelocity() const = 0;
-			virtual void setVelocity(const cocos2d::Vec2& velocity) = 0;
-
-			virtual cocos2d::Vec2 getHeading() const = 0;
-
+            virtual void setVelocity(const cocos2d::Vec2& velocity) = 0;
+            virtual cocos2d::Vec2 getHeading() const = 0;
 			virtual float getRotationZ() const = 0;
-
-			inline int getType() const { return _type; }
 
 		protected:
 
             PhysicsManager* _physicsManager;
 			b2Body* _body;
-			int _type;
+			Type _type;
 
 		private:
 

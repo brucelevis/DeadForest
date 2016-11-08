@@ -17,7 +17,7 @@ bool QueryWallByAABB::ReportFixture(b2Fixture* fixture)
 	if (userData)
 	{
 		PhysicsBase* physic = static_cast<PhysicsBase*>(userData);
-		if (physic->getType() == PhysicsBase::kWall)
+		if (physic->getType() == PhysicsBase::Type::kWall)
 		{
 			walls.push_back(static_cast<Wall*>(physic));
 		}
@@ -31,11 +31,11 @@ bool QueryEntityByAABB::ReportFixture(b2Fixture* fixture)
 	if (userData)
 	{
 		PhysicsBase* physic = static_cast<PhysicsBase*>(userData);
-		if (physic->getType() == PhysicsBase::kHuman)
+		if (physic->getType() == PhysicsBase::Type::kHuman)
 		{
 			entities.push_back(static_cast<HumanBase*>(physic));
 		}
-		else if (physic->getType() == PhysicsBase::kItem)
+		else if (physic->getType() == PhysicsBase::Type::kItem)
 		{
 			entities.push_back(static_cast<ItemBase*>(physic));
 		}
@@ -53,7 +53,7 @@ float32 QueryWallByRayCast::ReportFixture(
 	if (userData)
 	{
 		PhysicsBase* physic = static_cast<PhysicsBase*>(userData);
-		if (physic->getType() == PhysicsBase::kWall)
+		if (physic->getType() == PhysicsBase::Type::kWall)
 		{
 			walls.push_back(static_cast<Wall*>(physic));
 		}
@@ -72,11 +72,11 @@ float32 QueryEntityByRayCast::ReportFixture(
 	if (userData)
 	{
 		PhysicsBase* physic = static_cast<PhysicsBase*>(userData);
-		if (physic->getType() == PhysicsBase::kHuman)
+		if (physic->getType() == PhysicsBase::Type::kHuman)
 		{
 			entities.push_back(static_cast<HumanBase*>(physic));
 		}
-		else if (physic->getType() == PhysicsBase::kItem)
+		else if (physic->getType() == PhysicsBase::Type::kItem)
 		{
 			entities.push_back(static_cast<ItemBase*>(physic));
 		}
@@ -163,13 +163,13 @@ void PhysicsManager::BeginContact(b2Contact* contact)
 		PhysicsBase* a = static_cast<PhysicsBase*>(bodyUserDataA);
 		PhysicsBase* b = static_cast<PhysicsBase*>(bodyUserDataB);
 
-		if (a->getType() == PhysicsBase::kHuman && b->getType() == PhysicsBase::kHuman)
+		if (a->getType() == PhysicsBase::Type::kHuman && b->getType() == PhysicsBase::Type::kHuman)
 		{
 			auto humanA = static_cast<HumanBase*>(a);
 			auto humanB = static_cast<HumanBase*>(b);
 		}
 
-		else if (a->getType() == PhysicsBase::kHuman && b->getType() == PhysicsBase::kItem)
+		else if (a->getType() == PhysicsBase::Type::kHuman && b->getType() == PhysicsBase::Type::kItem)
 		{
 			auto human = static_cast<HumanBase*>(a);
 			auto item = static_cast<ItemBase*>(b);
@@ -183,19 +183,19 @@ void PhysicsManager::BeginContact(b2Contact* contact)
 			}
 		}
 
-		else if (a->getType() == PhysicsBase::kHuman && b->getType() == PhysicsBase::kWall)
+		else if (a->getType() == PhysicsBase::Type::kHuman && b->getType() == PhysicsBase::Type::kWall)
 		{
 			auto human = static_cast<HumanBase*>(a);
 			auto wall = static_cast<Wall*>(b);
 		}
 
-		else if (a->getType() == PhysicsBase::kWall && b->getType() == PhysicsBase::kHuman)
+		else if (a->getType() == PhysicsBase::Type::kWall && b->getType() == PhysicsBase::Type::kHuman)
 		{
 			auto wall = static_cast<Wall*>(a);
 			auto human = static_cast<HumanBase*>(b);
 		}
 
-		else if (a->getType() == PhysicsBase::kItem && b->getType() == PhysicsBase::kHuman)
+		else if (a->getType() == PhysicsBase::Type::kItem && b->getType() == PhysicsBase::Type::kHuman)
 		{
 			auto item = static_cast<ItemBase*>(a);
 			auto human = static_cast<HumanBase*>(b);

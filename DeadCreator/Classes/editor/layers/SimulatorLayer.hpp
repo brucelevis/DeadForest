@@ -7,7 +7,7 @@
 //
 
 #pragma once
-#define _ENABLE_ATOMIC_ALIGNMENT_FIX
+
 #include "cocos2d.h"
 #include "Mat3.hpp"
 #include "SizeProtocol.h"
@@ -17,7 +17,7 @@
 #include "realtrick/network/TCPSession.hpp"
 
 #include "Box2D/Box2D.h"
-#include "Box2D/Common/b2Draw.h"
+#include "Box2D/common/b2Draw.h"
 
 namespace realtrick
 {
@@ -30,7 +30,7 @@ namespace realtrick
 	{
 
 		class EditScene;
-
+        
 		class SimulatorLayer : public cocos2d::Node, public b2Draw
 		{
 
@@ -96,7 +96,7 @@ namespace realtrick
             
             cocos2d::Vec2 _debugOrigin;
             realtrick::network::TCPSession _tcpSession;
-
+            
 		};
 
 	}

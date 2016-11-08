@@ -11,7 +11,10 @@ PhysicsBase::PhysicsBase() :
 
 PhysicsBase::~PhysicsBase()
 {
-    _physicsManager->ReserveRemoveBody(_body);
+    if ( _body )
+    {
+        _physicsManager->ReserveRemoveBody(_body);
+    }
 }
 
 

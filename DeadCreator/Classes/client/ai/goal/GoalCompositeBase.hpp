@@ -2,7 +2,7 @@
 //  GoalCompositeBase.hpp
 //  DeadCreator
 //
-//  Created by NamJunHyeon on 2016. 8. 10..
+//  Created by mac on 2016. 8. 10..
 //
 //
 
@@ -38,7 +38,7 @@ namespace realtrick
                     goal->terminate();
                 _subGoals.clear();
             }
-            
+
             virtual void activate() = 0;
             virtual GoalStatus process() = 0;
             virtual void terminate() = 0;

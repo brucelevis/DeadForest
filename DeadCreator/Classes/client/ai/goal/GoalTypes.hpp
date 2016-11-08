@@ -2,7 +2,7 @@
 //  GoalTypes.hpp
 //  DeadCreator
 //
-//  Created by NamJunHyeon on 2016. 8. 17..
+//  Created by mac on 2016. 8. 17..
 //
 //
 
@@ -34,7 +34,13 @@ namespace realtrick
 			FOLLOW_PLAYER = 16,
 			AVOID_COLLISION = 17,
 			MAKE_FORMATION = 18,
-			WALK_WITH_AIM = 19
+			WALK_WITH_AIM = 19,
+			RAID = 20,
+			HIDE = 21,
+			PROVOKE = 22,
+			WALK_TO_DIRECTION = 23,
+			SHAKE = 24,
+			AMBUSH = 25
         };
         
 
@@ -56,12 +62,3 @@ namespace realtrick
 		};
     }
 }
-
-
-
-
-
-
-
-
-

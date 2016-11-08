@@ -97,7 +97,7 @@ void AbstTargetingSystem::update()
 
 bool AbstTargetingSystem::isTargetWithinFOV() const
 {
-  return _owner->getSensoryMemory()->isOpponentWithinFOV(_target);
+  return _owner->getSensoryMemory()->isEntityViewable(_target);
 }
 
 //returns true if there is a currently assigned target
@@ -108,7 +108,7 @@ bool AbstTargetingSystem::isTargetPresent() const
 
 bool AbstTargetingSystem::isTargetAttackable() const
 {
-  return _owner->getSensoryMemory()->isOpponentAttackable(_target);
+  return _owner->getSensoryMemory()->isEntityAttackable(_target);
 }
 
 cocos2d::Vec2 AbstTargetingSystem::getLastRecordedPosition() const
@@ -129,7 +129,7 @@ std::chrono::duration<double> AbstTargetingSystem::getTimeTargetHasBeenOutOfView
 
 bool AbstTargetingSystem::addFollower(HumanBase* const follower)
 {
-	//bool removed = removeFollower(follower);
+	bool removed = removeFollower(follower);
 
 	for (auto& e : _followers)
 	{

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GOAL_RUN_AWAY_H
+#define GOAL_RUN_AWAY_H
+#pragma warning (disable:4786)
 
 #include "GoalEvaluatable.hpp"
 #include "Types.hpp"
@@ -28,9 +30,5 @@ namespace realtrick
 
 
 
-
-
-
-
-
+#endif
 

@@ -1,15 +1,10 @@
-#include "GoalAvoid.hpp"
+#include "GoalAmbush.hpp"
 #include "GoalSeekToPosition.hpp"
+#include "GoalAttackTarget.hpp"
 #include "HumanBase.hpp"
 #include "AbstTargetingSystem.hpp"
 #include "SensoryMemory.hpp"
-#include "InputMoveBegin.hpp"
-#include "InputMoveEnd.hpp"
-
-namespace
-{
-	float kMoveDistance = 150.0f;
-}
+#include "InventoryData.hpp"
 
 using namespace realtrick::client;
 using namespace realtrick;
@@ -17,51 +12,49 @@ USING_NS_CC;
 
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
-GoalAvoid::GoalAvoid(HumanBase* owner)
+GoalAmbush::GoalAmbush(HumanBase* owner, float character_bias)
 	:
-	GoalCompositeBase(owner)
+	GoalEvaluatable(owner, character_bias)
 {
-	setGoalType(GoalType::AVOID);
+	setGoalType(GoalType::AMBUSH);
 }
 
 
 //---------------------------- activate -------------------------------------
 //-----------------------------------------------------------------------------  
-void GoalAvoid::activate()
+void GoalAmbush::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
-	if (_owner->getTargetSys()->isTargetPresent())
-	{
-		Vec2 avoidMove(_owner->getSensoryMemory()->avoidingEnemiesVector(_owner->getWorldPosition(), _owner->getHeading()));
-		addSubgoal(new GoalSeekToPosition(_owner, _owner->getWorldPosition() + avoidMove * kMoveDistance));
-	}
+
+	if (!_owner->getTargetSys()->isTargetPresent())
+		return;
+	
+	addSubgoal(new GoalAttackTarget(_owner));
 }
 
 
 //------------------------------ process --------------------------------------
 //-----------------------------------------------------------------------------
-GoalStatus GoalAvoid::process()
+GoalStatus GoalAmbush::process()
 {
-	// If status is INACTIVE, call activate()
 	if (isInactive())
 		activate();
 
-	if (getGoalStatus() == GoalStatus::COMPLETED ||
-		getGoalStatus() == GoalStatus::FAILED)
-		return GoalStatus::COMPLETED;
-
-	processSubgoals();
+	setGoalStatus(processSubgoals());
 	
-	return GoalStatus::ACTIVE;
+	return getGoalStatus();
 }
 
 
 //---------------------------- terminate --------------------------------------
 //-----------------------------------------------------------------------------
-void GoalAvoid::terminate()
+void GoalAmbush::terminate()
 {
-	InputMoveEnd moveEnd(_owner);
-	moveEnd.execute();
+	removeAllSubgoals();
 }
 
 
+int GoalAmbush::evaluate(HumanBase* const owner)
+{
+	return 1;
+}

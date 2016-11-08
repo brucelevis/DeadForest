@@ -18,9 +18,9 @@ using namespace std::chrono;
 #include "Block.hpp"
 using namespace realtrick::profiler;
 
-#include "tinyxml2.h"
+#include "tinyxml2/tinyxml2.h"
 #include "json/rapidjson.h"
-#include "flatbuffers.h"
+#include "flatbuffers/flatbuffers.h"
 #include "profiling_schema_generated.h"
 using namespace flatbuffers;
 

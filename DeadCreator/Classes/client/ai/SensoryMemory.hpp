@@ -105,7 +105,7 @@ namespace realtrick
 
 		public:
 
-			SensoryMemory(HumanBase* const owner, double memory_span);
+			SensoryMemory(HumanBase* const owner, double memory_span, float viewRange = 300.0f);
 
 			~SensoryMemory();
 
@@ -124,8 +124,8 @@ namespace realtrick
 			//this method renders the infomation about sensory memory
 			void	render();
 
-			bool			isOpponentAttackable(HumanBase* const opponent)const;
-			bool			isOpponentWithinFOV(HumanBase* const opponent)const;
+			bool			isEntityAttackable(HumanBase* const entity)const;
+			bool			isEntityViewable(HumanBase* const entity)const;
 			cocos2d::Vec2	getLastRecordedPositionOfOpponent(HumanBase* const opponent)const;
 			std::chrono::duration<double>			getTimeOpponentHasBeenVisible(HumanBase* const opponent)const;
 			std::chrono::duration<double>			getTimeSinceLastSensed(HumanBase* const opponent)const;

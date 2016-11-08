@@ -2,7 +2,7 @@
 //  GoalTraverseEdge.cpp
 //  DeadCreator
 //
-//  Created by NamJunHyeon on 2016. 8. 17..
+//  Created by mac on 2016. 8. 17..
 //
 //
 
@@ -81,7 +81,7 @@ GoalStatus GoalTraverseEdge::process()
 	else
 	{
 		if (_owner->getWorldPosition().distance(_edge.getDestination()) < 
-			_owner->getBoundingRadius() * 3.0f)
+			_owner->getBoundingRadius() * 4.0f)
 		{
 			setGoalStatus(GoalStatus::COMPLETED);
 		}

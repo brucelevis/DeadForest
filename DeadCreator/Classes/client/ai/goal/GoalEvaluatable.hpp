@@ -2,7 +2,7 @@
 //  GoalCompositeBase.hpp
 //  DeadCreator
 //
-//  Created by NamJunHyeon on 2016. 8. 10..
+//  Created by mac on 2016. 8. 10..
 //
 //
 
@@ -21,12 +21,12 @@ namespace realtrick
             
         public:
             
-			inline float getCharacterBias() const { return _characterBias; };
+			inline float getCharacterBias() const { return _character_bias; };
 
-            explicit GoalEvaluatable(HumanBase* owner, float _characterBias)
+            explicit GoalEvaluatable(HumanBase* owner, float character_bias) 
 				:
 				GoalCompositeBase(owner),
-				_characterBias(_characterBias)
+				_character_bias(character_bias)
             {
                 setGoalType(GoalType::INVALID);
             }
@@ -37,9 +37,7 @@ namespace realtrick
 			virtual int evaluate(HumanBase* const owner) = 0;
 
         protected:
-            
-			float _characterBias;
-            
+			float _character_bias;
         };
         
     }

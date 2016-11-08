@@ -2,11 +2,13 @@
 //  GoalAttackToDestination.cpp
 //  DeadCreator
 //
-//  Created by NamJunHyeon on 2016. 8. 17..
+//  Created by mac on 2016. 8. 17..
 //
 //
 
-#include "Goals.hpp"
+#include "GoalAttackToDestination.hpp"
+#include "GoalAttackTarget.hpp"
+#include "GoalMoveToPosition.hpp"
 #include "AbstTargetingSystem.hpp"
 #include "HumanBase.hpp"
 

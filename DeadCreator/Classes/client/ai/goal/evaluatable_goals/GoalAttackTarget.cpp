@@ -2,17 +2,21 @@
 //  GoalTraverseEdge.cpp
 //  DeadCreator
 //
-//  Created by NamJunHyeon on 2016. 8. 17..
+//  Created by mac on 2016. 8. 17..
 //
 //
 
+#include "GoalAttackTarget.hpp"
+#include "GoalMoveToPosition.hpp"
 #include "GraphEdgeTypes.hpp"
 #include "InputCommands.hpp"
 #include "PathEdge.hpp"
 #include "HumanBase.hpp"
 #include "PathPlanner.hpp"
 #include "AbstTargetingSystem.hpp"
-#include "Goals.hpp"
+#include "GoalMainAttack.hpp"
+#include "GoalRangeAttack.hpp"
+#include "GoalHuntTarget.hpp"
 #include "SensoryMemory.hpp"
 #include "InventoryData.hpp"
 
@@ -57,19 +61,30 @@ void GoalAttackTarget::activate()
 	//then select a tactic to follow while shooting
 	if (_owner->getTargetSys()->isTargetAttackable())
 	{
-		if(_owner->getEquipedWeapon() == nullptr) 
+		if (_owner->getEquipedWeapon() == nullptr)
+		{
+			if(_owner->getEntityType() == EntityType::ENTITY_PLAYER)
+				addSubgoal(
+					new GoalMainAttack(
+						_owner,
+						_owner->getTargetSys()->getTarget()->getWorldPosition(),
+						GoalMainAttack::roughMoving));
+			else
+				addSubgoal(
+					new GoalMainAttack(
+						_owner,
+						_owner->getTargetSys()->getTarget()->getWorldPosition(),
+						GoalMainAttack::roughMoving));
+
+		}
+		else if (_owner->getEquipedWeapon()->getEntityType() == EntityType::ITEM_AXE)
+		{
 			addSubgoal(
 				new GoalMainAttack(
 					_owner,
 					_owner->getTargetSys()->getTarget()->getWorldPosition(),
-					GoalMainAttack::roughMoving));
-
-		else if(_owner->getEquipedWeapon()->getEntityType() == EntityType::ITEM_AXE)
-			addSubgoal(
-				new GoalMainAttack(
-					_owner, 
-					_owner->getTargetSys()->getTarget()->getWorldPosition(),
 					GoalMainAttack::smartMoving));
+		}
 		else
 		{
 			if(_owner->getSensoryMemory()->getListOfRecentlySensedEntities(false).size() > 
@@ -124,7 +139,7 @@ GoalStatus GoalAttackTarget::process()
 int GoalAttackTarget::evaluate(HumanBase* const owner) 
 {
 	if (_owner->getTargetSys()->isTargetPresent())
-		return kWeightForAttack * getCharacterBias();
+		return kWeightForAttack * _character_bias;
 	else
 		return 0;
 }

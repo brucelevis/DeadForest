@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GOAL_RANGE_ATTACK_H
+#define GOAL_RANGE_ATTACK_H
+#pragma warning (disable:4786)
 
 #include "GoalBase.hpp"
 
@@ -39,9 +41,5 @@ namespace realtrick
 
 
 
-
-
-
-
-
+#endif
 

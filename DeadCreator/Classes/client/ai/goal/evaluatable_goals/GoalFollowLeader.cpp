@@ -2,15 +2,20 @@
 //  GoalFollowLeader.cpp
 //  DeadCreator
 //
-//  Created by NamJunHyeon on 2016. 8. 17..
+//  Created by mac on 2016. 8. 17..
 //
 //
 
-#include "Goals.hpp"
+#include "GoalFollowLeader.hpp"
+#include "GoalAttackTarget.hpp"
+#include "GoalMoveToPosition.hpp"
 #include "AbstTargetingSystem.hpp"
 #include "SensoryMemory.hpp"
 #include "HumanBase.hpp"
 #include "Game.hpp"
+#include "GoalRangeAttack.hpp"
+#include "GoalNetwork.hpp"
+#include "GoalWalkWithAim.hpp"
 #include "InputCommands.hpp"
 
 using namespace realtrick;
@@ -115,7 +120,7 @@ int GoalFollowLeader::evaluate(HumanBase* const owner)
 	if (distance < 500.0f)
 		weight = 1;
 	else
-		weight = 1 + (int)(distance / 50.0f);
+		weight = 1 + (int)(distance / 25.0f);
 
 	return weight;
 }

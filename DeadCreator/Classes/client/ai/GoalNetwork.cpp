@@ -14,15 +14,15 @@ void GoalNetwork::staticInitConstants()
 {
 	cocos2d::Vec2 positions[kNumOfMaxFormations] =
 	{
-		Vec2(-1, 1),	Vec2(0, 1),		Vec2(1, 1),
-		Vec2(-1, 0),					Vec2(1, 0),
 		Vec2(-1, -1),	Vec2(0, -1),	Vec2(1, -1),
+		Vec2(-1, 0),					Vec2(1, 0),
+		Vec2(-1, 1),	Vec2(0, 1),		Vec2(1, 1),
 
-		Vec2(-2, 2),	Vec2(-1, 2),	Vec2(0, 2),		Vec2(1, 2),		Vec2(2, 2),
-		Vec2(-2, 1),													Vec2(2, 1),
-		Vec2(-2, 0),													Vec2(2, 0),
-		Vec2(-2, -1),													Vec2(2, -1),
 		Vec2(-2, -2),	Vec2(-1, -2),	Vec2(0, -2),	Vec2(1, -2),	Vec2(2, -2),
+		Vec2(-2, -1),													Vec2(2, -1),
+		Vec2(-2, 0),													Vec2(2, 0),
+		Vec2(-2, 1),													Vec2(2, 1),
+		Vec2(-2, 2),	Vec2(-1, 2),	Vec2(0, 2),		Vec2(1, 2),		Vec2(2, 2),
 	};
 
 	for (int i = 0; i < kNumOfMaxFormations; i++)

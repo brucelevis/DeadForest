@@ -3,7 +3,12 @@
 #include "SensoryMemory.hpp"
 #include "HumanBase.hpp"
 #include "InventoryData.hpp"
-#include "InputCommands.hpp"
+#include "InputAttackBegin.hpp"
+#include "InputAttackEnd.hpp"
+#include "InputBezelBegin.hpp"
+#include "InputBezelEnd.hpp"
+#include "InputMoveBegin.hpp"
+#include "InputMoveEnd.hpp"
 #include "StateMachine.hpp"
 
 using namespace realtrick::client;
@@ -33,6 +38,22 @@ cocos2d::Vec2 GoalMainAttack::roughMoving(HumanBase* owner)
 		target = owner->getTargetSys()->getTarget();
 		return (target->getWorldPosition() - owner->getWorldPosition()).getNormalized();
 	}
+	return owner->getMoving();
+}
+
+cocos2d::Vec2 GoalMainAttack::chaseMoving(HumanBase* owner)
+{
+	HumanBase* target = nullptr;
+	if (owner->getTargetSys()->isTargetPresent())
+	{
+		target = owner->getTargetSys()->getTarget();
+		return target->getMoving();
+	}
+	return owner->getMoving();
+}
+
+cocos2d::Vec2 GoalMainAttack::simpleMoving(HumanBase* owner)
+{
 	return owner->getMoving();
 }
 

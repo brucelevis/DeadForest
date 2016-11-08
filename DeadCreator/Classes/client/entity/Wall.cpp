@@ -33,11 +33,13 @@ bool Wall::init(PhysicsManager* mgr, const std::vector<cocos2d::Vec2>& vertices)
 	b2BodyDef groundDef;
 	groundDef.type = b2BodyType::b2_staticBody;
 
-	b2Vec2* v = new b2Vec2[vertices.size()];
-	for (int i = 0; i < vertices.size(); ++i)
+    auto size = vertices.size();
+	b2Vec2* v = new b2Vec2[size + 1];
+	for (int i = 0; i < size - 1; ++i)
 	{
 		v[i].Set(vertices[i].x, vertices[i].y);
 	}
+    v[size - 1].Set(vertices.front().x, vertices.front().y);
 
 	b2ChainShape chain;
 	chain.CreateChain(v, static_cast<int32>(vertices.size()));

@@ -2,7 +2,7 @@
 //  GoalFindWeapon.cpp
 //  DeadCreator
 //
-//  Created by NamJunHyeon on 2016. 8. 17..
+//  Created by mac on 2016. 8. 17..
 //
 //
 
@@ -21,7 +21,7 @@
 
 using namespace realtrick::client;
 using namespace realtrick;
-using namespace cocos2d;
+USING_NS_CC;
 
 
 GoalFindWeapon::GoalFindWeapon(HumanBase* owner, float character_bias)

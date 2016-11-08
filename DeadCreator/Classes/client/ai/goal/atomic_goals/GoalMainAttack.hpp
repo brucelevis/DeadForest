@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GOAL_MAIN_ATTACK_H
+#define GOAL_MAIN_ATTACK_H
+#pragma warning (disable:4786)
 
 #include "GoalBase.hpp"
 
@@ -14,6 +16,8 @@ namespace realtrick
 		public:
 			static cocos2d::Vec2 smartMoving(HumanBase* owner);
 			static cocos2d::Vec2 roughMoving(HumanBase* owner);
+			static cocos2d::Vec2 chaseMoving(HumanBase* owner);
+			static cocos2d::Vec2 simpleMoving(HumanBase* owner);
 
 			GoalMainAttack(
 				HumanBase* owner,
@@ -38,9 +42,5 @@ namespace realtrick
 
 
 
-
-
-
-
-
+#endif
 

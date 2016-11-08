@@ -8,7 +8,6 @@
 
 namespace
 {
-	float kDefaultViewRange = 600.0f;
 	float kDefaultAttackRange = 60.0f;
 }
 
@@ -35,12 +34,13 @@ std::stringstream & realtrick::client::operator<<(
 //-----------------------------------------------------------------------------
 SensoryMemory::SensoryMemory(
 	HumanBase* const owner,
-	double memory_span)
+	double memory_span, 
+	float viewRange)
 	:
 	_owner(owner),
 	_memorySpan(memory_span)
 {
-	_viewRange = kDefaultViewRange;
+	_viewRange = viewRange;
 	_attackRange = kDefaultAttackRange;
 }
 
@@ -118,26 +118,23 @@ void SensoryMemory::updateVision()
 
 					if (info.isLosOkay)
 					{
-						info.timeLastSensed =
-							system_clock::now().time_since_epoch();
-
-						info.timeLastVisible =
-							system_clock::now().time_since_epoch();
-
-						info.lastSensedPos = humanPos;
-
-						if (ownerPos.getDistance(humanPos) < _attackRange &&
-							info.isLosOkay)
+						if (ownerPos.getDistance(humanPos) < _attackRange)
 							info.attackable = true;
 						else
 							info.attackable = false;
 
-						if (info.viewable == false &&
-							info.isLosOkay)
-						{
-							info.viewable = true;
-							info.timeBecameVisible = info.timeLastSensed;
-						}
+						info.viewable = true;
+						info.timeBecameVisible = info.timeLastSensed;
+						info.timeLastSensed =
+							system_clock::now().time_since_epoch();
+						info.timeLastVisible =
+							system_clock::now().time_since_epoch();
+						info.lastSensedPos = humanPos;
+					}
+					else
+					{
+						info.attackable = false;
+						info.viewable = false;
 					}
 				}
 				else
@@ -205,9 +202,9 @@ const std::vector<ItemBase*>& SensoryMemory::getSensedItems() const
 //  returns true if the bot given as a parameter can be shot (ie. its not
 //  obscured by walls)
 //-----------------------------------------------------------------------------
-bool SensoryMemory::isOpponentAttackable(HumanBase* const opponent)const
+bool SensoryMemory::isEntityAttackable(HumanBase* const entity) const
 {
-	const auto& it = _memory.find(opponent);
+	const auto& it = _memory.find(entity);
 
 	if (it != _memory.end())
 		return it->second.attackable; 
@@ -219,9 +216,9 @@ bool SensoryMemory::isOpponentAttackable(HumanBase* const opponent)const
 //
 //  returns true if the bot given as a parameter is within FOV
 //-----------------------------------------------------------------------------
-bool SensoryMemory::isOpponentWithinFOV(HumanBase* const opponent) const
+bool SensoryMemory::isEntityViewable(HumanBase* const entity) const
 {
-	const auto& it = _memory.find(opponent);
+	const auto& it = _memory.find(entity);
 
 	if (it != _memory.end())
 		return it->second.viewable;

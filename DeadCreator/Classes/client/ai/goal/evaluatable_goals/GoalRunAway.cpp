@@ -1,4 +1,5 @@
-#include "Goals.hpp"
+#include "GoalRunAway.hpp"
+#include "GoalSeekToPosition.hpp"
 #include "HumanBase.hpp"
 #include "AbstTargetingSystem.hpp"
 #include "SensoryMemory.hpp"
@@ -23,16 +24,13 @@ GoalRunAway::GoalRunAway(HumanBase* owner, float character_bias)
 void GoalRunAway::activate()
 {
 	setGoalStatus(GoalStatus::ACTIVE);
+	
+	if (!_owner->getTargetSys()->isTargetPresent())
+		return;
 
 	cocos2d::Vec2 ownerPos = _owner->getWorldPosition();
 	cocos2d::Vec2 avoidMove(ownerPos);
 
-	if (_owner->getTargetSys()->getTarget() == nullptr)
-	{
-		setGoalStatus(GoalStatus::COMPLETED);
-		return;
-	}
-	
 	avoidMove = (_owner->getTargetSys()->getTarget()->getWorldPosition() - ownerPos).getPerp().getNormalized() * 800;
 	addSubgoal(new GoalSeekToPosition(_owner, _owner->getWorldPosition() + avoidMove));
 }
@@ -42,7 +40,6 @@ void GoalRunAway::activate()
 //-----------------------------------------------------------------------------
 GoalStatus GoalRunAway::process()
 {
-	// If status is INACTIVE, call activate()
 	if (isInactive())
 		activate();
 
@@ -62,10 +59,16 @@ void GoalRunAway::terminate()
 
 int GoalRunAway::evaluate(HumanBase* const owner)
 {
-	if (!_owner->getSensoryMemory()->isReadyToFight() && 
-		_owner->getSensoryMemory()->queryUsableRangeWeapon().size() == 0 &&
-		_owner->getSensoryMemory()->queryMeleeWeapon().size() == 0)
-		return 3;
+	if (!owner->getTargetSys()->isTargetPresent())
+		return 0;
+	
+	auto target = owner->getTargetSys()->getTarget();
 
-	return 0;
+	if (!target->getSensoryMemory()->isEntityViewable(owner))
+		return 0;
+
+	auto elist = _owner->getSensoryMemory()->getListOfRecentlySensedEntities(false);
+	auto alist = _owner->getSensoryMemory()->getListOfRecentlySensedEntities(true);
+
+	return std::max((int)elist.size() - (int)alist.size(), 0) * 10;
 }

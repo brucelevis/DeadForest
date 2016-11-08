@@ -1,5 +1,5 @@
-#ifndef GOAL_WALK_WITH_AIM_H
-#define GOAL_WALK_WITH_AIM_H
+#ifndef GOAL_WALK_TO_DIRECTION_H
+#define GOAL_WALK_TO_DIRECTION_H
 #pragma warning (disable:4786)
 
 #include "GoalBase.hpp"
@@ -10,18 +10,17 @@ namespace realtrick
 	{
 		class HumanBase;
 
-		class GoalWalkWithAim : public GoalBase
+		class GoalWalkToDirection : public GoalBase
 		{
 
 		public:
 
-			GoalWalkWithAim(
+			GoalWalkToDirection(
 				HumanBase* owner,
-				const cocos2d::Vec2& destination,
-				const cocos2d::Vec2& aimHeading,
+				const cocos2d::Vec2& direction,
 				float walkTime);
 
-			virtual ~GoalWalkWithAim() override
+			virtual ~GoalWalkToDirection() override
 			{}
 
 			virtual void activate() override;
@@ -30,8 +29,7 @@ namespace realtrick
 
 		public:
 			std::chrono::duration<double> _startTime;
-			cocos2d::Vec2 _destination;
-			cocos2d::Vec2 _aimHeading;
+			cocos2d::Vec2 _direction;
 			float _walkTime;
 		};
 	}

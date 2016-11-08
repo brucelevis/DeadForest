@@ -2,7 +2,7 @@
 //  GoalThink.cpp
 //  DeadCreator
 //
-//  Created by NamJunHyeon on 2016. 8. 10..
+//  Created by mac on 2016. 8. 10..
 //
 //
 
@@ -28,6 +28,8 @@ GoalThink::~GoalThink()
 void GoalThink::activate()
 {
     if ( _goalEntry.empty() ) return;
+    
+	cocos2d::log("entity %d  decision", _owner->getTag());
 
 	GoalBase* bestGoal = nullptr;
 	int weight = -1;
@@ -40,7 +42,10 @@ void GoalThink::activate()
 			bestGoal = e;
 			weight = entWeight;
 		}
+		cocos2d::log("goal : %d   weight : %d", e->getGoalType(), entWeight);
 	}
+	cocos2d::log("entity type : %d", _owner->getEntityType());
+	cocos2d::log("best goal : %d   weight : %d\n\n", bestGoal->getGoalType(), weight);
 
     addSubgoal(bestGoal);
     setGoalStatus(GoalStatus::ACTIVE);

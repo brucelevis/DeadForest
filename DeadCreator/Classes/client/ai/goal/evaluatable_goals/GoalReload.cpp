@@ -1,8 +1,9 @@
-#include "Goals.hpp"
+#include "GoalReload.hpp"
 #include "InventoryData.hpp"
 #include "HumanBase.hpp"
 #include "SensoryMemory.hpp"
-#include "InputCommands.hpp"
+#include "GoalAvoid.hpp"
+#include "InputReload.hpp"
 
 using namespace realtrick::client;
 using namespace realtrick;

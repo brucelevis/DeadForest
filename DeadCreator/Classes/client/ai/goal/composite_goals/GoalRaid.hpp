@@ -1,5 +1,5 @@
 //
-//  GoalAttackToDestination.hpp
+//  GoalRaid.hpp
 //  DeadCreator
 //
 //  Created by mac on 2016. 8. 17..
@@ -15,16 +15,14 @@ namespace realtrick
 {
     namespace client
     {
-        class GoalAttackToDestination : public GoalCompositeBase
+        class GoalRaid : public GoalCompositeBase
         {
-            
         public:
-			explicit GoalAttackToDestination(
+			explicit GoalRaid(
 				HumanBase* const owner,
-				const cocos2d::Vec2& destination,
-				float arriveRange);
+				std::function<cocos2d::Vec2(HumanBase*)> movingStrategy);
 
-			virtual ~GoalAttackToDestination() override
+			virtual ~GoalRaid() override
 			{}
 
             virtual void activate() override;
@@ -32,8 +30,8 @@ namespace realtrick
 			virtual void terminate() override;
 
 		private:
-			cocos2d::Vec2 _destination;
-			float _arriveRange;
+			bool _arrived;
+			std::function<cocos2d::Vec2(HumanBase*)> _movingStrategy;
         };
     }
 }

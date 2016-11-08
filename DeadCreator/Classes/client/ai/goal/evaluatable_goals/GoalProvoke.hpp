@@ -1,9 +1,10 @@
-#ifndef GOAL_RELOAD_H
-#define GOAL_RELOAD_H
+#ifndef GOAL_PROVOKE_H
+#define GOAL_PROVOKE_H
 #pragma warning (disable:4786)
 
 #include "GoalEvaluatable.hpp"
 #include "Types.hpp"
+#include <queue>
 
 namespace realtrick
 {
@@ -11,13 +12,13 @@ namespace realtrick
 	{
 		class HumanBase;
 
-		class GoalReload : public GoalEvaluatable
+		class GoalProvoke : public GoalEvaluatable
 		{
 
 		public:
 
-			GoalReload(HumanBase* owner, float character_bias = 0.0f);
-			virtual ~GoalReload() override
+			GoalProvoke(HumanBase* owner, float character_bias = 0.0f);
+			virtual ~GoalProvoke() override
 			{}
 
 			virtual int evaluate(HumanBase* const owner) override;
@@ -26,7 +27,10 @@ namespace realtrick
 			virtual void terminate() override;
 
 		private:
-			std::chrono::duration<double> _startTime;
+			cocos2d::Vec2 _savePos;
+			bool _arrivedTargetRange;
+			bool _finishedAvoid;
+			std::queue<GoalBase*> _queuedGoals;
 		};
 	}
 }

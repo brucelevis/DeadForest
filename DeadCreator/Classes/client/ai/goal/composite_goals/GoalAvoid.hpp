@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GOAL_AVOID_H
+#define GOAL_AVOID_H
+#pragma warning (disable:4786)
 
 #include "GoalCompositeBase.hpp"
 #include "Types.hpp"
@@ -27,9 +29,5 @@ namespace realtrick
 
 
 
-
-
-
-
-
+#endif
 

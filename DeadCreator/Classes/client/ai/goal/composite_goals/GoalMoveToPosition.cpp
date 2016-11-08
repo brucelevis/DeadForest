@@ -2,11 +2,13 @@
 //  GoalTraverseEdge.cpp
 //  DeadCreator
 //
-//  Created by NamJunHyeon on 2016. 8. 17..
+//  Created by mac on 2016. 8. 17..
 //
 //
 
-#include "Goals.hpp"
+#include "GoalMoveToPosition.hpp"
+#include "GoalFollowPath.hpp"
+#include "GoalSeekToPosition.hpp"
 #include "GraphEdgeTypes.hpp"
 #include "InputCommands.hpp"
 #include "PathEdge.hpp"
@@ -69,6 +71,7 @@ GoalStatus GoalMoveToPosition::process()
 	if (_goalStatus == GoalStatus::FAILED)
 	{
 		setGoalStatus(GoalStatus::INACTIVE);
+		log("GoalMoveToPosition FAILED");
 	}
 
 	return _goalStatus;

@@ -2,7 +2,7 @@
 //  ZombieBrain.hpp
 //  DeadCreator
 //
-//  Created by NamJunHyeon on 2016. 8. 10..
+//  Created by mac on 2016. 8. 10..
 //
 //
 
@@ -31,6 +31,7 @@ namespace realtrick
 
 			explicit ZombieBrain(HumanBase* owner) : BrainBase(owner)
 			{}
+            
         };
     }
 }

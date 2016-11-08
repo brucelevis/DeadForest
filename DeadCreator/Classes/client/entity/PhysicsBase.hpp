@@ -31,6 +31,7 @@ namespace realtrick
 			virtual bool initWithPhysicsBody(PhysicsManager* mgr, const b2BodyDef& bd, const b2FixtureDef& fd, Type type);
             Type getType() const { return _type; }
             b2Body* getBody() const { return _body; }
+            void removeFromWorld();
             
 			virtual cocos2d::Vec2 getWorldPosition() const = 0;
 			virtual void setWorldPosition(const cocos2d::Vec2& pos) = 0;

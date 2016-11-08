@@ -85,6 +85,20 @@ float32 QueryEntityByRayCast::ReportFixture(
 }
 
 
+
+
+//
+// physics manager
+//
+PhysicsManager::~PhysicsManager()
+{
+    for(auto body = _world->GetBodyList() ; body ; body = body->GetNext() )
+    {
+        _world->DestroyBody(body);
+    }
+}
+
+
 bool PhysicsManager::CheckContact(
 	const b2Shape* shapeA, int32 indexA,
 	const b2Shape* shapeB, int32 indexB,
@@ -306,8 +320,11 @@ b2Body* PhysicsManager::CreateBody(float x, float y, b2BodyType type, b2Shape* s
 
 void PhysicsManager::ReserveRemoveBody(b2Body* body)
 {
-    body->SetUserData(nullptr);
-    _removedBodies.push_back(body);
+    if ( body )
+    {
+        body->SetUserData(nullptr);
+        _removedBodies.push_back(body);
+    }
 }
 
 

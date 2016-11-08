@@ -149,7 +149,9 @@ namespace realtrick
 				b2DistanceOutput& output);
 
 			PhysicsManager(float worldX, float worldY);
-
+            virtual ~PhysicsManager();
+            
+            
 			void Step();
 
 			inline b2World* GetPhysicsWorld() const { return _world; }

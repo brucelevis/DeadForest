@@ -11,6 +11,11 @@ PhysicsBase::PhysicsBase() :
 
 PhysicsBase::~PhysicsBase()
 {
+}
+
+
+void PhysicsBase::removeFromWorld()
+{
     if ( _body )
     {
         _physicsManager->ReserveRemoveBody(_body);

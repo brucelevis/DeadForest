@@ -29,8 +29,8 @@ DeferredRendering::~DeferredRendering()
     CC_SAFE_RELEASE_NULL(_dynamicTexture);
     CC_SAFE_RELEASE_NULL(_staticTexture);
     CC_SAFE_RELEASE_NULL(_normalTexture);
-    CC_SAFE_RELEASE_NULL(_occlusionTexture);
-    CC_SAFE_RELEASE_NULL(_occlusionBaker);
+//    CC_SAFE_RELEASE_NULL(_occlusionTexture);
+//    CC_SAFE_RELEASE_NULL(_occlusionBaker);
 }
 
 
@@ -72,11 +72,11 @@ bool DeferredRendering::initWithFile(const std::string& basicTextureName)
     _normalTexture = RenderTexture::create(getContentSize().width, getContentSize().height);
     _normalTexture->retain();
     
-    _occlusionTexture = RenderTexture::create(getContentSize().width, getContentSize().height);
-    _occlusionTexture->retain();
-    
-    _occlusionBaker = OcclusionBaker::create(getContentSize());
-    _occlusionBaker->retain();
+//    _occlusionTexture = RenderTexture::create(getContentSize().width, getContentSize().height);
+//    _occlusionTexture->retain();
+//    
+//    _occlusionBaker = OcclusionBaker::create(getContentSize());
+//    _occlusionBaker->retain();
     
     return true;
 }
@@ -122,22 +122,22 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
     
     // bake occlusion texture
     auto player = _game->getPlayerPtr();
-    OcclusionBaker::FieldOfView fov;
-    fov.aroundCircleRadius = 40.0f;
-    fov.aroundCircleSlice = 30;
-    fov.entryDegree = 110.0f;
-    fov.heading = player->getHeading();
-    fov.isEnable = false;
-    _occlusionBaker->bakeTexture(_occlusionTexture,
-                                 player->getWorldPosition(),
-                                 zoomScale,
-                                 _game->getNeighborWalls(player->getWorldPosition(),
-                                                         Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT)),
-                                 Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT), fov);
+//    OcclusionBaker::FieldOfView fov;
+//    fov.aroundCircleRadius = 40.0f;
+//    fov.aroundCircleSlice = 30;
+//    fov.entryDegree = 110.0f;
+//    fov.heading = player->getHeading();
+//    fov.isEnable = false;
+//    _occlusionBaker->bakeTexture(_occlusionTexture,
+//                                 player->getWorldPosition(),
+//                                 zoomScale,
+//                                 _game->getNeighborWalls(player->getWorldPosition(),
+//                                                         Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT)),
+//                                 Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT), fov);
     
     getGLProgramState()->setUniformTexture("u_dynamicTex", _dynamicTexture->getSprite()->getTexture());
     getGLProgramState()->setUniformTexture("u_staticTex", _staticTexture->getSprite()->getTexture());
-    getGLProgramState()->setUniformTexture("u_occlusionTex", _occlusionTexture->getSprite()->getTexture());
+//    getGLProgramState()->setUniformTexture("u_occlusionTex", _occlusionTexture->getSprite()->getTexture());
     
     getGLProgramState()->setUniformFloat("u_dizzy", player->getDizzyScale());
     getGLProgramState()->setUniformFloat("u_bloody", player->getBloodyScale());

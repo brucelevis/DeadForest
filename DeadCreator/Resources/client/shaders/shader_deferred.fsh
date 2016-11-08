@@ -69,7 +69,7 @@ void main()
     vec4 originColor = texture2D(CC_Texture0, v_texCoord);
     vec4 staticColor = texture2D(u_staticTex, v_texCoord);
     vec4 dynamicColor = texture2D(u_dynamicTex, v_texCoord);
-    vec4 occlusionColor = texture2D(u_occlusionTex, v_texCoord);
+    vec4 occlusionColor = vec4(1.0); //texture2D(u_occlusionTex, v_texCoord);
     
     vec4 visibleStaticColor = staticColor * occlusionColor.r * (1.0 - dynamicColor.a);
     vec4 unvisibleStaticColor = staticColor * (1.0 - occlusionColor.r);

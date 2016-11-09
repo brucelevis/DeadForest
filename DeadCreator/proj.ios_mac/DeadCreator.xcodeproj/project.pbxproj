@@ -985,12 +985,12 @@
 		BF445ECB1DD1BBC0005C667A /* items */ = {
 			isa = PBXGroup;
 			children = (
+				BF445EDF1DD1BBC0005C667A /* weapons */,
 				BF445ECC1DD1BBC0005C667A /* bullets */,
 				BF445ED51DD1BBC0005C667A /* consumables */,
 				BF445EDC1DD1BBC0005C667A /* ItemBase.cpp */,
 				BF445EDD1DD1BBC0005C667A /* ItemBase.hpp */,
 				BF445EDE1DD1BBC0005C667A /* Items.hpp */,
-				BF445EDF1DD1BBC0005C667A /* weapons */,
 			);
 			path = items;
 			sourceTree = "<group>";

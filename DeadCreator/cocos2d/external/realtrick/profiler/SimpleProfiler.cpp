@@ -255,6 +255,8 @@ void SimpleProfiler::writeToNetwork(WriteType type)
                 break;
             }
         }
+        
+        reset();
     }
     
 }

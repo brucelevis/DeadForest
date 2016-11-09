@@ -80,7 +80,7 @@ void Block::end()
     _numberOfCalls ++;
     
     auto curr = chrono::high_resolution_clock::now();
-    _lastDuration = static_cast<int32_t>(chrono::duration_cast<chrono::milliseconds>(curr - _beginPoint).count());
+    _lastDuration = static_cast<int32_t>(chrono::duration_cast<chrono::microseconds>(curr - _beginPoint).count());
     
     _totalTime += _lastDuration;
     _avgTime = _totalTime  / _numberOfCalls;

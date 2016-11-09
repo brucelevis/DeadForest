@@ -48,7 +48,7 @@ bool Wall::init(PhysicsManager* mgr, const std::vector<cocos2d::Vec2>& vertices)
 
 	b2FixtureDef groundFixture;
 	groundFixture.shape = &chain;
-	groundFixture.restitution = 0.1f;
+	groundFixture.restitution = 1.0f;
 	groundFixture.friction = 0.0f;
 
     if (!PhysicsBase::initWithPhysicsBody(mgr, groundDef, groundFixture, PhysicsBase::Type::kWall))

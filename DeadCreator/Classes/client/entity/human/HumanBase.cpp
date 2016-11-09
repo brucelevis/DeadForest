@@ -89,7 +89,7 @@ bool HumanBase::init()
 	fd.shape = &shape;
 	fd.density = 5.0f;
 	fd.friction = 0.1f;
-	fd.restitution = 0.0f;
+	fd.restitution = 1.0f;
 	fd.isSensor = false;
 
     if (!PhysicsBase::initWithPhysicsBody(_game->getPhysicsManager(), bd, fd, PhysicsBase::Type::kHuman) )
@@ -127,15 +127,26 @@ HumanBase* HumanBase::create(Game* game)
 
 void HumanBase::update(float dt)
 {
+    PROFILE_BEGIN("ai");
     if (_brain && isAlive() && _regulator.isReady())
     {
+        PROFILE_BEGIN("think");
         _brain->think();
+        PROFILE_END("think");
+        
+        PROFILE_BEGIN("sensory");
         _sensory->updateVision();
+        PROFILE_END("sensory");
+        
+        PROFILE_BEGIN("target system");
         _targetSystem->update();
+        PROFILE_END("target system");
     }
     
     if ( _FSM ) _FSM->update(dt);
+    PROFILE_END("ai");
     
+    PROFILE_BEGIN("other");
     // move and rotate
     this->rotateEntity();
     
@@ -172,6 +183,7 @@ void HumanBase::update(float dt)
         _animator->setRotation(getRotationZ());
         _animator->processAnimation(dt);
     }
+    PROFILE_END("other");
 }
 
 
@@ -276,13 +288,8 @@ bool HumanBase::handleMessage(const Telegram& msg)
         
         
         AnimatedFiniteEntity* bloody = AnimatedFiniteEntity::create(_game, {
-            "bloody1.png",
-            "bloody2.png",
-            "bloody3.png",
-            "bloody4.png",
-            "bloody5.png",
-            "bloody6.png",
-            "bloody7.png"
+            "bloody1.png", "bloody2.png", "bloody3.png", "bloody4.png",
+            "bloody5.png", "bloody6.png", "bloody7.png"
         }, 0.0f, cocos2d::ui::Widget::TextureResType::PLIST);
         bloody->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
                                      getWorldPosition().y + random(-30, 30)));
@@ -301,13 +308,8 @@ bool HumanBase::handleMessage(const Telegram& msg)
         _game->addEntity(blood);
         
         AnimatedFiniteEntity* bloody = AnimatedFiniteEntity::create(_game, {
-            "bloody1.png",
-            "bloody2.png",
-            "bloody3.png",
-            "bloody4.png",
-            "bloody5.png",
-            "bloody6.png",
-            "bloody7.png"
+            "bloody1.png", "bloody2.png", "bloody3.png", "bloody4.png",
+            "bloody5.png", "bloody6.png", "bloody7.png"
         }, 0.0f, cocos2d::ui::Widget::TextureResType::PLIST);
         bloody->setWorldPosition(Vec2(getWorldPosition().x + random(-30, 30),
                                       getWorldPosition().y + random(-30, 30)));

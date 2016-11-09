@@ -24,7 +24,11 @@ using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
 
-#include "realtrick/profiler/profiling_schema_generated.h"
+
+const ImVec4 SimulatorLayer::BLACK = ImVec4(0.0, 0.0, 0.0, 1.0);
+const ImVec4 SimulatorLayer::GRAYLISH_GREEN = ImVec4(0.2, 0.5, 0.2, 1.0);
+const ImVec4 SimulatorLayer::GRAYLISH_RED = ImVec4(0.5, 0.2, 0.2, 1.0);
+const ImVec4 SimulatorLayer::GRAYLISH_BLUE = ImVec4(0.2, 0.2, 0.5, 1.0);
 
 
 SimulatorLayer::SimulatorLayer(EditScene* layer) : _imguiLayer(layer)
@@ -303,18 +307,14 @@ void SimulatorLayer::receiveProfileDataAndRender()
         ImGui::SetNextWindowPos(ImVec2(100,100), ImGuiSetCond_Once);
         ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiSetCond_Once);
         ImGui::Begin("profiler", NULL, ImGuiWindowFlags_ShowBorders);
-        
-        static const ImVec4 BLACK(0.0, 0.0, 0.0, 1.0);
-        static const ImVec4 GRAYLISH_GREEN(0.2, 0.5, 0.2, 1.0);
-        static const ImVec4 GRAYLISH_RED(0.5, 0.2, 0.2, 1.0);
-        static const ImVec4 GRAYLISH_BLUE(0.2, 0.2, 0.5, 1.0);
-        
+    
         auto drawList = ImGui::GetWindowDrawList();
     
         ImGui::TabLabels(numTabs, tabNames, selectedTab, tabTooltips, false, &optionalHoveredTab);
         ImGui::BeginChild("##diagram wrapper", ImVec2(0, 200), false);
         
         auto origin = ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + ImGui::GetWindowSize().y);
+        _profileRenderOrigin = ImVec2(origin.x, origin.y);
         
         const int HORIZONTAL_LINE_LENGTH = ImGui::GetWindowSize().x - 15;
         const int VERTICAL_LINE_LENGTH = ImGui::GetWindowSize().y - 10;
@@ -335,6 +335,8 @@ void SimulatorLayer::receiveProfileDataAndRender()
         drawList->AddLine(ImVec2(origin.x + 5, origin.y),
                           ImVec2(origin.x + 5, origin.y - ImGui::GetWindowSize().y + 10),
                           ImColor(BLACK));
+        
+        ImGui::EndChild();
         
         if ( selectedTab == 0 )
         {
@@ -371,13 +373,17 @@ void SimulatorLayer::receiveProfileDataAndRender()
         
         else if ( selectedTab == 1 )
         {
+            if ( !_profileCPU.empty() )
+            {
+                ImGui::Text("");
+                drawProfileCPUs(_profileCPU.back());
+            }
         }
         
         else if ( selectedTab == 2 )
         {
         }
         
-        ImGui::EndChild();
         ImGui::End();
     }
     
@@ -393,24 +399,28 @@ void SimulatorLayer::receiveProfileDataAndRender()
             {
                 case network::PacketType::PROFILE_INFO_FLATBUFFERS:
                 {
+                    // status
+                    ProfileStatus stat;
+                    stat.fps = ImGui::GetIO().Framerate;
+                    stat.drawCalls = Director::getInstance()->getRenderer()->getDrawnBatches();
+                    stat.numOfVertices = Director::getInstance()->getRenderer()->getDrawnVertices();
+                    _profileStatus.push_back(stat);
+                 
+                    // cpu usage
                     auto obj = realtrick::profiler::GetData(packet->body());
+                    auto mainloop = obj->main_loop();
                     
-                    if ( selectedTab == 0 )
-                    {
-                        ProfileStatus stat;
-                        stat.fps = ImGui::GetIO().Framerate;
-                        stat.drawCalls = Director::getInstance()->getRenderer()->getDrawnBatches();
-                        stat.numOfVertices = Director::getInstance()->getRenderer()->getDrawnVertices();
-                        
-                        _profileStatus.push_back(stat);
-                    }
-                    else if ( selectedTab == 1 )
-                    {
-                    }
+                    ProfileCPU mainloopBlock;
+                    mainloopBlock.calls = mainloop->calls();
+                    mainloopBlock.avgTime = mainloop->avg_time();
+                    mainloopBlock.minTime = mainloop->min_time();
+                    mainloopBlock.maxTime = mainloop->max_time();
+                    mainloopBlock.name = mainloop->name()->str();
+                    mainloopBlock.usage = mainloop->usage();
+                    for( auto child = mainloop->children()->begin() ; child != mainloop->children()->end() ; ++ child )
+                        fillProfileCPUDatas(mainloopBlock.children, *child);
                     
-                    else if ( selectedTab == 2 )
-                    {
-                    }
+                    _profileCPU.push_back(mainloopBlock);
                     
                     break;
                 }
@@ -420,6 +430,38 @@ void SimulatorLayer::receiveProfileDataAndRender()
         
         delete packet;
         packet = nullptr;
+    }
+}
+
+
+void SimulatorLayer::fillProfileCPUDatas(std::vector<ProfileCPU>& parent, const realtrick::profiler::Element* elem)
+{
+    ProfileCPU block;
+    block.calls = elem->calls();
+    block.avgTime = elem->avg_time();
+    block.minTime = elem->min_time();
+    block.maxTime = elem->max_time();
+    block.name = elem->name()->str();
+    block.usage = elem->usage();
+
+    for( auto child = elem->children()->begin() ; child != elem->children()->end() ; ++ child )
+        fillProfileCPUDatas(block.children, *child);
+    
+    parent.push_back(block);
+}
+
+
+void SimulatorLayer::drawProfileCPUs(const ProfileCPU& data)
+{
+    if ( ImGui::TreeNode(data.name.c_str()) )
+    {
+        ImGui::Bullet(); ImGui::SameLine(); ImGui::TextColored(ImColor(GRAYLISH_RED), "Total: %s", std::string(_to_string((int)data.usage) + "%").c_str());
+        ImGui::SameLine(); ImGui::TextColored(ImColor(GRAYLISH_RED), "Calls: %s", _to_string(data.calls / 60).c_str());
+        ImGui::SameLine(); ImGui::TextColored(ImColor(GRAYLISH_RED), "Time: %.3f%s", data.avgTime / 1000.0f, "(ms)");
+        for(auto child = std::begin(data.children) ; child != std::end(data.children) ; ++ child)
+            drawProfileCPUs(*child);
+        
+        ImGui::TreePop();
     }
 }
 

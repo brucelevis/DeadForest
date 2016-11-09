@@ -78,7 +78,7 @@ void ItemM1897::dropCartiridges()
                                                             5.0f, ui::Widget::TextureResType::PLIST);
     es->setWorldPosition(worldPos + _owner->getHeading() * random(-30.0f, 30.0f) + _owner->getRight() * random(20.0f, 40.0f));
     es->setScale(0.7f);
-    es->setRotation(_owner->getRotationZ());
+    es->setRotation(-_owner->getRotationZ());
     _game->addEntity(es);
 }
 

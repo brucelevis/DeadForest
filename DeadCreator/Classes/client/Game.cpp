@@ -34,6 +34,7 @@ using namespace realtrick::client;
 
 #include "GMXFile_generated.h"
 #include "flatbuffers/util.h"
+#include "realtrick/profiler/SimpleProfiler.hpp"
 
 
 Game::Game() :
@@ -130,24 +131,24 @@ void Game::update(float dt)
 {
     _elapsedTime += dt;
     
-    // update physics
-	_physicsMgr->Step();
-    
-    // late remove
+    PROFILE_BEGIN("physics");
+    // update physics, remove bodies late
+    _physicsMgr->Step();
     _physicsMgr->RemoveReservedBodies();
-    
+    PROFILE_END("physics");
+
     // update logic stream
     _logicStream->update(dt);
     
+    PROFILE_BEGIN("trigger");
     // trigger update and execute
     _triggerSystem->update(dt);
+    PROFILE_END("trigger");
     
-    
+    PROFILE_BEGIN("update entities");
     if ( !_isPaused )
     {
-        pair<int, int> oldIndex = getFocusedTileIndex(_camera->getCameraPos(),
-                                                      _gameResource->getTileWidth(),
-                                                      _gameResource->getTileHeight(), DUMMY_TILE_SIZE);
+        auto oldIndex = getFocusedTileIndex(_camera->getCameraPos(), _gameResource->getTileWidth(), _gameResource->getTileHeight(), DUMMY_TILE_SIZE);
         
         // update entities
         _entityManager->update(dt);
@@ -161,6 +162,7 @@ void Game::update(float dt)
         
         _messenger->dispatchDelayedMessages();
     }
+    PROFILE_END("update entities");
 }
 
 

@@ -87,14 +87,15 @@ int Application::run()
         PROFILE_BEGIN_FRAME;
         director->mainLoop();
         glview->pollEvents();
-        PROFILE_END_FRAME;
-        realtrick::profiler::SimpleProfiler::getInstance().writeToNetwork(realtrick::profiler::SimpleProfiler::WriteType::FLATBUFFERS);
         
         curTime = getCurrentMillSecond();
         if (curTime - lastTime < _animationInterval)
         {
             usleep(static_cast<useconds_t>((_animationInterval - curTime + lastTime)*1000));
         }
+        
+        PROFILE_END_FRAME;
+        realtrick::profiler::SimpleProfiler::getInstance().writeToNetwork(realtrick::profiler::SimpleProfiler::WriteType::FLATBUFFERS);
     }
 
     /* Only work on Desktop

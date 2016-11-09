@@ -14,8 +14,6 @@ table Element
 table Data
 {
    main_loop : Element;
-   tick : int;
-   fps : float;
 }
 
 root_type Data;

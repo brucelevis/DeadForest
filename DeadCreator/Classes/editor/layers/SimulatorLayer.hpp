@@ -21,14 +21,20 @@
 
 namespace realtrick
 {
-	namespace client
-	{
-		class DummyScene;
-	}
+    namespace client { class DummyScene; }
 
 	namespace editor
 	{
-
+    
+        struct ProfileStatus
+        {
+            int fps;
+            int drawCalls;
+            int numOfVertices;
+            
+            ProfileStatus() : fps(0), drawCalls(0), numOfVertices(0) {}
+        };
+        
 		class EditScene;
         
 		class SimulatorLayer : public cocos2d::Node, public b2Draw
@@ -36,10 +42,7 @@ namespace realtrick
 
 		public:
 
-			explicit SimulatorLayer(EditScene* layer) : _imguiLayer(layer)
-			{
-                _tcpSession.connect("127.0.0.1", "4242");
-            }
+            explicit SimulatorLayer(EditScene* layer);
 			virtual ~SimulatorLayer() = default;
 
 			static SimulatorLayer* create(EditScene* layer)
@@ -96,6 +99,8 @@ namespace realtrick
             
             cocos2d::Vec2 _debugOrigin;
             realtrick::network::TCPSession _tcpSession;
+            
+            std::list<ProfileStatus> _profileStatus;
             
 		};
 

@@ -6,6 +6,8 @@
 //
 //
 
+#include <iterator>
+
 #include "DummyScene.hpp"
 #include "EditScene.hpp"
 #include "SimulatorLayer.hpp"
@@ -25,19 +27,21 @@ using namespace cocos2d;
 #include "realtrick/profiler/profiling_schema_generated.h"
 
 
+SimulatorLayer::SimulatorLayer(EditScene* layer) : _imguiLayer(layer)
+{
+    _tcpSession.connect("127.0.0.1", "4242");
+}
+
+
 void SimulatorLayer::showLayer(bool& opened)
 {
-	static bool isStatusOn = true;
 	static bool isPlayerInfo = true;
 	static bool isGridOn = false;
 	static bool isLocationViewOn = false;
 	static bool isGraphNodeViewOn = false;
 
     static bool isPhysicsShape = false;
-    static bool isPhysicsJoint = false;
     static bool isPhysicsAABB = false;
-    static bool isPhysicsPair = false;
-    static bool isPhysicsCenterOfMass = false;
     static bool isQueryWall = false;
 
 	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2 - GAME_SCREEN_WIDTH / 2,
@@ -64,19 +68,6 @@ void SimulatorLayer::showLayer(bool& opened)
 		{
 			ImGui::SetCursorScreenPos(ImVec2(_debugOrigin.x, _debugOrigin.y));
 			auto drawList = ImGui::GetWindowDrawList();
-
-			if (isStatusOn)
-			{
-				static auto renderer = Director::getInstance()->getRenderer();
-
-				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 1.00, 1.00));
-				ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
-				ImGui::Text("Vertices: %d", static_cast<int>(renderer->getDrawnVertices()));
-				ImGui::Text("Batches: %d", static_cast<int>(renderer->getDrawnBatches()));
-                ImGui::Text("Elapsed Time: %d (sec)", static_cast<int>(game->getElapsedTime()));
-                
-				ImGui::PopStyleColor();
-			}
 
 			if (isPlayerInfo)
 			{
@@ -185,7 +176,7 @@ void SimulatorLayer::showLayer(bool& opened)
                 }
 			}
             
-            if ( isPhysicsShape || isPhysicsJoint || isPhysicsAABB || isPhysicsPair || isPhysicsCenterOfMass )
+            if ( isPhysicsShape || isPhysicsAABB )
             {
                 game->getPhysicsManager()->GetPhysicsWorld()->DrawDebugData();
             }
@@ -217,7 +208,6 @@ void SimulatorLayer::showLayer(bool& opened)
 
 			if (ImGui::TreeNode("debug"))
 			{
-				ImGui::Checkbox("status", &isStatusOn);
 				ImGui::Checkbox("player info", &isPlayerInfo);
 				ImGui::Checkbox("grid", &isGridOn);
 				ImGui::Checkbox("location", &isLocationViewOn);
@@ -237,38 +227,20 @@ void SimulatorLayer::showLayer(bool& opened)
                     if ( isPhysicsAABB ) AppendFlags(b2Draw::e_aabbBit);
                     else ClearFlags(b2Draw::e_aabbBit);
                 }
-                if ( ImGui::Checkbox("joint", &isPhysicsJoint) )
-                {
-                    if ( isPhysicsJoint ) AppendFlags(b2Draw::e_jointBit);
-                    else ClearFlags(b2Draw::e_jointBit);
-                }
-                if ( ImGui::Checkbox("pair", &isPhysicsPair) )
-                {
-                    if ( isPhysicsPair ) AppendFlags(b2Draw::e_pairBit);
-                    else ClearFlags(b2Draw::e_pairBit);
-                }
-                if ( ImGui::Checkbox("center of mass", &isPhysicsCenterOfMass) )
-                {
-                    if ( isPhysicsCenterOfMass ) AppendFlags(b2Draw::e_centerOfMassBit);
-                    else ClearFlags(b2Draw::e_centerOfMassBit);
-                }
                 if ( ImGui::Checkbox("queried walls", &isQueryWall) )
                 {
-                    auto physics = game->getPhysicsManager();
-                    auto walls = physics->queryWallsAABB(game->getPlayerPtr()->getWorldPosition(), 500, 300);
-                    for(auto& wall : walls)
-                    {
+//                    auto physics = game->getPhysicsManager();
+//                    auto walls = physics->queryWallsAABB(game->getPlayerPtr()->getWorldPosition(), 500, 300);
+//                    for(auto& wall : walls)
+//                    {
 //                        auto body = wall->getBody();
 //                        body->
-                    }
+//                    }
                 }
                 
                 ImGui::TreePop();
             }
 			ImGui::End();
-            
-            // profiler
-            receiveProfileDataAndRender();
             
             // logger
             ImGui::SetNextWindowPos(ImVec2(100,600), ImGuiSetCond_Once);
@@ -280,6 +252,10 @@ void SimulatorLayer::showLayer(bool& opened)
             ImGui::End();
 		}
 	}
+    
+    
+    // profiler
+    receiveProfileDataAndRender();
 }
 
 
@@ -292,6 +268,7 @@ void SimulatorLayer::playGame()
 
 void SimulatorLayer::closeLayer()
 {
+    _profileStatus.clear();
 	_gameLayer->removeFromParentAndCleanup(true);
 	_imguiLayer->stopGame();
 }
@@ -315,15 +292,94 @@ cocos2d::Vec2 SimulatorLayer::worldToLocal(const cocos2d::Vec2& origin, const co
 
 void SimulatorLayer::receiveProfileDataAndRender()
 {
-    ImGui::SetNextWindowPos(ImVec2(100,100), ImGuiSetCond_Once);
-    ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiSetCond_Once);
-    ImGui::Begin("profiler", NULL, ImGuiWindowFlags_ShowBorders);
+    const char* tabNames[] = {"status", "cpu usage", "events"};
+    const int numTabs = 3;
+    const char* tabTooltips[numTabs] = {"fps, draw calls, vertices...", "cpu usages...", "events at time"};
+    static int selectedTab = 0;
+    static int optionalHoveredTab = 0;
     
-    static const ImVec4 BLACK(0.0, 0.0, 0.0, 1.0);
-    static const ImVec4 GRAYLISH_GREEN(0.2, 0.5, 0.2, 1.0);
-    static const ImVec4 GRAYLISH_RED(0.5, 0.2, 0.2, 1.0);
+    if ( _isGameStarted )
+    {
+        ImGui::SetNextWindowPos(ImVec2(100,100), ImGuiSetCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiSetCond_Once);
+        ImGui::Begin("profiler", NULL, ImGuiWindowFlags_ShowBorders);
+        
+        static const ImVec4 BLACK(0.0, 0.0, 0.0, 1.0);
+        static const ImVec4 GRAYLISH_GREEN(0.2, 0.5, 0.2, 1.0);
+        static const ImVec4 GRAYLISH_RED(0.5, 0.2, 0.2, 1.0);
+        static const ImVec4 GRAYLISH_BLUE(0.2, 0.2, 0.5, 1.0);
+        
+        auto drawList = ImGui::GetWindowDrawList();
     
-    auto drawList = ImGui::GetWindowDrawList();
+        ImGui::TabLabels(numTabs, tabNames, selectedTab, tabTooltips, false, &optionalHoveredTab);
+        ImGui::BeginChild("##diagram wrapper", ImVec2(0, 200), false);
+        
+        auto origin = ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + ImGui::GetWindowSize().y);
+        
+        const int HORIZONTAL_LINE_LENGTH = ImGui::GetWindowSize().x - 15;
+        const int VERTICAL_LINE_LENGTH = ImGui::GetWindowSize().y - 10;
+        const float HORIZONTAL_SLICE = 50.0f;
+        
+        // horizontal line
+        drawList->AddLine(ImVec2(origin.x + 5, origin.y),
+                          ImVec2(origin.x + ImGui::GetWindowSize().x - 10, origin.y),
+                          ImColor(BLACK));
+        
+        for(int i = 0 ; i < HORIZONTAL_SLICE ; ++ i)
+        {
+            drawList->AddLine(ImVec2(origin.x + 5 + ((i + 1) / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH, origin.y),
+                              ImVec2(origin.x + 5 + ((i + 1) / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH, origin.y - 3), ImColor(BLACK));
+        }
+        
+        // vertical line
+        drawList->AddLine(ImVec2(origin.x + 5, origin.y),
+                          ImVec2(origin.x + 5, origin.y - ImGui::GetWindowSize().y + 10),
+                          ImColor(BLACK));
+        
+        if ( selectedTab == 0 )
+        {
+            if ( _profileStatus.size() > 1 )
+            {
+                if ( _profileStatus.size() > HORIZONTAL_SLICE + 1 ) _profileStatus.pop_front();
+                
+                drawList->AddRectFilled(ImVec2(origin.x, origin.y + 22), ImVec2(origin.x + 10, origin.y + 17), ImColor(GRAYLISH_GREEN));
+                drawList->AddRectFilled(ImVec2(origin.x, origin.y + 42), ImVec2(origin.x + 10, origin.y + 37), ImColor(GRAYLISH_RED));
+                drawList->AddRectFilled(ImVec2(origin.x, origin.y + 62), ImVec2(origin.x + 10, origin.y + 57), ImColor(GRAYLISH_BLUE));
+                
+                drawList->AddText(ImVec2(origin.x + 15, origin.y + 10), ImColor(BLACK), std::string("FPS: " + _to_string(_profileStatus.back().fps)).c_str());
+                drawList->AddText(ImVec2(origin.x + 15, origin.y + 30), ImColor(BLACK), std::string("Vertices: " + _to_string(_profileStatus.back().numOfVertices)).c_str());
+                drawList->AddText(ImVec2(origin.x + 15, origin.y + 50), ImColor(BLACK), std::string("Draw Calls: " + _to_string(_profileStatus.back().drawCalls)).c_str());
+                
+                int i = 0;
+                for(auto iter = std::begin(_profileStatus) ; iter != prev(std::end(_profileStatus), 1) ; ++ iter, ++ i)
+                {
+                    drawList->AddLine(ImVec2(origin.x + 5 + (i / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH, origin.y - (iter->fps / 60.0f) * VERTICAL_LINE_LENGTH),
+                                      ImVec2(origin.x + 5 + ((i + 1) / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH, origin.y - (next(iter, 1)->fps / 60.0f) * VERTICAL_LINE_LENGTH),
+                                      ImColor(GRAYLISH_GREEN));
+                    
+                    drawList->AddLine(ImVec2(origin.x + 5 + (i / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH, origin.y - (iter->numOfVertices / 20000.0f) * VERTICAL_LINE_LENGTH),
+                                      ImVec2(origin.x + 5 + ((i + 1) / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH, origin.y - (next(iter, 1)->numOfVertices / 20000.0f) * VERTICAL_LINE_LENGTH),
+                                      ImColor(GRAYLISH_RED));
+                    
+                    drawList->AddLine(ImVec2(origin.x + 5 + (i / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH, origin.y - (iter->drawCalls / 200.0f) * VERTICAL_LINE_LENGTH),
+                                      ImVec2(origin.x + 5 + ((i + 1) / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH, origin.y - (next(iter, 1)->drawCalls / 200.0f) * VERTICAL_LINE_LENGTH),
+                                      ImColor(GRAYLISH_BLUE));
+                    
+                }
+            }
+        }
+        
+        else if ( selectedTab == 1 )
+        {
+        }
+        
+        else if ( selectedTab == 2 )
+        {
+        }
+        
+        ImGui::EndChild();
+        ImGui::End();
+    }
     
     if ( !_tcpSession.isQueueEmpty() )
     {
@@ -331,63 +387,40 @@ void SimulatorLayer::receiveProfileDataAndRender()
         _tcpSession.dequeue(packet);
         packet->decode();
         
-        switch ( packet->type() )
+        if ( _isGameStarted )
         {
-            case network::PacketType::PROFILE_INFO_FLATBUFFERS:
+            switch ( packet->type() )
             {
-                auto obj = realtrick::profiler::GetData(packet->body());
-                
-                const char* tabNames[] = {"fps", "cpu usage", "events"};
-                const int numTabs = 3;
-                const char* tabTooltips[numTabs] = {"total fps", "cpu usages...", "events at time"};
-                static int selectedTab = 0;
-                static int optionalHoveredTab = 0;
-                ImGui::TabLabels(numTabs, tabNames, selectedTab, tabTooltips, false, &optionalHoveredTab);
-                
-                ImGui::BeginChild("##diagram wrapper", ImVec2(0, 200), false);
-                
-                auto origin = ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + ImGui::GetWindowSize().y);
-                drawList->AddLine(ImVec2(origin.x + 35, origin.y - 20),
-                                  ImVec2(origin.x + ImGui::GetWindowSize().x - 10, origin.y - 20),
-                                  ImColor(BLACK));
-                
-                drawList->AddLine(ImVec2(origin.x + 35, origin.y - 20),
-                                  ImVec2(origin.x + 35, origin.y - ImGui::GetWindowSize().y + 10),
-                                  ImColor(BLACK));
-                
-                drawList->AddText(ImVec2(origin.x + 35, origin.y - 20), ImColor(BLACK), "0 tick");
-                
-                if ( selectedTab == 0 )
+                case network::PacketType::PROFILE_INFO_FLATBUFFERS:
                 {
-                    drawList->AddText(ImVec2(origin.x, origin.y - ImGui::GetWindowSize().y + 10), ImColor(BLACK), " 60\nfps");
-                    ImGui::EndChild();
+                    auto obj = realtrick::profiler::GetData(packet->body());
                     
-                    ImGui::Text("  avg: "); ImGui::SameLine(); ImGui::TextColored(GRAYLISH_GREEN, "%.1f", obj->fps());
-                    ImGui::Text("  max: "); ImGui::SameLine(); ImGui::TextColored(GRAYLISH_GREEN, "%.1f", obj->fps());
-                    ImGui::Text("  min: "); ImGui::SameLine(); ImGui::TextColored(GRAYLISH_RED, "%d", obj->tick());
-                    ImGui::SameLine(); ImGui::Text(" (at '%d' tick)", obj->tick());
+                    if ( selectedTab == 0 )
+                    {
+                        ProfileStatus stat;
+                        stat.fps = ImGui::GetIO().Framerate;
+                        stat.drawCalls = Director::getInstance()->getRenderer()->getDrawnBatches();
+                        stat.numOfVertices = Director::getInstance()->getRenderer()->getDrawnVertices();
+                        
+                        _profileStatus.push_back(stat);
+                    }
+                    else if ( selectedTab == 1 )
+                    {
+                    }
+                    
+                    else if ( selectedTab == 2 )
+                    {
+                    }
+                    
+                    break;
                 }
-                
-                else if ( selectedTab == 1 )
-                {
-                    ImGui::EndChild();
-                }
-                
-                else if ( selectedTab == 2 )
-                {
-                    ImGui::EndChild();
-                }
-                
-                break;
+                default: break;
             }
-            default: break;
         }
         
         delete packet;
         packet = nullptr;
     }
-    
-    ImGui::End();
 }
 
 

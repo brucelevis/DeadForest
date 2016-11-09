@@ -24,13 +24,14 @@ using namespace realtrick::profiler;
 #include "profiling_schema_generated.h"
 using namespace flatbuffers;
 
+#include "cocos2d.h"
 
 SimpleProfiler::SimpleProfiler() :
 _blockStack(),
 _blocks(),
-_tick(0),
 _mainLoopBlock(nullptr),
-_networkWriter(nullptr)
+_networkWriter(nullptr),
+_point(std::chrono::high_resolution_clock::now())
 {
     _networkWriter = new NetworkWriter();
 }
@@ -70,8 +71,6 @@ void SimpleProfiler::endFrame()
     
     _blockStack.pop_back();
     _mainLoopBlock->end();
-    
-    _tick ++;
 }
 
 
@@ -158,9 +157,7 @@ std::pair<uint8_t*, uint32_t> SimpleProfiler::flatbufferWriter()
                                                              _mainLoopBlock->getMinTime(),
                                                              _mainLoopBlock->getMaxTime(),
                                                              _mainLoopBlock->getUsageFromParent(),
-                                                             _mainLoopBlock->getChildrenFlatbuffers(builder)),
-                                               _tick, /* tick */
-                                               1000.0f / _mainLoopBlock->_lastDuration /* fps */);
+                                                             _mainLoopBlock->getChildrenFlatbuffers(builder)));
     builder.Finish(obj);
     return std::make_pair(builder.GetBufferPointer(), builder.GetSize());
 }
@@ -223,33 +220,40 @@ void SimpleProfiler::flatbufferWriteHelper(int depth, std::string& out, const El
 
 void SimpleProfiler::writeToNetwork(WriteType type)
 {
-    switch (type)
+    auto curr = std::chrono::high_resolution_clock::now();
+    
+    if ( std::chrono::duration_cast<std::chrono::milliseconds>((curr - _point)).count() > 1000 )
     {
-        case WriteType::PRETTY:
+        _point = std::chrono::high_resolution_clock::now();
+        
+        switch (type)
         {
-            break;
-        }
-        case WriteType::JSON:
-        {
-            break;
-        }
-        case WriteType::XML:
-        {
-            break;
-        }
-        case WriteType::FLATBUFFERS:
-        {
-            auto flatbufferData = flatbufferWriter();
-            
-            network::Packet packet;
-            packet.encode(flatbufferData.first, flatbufferData.second, network::PacketType::PROFILE_INFO_FLATBUFFERS);
-            _networkWriter->deliveryPacket(&packet);
-            
-            break;
-        }
-        default:
-        {
-            break;
+            case WriteType::PRETTY:
+            {
+                break;
+            }
+            case WriteType::JSON:
+            {
+                break;
+            }
+            case WriteType::XML:
+            {
+                break;
+            }
+            case WriteType::FLATBUFFERS:
+            {
+                auto flatbufferData = flatbufferWriter();
+                
+                network::Packet packet;
+                packet.encode(flatbufferData.first, flatbufferData.second, network::PacketType::PROFILE_INFO_FLATBUFFERS);
+                _networkWriter->deliveryPacket(&packet);
+                
+                break;
+            }
+            default:
+            {
+                break;
+            }
         }
     }
     

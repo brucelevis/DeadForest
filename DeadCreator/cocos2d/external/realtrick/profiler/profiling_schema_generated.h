@@ -84,19 +84,13 @@ namespace realtrick {
         
         struct Data FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
             enum {
-                VT_MAIN_LOOP = 4,
-                VT_TICK = 6,
-                VT_FPS = 8
+                VT_MAIN_LOOP = 4
             };
             const Element *main_loop() const { return GetPointer<const Element *>(VT_MAIN_LOOP); }
-            int32_t tick() const { return GetField<int32_t>(VT_TICK, 0); }
-            float fps() const { return GetField<float>(VT_FPS, 0.0f); }
             bool Verify(flatbuffers::Verifier &verifier) const {
                 return VerifyTableStart(verifier) &&
                 VerifyField<flatbuffers::uoffset_t>(verifier, VT_MAIN_LOOP) &&
                 verifier.VerifyTable(main_loop()) &&
-                VerifyField<int32_t>(verifier, VT_TICK) &&
-                VerifyField<float>(verifier, VT_FPS) &&
                 verifier.EndTable();
             }
         };
@@ -105,23 +99,17 @@ namespace realtrick {
             flatbuffers::FlatBufferBuilder &fbb_;
             flatbuffers::uoffset_t start_;
             void add_main_loop(flatbuffers::Offset<Element> main_loop) { fbb_.AddOffset(Data::VT_MAIN_LOOP, main_loop); }
-            void add_tick(int32_t tick) { fbb_.AddElement<int32_t>(Data::VT_TICK, tick, 0); }
-            void add_fps(float fps) { fbb_.AddElement<float>(Data::VT_FPS, fps, 0.0f); }
             DataBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
             DataBuilder &operator=(const DataBuilder &);
             flatbuffers::Offset<Data> Finish() {
-                auto o = flatbuffers::Offset<Data>(fbb_.EndTable(start_, 3));
+                auto o = flatbuffers::Offset<Data>(fbb_.EndTable(start_, 1));
                 return o;
             }
         };
         
         inline flatbuffers::Offset<Data> CreateData(flatbuffers::FlatBufferBuilder &_fbb,
-                                                    flatbuffers::Offset<Element> main_loop = 0,
-                                                    int32_t tick = 0,
-                                                    float fps = 0.0f) {
+                                                    flatbuffers::Offset<Element> main_loop = 0) {
             DataBuilder builder_(_fbb);
-            builder_.add_fps(fps);
-            builder_.add_tick(tick);
             builder_.add_main_loop(main_loop);
             return builder_.Finish();
         }

@@ -77,11 +77,12 @@ namespace realtrick
             
             std::vector<Block*> _blockStack;
             std::map<std::string, Block*> _blocks;
-            uint32_t _tick;
             
             Block* _mainLoopBlock;
             boost::thread* _networkThread;
             NetworkWriter* _networkWriter;
+            
+            std::chrono::high_resolution_clock::time_point _point;
             
         };
         

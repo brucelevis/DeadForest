@@ -35,6 +35,7 @@ using namespace realtrick::client;
 #include "GMXFile_generated.h"
 #include "flatbuffers/util.h"
 #include "realtrick/profiler/SimpleProfiler.hpp"
+#include "ClipperWrapper.hpp"
 
 
 Game::Game() :
@@ -210,14 +211,30 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
 	aabb.upperBound = b2Vec2(position.x, position.y) + b2Vec2(speed, speed);
 	_physicsMgr->GetPhysicsWorld()->QueryAABB(&query, aabb);
 
-	std::vector<realtrick::Polygon> ret;
+    std::vector<realtrick::Polygon> ret;
     return ret;
 }
 
 
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const
 {
+    QueryWallByAABB query;
+    b2AABB aabb;
+    aabb.lowerBound = b2Vec2(position.x, position.y) - b2Vec2(screenSize.width / 2, screenSize.height / 2);
+    aabb.upperBound = b2Vec2(position.x, position.y) + b2Vec2(screenSize.width / 2, screenSize.height / 2);
+    _physicsMgr->GetPhysicsWorld()->QueryAABB(&query, aabb);
+    
     std::vector<realtrick::Polygon> ret;
+    for( int i = 0 ; i < query.walls.size() ; ++ i )
+    {
+        Polygon poly;
+        auto s = static_cast<b2ChainShape*>(query.walls[i]->getBody()->GetFixtureList()->GetShape());
+        for(int i = 0 ; i < s->m_count ; ++ i)
+        {
+            poly.pushVertex(Vec2(s->m_vertices[i].x, s->m_vertices[i].y));
+        }
+        ret.push_back(poly);
+    }
     return ret;
 }
 
@@ -333,11 +350,11 @@ void Game::loadGameContents(PlayerType ownPlayer)
     _releasePool.addObject(_triggerSystem);
     
     
+    initCell(_gameResource);
     const auto& walls = _gameResource->getCollisionData();
     for (const auto& wall : walls )
     {
-        auto w = Wall::create(_physicsMgr, wall.vertices);
-        _walls.pushBack(w);
+        addWall(wall);
     }
     
     const auto& entities = _entityManager->getEntities();
@@ -793,4 +810,83 @@ bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B, float radius) const
 }
 
 
+void Game::initCell(GameResource* res)
+{
+    auto worldWidth = res->getTileWidth() * res->getNumOfTileX();
+    auto worldHeight = res->getTileHeight() * res->getNumOfTileY();
+    auto cellWidth = 128;
+    auto cellHeight = 128;
+    
+    auto numOfCellsX = (worldWidth  / cellWidth) + 2;
+    auto numOfCellsY = (worldHeight / cellHeight) + 2;
+    
+    for (int y = 0; y < numOfCellsY; ++y)
+    {
+        for (int x = 0; x < numOfCellsX; ++x)
+        {
+            float left  = x * cellWidth;
+            float bot   = y * cellHeight;
+            _cellAABBs.push_back(cocos2d::Rect(left - cellWidth, bot - cellHeight, cellWidth, cellHeight));
+        }
+    }
+}
+
+
+void Game::addWall(const Polygon& wall)
+{
+    //
+    //      -------- -------- --------
+    //     | 1      | 2      | 3      |
+    //     |        |  ------|-. max  |                      _____       _
+    //     |       -|-       | |      |            -        -     |     | |
+    //     |      | |        | |      |        1: |_|    2:|______|  3: |_|
+    //      -------- -------- --------             _                     _
+    //     | 4    | | 5      |6|      |        4: |_|    5: ------   6: | |
+    //     |       -|----    | |      |                    |      |     | |
+    //     |        |    |   | |      |                     ---   |     | |
+    //     |        |    |   | |      |                        |__|     |_|
+    //      -------- -------- --------                          __       _
+    //     | 7      | 8  |   |9|      |        7:        8:    |  |  9: | |
+    //     |      . |     ---|-       |                         --       -
+    //     |     min|        |        |
+    //     |        |        |        |
+    //      -------- -------- --------
+    //
+    //      해당 벽의 최대 최소 x, y를 각각 구해 AABB 를 만든다.
+    //      공간들을 순회하면서 겹치는 공간이 있다면, 클리핑한다.
+    //      그리고 해당 공간에 클리핑된 벽들을 각각 저장해 놓는다.
+    
+    float minx = std::min_element(std::begin(wall.vertices), std::end(wall.vertices), [](const cocos2d::Vec2& v1, const cocos2d::Vec2& v2) {
+        return (v1.x < v2.x);
+    })->x;
+    
+    float miny = std::min_element(std::begin(wall.vertices), std::end(wall.vertices), [](const cocos2d::Vec2& v1, const cocos2d::Vec2& v2) {
+        return (v1.y < v2.y);
+    })->y;
+    
+    float maxx = std::max_element(std::begin(wall.vertices), std::end(wall.vertices), [](const cocos2d::Vec2& v1, const cocos2d::Vec2& v2) {
+        return (v1.x < v2.x);
+    })->x;
+    
+    float maxy = std::max_element(std::begin(wall.vertices), std::end(wall.vertices), [](const cocos2d::Vec2& v1, const cocos2d::Vec2& v2) {
+        return (v1.y < v2.y);
+    })->y;
+    
+    cocos2d::Vec2 minVertex = cocos2d::Vec2(minx, miny);
+    cocos2d::Vec2 maxVertex = cocos2d::Vec2(maxx, maxy);
+    cocos2d::Rect wallAABB = cocos2d::Rect(minVertex, cocos2d::Size(maxVertex - minVertex));
+    
+    for( auto& aabb : _cellAABBs )
+    {
+        if ( aabb.intersectsRect(wallAABB) )
+        {
+            std::vector<realtrick::Polygon> clippedWalls = clipping::getClippedPolygons(wall, aabb);
+            for( const auto& clippedWall : clippedWalls )
+            {
+                auto wall = Wall::create(_physicsMgr, clippedWall.vertices);
+                _walls.pushBack(wall);
+            }
+        }
+    }
+}
 

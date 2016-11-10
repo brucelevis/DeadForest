@@ -93,7 +93,7 @@ namespace realtrick
             if ( _type == TileType::GRASS ) ret += "2_";
             if ( _type == TileType::WATER ) ret += "3_";
             if ( _type == TileType::HILL ) ret += "5_";
-            ret += _to_string(cocos2d::random(1,3)) + "_";
+            ret += _to_string(cocos2d::random(1, 3)) + "_";
             
             return ret;
         }
@@ -110,7 +110,7 @@ namespace realtrick
             if ( type == TileType::GRASS ) ret += "2_";
             if ( type == TileType::WATER ) ret += "3_";
             if ( type == TileType::HILL ) ret += "5_";
-            ret += _to_string(cocos2d::random(1,3)) + "_";
+            ret += _to_string(cocos2d::random(1, 3)) + "_";
             
             return ret;
         }
@@ -119,7 +119,7 @@ namespace realtrick
         {
             std::string ret;
             ret += number[0];
-            ret += "_" + _to_string(cocos2d::random(1,3)) + "_";
+            ret += "_" + _to_string(cocos2d::random(1, 3)) + "_";
             return ret;
         }
         

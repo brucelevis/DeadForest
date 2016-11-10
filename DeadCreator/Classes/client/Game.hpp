@@ -165,6 +165,9 @@ namespace realtrick
             
             PhysicsManager* getPhysicsManager() const { return _physicsMgr; }
             
+            void initCell(GameResource* res);
+            void addWall(const Polygon& wall);
+            
         private:
             
             cocos2d::Size _winSize;

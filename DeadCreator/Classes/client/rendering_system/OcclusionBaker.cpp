@@ -12,6 +12,8 @@ using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
 
+#include "realtrick/profiler/SimpleProfiler.hpp"
+
 
 OcclusionBaker::OcclusionBaker() :
 _dNode(nullptr),
@@ -83,6 +85,7 @@ void OcclusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
     Vec2 v3 = Vec2(worldPos.x + boundarySize.width / 2 - PAD, worldPos.y + boundarySize.height / 2 - PAD); // right top
     Vec2 v4 = Vec2(worldPos.x + boundarySize.width / 2 - PAD, worldPos.y - boundarySize.height / 2 + PAD); // right bottom
     
+    PROFILE_BEGIN("a");
     if ( fov.isEnable )
     {
         // fov 를 적용한다면 시야각과 플레이어 주변 원 데이터를 이용해 클리핑 경계면을 만든다. ( CCW )
@@ -184,14 +187,17 @@ void OcclusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
         clipBoundary.pushVertex(v2);
         clipBoundary.pushVertex(v1);
     }
+    PROFILE_END("a");
     
-    
+    PROFILE_BEGIN("a-1");
     // 폴리곤을 클리핑 한다. ( CCW )
     vector<realtrick::Polygon> clippedPloygon = clipping::getClippedPolygons(polygons, clipBoundary);
+    PROFILE_END("a-1");
+    
     vector<Segment> visibleWalls;
     vector<Vec2> storedVert;
     
-    
+    PROFILE_BEGIN("b");
     // 클리핑된 도형에 대해 벽을 생성한다.
     for(const auto& polygon : clippedPloygon)
     {
@@ -204,8 +210,9 @@ void OcclusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
                 visibleWalls.push_back(wall);
         }
     }
+    PROFILE_END("b");
     
-    
+    PROFILE_BEGIN("c");
     // 경계면에 대해 벽을 생성.
     if ( _windingOrder == WindingOrder::CCW )
     {
@@ -228,8 +235,9 @@ void OcclusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
         Segment wall(clipBoundary.vertices.back(), clipBoundary.vertices.front());
         visibleWalls.push_back(wall);
     }
+    PROFILE_END("c");
     
-    
+    PROFILE_BEGIN("d");
     // 같은 정점을 제거한다.
     {
         std::unordered_map<int, bool> uniqueVertice;
@@ -250,8 +258,9 @@ void OcclusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
             }
         }
     }
+    PROFILE_END("d");
     
-    
+    PROFILE_BEGIN("e");
     // 두 번 이상 충돌되는 점 모두제거.
     {
         storedVert.erase(remove_if(begin(storedVert), end(storedVert), [&](const Vec2& v){
@@ -260,8 +269,9 @@ void OcclusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
             
         }), end(storedVert));
     }
+    PROFILE_END("e");
     
-    
+    PROFILE_BEGIN("f");
     // 각 정점으로 세 갈레로 광선을 쏴본 후 걸리는 부분을 추가한다.
     {
         int tempSize = (int)storedVert.size();
@@ -291,8 +301,9 @@ void OcclusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
                 storedVert.push_back(closestVert);
         }
     }
+    PROFILE_END("f");
     
-    
+    PROFILE_BEGIN("g");
     // 점을 각도값으로 정렬.
     {
         std::sort(std::begin(storedVert), std::end(storedVert), [this](const Vec2& v1, const Vec2& v2) {
@@ -307,8 +318,9 @@ void OcclusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
             
         });
     }
+    PROFILE_END("g");
     
-    
+    PROFILE_BEGIN("h");
     // 삼각형 이어그리기
     {
         if( !storedVert.empty() ) storedVert.push_back(storedVert.front());
@@ -325,6 +337,7 @@ void OcclusionBaker::bakeTexture(cocos2d::RenderTexture* tex,
         
         if ( !storedVert.empty() ) storedVert.pop_back();
     }
+    PROFILE_END("h");
 }
 
 

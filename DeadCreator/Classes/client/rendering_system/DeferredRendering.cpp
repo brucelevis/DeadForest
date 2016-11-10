@@ -16,6 +16,8 @@
 using namespace cocos2d;
 using namespace realtrick::client;
 
+#include "realtrick/profiler/SimpleProfiler.hpp"
+
 
 DeferredRendering::DeferredRendering(Game* game) : _game(game)
 {
@@ -120,6 +122,7 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
     //    for ( auto& entity : _dynamicEntities->getChildren() )
     //        static_cast<EntityBase*>(entity)->enableNormal(false);
     
+    PROFILE_BEGIN("occlusion");
     // bake occlusion texture
     auto player = _game->getPlayerPtr();
     OcclusionBaker::FieldOfView fov;
@@ -134,6 +137,7 @@ void DeferredRendering::prepareToRender(const cocos2d::Vec2& zoomScale, const co
                                  _game->getNeighborWalls(player->getWorldPosition(),
                                                          Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT)),
                                  Size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT), fov);
+    PROFILE_END("occlusion");
     
     getGLProgramState()->setUniformTexture("u_dynamicTex", _dynamicTexture->getSprite()->getTexture());
     getGLProgramState()->setUniformTexture("u_staticTex", _staticTexture->getSprite()->getTexture());

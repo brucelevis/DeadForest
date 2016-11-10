@@ -42,7 +42,7 @@ void GoalMoveToPosition::activate()
 	//make sure the subgoal list is clear.
 	removeAllSubgoals();
 
-	if (_owner->getGame()->isCollideSimpleWalls(_destination))
+	if (_owner->getGame()->isCollideWalls(_destination))
 	{
 		setGoalStatus(GoalStatus::COMPLETED);
 		return;

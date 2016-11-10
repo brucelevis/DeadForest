@@ -196,39 +196,34 @@ std::vector<EntityBase*> Game::getNeighborsEntities(const cocos2d::Vec2& pos, co
 }
 
 
-std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& pos) const
-{
-	std::vector<realtrick::Polygon> ret;
-	return ret;
-}
-
-
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, float speed) const
 {
-	QueryWallByAABB query;
-	b2AABB aabb;
-	aabb.lowerBound = b2Vec2(position.x, position.y) - b2Vec2(speed, speed);
-	aabb.upperBound = b2Vec2(position.x, position.y) + b2Vec2(speed, speed);
-	_physicsMgr->GetPhysicsWorld()->QueryAABB(&query, aabb);
-
+    auto walls = _physicsMgr->queryWallsAABB(position, speed / 2, speed / 2);
+    
     std::vector<realtrick::Polygon> ret;
+    for( int i = 0 ; i < walls.size() ; ++ i )
+    {
+        Polygon poly;
+        auto s = static_cast<b2ChainShape*>(walls[i]->getBody()->GetFixtureList()->GetShape());
+        for(int i = 0 ; i < s->m_count ; ++ i)
+        {
+            poly.pushVertex(Vec2(s->m_vertices[i].x, s->m_vertices[i].y));
+        }
+        ret.push_back(poly);
+    }
     return ret;
 }
 
 
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const
 {
-    QueryWallByAABB query;
-    b2AABB aabb;
-    aabb.lowerBound = b2Vec2(position.x, position.y) - b2Vec2(screenSize.width / 2, screenSize.height / 2);
-    aabb.upperBound = b2Vec2(position.x, position.y) + b2Vec2(screenSize.width / 2, screenSize.height / 2);
-    _physicsMgr->GetPhysicsWorld()->QueryAABB(&query, aabb);
+    auto walls = _physicsMgr->queryWallsAABB(position, screenSize.width / 2, screenSize.height / 2);
     
     std::vector<realtrick::Polygon> ret;
-    for( int i = 0 ; i < query.walls.size() ; ++ i )
+    for( int i = 0 ; i < walls.size() ; ++ i )
     {
         Polygon poly;
-        auto s = static_cast<b2ChainShape*>(query.walls[i]->getBody()->GetFixtureList()->GetShape());
+        auto s = static_cast<b2ChainShape*>(walls[i]->getBody()->GetFixtureList()->GetShape());
         for(int i = 0 ; i < s->m_count ; ++ i)
         {
             poly.pushVertex(Vec2(s->m_vertices[i].x, s->m_vertices[i].y));
@@ -241,61 +236,29 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
 
 std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& position, const Segment& ray) const
 {
+    auto walls = _physicsMgr->queryWallsRayCast(ray.start, ray.end);
+    sort(std::begin(walls), std::end(walls));
+    walls.erase(unique(begin(walls), end(walls)), end(walls));
+    
     std::vector<realtrick::Polygon> ret;
+    for( int i = 0 ; i < walls.size() ; ++ i )
+    {
+        Polygon poly;
+        auto s = static_cast<b2ChainShape*>(walls[i]->getBody()->GetFixtureList()->GetShape());
+        for(int i = 0 ; i < s->m_count ; ++ i)
+        {
+            poly.pushVertex(Vec2(s->m_vertices[i].x, s->m_vertices[i].y));
+        }
+        ret.push_back(poly);
+    }
     return ret;
+
 }
 
 
-std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& pos) const
+bool Game::isCollideWalls(const cocos2d::Vec2& pos) const
 {
-	std::vector<realtrick::Polygon> ret;
-    return ret;
-}
-
-
-std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& position, float speed) const
-{
-    std::vector<realtrick::Polygon> ret;
-    return ret;
-}
-
-
-std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& position, const cocos2d::Size screenSize) const
-{
-    std::vector<realtrick::Polygon> ret;
-    return ret;
-}
-
-
-std::vector<realtrick::Polygon> Game::getNeighborSimpleWalls(const cocos2d::Vec2& position, const Segment& ray) const
-{
-    std::vector<realtrick::Polygon> ret;
-    return ret;
-}
-
-std::vector<Wall*> Game::queryWalls(const cocos2d::Vec2& pos) const
-{
-	return _physicsMgr->queryWallsAABB(pos, 0.001f, 0.001f);
-}
-
-std::vector<Wall*> Game::queryWalls(const cocos2d::Vec2& pos, float radius) const
-{
-	return _physicsMgr->queryWallsAABB(pos, radius, radius);
-}
-
-std::vector<Wall*> Game::queryWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const
-{
-	return _physicsMgr->queryWallsAABB(pos, screenSize.width / 2, screenSize.height / 2);
-}
-
-std::vector<Wall*> Game::queryWalls(const cocos2d::Vec2& pos, const Segment& ray) const
-{
-	return _physicsMgr->queryWallsRayCast(ray.start, ray.end);
-}
-
-bool Game::isCollideSimpleWalls(const cocos2d::Vec2& pos) const
-{
-	const auto& walls = getNeighborSimpleWalls(pos);
+	const auto& walls = getNeighborWalls(pos, 10);
 	for (const auto& wall : walls)
 		if (wall.containPoint(pos))
 			return true;
@@ -785,7 +748,7 @@ void Game::setSwitchStatus(int index, SwitchStatus status)
 //------------------------------------------------------------------------------
 bool Game::isLOSOkay(cocos2d::Vec2 A, cocos2d::Vec2 B) const
 {
-	const auto& cols = getNeighborSimpleWalls(A, Segment(A, B));
+	const auto& cols = getNeighborWalls(A, Segment(A, B));
 
 	bool collide = false;
 	for (const auto& col : cols)

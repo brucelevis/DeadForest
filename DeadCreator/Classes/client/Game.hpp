@@ -106,22 +106,11 @@ namespace realtrick
             std::vector<EntityBase*> getNeighborsOnAttack(const cocos2d::Vec2& pos, const cocos2d::Vec2& dir, float range) const;
             std::vector<EntityBase*> getNeighborsEntities(const cocos2d::Vec2& pos, const cocos2d::Rect& rect) const;
 
-            std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos) const;
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, float speed) const;
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
             std::vector<realtrick::Polygon> getNeighborWalls(const cocos2d::Vec2& pos, const Segment& ray) const;
-            std::vector<realtrick::Polygon> getNeighborSimpleWalls(const cocos2d::Vec2& pos) const;
-            std::vector<realtrick::Polygon> getNeighborSimpleWalls(const cocos2d::Vec2& pos, float speed) const;
-            std::vector<realtrick::Polygon> getNeighborSimpleWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
-            std::vector<realtrick::Polygon> getNeighborSimpleWalls(const cocos2d::Vec2& pos, const Segment& ray) const;
-			
-			std::vector<Wall*> queryWalls(const cocos2d::Vec2& pos) const;
-			std::vector<Wall*> queryWalls(const cocos2d::Vec2& pos, float radius) const;
-			std::vector<Wall*> queryWalls(const cocos2d::Vec2& pos, const cocos2d::Size screenSize) const;
-			std::vector<Wall*> queryWalls(const cocos2d::Vec2& pos, const Segment& ray) const;
 
-
-			bool isCollideSimpleWalls(const cocos2d::Vec2& pos) const;
+			bool isCollideWalls(const cocos2d::Vec2& pos) const;
 
             TileType getStepOnTileType(const cocos2d::Vec2& pos);
             

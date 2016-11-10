@@ -44,7 +44,7 @@ void GoalWander::activate()
 		_owner->getWorldPosition() 
 		+ randomDirection * (kDefaultDistance + random(-kRandomErrorRange, kRandomErrorRange));
 
-	if (_owner->getGame()->isCollideSimpleWalls(_destination))
+	if (_owner->getGame()->isCollideWalls(_destination))
 	{
 		setGoalStatus(GoalStatus::COMPLETED);
 		return;

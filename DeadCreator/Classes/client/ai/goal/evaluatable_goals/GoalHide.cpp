@@ -69,7 +69,7 @@ bool GoalHide::findHidePosition(
 
 	for (auto e : hidePositions)
 	{
-		if (!owner->getGame()->isCollideSimpleWalls(e))
+		if (!owner->getGame()->isCollideWalls(e))
 		{
 			hidePos = e;
 			return true;
@@ -98,7 +98,7 @@ void GoalHide::activate()
 		return;
 	}
 		
-	const auto& poly = _owner->getGame()->getNeighborSimpleWalls(
+	const auto& poly = _owner->getGame()->getNeighborWalls(
 		_owner->getWorldPosition(),
 		_owner->getSensoryMemory()->getViewRange());
 

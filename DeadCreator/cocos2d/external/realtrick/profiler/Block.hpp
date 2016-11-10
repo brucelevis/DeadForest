@@ -50,6 +50,7 @@ namespace realtrick
             int32_t getMinTime() const { return _minTime; }
             int32_t getMaxTime() const { return _maxTime; }
             int32_t getTotalCall() const { return _numberOfCalls; }
+            int32_t getTotalTime() const { return _totalTime; }
             
             void prettyWrite(int depth, std::string& out) const;
             Offset<Vector<Offset<Element>>> getChildrenFlatbuffers(FlatBufferBuilder& builder) const;

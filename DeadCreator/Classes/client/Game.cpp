@@ -140,10 +140,8 @@ void Game::update(float dt)
     // update logic stream
     _logicStream->update(dt);
     
-    PROFILE_BEGIN("trigger");
     // trigger update and execute
     _triggerSystem->update(dt);
-    PROFILE_END("trigger");
     
     PROFILE_BEGIN("update entities");
     if ( !_isPaused )

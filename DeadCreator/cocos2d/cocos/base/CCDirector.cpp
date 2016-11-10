@@ -316,20 +316,18 @@ void Director::drawScene()
         showStats();
     }
     _renderer->render();
-    PROFILE_END("render");
     
     _eventDispatcher->dispatchEvent(_eventAfterDraw);
     
     popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
     
     _totalFrames++;
-    PROFILE_BEGIN("swap buffers");
     // swap buffers
     if (_openGLView)
     {
         _openGLView->swapBuffers();
     }
-    PROFILE_END("swap buffers");
+    PROFILE_END("render");
     
     if (_displayStats)
     {

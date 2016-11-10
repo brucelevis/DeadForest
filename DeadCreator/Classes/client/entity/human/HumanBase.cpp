@@ -127,9 +127,10 @@ HumanBase* HumanBase::create(Game* game)
 
 void HumanBase::update(float dt)
 {
-    PROFILE_BEGIN("ai");
     if (_brain && isAlive() && _regulator.isReady())
     {
+        PROFILE_BEGIN("ai");
+        
         PROFILE_BEGIN("think");
         _brain->think();
         PROFILE_END("think");
@@ -141,10 +142,11 @@ void HumanBase::update(float dt)
         PROFILE_BEGIN("target system");
         _targetSystem->update();
         PROFILE_END("target system");
+        
+        PROFILE_END("ai");
     }
     
     if ( _FSM ) _FSM->update(dt);
-    PROFILE_END("ai");
     
     PROFILE_BEGIN("other");
     // move and rotate
@@ -175,14 +177,19 @@ void HumanBase::update(float dt)
         }
     }
     
-    // this->setFootGauge( _footGauge + _speed * dt );
+    PROFILE_BEGIN("foot");
+    this->setFootGauge( _footGauge + getVelocity().length() * dt );
+    PROFILE_END("foot");
     
+    PROFILE_BEGIN("animation");
     // update animation
     if ( _animator )
     {
         _animator->setRotation(getRotationZ());
         _animator->processAnimation(dt);
     }
+    PROFILE_END("animation");
+    
     PROFILE_END("other");
 }
 

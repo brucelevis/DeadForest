@@ -296,9 +296,9 @@ cocos2d::Vec2 SimulatorLayer::worldToLocal(const cocos2d::Vec2& origin, const co
 
 void SimulatorLayer::receiveProfileDataAndRender()
 {
-    const char* tabNames[] = {"status", "cpu usage", "events"};
-    const int numTabs = 3;
-    const char* tabTooltips[numTabs] = {"fps, draw calls, vertices...", "cpu usages...", "events at time"};
+    const char* tabNames[] = {"status", "cpu usage"};
+    const int numTabs = 2;
+    const char* tabTooltips[numTabs] = {"fps, draw calls, vertices...", "cpu usages..."};
     static int selectedTab = 0;
     static int optionalHoveredTab = 0;
     
@@ -311,35 +311,36 @@ void SimulatorLayer::receiveProfileDataAndRender()
         auto drawList = ImGui::GetWindowDrawList();
     
         ImGui::TabLabels(numTabs, tabNames, selectedTab, tabTooltips, false, &optionalHoveredTab);
-        ImGui::BeginChild("##diagram wrapper", ImVec2(0, 200), false);
-        
-        auto origin = ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + ImGui::GetWindowSize().y);
-        _profileRenderOrigin = ImVec2(origin.x, origin.y);
-        
-        const int HORIZONTAL_LINE_LENGTH = ImGui::GetWindowSize().x - 15;
-        const int VERTICAL_LINE_LENGTH = ImGui::GetWindowSize().y - 10;
-        const float HORIZONTAL_SLICE = 50.0f;
-        
-        // horizontal line
-        drawList->AddLine(ImVec2(origin.x + 5, origin.y),
-                          ImVec2(origin.x + ImGui::GetWindowSize().x - 10, origin.y),
-                          ImColor(BLACK));
-        
-        for(int i = 0 ; i < HORIZONTAL_SLICE ; ++ i)
-        {
-            drawList->AddLine(ImVec2(origin.x + 5 + ((i + 1) / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH, origin.y),
-                              ImVec2(origin.x + 5 + ((i + 1) / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH, origin.y - 3), ImColor(BLACK));
-        }
-        
-        // vertical line
-        drawList->AddLine(ImVec2(origin.x + 5, origin.y),
-                          ImVec2(origin.x + 5, origin.y - ImGui::GetWindowSize().y + 10),
-                          ImColor(BLACK));
-        
-        ImGui::EndChild();
         
         if ( selectedTab == 0 )
         {
+            ImGui::BeginChild("##diagram wrapper", ImVec2(0, 200), false);
+            
+            auto origin = ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + ImGui::GetWindowSize().y);
+            _profileRenderOrigin = ImVec2(origin.x, origin.y);
+            
+            const int HORIZONTAL_LINE_LENGTH = ImGui::GetWindowSize().x - 15;
+            const int VERTICAL_LINE_LENGTH = ImGui::GetWindowSize().y - 10;
+            const float HORIZONTAL_SLICE = 50.0f;
+            
+            // horizontal line
+            drawList->AddLine(ImVec2(origin.x + 5, origin.y),
+                              ImVec2(origin.x + ImGui::GetWindowSize().x - 10, origin.y),
+                              ImColor(BLACK));
+            
+            for(int i = 0 ; i < HORIZONTAL_SLICE ; ++ i)
+            {
+                drawList->AddLine(ImVec2(origin.x + 5 + ((i + 1) / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH, origin.y),
+                                  ImVec2(origin.x + 5 + ((i + 1) / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH, origin.y - 3), ImColor(BLACK));
+            }
+            
+            // vertical line
+            drawList->AddLine(ImVec2(origin.x + 5, origin.y),
+                              ImVec2(origin.x + 5, origin.y - ImGui::GetWindowSize().y + 10),
+                              ImColor(BLACK));
+            
+            ImGui::EndChild();
+            
             if ( _profileStatus.size() > 1 )
             {
                 if ( _profileStatus.size() > HORIZONTAL_SLICE + 1 ) _profileStatus.pop_front();
@@ -351,6 +352,18 @@ void SimulatorLayer::receiveProfileDataAndRender()
                 drawList->AddText(ImVec2(origin.x + 15, origin.y + 10), ImColor(BLACK), std::string("FPS: " + _to_string(_profileStatus.back().fps)).c_str());
                 drawList->AddText(ImVec2(origin.x + 15, origin.y + 30), ImColor(BLACK), std::string("Vertices: " + _to_string(_profileStatus.back().numOfVertices)).c_str());
                 drawList->AddText(ImVec2(origin.x + 15, origin.y + 50), ImColor(BLACK), std::string("Draw Calls: " + _to_string(_profileStatus.back().drawCalls)).c_str());
+                
+                drawList->AddText(ImVec2(origin.x + 5 + (_profileStatus.size() / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH - 20,
+                                         origin.y - (_profileStatus.back().fps / 60.0f) * VERTICAL_LINE_LENGTH + 5),
+                                  ImColor(GRAYLISH_GREEN), _to_string(_profileStatus.back().fps).c_str());
+                
+                drawList->AddText(ImVec2(origin.x + 5 + (_profileStatus.size() / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH - 40,
+                                         origin.y - (_profileStatus.back().numOfVertices / 20000.0f) * VERTICAL_LINE_LENGTH - 15),
+                                  ImColor(GRAYLISH_RED), _to_string(_profileStatus.back().numOfVertices).c_str());
+                
+                drawList->AddText(ImVec2(origin.x + 5 + (_profileStatus.size() / HORIZONTAL_SLICE) * HORIZONTAL_LINE_LENGTH - 30,
+                                         origin.y - (_profileStatus.back().drawCalls / 200.0f) * VERTICAL_LINE_LENGTH - 15),
+                                  ImColor(GRAYLISH_BLUE), _to_string(_profileStatus.back().drawCalls).c_str());
                 
                 int i = 0;
                 for(auto iter = std::begin(_profileStatus) ; iter != prev(std::end(_profileStatus), 1) ; ++ iter, ++ i)
@@ -375,13 +388,9 @@ void SimulatorLayer::receiveProfileDataAndRender()
         {
             if ( !_profileCPU.empty() )
             {
-                ImGui::Text("");
+                ImGui::Separator();
                 drawProfileCPUs(_profileCPU.back());
             }
-        }
-        
-        else if ( selectedTab == 2 )
-        {
         }
         
         ImGui::End();
@@ -455,9 +464,10 @@ void SimulatorLayer::drawProfileCPUs(const ProfileCPU& data)
 {
     if ( ImGui::TreeNode(data.name.c_str()) )
     {
-        ImGui::Bullet(); ImGui::SameLine(); ImGui::TextColored(ImColor(GRAYLISH_RED), "Total: %s", std::string(_to_string((int)data.usage) + "%").c_str());
-        ImGui::SameLine(); ImGui::TextColored(ImColor(GRAYLISH_RED), "Calls: %s", _to_string(data.calls / 60).c_str());
-        ImGui::SameLine(); ImGui::TextColored(ImColor(GRAYLISH_RED), "Time: %.3f%s", data.avgTime / 1000.0f, "(ms)");
+        float calls = data.calls / (float)_profileStatus.back().fps;
+        ImGui::SameLine(); ImGui::TextColored(ImColor(GRAYLISH_RED), "%5.2f%s", data.usage, "(%)");
+        ImGui::SameLine(); ImGui::TextColored(ImColor(GRAYLISH_RED), "%3d%s", (int)calls, "(calls)");
+        ImGui::SameLine(); ImGui::TextColored(ImColor(GRAYLISH_RED), "%7.3f%s", data.avgTime * calls / 1000.0f, "(ms)");
         for(auto child = std::begin(data.children) ; child != std::end(data.children) ; ++ child)
             drawProfileCPUs(*child);
         

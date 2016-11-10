@@ -61,9 +61,8 @@ float Block::getUsageFromParent() const
 {
     if ( _parent )
     {
-        auto entryTime = static_cast<float>(_parent->getAvgTime());
-        if ( entryTime != 0.0f )
-            return (_avgTime / entryTime) * 100.0f;
+        auto entryTime = static_cast<float>(_parent->getTotalTime());
+        if ( entryTime != 0.0f ) return (getTotalTime() / entryTime) * 100.0f;
     }
     return 100.0f;
 }

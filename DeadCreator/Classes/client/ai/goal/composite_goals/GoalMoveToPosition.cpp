@@ -20,16 +20,13 @@ using namespace realtrick::client;
 USING_NS_CC;
 
 
-GoalMoveToPosition::GoalMoveToPosition(
-	HumanBase* const owner,
-	Vec2 pos,
-	std::shared_ptr<ArrivingData> arrivingData)
-	:
-	GoalCompositeBase(owner),
-	_destination(pos),
-	_arrivingData(arrivingData)
+GoalMoveToPosition::GoalMoveToPosition( HumanBase* const owner, Vec2 pos, std::shared_ptr<ArrivingData> arrivingData) :
+GoalCompositeBase(owner),
+_destination(pos),
+_arrivingData(arrivingData)
 {
-	setGoalType(GoalType::MOVE_TO_POS);
+    setGoalName("move to position");
+    setGoalType(GoalType::MOVE_TO_POS);
 }
 
 
@@ -37,22 +34,22 @@ GoalMoveToPosition::GoalMoveToPosition(
 //-----------------------------------------------------------------------------
 void GoalMoveToPosition::activate()
 {
-	setGoalStatus(GoalStatus::ACTIVE);
-
-	//make sure the subgoal list is clear.
-	removeAllSubgoals();
-
-	if (_owner->getGame()->isCollideWalls(_destination))
-	{
-		setGoalStatus(GoalStatus::COMPLETED);
-		return;
-	}
-
-	if (!_owner->getPathPlanner()->requestPathToPosition(_destination))
-		addSubgoal(new GoalSeekToPosition(_owner, _destination, _arrivingData));
-
-	else
-		addSubgoal(new GoalFollowPath(_owner, _owner->getPathPlanner()->getPath()));
+    setGoalStatus(GoalStatus::ACTIVE);
+    
+    //make sure the subgoal list is clear.
+    removeAllSubgoals();
+    
+    if (_owner->getGame()->isCollideWalls(_destination))
+    {
+        setGoalStatus(GoalStatus::COMPLETED);
+        return;
+    }
+    
+    if (!_owner->getPathPlanner()->requestPathToPosition(_destination))
+        addSubgoal(new GoalSeekToPosition(_owner, _destination, _arrivingData));
+    
+    else
+        addSubgoal(new GoalFollowPath(_owner, _owner->getPathPlanner()->getPath()));
 }
 
 
@@ -60,23 +57,23 @@ void GoalMoveToPosition::activate()
 //-----------------------------------------------------------------------------
 GoalStatus GoalMoveToPosition::process()
 {
-	//if status is INACTIVE, call activate()
-	if (isInactive())
-		activate();
-
-	//process the subgoals
-	_goalStatus = processSubgoals();
-
-	//if any of the subgoals have FAILED then this goal re-plans
-	if (_goalStatus == GoalStatus::FAILED)
-	{
-		setGoalStatus(GoalStatus::INACTIVE);
-	}
-
-	return _goalStatus;
+    //if status is INACTIVE, call activate()
+    if (isInactive())
+        activate();
+    
+    //process the subgoals
+    _goalStatus = processSubgoals();
+    
+    //if any of the subgoals have FAILED then this goal re-plans
+    if (_goalStatus == GoalStatus::FAILED)
+    {
+        setGoalStatus(GoalStatus::INACTIVE);
+    }
+    
+    return _goalStatus;
 }
 
 void GoalMoveToPosition::terminate()
 {
-	removeAllSubgoals();
+    removeAllSubgoals();
 }

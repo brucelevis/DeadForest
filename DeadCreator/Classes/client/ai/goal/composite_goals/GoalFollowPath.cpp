@@ -24,6 +24,7 @@ GoalFollowPath::GoalFollowPath(HumanBase* const owner, std::list<realtrick::Path
 GoalCompositeBase(owner),
 _path(path)
 {
+    setGoalName("follow path");
     setGoalType(GoalType::FOLLOW_PATH);
 }
 

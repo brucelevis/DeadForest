@@ -24,6 +24,7 @@ namespace realtrick
             explicit GoalCompositeBase(HumanBase* owner) : GoalBase(owner)
             {
                 setGoalType(GoalType::INVALID);
+                _isCompositeGoal = true;
             }
             virtual ~GoalCompositeBase()
             {
@@ -38,7 +39,9 @@ namespace realtrick
                     goal->terminate();
                 _subGoals.clear();
             }
-
+            
+            const std::vector<GoalBase*>& getSubGoals() const { return _subGoals; }
+            
             virtual void activate() = 0;
             virtual GoalStatus process() = 0;
             virtual void terminate() = 0;

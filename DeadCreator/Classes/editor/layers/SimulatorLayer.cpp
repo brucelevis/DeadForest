@@ -26,6 +26,8 @@ using namespace realtrick::editor;
 #include "HumanBase.hpp"
 #include "BrainBase.hpp"
 #include "Goals.hpp"
+#include "GoalBase.hpp"
+#include "GoalCompositeBase.hpp"
 using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
@@ -45,121 +47,121 @@ SimulatorLayer::SimulatorLayer(EditScene* layer) : _imguiLayer(layer)
 
 void SimulatorLayer::showLayer(bool& opened)
 {
-	static bool isPlayerInfo = true;
-	static bool isGridOn = false;
-	static bool isLocationViewOn = false;
-	static bool isGraphNodeViewOn = false;
-
+    static bool isPlayerInfo = true;
+    static bool isGridOn = false;
+    static bool isLocationViewOn = false;
+    static bool isGraphNodeViewOn = false;
+    
     static bool isPhysicsShape = false;
     static bool isPhysicsAABB = false;
     
     static bool isNavGraphOn = false;
     static bool isGoalDescOn = false;
-
-	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2 - GAME_SCREEN_WIDTH / 2,
-		ImGui::GetIO().DisplaySize.y / 2 - GAME_SCREEN_HEIGHT / 2), ImGuiSetCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT + 25), ImGuiSetCond_Once);
-
-	ImGui::Begin("simulator", &opened, ImVec2(0, 0), 0.0f,
-		ImGuiWindowFlags_ShowBorders |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoBringToFrontOnFocus);
-
-	setPosition(ImGui::GetWindowPos().x, ImGui::GetIO().DisplaySize.y - ImGui::GetWindowPos().y - GAME_SCREEN_HEIGHT - 25);
-
-	_debugOrigin = Vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
-	auto canvasSize = cocos2d::Size(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
-	ImGui::InvisibleButton("##dummy", ImVec2(canvasSize.width, canvasSize.height));
-
-	// game layer
-	if (_isGameStarted)
-	{
-		auto game = _gameLayer->getGame();
-		if (!game->isGameEnded())
-		{
-			ImGui::SetCursorScreenPos(ImVec2(_debugOrigin.x, _debugOrigin.y));
-			auto drawList = ImGui::GetWindowDrawList();
-
-			if (isPlayerInfo)
-			{
-				ImVec2 before = ImGui::GetCursorScreenPos();
-				ImGui::SetCursorScreenPos(ImVec2(_debugOrigin.x, _debugOrigin.y + GAME_SCREEN_HEIGHT - 80));
-				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 1.00, 1.00));
-
-				auto player = game->getPlayerPtr();
-				ImGui::Text("x: %.0f, y: %.0f", player->getWorldPosition().x, player->getWorldPosition().y);
-				ImGui::Text("hp: %d", player->getBlood());
-				ImGui::Text("state: %s", player->getStateName().c_str());
-
-				ImGui::PopStyleColor();
-				ImGui::SetCursorScreenPos(before);
-			}
-
-			if (isGridOn)
-			{
-				auto resource = game->getGameResource();
-
-				// rectangle lines
-				for (int i = 0; i < resource->getWorldHeight(); i = i + resource->getTileHeight() / 4)
-				{
-					auto a = worldToLocal(_debugOrigin, Vec2(0, i));
-					auto b = worldToLocal(_debugOrigin, Vec2(resource->getWorldWidth(), i));
-					drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
-				}
-
-				for (int i = 0; i < resource->getWorldWidth(); i = i + resource->getTileWidth() / 4)
-				{
-					auto a = worldToLocal(_debugOrigin, Vec2(i, 0));
-					auto b = worldToLocal(_debugOrigin, Vec2(i, resource->getWorldHeight()));
-					drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
-				}
-
-				// center rect
-				auto indices = getFocusedTileIndex(game->getPlayerPtr()->getWorldPosition(), 128, 128, 4);
-				const auto& tiles = resource->getTileData();
-				for (int i = indices.second - Prm.getValueAsInt("numOfViewableTileY") / 2;
-					i < indices.second + Prm.getValueAsInt("numOfViewableTileY") / 2; ++i)
-				{
-					for (int j = indices.first - Prm.getValueAsInt("numOfViewableTileX") / 2;
-						j < indices.first + Prm.getValueAsInt("numOfViewableTileX") / 2; ++j)
-					{
-						if (j < 0 || i < 0 || i >= resource->getNumOfTileY() || j >= resource->getNumOfTileX()) continue;
-
-						auto left = worldToLocal(_debugOrigin, tiles[i][j].getPosition() + Vec2(-64, 0));
-						auto bottom = worldToLocal(_debugOrigin, tiles[i][j].getPosition() + Vec2(0, -64));
-						auto right = worldToLocal(_debugOrigin, tiles[i][j].getPosition() + Vec2(64, 0));
-
-						drawList->AddLine(ImVec2(right.x, right.y), ImVec2(bottom.x, bottom.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
-						drawList->AddLine(ImVec2(bottom.x, bottom.y), ImVec2(left.x, left.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
-					}
-				}
+    
+    ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2 - GAME_SCREEN_WIDTH / 2,
+                                   ImGui::GetIO().DisplaySize.y / 2 - GAME_SCREEN_HEIGHT / 2), ImGuiSetCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT + 25), ImGuiSetCond_Once);
+    
+    ImGui::Begin("simulator", &opened, ImVec2(0, 0), 0.0f,
+                 ImGuiWindowFlags_ShowBorders |
+                 ImGuiWindowFlags_NoResize |
+                 ImGuiWindowFlags_NoCollapse |
+                 ImGuiWindowFlags_NoBringToFrontOnFocus);
+    
+    setPosition(ImGui::GetWindowPos().x, ImGui::GetIO().DisplaySize.y - ImGui::GetWindowPos().y - GAME_SCREEN_HEIGHT - 25);
+    
+    _debugOrigin = Vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+    auto canvasSize = cocos2d::Size(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
+    ImGui::InvisibleButton("##dummy", ImVec2(canvasSize.width, canvasSize.height));
+    
+    // game layer
+    if (_isGameStarted)
+    {
+        auto game = _gameLayer->getGame();
+        if (!game->isGameEnded())
+        {
+            ImGui::SetCursorScreenPos(ImVec2(_debugOrigin.x, _debugOrigin.y));
+            auto drawList = ImGui::GetWindowDrawList();
+            
+            if (isPlayerInfo)
+            {
+                ImVec2 before = ImGui::GetCursorScreenPos();
+                ImGui::SetCursorScreenPos(ImVec2(_debugOrigin.x, _debugOrigin.y + GAME_SCREEN_HEIGHT - 80));
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00, 1.00, 1.00, 1.00));
+                
+                auto player = game->getPlayerPtr();
+                ImGui::Text("x: %.0f, y: %.0f", player->getWorldPosition().x, player->getWorldPosition().y);
+                ImGui::Text("hp: %d", player->getBlood());
+                ImGui::Text("state: %s", player->getStateName().c_str());
+                
+                ImGui::PopStyleColor();
+                ImGui::SetCursorScreenPos(before);
             }
-
-			if (isLocationViewOn)
-			{
-				const auto& locations = game->getGameResource()->getLocations();
-				for (const auto& location : locations)
-				{
-					const auto& name = location.first;
-					const auto& rect = location.second;
-
-					Vec2 rectOrigin = worldToLocal(_debugOrigin, rect.origin);
-					Vec2 rectDest = worldToLocal(_debugOrigin, rect.origin + rect.size);
-
-					drawList->AddRect(ImVec2(rectOrigin.x, rectOrigin.y),
-						ImVec2(rectDest.x, rectDest.y),
-						ImColor(ImVec4(1.0, 1.0, 1.0, 0.6)));
-					drawList->AddRectFilled(ImVec2(rectOrigin.x, rectOrigin.y),
-						ImVec2(rectDest.x, rectDest.y),
-						ImColor(ImVec4(0.2, 0.2, 0.8, 0.2)));
-
-					drawList->AddText(ImVec2(rectOrigin.x, rectOrigin.y), ImColor(ImVec4(1.0, 1.0, 0.0, 1.0)), name.c_str());
-				}
-			}
-
-			if (isGraphNodeViewOn)
-			{
+            
+            if (isGridOn)
+            {
+                auto resource = game->getGameResource();
+                
+                // rectangle lines
+                for (int i = 0; i < resource->getWorldHeight(); i = i + resource->getTileHeight() / 4)
+                {
+                    auto a = worldToLocal(_debugOrigin, Vec2(0, i));
+                    auto b = worldToLocal(_debugOrigin, Vec2(resource->getWorldWidth(), i));
+                    drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
+                }
+                
+                for (int i = 0; i < resource->getWorldWidth(); i = i + resource->getTileWidth() / 4)
+                {
+                    auto a = worldToLocal(_debugOrigin, Vec2(i, 0));
+                    auto b = worldToLocal(_debugOrigin, Vec2(i, resource->getWorldHeight()));
+                    drawList->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.1)));
+                }
+                
+                // center rect
+                auto indices = getFocusedTileIndex(game->getPlayerPtr()->getWorldPosition(), 128, 128, 4);
+                const auto& tiles = resource->getTileData();
+                for (int i = indices.second - Prm.getValueAsInt("numOfViewableTileY") / 2;
+                     i < indices.second + Prm.getValueAsInt("numOfViewableTileY") / 2; ++i)
+                {
+                    for (int j = indices.first - Prm.getValueAsInt("numOfViewableTileX") / 2;
+                         j < indices.first + Prm.getValueAsInt("numOfViewableTileX") / 2; ++j)
+                    {
+                        if (j < 0 || i < 0 || i >= resource->getNumOfTileY() || j >= resource->getNumOfTileX()) continue;
+                        
+                        auto left = worldToLocal(_debugOrigin, tiles[i][j].getPosition() + Vec2(-64, 0));
+                        auto bottom = worldToLocal(_debugOrigin, tiles[i][j].getPosition() + Vec2(0, -64));
+                        auto right = worldToLocal(_debugOrigin, tiles[i][j].getPosition() + Vec2(64, 0));
+                        
+                        drawList->AddLine(ImVec2(right.x, right.y), ImVec2(bottom.x, bottom.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
+                        drawList->AddLine(ImVec2(bottom.x, bottom.y), ImVec2(left.x, left.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.2)));
+                    }
+                }
+            }
+            
+            if (isLocationViewOn)
+            {
+                const auto& locations = game->getGameResource()->getLocations();
+                for (const auto& location : locations)
+                {
+                    const auto& name = location.first;
+                    const auto& rect = location.second;
+                    
+                    Vec2 rectOrigin = worldToLocal(_debugOrigin, rect.origin);
+                    Vec2 rectDest = worldToLocal(_debugOrigin, rect.origin + rect.size);
+                    
+                    drawList->AddRect(ImVec2(rectOrigin.x, rectOrigin.y),
+                                      ImVec2(rectDest.x, rectDest.y),
+                                      ImColor(ImVec4(1.0, 1.0, 1.0, 0.6)));
+                    drawList->AddRectFilled(ImVec2(rectOrigin.x, rectOrigin.y),
+                                            ImVec2(rectDest.x, rectDest.y),
+                                            ImColor(ImVec4(0.2, 0.2, 0.8, 0.2)));
+                    
+                    drawList->AddText(ImVec2(rectOrigin.x, rectOrigin.y), ImColor(ImVec4(1.0, 1.0, 0.0, 1.0)), name.c_str());
+                }
+            }
+            
+            if (isGraphNodeViewOn)
+            {
                 auto graph = game->getGraph();
                 auto nodes = graph->getNodes();
                 for(const auto& node : nodes)
@@ -170,7 +172,7 @@ void SimulatorLayer::showLayer(bool& opened)
                         Vec2 rectOrigin = worldToLocal(_debugOrigin, node.getPos());
                         Vec2 rectDest = rectOrigin + Vec2(3, 3);
                         drawList->AddRect(ImVec2(rectOrigin.x, rectOrigin.y), ImVec2(rectDest.x, rectDest.y), ImColor(ImVec4(1.0, 1.0, 1.0, 0.6)));
-                
+                        
                         auto resource = game->getGameResource();
                         const auto& edges = graph->getEdges(node.getIndex());
                         for(const auto& edge : edges)
@@ -186,7 +188,7 @@ void SimulatorLayer::showLayer(bool& opened)
                         }
                     }
                 }
-			}
+            }
             
             if ( isPhysicsShape || isPhysicsAABB )
             {
@@ -222,54 +224,55 @@ void SimulatorLayer::showLayer(bool& opened)
             
             if ( isGoalDescOn )
             {
-//                auto entities = game->getNeighborsEntities(game->getPlayerPtr()->getWorldPosition(), cocos2d::Rect(0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
-//                for( const auto& ent : entities )
-//                {
-//                    if ( isMasked(ent->getFamilyMask(), FamilyMask::HUMAN_BASE) )
-//                    {
-//                        auto human = static_cast<HumanBase*>(ent);
-//                        auto brain = human->getBrain();
-//                        if ( human->isAlive() && brain )
-//                        {
-//                            brain->getGoalThink()->
-//                        }
-//                    }
-//                }
+                auto entities = game->getNeighborsEntities(game->getPlayerPtr()->getWorldPosition(), cocos2d::Rect(0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
+                for( const auto& ent : entities )
+                {
+                    if ( isMasked(ent->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+                    {
+                        auto human = static_cast<HumanBase*>(ent);
+                        auto brain = human->getBrain();
+                        if ( human->isAlive() && brain )
+                        {
+                            _lines = 0;
+                            drawGoalDatas(0, brain->getGoalThink());
+                        }
+                    }
+                }
             }
             
-		}
-	}
-	ImGui::End();
-
-	if (_isGameStarted)
-	{
-		auto game = _gameLayer->getGame();
-		if (game->isGameEnded())
-			opened = false;
-	}
-
+        }
+    }
+    ImGui::End();
+    
+    if (_isGameStarted)
+    {
+        auto game = _gameLayer->getGame();
+        if (game->isGameEnded())
+            opened = false;
+    }
+    
     if (!opened)
     {
         closeLayer();
     }
-
-	// setting layer
-	if (_isGameStarted)
-	{
-		auto game = _gameLayer->getGame();
-		if (!game->isGameEnded())
-		{
-			ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
-			ImGui::Begin("statistic", NULL, ImGuiWindowFlags_ShowBorders);
-
-			if (ImGui::TreeNode("debug"))
-			{
-				ImGui::Checkbox("player info", &isPlayerInfo);
-				ImGui::Checkbox("grid", &isGridOn);
-				ImGui::Checkbox("location", &isLocationViewOn);
-				ImGui::Checkbox("graph", &isGraphNodeViewOn);
-				ImGui::TreePop();
-			}
+    
+    // setting layer
+    if (_isGameStarted)
+    {
+        auto game = _gameLayer->getGame();
+        if (!game->isGameEnded())
+        {
+            ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
+            ImGui::Begin("statistic", NULL, ImGuiWindowFlags_ShowBorders);
+            
+            if (ImGui::TreeNode("debug"))
+            {
+                ImGui::Checkbox("player info", &isPlayerInfo);
+                ImGui::Checkbox("grid", &isGridOn);
+                ImGui::Checkbox("location", &isLocationViewOn);
+                ImGui::Checkbox("graph", &isGraphNodeViewOn);
+                ImGui::TreePop();
+            }
             
             if ( ImGui::TreeNode("physics") )
             {
@@ -295,7 +298,7 @@ void SimulatorLayer::showLayer(bool& opened)
                 ImGui::TreePop();
             }
             
-			ImGui::End();
+            ImGui::End();
             
             // logger
             ImGui::SetNextWindowPos(ImVec2(100,600), ImGuiSetCond_Once);
@@ -305,8 +308,8 @@ void SimulatorLayer::showLayer(bool& opened)
             if (game->isLogAdded()) ImGui::SetScrollHere(1.0f);
             game->isLogAdded() = false;
             ImGui::End();
-		}
-	}
+        }
+    }
     
     
     // profiler
@@ -316,32 +319,32 @@ void SimulatorLayer::showLayer(bool& opened)
 
 void SimulatorLayer::playGame()
 {
-	_gameLayer = realtrick::client::DummyScene::create(this);
-	addChild(_gameLayer);
+    _gameLayer = realtrick::client::DummyScene::create(this);
+    addChild(_gameLayer);
 }
 
 
 void SimulatorLayer::closeLayer()
 {
     _profileStatus.clear();
-	_gameLayer->removeFromParentAndCleanup(true);
-	_imguiLayer->stopGame();
+    _gameLayer->removeFromParentAndCleanup(true);
+    _imguiLayer->stopGame();
 }
 
 
 cocos2d::Vec2 SimulatorLayer::worldToLocal(const cocos2d::Vec2& p)
 {
-	auto game = _gameLayer->getGame();
+    auto game = _gameLayer->getGame();
     auto transformedVector =  p - game->getPlayerPtr()->getWorldPosition();
     auto zoomScale = game->getRenderingSysetm()->getZoomScale();
-	return cocos2d::Vec2(transformedVector.x * zoomScale.x, transformedVector.y * zoomScale.y);
+    return cocos2d::Vec2(transformedVector.x * zoomScale.x, transformedVector.y * zoomScale.y);
 }
 
 
 cocos2d::Vec2 SimulatorLayer::worldToLocal(const cocos2d::Vec2& origin, const cocos2d::Vec2& p)
 {
-	auto local = worldToLocal(p);
-	return cocos2d::Vec2(origin.x + local.x + GAME_SCREEN_WIDTH / 2, origin.y - local.y + GAME_SCREEN_HEIGHT / 2);
+    auto local = worldToLocal(p);
+    return cocos2d::Vec2(origin.x + local.x + GAME_SCREEN_WIDTH / 2, origin.y - local.y + GAME_SCREEN_HEIGHT / 2);
 }
 
 
@@ -358,9 +361,9 @@ void SimulatorLayer::receiveProfileDataAndRender()
         ImGui::SetNextWindowPos(ImVec2(100,100), ImGuiSetCond_Once);
         ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiSetCond_Once);
         ImGui::Begin("profiler", NULL, ImGuiWindowFlags_ShowBorders);
-    
+        
         auto drawList = ImGui::GetWindowDrawList();
-    
+        
         ImGui::TabLabels(numTabs, tabNames, selectedTab, tabTooltips, false, &optionalHoveredTab);
         
         if ( selectedTab == 0 )
@@ -465,7 +468,7 @@ void SimulatorLayer::receiveProfileDataAndRender()
                     stat.drawCalls = Director::getInstance()->getRenderer()->getDrawnBatches();
                     stat.numOfVertices = Director::getInstance()->getRenderer()->getDrawnVertices();
                     _profileStatus.push_back(stat);
-                 
+                    
                     // cpu usage
                     auto obj = realtrick::profiler::GetData(packet->body());
                     auto mainloop = obj->main_loop();
@@ -503,7 +506,7 @@ void SimulatorLayer::fillProfileCPUDatas(std::vector<ProfileCPU>& parent, const 
     block.maxTime = elem->max_time();
     block.name = elem->name()->str();
     block.usage = elem->usage();
-
+    
     for( auto child = elem->children()->begin() ; child != elem->children()->end() ; ++ child )
         fillProfileCPUDatas(block.children, *child);
     
@@ -523,6 +526,36 @@ void SimulatorLayer::drawProfileCPUs(const ProfileCPU& data)
             drawProfileCPUs(*child);
         
         ImGui::TreePop();
+    }
+}
+
+
+void SimulatorLayer::drawGoalDatas(int blanks, GoalBase* goal)
+{
+    auto drawList = ImGui::GetWindowDrawList();
+    
+    ImColor col;
+    
+    if ( !goal->isCompositeGoal() ) col = ImColor(ImVec4(1.0, 1.0, 1.0, 1.0));
+    else
+    {
+        if ( static_cast<GoalCompositeBase*>(goal)->getSubGoals().empty() )
+            col = ImColor(ImVec4(1.0, 1.0, 1.0, 1.0));
+        else
+            col = ImColor(ImVec4(0.5, 0.5, 0.5, 1.0));
+    }
+    
+    Vec2 origin = worldToLocal(_debugOrigin, goal->getOwner()->getWorldPosition());
+    drawList->AddText(ImVec2(origin.x + blanks * 4, origin.y + _lines * 20), col, goal->getGoalName().c_str());
+    
+    if ( goal->isCompositeGoal() )
+    {
+        auto compositeGoal = static_cast<GoalCompositeBase*>(goal);
+        for(const auto& subGoal : compositeGoal->getSubGoals() )
+        {
+            _lines++;
+            drawGoalDatas(blanks + 1, subGoal);
+        }
     }
 }
 
@@ -596,8 +629,8 @@ void SimulatorLayer::DrawPoint(const b2Vec2& p, float32 size, const b2Color& col
         Vec2 rectOrigin = worldToLocal(_debugOrigin, toVec(p));
         Vec2 rectDest = worldToLocal(_debugOrigin, Vec2(p.x + size, p.y + size));
         drawList->AddRectFilled(ImVec2(rectOrigin.x, rectOrigin.y),
-                            ImVec2(rectDest.x, rectDest.y),
-                            ImColor(ImVec4(0.2, 0.2, 0.8, 0.2)));
+                                ImVec2(rectDest.x, rectDest.y),
+                                ImColor(ImVec4(0.2, 0.2, 0.8, 0.2)));
     }
 }
 

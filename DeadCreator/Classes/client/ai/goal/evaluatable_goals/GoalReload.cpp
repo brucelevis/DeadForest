@@ -16,6 +16,7 @@ GoalReload::GoalReload(HumanBase* owner, float character_bias)
 	:
 	GoalEvaluatable(owner, character_bias)
 {
+    setGoalName("reload");
 	setGoalType(GoalType::RELOAD);
 }
 

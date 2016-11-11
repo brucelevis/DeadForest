@@ -24,6 +24,7 @@ GoalProvoke::GoalProvoke(HumanBase* owner, float character_bias)
 	:
 	GoalEvaluatable(owner, character_bias)
 {
+    setGoalName("provoke");
 	setGoalType(GoalType::PROVOKE);
 }
 

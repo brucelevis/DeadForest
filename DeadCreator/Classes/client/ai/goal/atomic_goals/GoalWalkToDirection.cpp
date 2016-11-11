@@ -15,28 +15,25 @@ USING_NS_CC;
 
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
-GoalWalkToDirection::GoalWalkToDirection(
-	HumanBase* owner,
-	const cocos2d::Vec2& direction,
-	float walkTime)
-	:
-	GoalBase(owner),
-	_direction(direction),
-	_walkTime(walkTime)
+GoalWalkToDirection::GoalWalkToDirection( HumanBase* owner, const cocos2d::Vec2& direction, float walkTime) :
+GoalBase(owner),
+_direction(direction),
+_walkTime(walkTime)
 {
-	setGoalType(GoalType::WALK_TO_DIRECTION);
+    setGoalName("walk to direction");
+    setGoalType(GoalType::WALK_TO_DIRECTION);
 }
 
 
 //---------------------------- activate -------------------------------------
-//-----------------------------------------------------------------------------  
+//-----------------------------------------------------------------------------
 void GoalWalkToDirection::activate()
 {
-	setGoalStatus(GoalStatus::ACTIVE);
-	_startTime = system_clock::now().time_since_epoch();
-
-	InputMoveBegin moveBegin(_owner, _direction);
-	moveBegin.execute();
+    setGoalStatus(GoalStatus::ACTIVE);
+    _startTime = system_clock::now().time_since_epoch();
+    
+    InputMoveBegin moveBegin(_owner, _direction);
+    moveBegin.execute();
 }
 
 
@@ -44,16 +41,16 @@ void GoalWalkToDirection::activate()
 //-----------------------------------------------------------------------------
 GoalStatus GoalWalkToDirection::process()
 {
-	if (isInactive())
-		activate();
-
-	duration<double> endTime = 
-		system_clock::now().time_since_epoch();
-
-	if (_walkTime < (endTime - _startTime).count())
-		setGoalStatus(GoalStatus::COMPLETED);
-	
-	return getGoalStatus();
+    if (isInactive())
+        activate();
+    
+    duration<double> endTime =
+    system_clock::now().time_since_epoch();
+    
+    if (_walkTime < (endTime - _startTime).count())
+        setGoalStatus(GoalStatus::COMPLETED);
+    
+    return getGoalStatus();
 }
 
 
@@ -61,10 +58,10 @@ GoalStatus GoalWalkToDirection::process()
 //-----------------------------------------------------------------------------
 void GoalWalkToDirection::terminate()
 {
-	InputMoveEnd moveEnd(_owner);
-	moveEnd.execute();
-
-	setGoalStatus(GoalStatus::COMPLETED);
+    InputMoveEnd moveEnd(_owner);
+    moveEnd.execute();
+    
+    setGoalStatus(GoalStatus::COMPLETED);
 }
 
 

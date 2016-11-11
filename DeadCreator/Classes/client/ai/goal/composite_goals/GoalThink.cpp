@@ -14,6 +14,7 @@ using namespace realtrick::client;
 
 GoalThink::GoalThink(HumanBase* owner) : GoalCompositeBase(owner)
 {
+    setGoalName("think");
     setGoalType(GoalType::THINK);
 }
 

@@ -17,12 +17,9 @@ using namespace std::chrono;
 USING_NS_CC;
 
 
-GoalTraverseEdge::GoalTraverseEdge(HumanBase* owner, PathEdge edge)
-:
-GoalBase(owner),
-_edge(edge),
-_time_expected(0.0)
+GoalTraverseEdge::GoalTraverseEdge(HumanBase* owner, PathEdge edge) : GoalBase(owner), _edge(edge), _time_expected(0.0)
 {
+    setGoalName("traverse edge");
     setGoalType(GoalType::TRAVERSE_EDGE);
 }
 

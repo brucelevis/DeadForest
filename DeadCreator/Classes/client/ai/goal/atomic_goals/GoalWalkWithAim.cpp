@@ -15,37 +15,33 @@ USING_NS_CC;
 
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
-GoalWalkWithAim::GoalWalkWithAim(
-	HumanBase* owner,
-	const cocos2d::Vec2& destination,
-	const cocos2d::Vec2& aimHeading,
-	float walkTime)
-	:
-	GoalBase(owner),
-	_destination(destination),
-	_aimHeading(aimHeading),
-	_walkTime(walkTime)
+GoalWalkWithAim::GoalWalkWithAim(HumanBase* owner, const cocos2d::Vec2& destination, const cocos2d::Vec2& aimHeading, float walkTime) :
+GoalBase(owner),
+_destination(destination),
+_aimHeading(aimHeading),
+_walkTime(walkTime)
 {
-	setGoalType(GoalType::WALK_WITH_AIM);
+    setGoalName("walk with aim");
+    setGoalType(GoalType::WALK_WITH_AIM);
 }
 
 
 //---------------------------- activate -------------------------------------
-//-----------------------------------------------------------------------------  
+//-----------------------------------------------------------------------------
 void GoalWalkWithAim::activate()
 {
-	setGoalStatus(GoalStatus::ACTIVE);
-
-	_startTime = system_clock::now().time_since_epoch();
-
-	InputMoveBegin moveBegin(
-		_owner, 
-		(_destination - _owner->getWorldPosition()).getNormalized());
-
-	moveBegin.execute();
-
-	InputBezelBegin bezelBegin(_owner, _aimHeading);
-	bezelBegin.execute();
+    setGoalStatus(GoalStatus::ACTIVE);
+    
+    _startTime = system_clock::now().time_since_epoch();
+    
+    InputMoveBegin moveBegin(
+                             _owner,
+                             (_destination - _owner->getWorldPosition()).getNormalized());
+    
+    moveBegin.execute();
+    
+    InputBezelBegin bezelBegin(_owner, _aimHeading);
+    bezelBegin.execute();
 }
 
 
@@ -53,16 +49,16 @@ void GoalWalkWithAim::activate()
 //-----------------------------------------------------------------------------
 GoalStatus GoalWalkWithAim::process()
 {
-	if (isInactive())
-		activate();
-
-	duration<double> endTime = 
-		system_clock::now().time_since_epoch();
-
-	if (_walkTime < (endTime - _startTime).count())
-		setGoalStatus(GoalStatus::COMPLETED);
-	
-	return getGoalStatus();
+    if (isInactive())
+        activate();
+    
+    duration<double> endTime =
+    system_clock::now().time_since_epoch();
+    
+    if (_walkTime < (endTime - _startTime).count())
+        setGoalStatus(GoalStatus::COMPLETED);
+    
+    return getGoalStatus();
 }
 
 
@@ -70,13 +66,13 @@ GoalStatus GoalWalkWithAim::process()
 //-----------------------------------------------------------------------------
 void GoalWalkWithAim::terminate()
 {
-	InputMoveEnd moveEnd(_owner);
-	moveEnd.execute();
-
-	InputBezelEnd bezelEnd(_owner);
-	bezelEnd.execute();
-
-	setGoalStatus(GoalStatus::COMPLETED);
+    InputMoveEnd moveEnd(_owner);
+    moveEnd.execute();
+    
+    InputBezelEnd bezelEnd(_owner);
+    bezelEnd.execute();
+    
+    setGoalStatus(GoalStatus::COMPLETED);
 }
 
 

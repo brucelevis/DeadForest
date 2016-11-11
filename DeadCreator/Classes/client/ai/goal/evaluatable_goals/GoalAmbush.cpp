@@ -12,24 +12,24 @@ USING_NS_CC;
 
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
-GoalAmbush::GoalAmbush(HumanBase* owner, float character_bias)
-	:
-	GoalEvaluatable(owner, character_bias)
+GoalAmbush::GoalAmbush(HumanBase* owner, float character_bias) :
+GoalEvaluatable(owner, character_bias)
 {
-	setGoalType(GoalType::AMBUSH);
+    setGoalName("ambush");
+    setGoalType(GoalType::AMBUSH);
 }
 
 
 //---------------------------- activate -------------------------------------
-//-----------------------------------------------------------------------------  
+//-----------------------------------------------------------------------------
 void GoalAmbush::activate()
 {
-	setGoalStatus(GoalStatus::ACTIVE);
-
-	if (!_owner->getTargetSys()->isTargetPresent())
-		return;
-	
-	addSubgoal(new GoalAttackTarget(_owner));
+    setGoalStatus(GoalStatus::ACTIVE);
+    
+    if (!_owner->getTargetSys()->isTargetPresent())
+        return;
+    
+    addSubgoal(new GoalAttackTarget(_owner));
 }
 
 
@@ -37,12 +37,12 @@ void GoalAmbush::activate()
 //-----------------------------------------------------------------------------
 GoalStatus GoalAmbush::process()
 {
-	if (isInactive())
-		activate();
-
-	setGoalStatus(processSubgoals());
-	
-	return getGoalStatus();
+    if (isInactive())
+        activate();
+    
+    setGoalStatus(processSubgoals());
+    
+    return getGoalStatus();
 }
 
 
@@ -50,11 +50,11 @@ GoalStatus GoalAmbush::process()
 //-----------------------------------------------------------------------------
 void GoalAmbush::terminate()
 {
-	removeAllSubgoals();
+    removeAllSubgoals();
 }
 
 
 int GoalAmbush::evaluate(HumanBase* const owner)
 {
-	return 1;
+    return 1;
 }

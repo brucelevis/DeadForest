@@ -22,7 +22,11 @@
 
 namespace realtrick
 {
-    namespace client { class DummyScene; }
+    namespace client
+    {
+        class DummyScene;
+        class GoalBase;
+    }
     
 	namespace editor
 	{
@@ -116,6 +120,8 @@ namespace realtrick
             void fillProfileCPUDatas(std::vector<ProfileCPU>& parent, const realtrick::profiler::Element* elem);
             void drawProfileCPUs(const ProfileCPU& data);
             
+            void drawGoalDatas(int blanks, realtrick::client::GoalBase* goal);
+            
 		private:
 
 			EditScene* _imguiLayer;
@@ -130,6 +136,8 @@ namespace realtrick
             ImVec2 _profileRenderOrigin;
             std::list<ProfileStatus> _profileStatus;
             std::list<ProfileCPU> _profileCPU;
+            
+            int _lines = 0;
             
 		};
 

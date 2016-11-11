@@ -8,7 +8,7 @@
 
 namespace
 {
-	float kMoveDistance = 150.0f;
+    float kMoveDistance = 150.0f;
 }
 
 using namespace realtrick::client;
@@ -17,24 +17,24 @@ USING_NS_CC;
 
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
-GoalAvoid::GoalAvoid(HumanBase* owner)
-	:
-	GoalCompositeBase(owner)
+GoalAvoid::GoalAvoid(HumanBase* owner) :
+GoalCompositeBase(owner)
 {
-	setGoalType(GoalType::AVOID);
+    setGoalName("avoid");
+    setGoalType(GoalType::AVOID);
 }
 
 
 //---------------------------- activate -------------------------------------
-//-----------------------------------------------------------------------------  
+//-----------------------------------------------------------------------------
 void GoalAvoid::activate()
 {
-	setGoalStatus(GoalStatus::ACTIVE);
-	if (_owner->getTargetSys()->isTargetPresent())
-	{
-		Vec2 avoidMove(_owner->getSensoryMemory()->avoidingEnemiesVector(_owner->getWorldPosition(), _owner->getHeading()));
-		addSubgoal(new GoalSeekToPosition(_owner, _owner->getWorldPosition() + avoidMove * kMoveDistance));
-	}
+    setGoalStatus(GoalStatus::ACTIVE);
+    if (_owner->getTargetSys()->isTargetPresent())
+    {
+        Vec2 avoidMove(_owner->getSensoryMemory()->avoidingEnemiesVector(_owner->getWorldPosition(), _owner->getHeading()));
+        addSubgoal(new GoalSeekToPosition(_owner, _owner->getWorldPosition() + avoidMove * kMoveDistance));
+    }
 }
 
 
@@ -42,17 +42,17 @@ void GoalAvoid::activate()
 //-----------------------------------------------------------------------------
 GoalStatus GoalAvoid::process()
 {
-	// If status is INACTIVE, call activate()
-	if (isInactive())
-		activate();
-
-	if (getGoalStatus() == GoalStatus::COMPLETED ||
-		getGoalStatus() == GoalStatus::FAILED)
-		return GoalStatus::COMPLETED;
-
-	processSubgoals();
-	
-	return GoalStatus::ACTIVE;
+    // If status is INACTIVE, call activate()
+    if (isInactive())
+        activate();
+    
+    if (getGoalStatus() == GoalStatus::COMPLETED ||
+        getGoalStatus() == GoalStatus::FAILED)
+        return GoalStatus::COMPLETED;
+    
+    processSubgoals();
+    
+    return GoalStatus::ACTIVE;
 }
 
 
@@ -60,8 +60,8 @@ GoalStatus GoalAvoid::process()
 //-----------------------------------------------------------------------------
 void GoalAvoid::terminate()
 {
-	InputMoveEnd moveEnd(_owner);
-	moveEnd.execute();
+    InputMoveEnd moveEnd(_owner);
+    moveEnd.execute();
 }
 
 

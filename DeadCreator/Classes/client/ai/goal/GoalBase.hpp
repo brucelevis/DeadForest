@@ -29,6 +29,7 @@ namespace realtrick
             {
                 setGoalStatus(GoalStatus::INACTIVE);
                 setGoalType(GoalType::INVALID);
+                _isCompositeGoal = false;
             }
             virtual ~GoalBase() = default;
             
@@ -43,10 +44,13 @@ namespace realtrick
             void setEvaluator(const std::function<int(HumanBase*)>& evaluator) { _evaluator = evaluator; }
             int getWeight() { return (_evaluator ? _evaluator(_owner) : 0); }
             
+            std::string getGoalName() const { return _goalName; }
+            
             bool isCompleted() const { return (_goalStatus == GoalStatus::COMPLETED); }
             bool isActive() const { return (_goalStatus == GoalStatus::ACTIVE); }
             bool isInactive() const { return (_goalStatus == GoalStatus::INACTIVE); }
             bool isFailed() const { return (_goalStatus == GoalStatus::FAILED); }
+            bool isCompositeGoal() const { return _isCompositeGoal; }
             
             virtual void activate() = 0;
             virtual GoalStatus process() = 0;
@@ -54,10 +58,16 @@ namespace realtrick
     
         protected:
             
+            void setGoalName(const std::string& name) { _goalName = name; }
+            
+        protected:
+            
             HumanBase* _owner;
             GoalStatus _goalStatus;
             GoalType _goalType;
             std::function<int(HumanBase*)> _evaluator;
+            bool _isCompositeGoal;
+            std::string _goalName;
             
         };
         

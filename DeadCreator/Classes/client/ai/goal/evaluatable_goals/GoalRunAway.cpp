@@ -15,6 +15,7 @@ GoalRunAway::GoalRunAway(HumanBase* owner, float character_bias)
 	:
 	GoalEvaluatable(owner, character_bias)
 {
+    setGoalName("run away");
 	setGoalType(GoalType::RUN_AWAY);
 }
 

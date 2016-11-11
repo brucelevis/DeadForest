@@ -6,6 +6,9 @@
 //
 //
 
+#pragma once
+
+
 #include <chrono>
 
 #include "GoalBase.hpp"
@@ -20,7 +23,7 @@ namespace realtrick
             
         public:
 			
-            GoalTraverseEdge(HumanBase* owner, realtrick::PathEdge edge, bool last_edge);
+            GoalTraverseEdge(HumanBase* owner, realtrick::PathEdge edge);
 			virtual ~GoalTraverseEdge()
 			{}
             
@@ -36,10 +39,7 @@ namespace realtrick
 			bool		isStuck() const;
 
 			//the edge the bot will follow
-			realtrick::PathEdge	_edge;
-
-			//true if _edge is the last in the path.
-			bool		_last_edge_in_path;
+            realtrick::PathEdge	_edge;
 
 			std::chrono::duration<double>	_start;
 
@@ -49,6 +49,8 @@ namespace realtrick
         
     }
 }
+
+
 
 
 

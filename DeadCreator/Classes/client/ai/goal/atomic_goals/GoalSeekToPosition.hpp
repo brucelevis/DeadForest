@@ -6,6 +6,9 @@
 //
 //
 
+#pragma once
+
+
 #include <chrono>
 
 #include "GoalBase.hpp"
@@ -52,6 +55,8 @@ namespace realtrick
         
     }
 }
+
+
 
 
 

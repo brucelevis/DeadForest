@@ -1,6 +1,4 @@
-#ifndef GOAL_AMBUSH_H
-#define GOAL_AMBUSH_H
-#pragma warning (disable:4786)
+#pragma once
 
 #include "GoalEvaluatable.hpp"
 #include "Types.hpp"
@@ -24,11 +22,16 @@ namespace realtrick
 			virtual void activate() override;
 			virtual GoalStatus process() override;
 			virtual void terminate() override;
+            
 		};
 	}
 }
 
 
 
-#endif
+
+
+
+
+
 

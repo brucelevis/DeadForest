@@ -37,7 +37,9 @@ namespace realtrick
 			virtual int evaluate(HumanBase* const owner) = 0;
 
         protected:
+            
 			float _character_bias;
+            
         };
         
     }

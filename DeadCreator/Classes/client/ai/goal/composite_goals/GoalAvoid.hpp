@@ -1,6 +1,4 @@
-#ifndef GOAL_AVOID_H
-#define GOAL_AVOID_H
-#pragma warning (disable:4786)
+#pragma once
 
 #include "GoalCompositeBase.hpp"
 #include "Types.hpp"
@@ -23,11 +21,16 @@ namespace realtrick
 			virtual void activate() override;
 			virtual GoalStatus process() override;
 			virtual void terminate() override;
+            
 		};
 	}
 }
 
 
 
-#endif
+
+
+
+
+
 

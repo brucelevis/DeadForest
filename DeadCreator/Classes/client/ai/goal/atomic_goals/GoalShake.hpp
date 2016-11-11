@@ -1,6 +1,4 @@
-#ifndef GOAL_SHAKE_H
-#define GOAL_SHAKE_H
-#pragma warning (disable:4786)
+#pragma once
 
 #include "GoalBase.hpp"
 
@@ -28,16 +26,22 @@ namespace realtrick
 			virtual GoalStatus process() override;
 			virtual void terminate() override;
 
-		public:
+		private:
+            
 			std::chrono::duration<double> _startTime;
 			cocos2d::Vec2 _movingDirection;
 			cocos2d::Vec2 _shakingAxis;
 			float _shakeTime;
+            
 		};
 	}
 }
 
 
 
-#endif
+
+
+
+
+
 

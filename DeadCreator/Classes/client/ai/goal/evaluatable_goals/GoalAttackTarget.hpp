@@ -6,6 +6,9 @@
 //
 //
 
+#pragma once
+
+
 #include <chrono>
 
 #include "GoalEvaluatable.hpp"
@@ -15,9 +18,12 @@ namespace realtrick
 {
     namespace client
     {
+        
         class GoalAttackTarget : public GoalEvaluatable
         {
+            
         public:
+            
 			explicit GoalAttackTarget(HumanBase* const owner, float character_bias = 1.0f);
 
 			virtual ~GoalAttackTarget() override
@@ -28,8 +34,16 @@ namespace realtrick
             virtual GoalStatus process() override;
 			virtual void terminate() override
 			{}
+            
         };
     }
 }
+
+
+
+
+
+
+
 
 

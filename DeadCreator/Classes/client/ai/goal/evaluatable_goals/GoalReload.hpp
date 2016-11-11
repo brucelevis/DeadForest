@@ -1,6 +1,4 @@
-#ifndef GOAL_RELOAD_H
-#define GOAL_RELOAD_H
-#pragma warning (disable:4786)
+#pragma once
 
 #include "GoalEvaluatable.hpp"
 #include "Types.hpp"
@@ -26,12 +24,19 @@ namespace realtrick
 			virtual void terminate() override;
 
 		private:
+            
 			std::chrono::duration<double> _startTime;
+            
 		};
+        
 	}
 }
 
 
 
-#endif
+
+
+
+
+
 

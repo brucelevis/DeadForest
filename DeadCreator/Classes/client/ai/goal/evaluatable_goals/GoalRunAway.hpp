@@ -1,6 +1,4 @@
-#ifndef GOAL_RUN_AWAY_H
-#define GOAL_RUN_AWAY_H
-#pragma warning (disable:4786)
+#pragma once
 
 #include "GoalEvaluatable.hpp"
 #include "Types.hpp"
@@ -9,6 +7,7 @@ namespace realtrick
 {
 	namespace client
 	{
+        
 		class HumanBase;
 
 		class GoalRunAway : public GoalEvaluatable
@@ -24,11 +23,17 @@ namespace realtrick
 			virtual void activate() override;
 			virtual GoalStatus process() override;
 			virtual void terminate() override;
+            
 		};
+        
 	}
 }
 
 
 
-#endif
+
+
+
+
+
 

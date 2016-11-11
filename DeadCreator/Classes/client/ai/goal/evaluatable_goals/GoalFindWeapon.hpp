@@ -38,7 +38,9 @@ namespace realtrick
 
         class GoalFindWeapon : public GoalEvaluatable
         {
+            
         public:
+            
             explicit GoalFindWeapon(HumanBase* owner, float character_bias = 0.0f);
 			virtual ~GoalFindWeapon()
 			{}
@@ -52,10 +54,12 @@ namespace realtrick
             virtual void terminate() override;
             
         private:
+            
 			std::vector<float> _weightFindItem;
 			std::vector<FindItemData> _findItemMap;
 
 			FindItemData _findWeaponData;
+            
         };
     }
 }

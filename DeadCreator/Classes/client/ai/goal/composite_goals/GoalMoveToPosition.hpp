@@ -6,6 +6,8 @@
 //
 //
 
+#pragma once
+
 #include <chrono>
 #include <memory>
 #include "GoalCompositeBase.hpp"
@@ -15,10 +17,12 @@ namespace realtrick
 {
     namespace client
     {
+        
         class GoalMoveToPosition : public GoalCompositeBase
         {
             
         public:
+            
 			// precise version
 			GoalMoveToPosition(
 				HumanBase* const owner,
@@ -39,8 +43,16 @@ namespace realtrick
 
 			// additional data for precise arriving
 			std::shared_ptr<ArrivingData> _arrivingData;
+            
         };
     }
 }
+
+
+
+
+
+
+
 
 

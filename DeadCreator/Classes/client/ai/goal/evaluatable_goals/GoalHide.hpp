@@ -16,9 +16,12 @@ namespace realtrick
 {
     namespace client
     {
+        
         class GoalHide : public GoalEvaluatable
         {
+            
         public:
+            
 			static void findHidePositions(
 				const std::vector<cocos2d::Vec2>& vertices,
 				cocos2d::Vec2 entityPos,
@@ -39,9 +42,9 @@ namespace realtrick
             virtual void activate() override;
             virtual GoalStatus process() override;
             virtual void terminate() override;
-            
-        private:
+
         };
+        
     }
 }
 

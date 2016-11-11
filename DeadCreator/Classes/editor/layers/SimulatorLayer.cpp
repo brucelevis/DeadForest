@@ -24,6 +24,8 @@ using namespace realtrick::editor;
 #include "PathEdge.hpp"
 #include "EntityManager.hpp"
 #include "HumanBase.hpp"
+#include "BrainBase.hpp"
+#include "Goals.hpp"
 using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
@@ -193,14 +195,15 @@ void SimulatorLayer::showLayer(bool& opened)
             
             if ( isNavGraphOn )
             {
-                for( const auto& entity : game->getEntityManager()->getEntities() )
+                auto entities = game->getEntityManager()->getEntities();
+                for( const auto& entity : entities )
                 {
                     auto ent = entity.second;
-                    if ( isMasked(ent->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+                    if ( isMasked(ent->getFamilyMask(), FamilyMask::HUMAN_BASE))
                     {
                         auto human = static_cast<HumanBase*>(ent);
                         auto renderPath = human->getPathPlanner()->getRenderPath();
-                        if ( renderPath )
+                        if ( human->isAlive() && renderPath )
                         {
                             for ( auto& path : *renderPath )
                             {
@@ -219,7 +222,19 @@ void SimulatorLayer::showLayer(bool& opened)
             
             if ( isGoalDescOn )
             {
-                
+//                auto entities = game->getNeighborsEntities(game->getPlayerPtr()->getWorldPosition(), cocos2d::Rect(0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
+//                for( const auto& ent : entities )
+//                {
+//                    if ( isMasked(ent->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+//                    {
+//                        auto human = static_cast<HumanBase*>(ent);
+//                        auto brain = human->getBrain();
+//                        if ( human->isAlive() && brain )
+//                        {
+//                            brain->getGoalThink()->
+//                        }
+//                    }
+//                }
             }
             
 		}

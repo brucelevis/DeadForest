@@ -28,6 +28,7 @@ namespace realtrick
             virtual void terminate() override;
             
             void addGoalEntry(GoalBase* goal) { _goalEntry.push_back(goal); }
+            const std::vector<GoalBase*>& getGoalEntry() const { return _goalEntry; }
           
         private:
             

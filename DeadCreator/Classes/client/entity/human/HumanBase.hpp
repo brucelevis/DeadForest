@@ -59,6 +59,7 @@ namespace realtrick
 			PathPlanner* getPathPlanner() const { return _pathPlanner; }
 			SensoryMemory* getSensoryMemory() const { return _sensory; }
 			AbstTargetingSystem* getTargetSys() const { return _targetSystem; }
+            BrainBase* getBrain() const { return _brain; }
             
             cocos2d::Vec2 getTargetHeading() const { return _targetHeading; }
             void setTargetHeading(const cocos2d::Vec2& target) { _targetHeading = target; }

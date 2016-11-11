@@ -15,9 +15,12 @@ namespace realtrick
 {
     namespace client
     {
+        
         class GoalWander : public GoalEvaluatable
         {
+            
         public:
+            
             explicit GoalWander(HumanBase* owner, float character_bias = 0.0f);
 			virtual ~GoalWander()
 			{}
@@ -31,7 +34,9 @@ namespace realtrick
 
 			cocos2d::Vec2 _destination;
 			std::chrono::duration<double> _startTime;
+            
         };
+        
     }
 }
 

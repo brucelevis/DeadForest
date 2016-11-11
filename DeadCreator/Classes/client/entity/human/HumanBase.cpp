@@ -177,10 +177,6 @@ void HumanBase::update(float dt)
         }
     }
     
-    PROFILE_BEGIN("foot");
-    this->setFootGauge( _footGauge + getVelocity().length() * dt );
-    PROFILE_END("foot");
-    
     PROFILE_BEGIN("animation");
     // update animation
     if ( _animator )

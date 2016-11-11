@@ -6,6 +6,9 @@
 //
 //
 
+#pragma once
+
+
 #include <chrono>
 
 #include "GoalCompositeBase.hpp"
@@ -34,11 +37,16 @@ namespace realtrick
         
 			//a local copy of the path returned by the path planner
 			std::list<realtrick::PathEdge>  _path;
-
 			
         };
     }
 }
+
+
+
+
+
+
 
 
 

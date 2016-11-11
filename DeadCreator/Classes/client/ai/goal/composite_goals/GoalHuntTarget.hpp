@@ -15,6 +15,7 @@ namespace realtrick
 {
     namespace client
     {
+        
         class GoalHuntTarget : public GoalCompositeBase
         {
             
@@ -29,9 +30,11 @@ namespace realtrick
             virtual void terminate() override;
             
         private:
+            
 			//this value is set to true if the last visible position of the target
 			//bot has been searched without success
 			bool  _last_visit_visible_pos_tried;
+            
         };
         
     }

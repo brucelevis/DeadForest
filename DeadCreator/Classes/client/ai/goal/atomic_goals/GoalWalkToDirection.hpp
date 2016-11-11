@@ -1,6 +1,4 @@
-#ifndef GOAL_WALK_TO_DIRECTION_H
-#define GOAL_WALK_TO_DIRECTION_H
-#pragma warning (disable:4786)
+#pragma once
 
 #include "GoalBase.hpp"
 
@@ -27,15 +25,20 @@ namespace realtrick
 			virtual GoalStatus process() override;
 			virtual void terminate() override;
 
-		public:
+		private:
 			std::chrono::duration<double> _startTime;
 			cocos2d::Vec2 _direction;
 			float _walkTime;
+            
 		};
 	}
 }
 
 
 
-#endif
+
+
+
+
+
 

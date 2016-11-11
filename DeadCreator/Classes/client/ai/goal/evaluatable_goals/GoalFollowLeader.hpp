@@ -6,6 +6,10 @@
 //
 //
 
+
+#pragma once
+
+
 #include <chrono>
 #include "GoalEvaluatable.hpp"
 
@@ -14,10 +18,12 @@ namespace realtrick
 {
     namespace client
     {
+        
         class GoalFollowLeader : public GoalEvaluatable
         {
             
         public:
+            
 			explicit GoalFollowLeader(HumanBase* const owner, float character_bias = 0.0f);
 
 			virtual ~GoalFollowLeader() override
@@ -29,10 +35,19 @@ namespace realtrick
 			virtual void terminate() override;
 
 		private:
+            
 			cocos2d::Vec2 _destination;
 			bool _arriveSafeZone;
+            
         };
     }
 }
+
+
+
+
+
+
+
 
 

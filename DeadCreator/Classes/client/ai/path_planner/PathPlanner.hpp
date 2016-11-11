@@ -1,6 +1,5 @@
-#ifndef PATHPLANNER_H
-#define PATHPLANNER_H
-#pragma warning (disable:4786)
+#pragma once
+
 
 //-----------------------------------------------------------------------------
 //
@@ -27,7 +26,9 @@ namespace realtrick
 
 		class PathPlanner
 		{
+            
 		public:
+            
 			//for ease of use typdef the graph edge/node types used by the navgraph
 			typedef typename Game::Graph		Graph;
 			typedef typename Graph::Edge		Edge;
@@ -92,9 +93,17 @@ namespace realtrick
 
 			Path	_path;
             std::list<realtrick::PathEdge>*     _renderPath;
+            
 		};
 
 	}
 }
-#endif
+
+
+
+
+
+
+
+
 

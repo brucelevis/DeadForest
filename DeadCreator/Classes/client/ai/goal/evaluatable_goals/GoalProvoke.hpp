@@ -1,6 +1,4 @@
-#ifndef GOAL_PROVOKE_H
-#define GOAL_PROVOKE_H
-#pragma warning (disable:4786)
+#pragma once
 
 #include "GoalEvaluatable.hpp"
 #include "Types.hpp"
@@ -27,15 +25,22 @@ namespace realtrick
 			virtual void terminate() override;
 
 		private:
+            
 			cocos2d::Vec2 _savePos;
 			bool _arrivedTargetRange;
 			bool _finishedAvoid;
 			std::queue<GoalBase*> _queuedGoals;
+            
 		};
+        
 	}
 }
 
 
 
-#endif
+
+
+
+
+
 

@@ -6,6 +6,9 @@
 //
 //
 
+#pragma once
+
+
 #include <chrono>
 
 #include "GoalCompositeBase.hpp"
@@ -15,6 +18,7 @@ namespace realtrick
 {
     namespace client
     {
+        
         class GoalAttackToDestination : public GoalCompositeBase
         {
             
@@ -32,10 +36,19 @@ namespace realtrick
 			virtual void terminate() override;
 
 		private:
+            
 			cocos2d::Vec2 _destination;
 			float _arriveRange;
+            
         };
+        
     }
 }
+
+
+
+
+
+
 
 

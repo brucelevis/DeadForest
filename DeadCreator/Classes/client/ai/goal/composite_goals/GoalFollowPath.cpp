@@ -11,6 +11,7 @@
 #include "GraphEdgeTypes.hpp"
 #include "InputCommands.hpp"
 #include "PathEdge.hpp"
+#include "PathPlanner.hpp"
 
 
 using namespace realtrick;
@@ -40,6 +41,8 @@ void GoalFollowPath::activate()
 	if (_path.empty())
 		return;
 
+    _owner->getPathPlanner()->setRenderPath(&_path);
+    
 	//get a reference to the next edge
 	realtrick::PathEdge edge = _path.front();
 
@@ -109,7 +112,9 @@ GoalStatus GoalFollowPath::process()
 }
 
 void GoalFollowPath::terminate()
-{}
+{
+    _owner->getPathPlanner()->setRenderPath(nullptr);
+}
 
 
 

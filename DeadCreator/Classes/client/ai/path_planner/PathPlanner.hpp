@@ -66,8 +66,11 @@ namespace realtrick
 			
 			bool requestPathToPosition(cocos2d::Vec2 targetPos);
 
-			Path getPath() { return _path; }
+			Path getPath() const { return _path; }
 
+            std::list<realtrick::PathEdge>* getRenderPath() const { return _renderPath; }
+            void setRenderPath(std::list<realtrick::PathEdge>* path) { _renderPath = path; }
+            
 		private:
 
 			//smooths a path by removing extraneous edges. 
@@ -88,6 +91,7 @@ namespace realtrick
 			const Graph&						_graph;
 
 			Path	_path;
+            std::list<realtrick::PathEdge>*     _renderPath;
 		};
 
 	}

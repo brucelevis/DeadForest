@@ -181,6 +181,7 @@ namespace realtrick
             StateMachine*                   _FSM;
             BrainBase*                      _brain;
 			PathPlanner*					_pathPlanner;
+            
 			SensoryMemory*					_sensory;
 			AbstTargetingSystem*			_targetSystem;
 			Regulator						_regulator;

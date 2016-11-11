@@ -16,7 +16,8 @@ using namespace client;
 PathPlanner::PathPlanner(const Graph& graph, HumanBase* const owner)
 	:
 	_owner(owner),
-	_graph(graph)
+	_graph(graph),
+    _renderPath(nullptr)
 {}
 
 
@@ -70,10 +71,8 @@ void PathPlanner::generatePath(
 		CCLOG("path is zero");
 
 	//smooth paths if required
-//	if (false)
-//	{
-//		smoothPathEdgesQuick(_path);
-//	}
+	smoothPathEdgesQuick(_path);
+	
 //
 //	if (false)
 //	{
@@ -103,9 +102,7 @@ void PathPlanner::smoothPathEdgesQuick(Path& path)
 	while (e2 != path.end())
 	{
 		//check for obstruction, adjust and remove the edges accordingly
-		if ((e2->getBehavior() == Edge::NORMAL) 
-			//&&_owner->canWalkBetween(e1->getSource(), e2->getDestination())
-			)
+		if (_owner->getGame()->isLOSOkay(e1->getSource(), e2->getDestination()))
 		{
 			e1->setDestination(e2->getDestination());
 			e2 = path.erase(e2);
@@ -209,8 +206,7 @@ int PathPlanner::getClosestNodeToPosition(cocos2d::Vec2 pos) const
 		tileHeight,
 		numOfDummy);
 
-	if (_owner->getGame()->getGameResource()->getTileData()[idx_pair.second][idx_pair.first]
-		.getTileType() != TileType::HILL)
+	if (_owner->getGame()->getGameResource()->getTileData()[idx_pair.second][idx_pair.first].getTileType() != TileType::HILL)
 		return indexToNumber(idx_pair.first, idx_pair.second, numOfTileX, numOfDummy);
 
 	auto adj = getNeighborTiles(idx_pair.first, idx_pair.second);

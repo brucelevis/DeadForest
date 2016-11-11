@@ -252,13 +252,12 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
         ret.push_back(poly);
     }
     return ret;
-
 }
 
 
 bool Game::isCollideWalls(const cocos2d::Vec2& pos) const
 {
-	const auto& walls = getNeighborWalls(pos, 10);
+	const auto& walls = getNeighborWalls(pos, 500);
 	for (const auto& wall : walls)
 		if (wall.containPoint(pos))
 			return true;

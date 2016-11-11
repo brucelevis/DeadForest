@@ -20,6 +20,10 @@ using namespace realtrick::editor;
 #include "GameResource.hpp"
 #include "RenderingSystem.hpp"
 #include "SparseGraph.hpp"
+#include "PathPlanner.hpp"
+#include "PathEdge.hpp"
+#include "EntityManager.hpp"
+#include "HumanBase.hpp"
 using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
@@ -46,7 +50,9 @@ void SimulatorLayer::showLayer(bool& opened)
 
     static bool isPhysicsShape = false;
     static bool isPhysicsAABB = false;
-    static bool isQueryWall = false;
+    
+    static bool isNavGraphOn = false;
+    static bool isGoalDescOn = false;
 
 	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2 - GAME_SCREEN_WIDTH / 2,
 		ImGui::GetIO().DisplaySize.y / 2 - GAME_SCREEN_HEIGHT / 2), ImGuiSetCond_Once);
@@ -185,6 +191,37 @@ void SimulatorLayer::showLayer(bool& opened)
                 game->getPhysicsManager()->GetPhysicsWorld()->DrawDebugData();
             }
             
+            if ( isNavGraphOn )
+            {
+                for( const auto& entity : game->getEntityManager()->getEntities() )
+                {
+                    auto ent = entity.second;
+                    if ( isMasked(ent->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+                    {
+                        auto human = static_cast<HumanBase*>(ent);
+                        auto renderPath = human->getPathPlanner()->getRenderPath();
+                        if ( renderPath )
+                        {
+                            for ( auto& path : *renderPath )
+                            {
+                                Vec2 s = path.getSource();
+                                Vec2 d = path.getDestination();
+                                
+                                Vec2 fromOrigin = worldToLocal(_debugOrigin, s);
+                                Vec2 toOrigin = worldToLocal(_debugOrigin, d);
+                                
+                                drawList->AddLine(ImVec2(fromOrigin.x, fromOrigin.y), ImVec2(toOrigin.x, toOrigin.y), ImColor(ImVec4(1.0, 0.0, 1.0, 1.0)));
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if ( isGoalDescOn )
+            {
+                
+            }
+            
 		}
 	}
 	ImGui::End();
@@ -231,19 +268,18 @@ void SimulatorLayer::showLayer(bool& opened)
                     if ( isPhysicsAABB ) AppendFlags(b2Draw::e_aabbBit);
                     else ClearFlags(b2Draw::e_aabbBit);
                 }
-                if ( ImGui::Checkbox("queried walls", &isQueryWall) )
-                {
-//                    auto physics = game->getPhysicsManager();
-//                    auto walls = physics->queryWallsAABB(game->getPlayerPtr()->getWorldPosition(), 500, 300);
-//                    for(auto& wall : walls)
-//                    {
-//                        auto body = wall->getBody();
-//                        body->
-//                    }
-                }
                 
                 ImGui::TreePop();
             }
+            
+            if ( ImGui::TreeNode("ai") )
+            {
+                ImGui::Checkbox("path", &isNavGraphOn);
+                ImGui::Checkbox("goal", &isGoalDescOn);
+                
+                ImGui::TreePop();
+            }
+            
 			ImGui::End();
             
             // logger

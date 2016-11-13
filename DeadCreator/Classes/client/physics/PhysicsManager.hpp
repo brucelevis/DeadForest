@@ -152,7 +152,7 @@ namespace realtrick
             virtual ~PhysicsManager();
             
             
-			void Step();
+			void Step(float dt);
 
 			inline b2World* GetPhysicsWorld() const { return _world; }
 			inline b2Body* GetGround() const { return _ground; }

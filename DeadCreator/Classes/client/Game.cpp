@@ -134,7 +134,7 @@ void Game::update(float dt)
     
     PROFILE_BEGIN("physics");
     // update physics, remove bodies late
-    _physicsMgr->Step();
+    _physicsMgr->Step(dt);
     _physicsMgr->RemoveReservedBodies();
     PROFILE_END("physics");
 

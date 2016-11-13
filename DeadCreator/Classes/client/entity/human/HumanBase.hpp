@@ -86,10 +86,7 @@ namespace realtrick
 				return cocos2d::Vec2(_body->GetLinearVelocity().x, _body->GetLinearVelocity().y);
 			}
 
-			virtual void setVelocity(const cocos2d::Vec2& velocity) override
-			{
-				_body->SetLinearVelocity(b2Vec2(velocity.x, velocity.y));
-			}
+			virtual void setVelocity(const cocos2d::Vec2& velocity) override { _body->SetLinearVelocity(b2Vec2(velocity.x, velocity.y)); }
             
 			virtual cocos2d::Vec2 getHeading() const override
 			{

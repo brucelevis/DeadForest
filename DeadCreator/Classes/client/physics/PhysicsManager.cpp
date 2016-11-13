@@ -157,12 +157,9 @@ PhysicsManager::PhysicsManager(float worldX, float worldY)
 	}
 }
 
-void PhysicsManager::Step()
+void PhysicsManager::Step(float dt)
 {
-	_world->Step(
-		_settings.hz,
-		_settings.velocityIterations,
-		_settings.positionIterations);
+	_world->Step(dt, _settings.velocityIterations, _settings.positionIterations);
 }
 
 

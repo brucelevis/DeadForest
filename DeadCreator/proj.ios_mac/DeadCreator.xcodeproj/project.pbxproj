@@ -1135,10 +1135,10 @@
 		BF445F221DD1BBC0005C667A /* state */ = {
 			isa = PBXGroup;
 			children = (
+				BF445F331DD1BBC0005C667A /* zombie */,
 				BF445F231DD1BBC0005C667A /* human */,
 				BF445F311DD1BBC0005C667A /* State.hpp */,
 				BF445F321DD1BBC0005C667A /* StateMachine.hpp */,
-				BF445F331DD1BBC0005C667A /* zombie */,
 			);
 			path = state;
 			sourceTree = "<group>";

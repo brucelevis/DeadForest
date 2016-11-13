@@ -27,6 +27,8 @@ namespace DeadCreator {
     
     struct Bring;
     
+    struct CreateEntity;
+    
     struct CountdownTimer;
     
     struct ElapsedTime;
@@ -177,25 +179,26 @@ namespace DeadCreator {
     
     enum ActionBase {
         ActionBase_NONE = 0,
-        ActionBase_DisplayText = 1,
-        ActionBase_PreserveTrigger = 2,
-        ActionBase_KillEntityAtLocation = 3,
-        ActionBase_MoveLocation = 4,
-        ActionBase_PlaySoundAtLocation = 5,
-        ActionBase_PlaySound = 6,
-        ActionBase_Victory = 7,
-        ActionBase_Defeat = 8,
-        ActionBase_MoveEntity = 9,
-        ActionBase_PauseGame = 10,
-        ActionBase_ResumeGame = 11,
-        ActionBase_SetCountdownTimer = 12,
-        ActionBase_SetSwitch = 13,
+        ActionBase_CreateEntity = 1,
+        ActionBase_DisplayText = 2,
+        ActionBase_PreserveTrigger = 3,
+        ActionBase_KillEntityAtLocation = 4,
+        ActionBase_MoveLocation = 5,
+        ActionBase_PlaySoundAtLocation = 6,
+        ActionBase_PlaySound = 7,
+        ActionBase_Victory = 8,
+        ActionBase_Defeat = 9,
+        ActionBase_MoveEntity = 10,
+        ActionBase_PauseGame = 11,
+        ActionBase_ResumeGame = 12,
+        ActionBase_SetCountdownTimer = 13,
+        ActionBase_SetSwitch = 14,
         ActionBase_MIN = ActionBase_NONE,
         ActionBase_MAX = ActionBase_SetSwitch
     };
     
     inline const char **EnumNamesActionBase() {
-        static const char *names[] = { "NONE", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", "Victory", "Defeat", "MoveEntity", "PauseGame", "ResumeGame", "SetCountdownTimer", "SetSwitch", nullptr };
+        static const char *names[] = { "NONE", "CreateEntity", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", "Victory", "Defeat", "MoveEntity", "PauseGame", "ResumeGame", "SetCountdownTimer", "SetSwitch", nullptr };
         return names;
     }
     
@@ -493,6 +496,56 @@ namespace DeadCreator {
         builder_.add_number(number);
         builder_.add_approximation(approximation);
         builder_.add_player(player);
+        return builder_.Finish();
+    }
+    
+    struct CreateEntity FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_NUMBER = 4,
+            VT_ENTITY_TYPE = 6,
+            VT_LOCATION_NAME = 8,
+            VT_PLAYER = 10
+        };
+        int32_t number() const { return GetField<int32_t>(VT_NUMBER, 0); }
+        int32_t entity_type() const { return GetField<int32_t>(VT_ENTITY_TYPE, 0); }
+        const flatbuffers::String *location_name() const { return GetPointer<const flatbuffers::String *>(VT_LOCATION_NAME); }
+        int32_t player() const { return GetField<int32_t>(VT_PLAYER, 0); }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<int32_t>(verifier, VT_NUMBER) &&
+            VerifyField<int32_t>(verifier, VT_ENTITY_TYPE) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_LOCATION_NAME) &&
+            verifier.Verify(location_name()) &&
+            VerifyField<int32_t>(verifier, VT_PLAYER) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct CreateEntityBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_number(int32_t number) { fbb_.AddElement<int32_t>(CreateEntity::VT_NUMBER, number, 0); }
+        void add_entity_type(int32_t entity_type) { fbb_.AddElement<int32_t>(CreateEntity::VT_ENTITY_TYPE, entity_type, 0); }
+        void add_location_name(flatbuffers::Offset<flatbuffers::String> location_name) { fbb_.AddOffset(CreateEntity::VT_LOCATION_NAME, location_name); }
+        void add_player(int32_t player) { fbb_.AddElement<int32_t>(CreateEntity::VT_PLAYER, player, 0); }
+        CreateEntityBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        CreateEntityBuilder &operator=(const CreateEntityBuilder &);
+        flatbuffers::Offset<CreateEntity> Finish() {
+            auto o = flatbuffers::Offset<CreateEntity>(fbb_.EndTable(start_, 4));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<CreateEntity> CreateCreateEntity(flatbuffers::FlatBufferBuilder &_fbb,
+                                                                int32_t number = 0,
+                                                                int32_t entity_type = 0,
+                                                                flatbuffers::Offset<flatbuffers::String> location_name = 0,
+                                                                int32_t player = 0) {
+        CreateEntityBuilder builder_(_fbb);
+        builder_.add_player(player);
+        builder_.add_location_name(location_name);
+        builder_.add_entity_type(entity_type);
+        builder_.add_number(number);
         return builder_.Finish();
     }
     
@@ -1548,6 +1601,7 @@ namespace DeadCreator {
     inline bool VerifyActionBase(flatbuffers::Verifier &verifier, const void *union_obj, ActionBase type) {
         switch (type) {
             case ActionBase_NONE: return true;
+            case ActionBase_CreateEntity: return verifier.VerifyTable(reinterpret_cast<const struct CreateEntity *>(union_obj));
             case ActionBase_DisplayText: return verifier.VerifyTable(reinterpret_cast<const DisplayText *>(union_obj));
             case ActionBase_PreserveTrigger: return verifier.VerifyTable(reinterpret_cast<const PreserveTrigger *>(union_obj));
             case ActionBase_KillEntityAtLocation: return verifier.VerifyTable(reinterpret_cast<const KillEntityAtLocation *>(union_obj));

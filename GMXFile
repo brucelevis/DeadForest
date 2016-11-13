@@ -55,6 +55,13 @@ table Bring
    entity_type : int;
    location_name : string;
 }
+table CreateEntity
+{
+   number : int;
+   entity_type : int;
+   location_name : string;
+   player : int;
+}
 table CountdownTimer
 {
    approximation : Approximation;
@@ -133,6 +140,7 @@ union ConditionBase
 
 union ActionBase 
 { 
+   CreateEntity,
    DisplayText,
    PreserveTrigger,
    KillEntityAtLocation,

@@ -88,7 +88,7 @@ namespace realtrick
                 
                 // location combo box
                 ImGui::PushID(4);
-                _location.drawImGui(opt);
+                ImGui::SameLine(); _location.drawImGui(opt);
                 ImGui::PopID();
                 
                 return (_playerType.isItemSelected() &&

@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "ActionCreateEntity.hpp"
 #include "ActionDisplayText.hpp"
 #include "ActionPreserveTrigger.hpp"
 #include "ActionKillEntityAtLocation.hpp"

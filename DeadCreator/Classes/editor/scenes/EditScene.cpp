@@ -659,6 +659,22 @@ void EditScene::createGMXLayer(const std::string& filePath)
                 auto actType = act->action_type();
                 switch (actType)
                 {
+                    case DeadCreator::ActionBase_CreateEntity:
+                    {
+                        auto actionObject = static_cast<const struct DeadCreator::CreateEntity*>(act->action());
+                        auto action = new ActionCreateEntity(_layer);
+                        action->setNumber(actionObject->number());
+                        action->setEntity(static_cast<EntityType>(actionObject->entity_type()));
+                        
+                        LocationNode* locationPtr = _layer->findLocation(actionObject->location_name()->str());
+                        action->setLocation(locationPtr);
+                        
+                        action->setPlayerType(static_cast<PlayerType>(actionObject->player()));
+                        
+                        newTrigger->addAction(action);
+                        
+                        break;
+                    }
                     case DeadCreator::ActionBase_DisplayText:
                     {
                         auto actionObject = static_cast<const DeadCreator::DisplayText*>(act->action());

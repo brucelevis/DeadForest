@@ -248,6 +248,7 @@
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		BF1C47EA1293683800B63C5D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		BF24772D1DD8A3630084F177 /* ActionCreateEntity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ActionCreateEntity.hpp; sourceTree = "<group>"; };
 		BF445E591DD1BBBF005C667A /* AppDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppDelegate.cpp; sourceTree = "<group>"; };
 		BF445E5A1DD1BBBF005C667A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BF445E5D1DD1BBBF005C667A /* AbstTargetingSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstTargetingSystem.cpp; sourceTree = "<group>"; };
@@ -510,8 +511,8 @@
 		BF445F831DD1BBC0005C667A /* ConditionNever.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ConditionNever.hpp; sourceTree = "<group>"; };
 		BF445F841DD1BBC0005C667A /* Conditions.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Conditions.hpp; sourceTree = "<group>"; };
 		BF445F851DD1BBC0005C667A /* ConditionSwitch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ConditionSwitch.hpp; sourceTree = "<group>"; };
-		BF445F861DD1BBC0005C667A /* GameTrigger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameTrigger.cpp; sourceTree = "<group>"; };
-		BF445F871DD1BBC0005C667A /* GameTrigger.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameTrigger.hpp; sourceTree = "<group>"; };
+		BF445F861DD1BBC0005C667A /* GameTrigger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameTrigger.cpp; path = trigger/GameTrigger.cpp; sourceTree = "<group>"; };
+		BF445F871DD1BBC0005C667A /* GameTrigger.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameTrigger.hpp; path = trigger/GameTrigger.hpp; sourceTree = "<group>"; };
 		BF445F891DD1BBC0005C667A /* TriggerComponentProtocol.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TriggerComponentProtocol.hpp; sourceTree = "<group>"; };
 		BF445F8A1DD1BBC0005C667A /* TriggerParameterApproximation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TriggerParameterApproximation.hpp; sourceTree = "<group>"; };
 		BF445F8B1DD1BBC0005C667A /* TriggerParameterArithmetical.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TriggerParameterArithmetical.hpp; sourceTree = "<group>"; };
@@ -1236,6 +1237,8 @@
 				BF445F651DD1BBC0005C667A /* script_system */,
 				BF445F691DD1BBC0005C667A /* tile */,
 				BF445F6C1DD1BBC0005C667A /* trigger */,
+				BF445F861DD1BBC0005C667A /* GameTrigger.cpp */,
+				BF445F871DD1BBC0005C667A /* GameTrigger.hpp */,
 				BF445F971DD1BBC0005C667A /* utils */,
 			);
 			path = common;
@@ -1293,8 +1296,6 @@
 			children = (
 				BF445F6D1DD1BBC0005C667A /* actions */,
 				BF445F7D1DD1BBC0005C667A /* conditions */,
-				BF445F861DD1BBC0005C667A /* GameTrigger.cpp */,
-				BF445F871DD1BBC0005C667A /* GameTrigger.hpp */,
 				BF445F881DD1BBC0005C667A /* parameters */,
 			);
 			path = trigger;
@@ -1304,6 +1305,7 @@
 			isa = PBXGroup;
 			children = (
 				BF445F6E1DD1BBC0005C667A /* ActionBase.hpp */,
+				BF24772D1DD8A3630084F177 /* ActionCreateEntity.hpp */,
 				BF445F6F1DD1BBC0005C667A /* ActionDefeat.hpp */,
 				BF445F701DD1BBC0005C667A /* ActionDisplayText.hpp */,
 				BF445F711DD1BBC0005C667A /* ActionKillEntityAtLocation.hpp */,

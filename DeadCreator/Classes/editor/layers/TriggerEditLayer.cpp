@@ -73,6 +73,7 @@ bool TriggerEditLayer::init()
     _conditionList.push_back(new ConditionNever(&_gmxLayer));
     _conditionList.push_back(new ConditionSwitch(&_gmxLayer));
     
+    _actionList.push_back(new ActionCreateEntity(&_gmxLayer));
     _actionList.push_back(new ActionDefeat(&_gmxLayer));
     _actionList.push_back(new ActionDisplayText(&_gmxLayer));
     _actionList.push_back(new ActionKillEntityAtLocation(&_gmxLayer));

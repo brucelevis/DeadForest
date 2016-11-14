@@ -12,7 +12,8 @@
 using namespace realtrick::client;
 
 
-GoalThink::GoalThink(HumanBase* owner) : GoalCompositeBase(owner)
+GoalThink::GoalThink(HumanBase* owner) : GoalCompositeBase(owner),
+_immediateGoal(nullptr)
 {
     setGoalName("think");
     setGoalType(GoalType::THINK);
@@ -64,9 +65,33 @@ GoalStatus GoalThink::process()
 
 void GoalThink::terminate()
 {
+    for(auto& goal : _subGoals )
+        goal->terminate();
+    _subGoals.clear();
     
+    if ( _immediateGoal )
+    {
+        _immediateGoal->terminate();
+        CC_SAFE_DELETE(_immediateGoal);
+    }
+    
+    setGoalStatus(GoalStatus::COMPLETED);
 }
 
+
+void GoalThink::executeGoal(GoalBase* immediateGoal)
+{
+    if ( _immediateGoal )
+    {
+        _immediateGoal->terminate();
+        CC_SAFE_DELETE(_immediateGoal);
+    }
+    
+    _immediateGoal = immediateGoal;
+    
+    addSubgoal(immediateGoal);
+    setGoalStatus(GoalStatus::ACTIVE);
+}
 
 
 

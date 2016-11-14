@@ -70,5 +70,6 @@ GoalStatus GoalAttackToDestination::process()
 void GoalAttackToDestination::terminate()
 {
     removeAllSubgoals();
+    setGoalStatus(GoalStatus::COMPLETED);
 }
 

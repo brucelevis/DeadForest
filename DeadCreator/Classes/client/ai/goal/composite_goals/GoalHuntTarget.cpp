@@ -83,5 +83,6 @@ GoalStatus GoalHuntTarget::process()
 void GoalHuntTarget::terminate()
 {
     removeAllSubgoals();
+    setGoalStatus(GoalStatus::COMPLETED);
 }
 

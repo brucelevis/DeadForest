@@ -20,3 +20,4 @@
 #include "TriggerParameterSwitchName.hpp"
 #include "TriggerParameterSwitchStatus.hpp"
 #include "TriggerParameterSwitchStatus2.hpp"
+#include "TriggerParameterOrderType.hpp"

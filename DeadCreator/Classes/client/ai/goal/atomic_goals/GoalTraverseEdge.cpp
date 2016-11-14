@@ -89,6 +89,8 @@ void GoalTraverseEdge::terminate()
 {
     InputMoveEnd moveEnd(_owner);
     moveEnd.execute();
+    
+    setGoalStatus(GoalStatus::COMPLETED);
 }
 
 realtrick::PathEdge GoalTraverseEdge::getEdge() const { return _edge; }

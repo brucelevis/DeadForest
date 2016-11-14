@@ -79,6 +79,7 @@ bool TriggerEditLayer::init()
     _actionList.push_back(new ActionKillEntityAtLocation(&_gmxLayer));
     _actionList.push_back(new ActionMoveEntity(&_gmxLayer));
     _actionList.push_back(new ActionMoveLocation(&_gmxLayer));
+    _actionList.push_back(new ActionOrder(&_gmxLayer));
     _actionList.push_back(new ActionPauseGame(&_gmxLayer));
     _actionList.push_back(new ActionPlaySound(&_gmxLayer));
     _actionList.push_back(new ActionPlaySoundAtLocation(&_gmxLayer));

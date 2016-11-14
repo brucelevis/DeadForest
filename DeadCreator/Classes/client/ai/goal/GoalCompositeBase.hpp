@@ -36,7 +36,10 @@ namespace realtrick
             void removeAllSubgoals()
             {
                 for ( auto& goal : _subGoals )
+                {
                     goal->terminate();
+                    CC_SAFE_DELETE(goal);
+                }
                 _subGoals.clear();
             }
             

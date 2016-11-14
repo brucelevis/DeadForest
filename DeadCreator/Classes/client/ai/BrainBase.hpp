@@ -7,8 +7,11 @@
 //
 
 #pragma once
-#include "GoalThink.hpp"
+
 #include <memory>
+
+#include "GoalThink.hpp"
+
 
 namespace realtrick
 {
@@ -38,6 +41,12 @@ namespace realtrick
             virtual void think()
             {
                 _thinker->process();
+            }
+            
+            virtual void executeGoal(GoalBase* goal)
+            {
+                _thinker->terminate();
+                _thinker->executeGoal(goal);
             }
             
         protected:

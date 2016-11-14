@@ -298,6 +298,19 @@ bool GameResource::initWithBinary(const char* buffer)
                     
                     break;
                 }
+                case DeadCreator::ActionBase_Order:
+                {
+                    auto actionObject = static_cast<const DeadCreator::Order*>(act->action());
+                    auto action = new ActionOrderData();
+                    action->entity = static_cast<EntityType>(actionObject->entity_type());
+                    action->player = static_cast<PlayerType>(actionObject->player());
+                    action->srcLocation = actionObject->src_location_name()->str();
+                    action->order = static_cast<OrderType>(actionObject->order());
+                    action->destLocation = actionObject->dest_location_name()->str();
+                    data.actions.push_back(action);
+                    
+                    break;
+                }
                 case DeadCreator::ActionBase_PlaySound:
                 {
                     auto actionObject = static_cast<const DeadCreator::PlaySound*>(act->action());
@@ -325,7 +338,7 @@ bool GameResource::initWithBinary(const char* buffer)
                     action->entity = static_cast<EntityType>(actionObject->entity_type());
                     action->player = static_cast<PlayerType>(actionObject->player());
                     action->sourceLocation = actionObject->src_location_name()->str();
-                    action->destLocation = actionObject->dst_location_name()->str();
+                    action->destLocation = actionObject->dest_location_name()->str();
                     data.actions.push_back(action);
                     
                     break;

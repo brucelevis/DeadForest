@@ -113,6 +113,13 @@ namespace realtrick
         RANDOMIZE = 3
     };
         
+    enum class OrderType : int
+    {
+        INVALUD = -1,
+        MOVE = 0,
+        ATTACK = 1,
+    };
+        
     enum class TriggerComponentType : int
     {
         CONDITION_ALWAYS,
@@ -125,6 +132,7 @@ namespace realtrick
         ACTION_DISPLAY_TEXT,
         ACTION_MOVE_LOCATION,
         ACTION_KILL_ENTITY_AT_LOCATION,
+        ACTION_ORDER,
         ACTION_PLAY_SOUND_AT_LOCATION,
         ACTION_PLAY_SOUND,
         ACTION_PRESERVE_TRIGGER,

@@ -111,6 +111,8 @@ GoalStatus GoalFollowPath::process()
 void GoalFollowPath::terminate()
 {
     _owner->getPathPlanner()->setRenderPath(nullptr);
+    removeAllSubgoals();
+    setGoalStatus(GoalStatus::COMPLETED);
 }
 
 

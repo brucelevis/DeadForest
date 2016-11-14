@@ -79,8 +79,7 @@ GoalStatus GoalRaid::process()
         _arrived = true;
         setGoalStatus(GoalStatus::ACTIVE);
         addSubgoal(
-                   new GoalMainAttack(
-                                      _owner,
+                   new GoalMainAttack(_owner,
                                       _owner->getTargetSys()->getTarget()->getWorldPosition(),
                                       _movingStrategy));
         
@@ -97,7 +96,9 @@ GoalStatus GoalRaid::process()
 
 void GoalRaid::terminate()
 {
-    removeAllSubgoals();
     InputMoveEnd moveEnd(_owner);
     moveEnd.execute();
+    
+    removeAllSubgoals();
+    setGoalStatus(GoalStatus::COMPLETED);
 }

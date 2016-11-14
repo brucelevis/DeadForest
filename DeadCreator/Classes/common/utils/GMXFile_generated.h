@@ -63,6 +63,8 @@ namespace DeadCreator {
     
     struct SetSwitch;
     
+    struct Order;
+    
     struct Condition;
     
     struct Action;
@@ -157,6 +159,20 @@ namespace DeadCreator {
     
     inline const char *EnumNameSwitchStatus2(SwitchStatus2 e) { return EnumNamesSwitchStatus2()[static_cast<int>(e)]; }
     
+    enum OrderType {
+        OrderType_Move = 0,
+        OrderType_Attack = 1,
+        OrderType_MIN = OrderType_Move,
+        OrderType_MAX = OrderType_Attack
+    };
+    
+    inline const char **EnumNamesOrderType() {
+        static const char *names[] = { "Move", "Attack", nullptr };
+        return names;
+    }
+    
+    inline const char *EnumNameOrderType(OrderType e) { return EnumNamesOrderType()[static_cast<int>(e)]; }
+    
     enum ConditionBase {
         ConditionBase_NONE = 0,
         ConditionBase_Always = 1,
@@ -196,12 +212,13 @@ namespace DeadCreator {
         ActionBase_SetAllianceStatus = 13,
         ActionBase_SetCountdownTimer = 14,
         ActionBase_SetSwitch = 15,
+        ActionBase_Order = 16,
         ActionBase_MIN = ActionBase_NONE,
-        ActionBase_MAX = ActionBase_SetSwitch
+        ActionBase_MAX = ActionBase_Order
     };
     
     inline const char **EnumNamesActionBase() {
-        static const char *names[] = { "NONE", "CreateEntity", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", "Victory", "Defeat", "MoveEntity", "PauseGame", "ResumeGame", "SetAllianceStatus", "SetCountdownTimer", "SetSwitch", nullptr };
+        static const char *names[] = { "NONE", "CreateEntity", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", "Victory", "Defeat", "MoveEntity", "PauseGame", "ResumeGame", "SetAllianceStatus", "SetCountdownTimer", "SetSwitch", "Order", nullptr };
         return names;
     }
     
@@ -887,13 +904,13 @@ namespace DeadCreator {
             VT_ENTITY_TYPE = 6,
             VT_PLAYER = 8,
             VT_SRC_LOCATION_NAME = 10,
-            VT_DST_LOCATION_NAME = 12
+            VT_DEST_LOCATION_NAME = 12
         };
         int32_t numberAll() const { return GetField<int32_t>(VT_NUMBERALL, 0); }
         int32_t entity_type() const { return GetField<int32_t>(VT_ENTITY_TYPE, 0); }
         int32_t player() const { return GetField<int32_t>(VT_PLAYER, 0); }
         const flatbuffers::String *src_location_name() const { return GetPointer<const flatbuffers::String *>(VT_SRC_LOCATION_NAME); }
-        const flatbuffers::String *dst_location_name() const { return GetPointer<const flatbuffers::String *>(VT_DST_LOCATION_NAME); }
+        const flatbuffers::String *dest_location_name() const { return GetPointer<const flatbuffers::String *>(VT_DEST_LOCATION_NAME); }
         bool Verify(flatbuffers::Verifier &verifier) const {
             return VerifyTableStart(verifier) &&
             VerifyField<int32_t>(verifier, VT_NUMBERALL) &&
@@ -901,8 +918,8 @@ namespace DeadCreator {
             VerifyField<int32_t>(verifier, VT_PLAYER) &&
             VerifyField<flatbuffers::uoffset_t>(verifier, VT_SRC_LOCATION_NAME) &&
             verifier.Verify(src_location_name()) &&
-            VerifyField<flatbuffers::uoffset_t>(verifier, VT_DST_LOCATION_NAME) &&
-            verifier.Verify(dst_location_name()) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_DEST_LOCATION_NAME) &&
+            verifier.Verify(dest_location_name()) &&
             verifier.EndTable();
         }
     };
@@ -914,7 +931,7 @@ namespace DeadCreator {
         void add_entity_type(int32_t entity_type) { fbb_.AddElement<int32_t>(MoveEntity::VT_ENTITY_TYPE, entity_type, 0); }
         void add_player(int32_t player) { fbb_.AddElement<int32_t>(MoveEntity::VT_PLAYER, player, 0); }
         void add_src_location_name(flatbuffers::Offset<flatbuffers::String> src_location_name) { fbb_.AddOffset(MoveEntity::VT_SRC_LOCATION_NAME, src_location_name); }
-        void add_dst_location_name(flatbuffers::Offset<flatbuffers::String> dst_location_name) { fbb_.AddOffset(MoveEntity::VT_DST_LOCATION_NAME, dst_location_name); }
+        void add_dest_location_name(flatbuffers::Offset<flatbuffers::String> dest_location_name) { fbb_.AddOffset(MoveEntity::VT_DEST_LOCATION_NAME, dest_location_name); }
         MoveEntityBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
         MoveEntityBuilder &operator=(const MoveEntityBuilder &);
         flatbuffers::Offset<MoveEntity> Finish() {
@@ -928,9 +945,9 @@ namespace DeadCreator {
                                                             int32_t entity_type = 0,
                                                             int32_t player = 0,
                                                             flatbuffers::Offset<flatbuffers::String> src_location_name = 0,
-                                                            flatbuffers::Offset<flatbuffers::String> dst_location_name = 0) {
+                                                            flatbuffers::Offset<flatbuffers::String> dest_location_name = 0) {
         MoveEntityBuilder builder_(_fbb);
-        builder_.add_dst_location_name(dst_location_name);
+        builder_.add_dest_location_name(dest_location_name);
         builder_.add_src_location_name(src_location_name);
         builder_.add_player(player);
         builder_.add_entity_type(entity_type);
@@ -1137,6 +1154,63 @@ namespace DeadCreator {
                                                           flatbuffers::Offset<SwitchInfo2> info = 0) {
         SetSwitchBuilder builder_(_fbb);
         builder_.add_info(info);
+        return builder_.Finish();
+    }
+    
+    struct Order FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_ENTITY_TYPE = 4,
+            VT_PLAYER = 6,
+            VT_SRC_LOCATION_NAME = 8,
+            VT_ORDER = 10,
+            VT_DEST_LOCATION_NAME = 12
+        };
+        int32_t entity_type() const { return GetField<int32_t>(VT_ENTITY_TYPE, 0); }
+        int32_t player() const { return GetField<int32_t>(VT_PLAYER, 0); }
+        const flatbuffers::String *src_location_name() const { return GetPointer<const flatbuffers::String *>(VT_SRC_LOCATION_NAME); }
+        OrderType order() const { return static_cast<OrderType>(GetField<int32_t>(VT_ORDER, 0)); }
+        const flatbuffers::String *dest_location_name() const { return GetPointer<const flatbuffers::String *>(VT_DEST_LOCATION_NAME); }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<int32_t>(verifier, VT_ENTITY_TYPE) &&
+            VerifyField<int32_t>(verifier, VT_PLAYER) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_SRC_LOCATION_NAME) &&
+            verifier.Verify(src_location_name()) &&
+            VerifyField<int32_t>(verifier, VT_ORDER) &&
+            VerifyField<flatbuffers::uoffset_t>(verifier, VT_DEST_LOCATION_NAME) &&
+            verifier.Verify(dest_location_name()) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct OrderBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_entity_type(int32_t entity_type) { fbb_.AddElement<int32_t>(Order::VT_ENTITY_TYPE, entity_type, 0); }
+        void add_player(int32_t player) { fbb_.AddElement<int32_t>(Order::VT_PLAYER, player, 0); }
+        void add_src_location_name(flatbuffers::Offset<flatbuffers::String> src_location_name) { fbb_.AddOffset(Order::VT_SRC_LOCATION_NAME, src_location_name); }
+        void add_order(OrderType order) { fbb_.AddElement<int32_t>(Order::VT_ORDER, static_cast<int32_t>(order), 0); }
+        void add_dest_location_name(flatbuffers::Offset<flatbuffers::String> dest_location_name) { fbb_.AddOffset(Order::VT_DEST_LOCATION_NAME, dest_location_name); }
+        OrderBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        OrderBuilder &operator=(const OrderBuilder &);
+        flatbuffers::Offset<Order> Finish() {
+            auto o = flatbuffers::Offset<Order>(fbb_.EndTable(start_, 5));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<Order> CreateOrder(flatbuffers::FlatBufferBuilder &_fbb,
+                                                  int32_t entity_type = 0,
+                                                  int32_t player = 0,
+                                                  flatbuffers::Offset<flatbuffers::String> src_location_name = 0,
+                                                  OrderType order = OrderType_Move,
+                                                  flatbuffers::Offset<flatbuffers::String> dest_location_name = 0) {
+        OrderBuilder builder_(_fbb);
+        builder_.add_dest_location_name(dest_location_name);
+        builder_.add_order(order);
+        builder_.add_src_location_name(src_location_name);
+        builder_.add_player(player);
+        builder_.add_entity_type(entity_type);
         return builder_.Finish();
     }
     
@@ -1656,6 +1730,7 @@ namespace DeadCreator {
             case ActionBase_SetAllianceStatus: return verifier.VerifyTable(reinterpret_cast<const SetAllianceStatus *>(union_obj));
             case ActionBase_SetCountdownTimer: return verifier.VerifyTable(reinterpret_cast<const SetCountdownTimer *>(union_obj));
             case ActionBase_SetSwitch: return verifier.VerifyTable(reinterpret_cast<const SetSwitch *>(union_obj));
+            case ActionBase_Order: return verifier.VerifyTable(reinterpret_cast<const Order *>(union_obj));
             default: return false;
         }
     }

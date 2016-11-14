@@ -132,6 +132,18 @@ bool TriggerSystem::initWithResource(GameResource* res)
                 newTrigger->addAction(action);
             }
             
+            else if ( (*act)->type == TriggerComponentType::ACTION_ORDER )
+            {
+                auto data = static_cast<ActionOrderData*>(*act);
+                auto action = ActionOrder::create(_game,
+                                                  data->entity,
+                                                  data->player,
+                                                  data->srcLocation,
+                                                  data->order,
+                                                  data->destLocation);
+                newTrigger->addAction(action);
+            }
+
             else if ( (*act)->type == TriggerComponentType::ACTION_PLAY_SOUND )
             {
                 auto data = static_cast<ActionPlaySoundData*>(*act);

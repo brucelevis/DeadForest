@@ -109,6 +109,8 @@ void GoalSeekToPosition::terminate()
     
     InputBezelEnd bezelEnd(_owner);
     bezelEnd.execute();
+    
+    setGoalStatus(GoalStatus::COMPLETED);
 }
 
 

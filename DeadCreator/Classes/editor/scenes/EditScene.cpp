@@ -742,6 +742,26 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         
                         break;
                     }
+                    case DeadCreator::ActionBase_Order:
+                    {
+                        auto actionObject = static_cast<const DeadCreator::Order*>(act->action());
+                        auto action = new ActionOrder(_layer);
+                        
+                        action->setEntity(static_cast<EntityType>(actionObject->entity_type()));
+                        action->setPlayerType(static_cast<PlayerType>(actionObject->player()));
+                        
+                        LocationNode* sourceLocationPtr = _layer->findLocation(actionObject->src_location_name()->str());
+                        action->setSourceLocation(sourceLocationPtr);
+                        
+                        action->setOrderType(static_cast<OrderType>(actionObject->order()));
+                        
+                        LocationNode* destLocationPtr = _layer->findLocation(actionObject->dest_location_name()->str());
+                        action->setDestLocation(destLocationPtr);
+                        
+                        newTrigger->addAction(action);
+                        
+                        break;
+                    }
                     case DeadCreator::ActionBase_PlaySound:
                     {
                         auto actionObject = static_cast<const DeadCreator::PlaySound*>(act->action());
@@ -815,7 +835,7 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         action->setEntity(static_cast<EntityType>(actionObject->entity_type()));
                         action->setPlayerType(static_cast<PlayerType>(actionObject->player()));
                         
-                        LocationNode* destLocationPtr = _layer->findLocation(actionObject->dst_location_name()->str());
+                        LocationNode* destLocationPtr = _layer->findLocation(actionObject->dest_location_name()->str());
                         action->setDestLocation(destLocationPtr);
                         
                         LocationNode* sourceLocationPtr = _layer->findLocation(actionObject->src_location_name()->str());

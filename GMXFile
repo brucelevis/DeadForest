@@ -30,7 +30,7 @@ enum Arithmetical : int { Add = 0, SetTo, Subtract }
 enum TileType : int { Dirt = 0, Grass, Water, Hill }
 enum SwitchStatus : int { Cleared = 0, Set }
 enum SwitchStatus2 : int { Clear = 0, Set, Toggle, Randomize }
- 
+enum OrderType : int { Move = 0, Attack }
 table TileInfo
 {
    number : string;
@@ -106,7 +106,7 @@ table MoveEntity
    entity_type : int;
    player : int;
    src_location_name : string;
-   dst_location_name : string;
+   dest_location_name : string;
 }
 table KillEntityAtLocation
 {
@@ -130,6 +130,14 @@ table SetCountdownTimer
 table SetSwitch
 {
    info : SwitchInfo2;
+}
+table Order
+{
+   entity_type : int;
+   player : int;
+   src_location_name : string;
+   order : OrderType;
+   dest_location_name : string;
 }
 
 union ConditionBase 
@@ -159,7 +167,8 @@ union ActionBase
    ResumeGame,
    SetAllianceStatus,
    SetCountdownTimer,
-   SetSwitch
+   SetSwitch,
+   Order
 }
 
 table Condition 

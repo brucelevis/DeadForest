@@ -76,4 +76,5 @@ GoalStatus GoalMoveToPosition::process()
 void GoalMoveToPosition::terminate()
 {
     removeAllSubgoals();
+    setGoalStatus(GoalStatus::COMPLETED);
 }

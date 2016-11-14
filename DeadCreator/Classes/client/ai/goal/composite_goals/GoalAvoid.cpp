@@ -62,6 +62,9 @@ void GoalAvoid::terminate()
 {
     InputMoveEnd moveEnd(_owner);
     moveEnd.execute();
+    
+    removeAllSubgoals();
+    setGoalStatus(GoalStatus::COMPLETED);
 }
 
 

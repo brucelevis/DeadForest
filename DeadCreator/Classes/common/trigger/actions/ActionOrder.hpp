@@ -11,6 +11,9 @@
 #include "ActionBase.hpp"
 #include "TriggerParameters.hpp"
 #include "GameResource.hpp"
+#include "Goals.hpp"
+#include "HumanBase.hpp"
+#include "BrainBase.hpp"
 
 
 namespace realtrick
@@ -197,7 +200,41 @@ namespace realtrick
             
             virtual void doAction()
             {
+                if ( _params.player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
+                else _maskedPlayer.set(static_cast<int>(_params.player));
                 
+                const auto& entities = _game->getEntityManager()->getEntities();
+                const auto& locations = _game->getGameResource()->getLocations();
+                
+                auto destRectCenter = cocos2d::Vec2(locations.at(_params.destLocation).getMidX() + cocos2d::random(-5.0f, 5.0f),
+                                                    locations.at(_params.destLocation).getMidY() + cocos2d::random(-5.0f, 5.0f));
+                
+                for( const auto& ent : entities )
+                {
+                    auto currEntity = ent.second;
+                    
+                    if ( !_maskedPlayer.test(static_cast<int>(currEntity->getPlayerType())) ) continue;
+                    if ( _params.entity != currEntity->getEntityType() ) continue;
+                    if ( _params.player != currEntity->getPlayerType() ) continue;
+                    if ( !isMasked(currEntity->getFamilyMask(), FamilyMask::HUMAN_BASE) ) continue;
+                    
+                    auto human = static_cast<HumanBase*>(currEntity);
+                    if ( locations.at(_params.srcLocation).intersectsCircle(human->getWorldPosition(), human->getBoundingRadius()) )
+                    {
+                        if ( _params.order == OrderType::MOVE )
+                        {
+                            auto heading = (destRectCenter - human->getWorldPosition()).getNormalized();
+                            GoalMoveToPosition* moveGoal = new GoalMoveToPosition(human, destRectCenter,
+                                                                                  std::make_shared<ArrivingData>(ArrivingData(heading, 100.0f, 50.0f)));
+                            human->getBrain()->executeGoal(moveGoal);
+                        }
+                        else // if ( _params.order == OrderType::ATTACK )
+                        {
+                            GoalAttackToDestination* attackGoal = new GoalAttackToDestination(human, destRectCenter, 50.0f);
+                            human->getBrain()->executeGoal(attackGoal);
+                        }
+                    }
+                }
             }
             
         private:

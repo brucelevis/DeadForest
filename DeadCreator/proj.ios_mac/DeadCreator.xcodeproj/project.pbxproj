@@ -244,6 +244,8 @@
 		521A8E6319F0C34300D177D7 /* Default-736h@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-736h@3x.png"; sourceTree = "<group>"; };
 		52B47A461A53D09B004E4C60 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.1.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		8262943D1AAF051F00CB7CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		BF08BBF81DD95BA300F113EE /* ActionSetAllianceStatus.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ActionSetAllianceStatus.hpp; sourceTree = "<group>"; };
+		BF08BBF91DD95DE100F113EE /* TriggerParameterAllyStatus.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TriggerParameterAllyStatus.hpp; sourceTree = "<group>"; };
 		BF10F2791DD0A18900B57AA8 /* boost.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = boost.framework; path = ../boost.framework; sourceTree = "<group>"; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -1305,6 +1307,7 @@
 			isa = PBXGroup;
 			children = (
 				BF445F6E1DD1BBC0005C667A /* ActionBase.hpp */,
+				BF445F791DD1BBC0005C667A /* Actions.hpp */,
 				BF24772D1DD8A3630084F177 /* ActionCreateEntity.hpp */,
 				BF445F6F1DD1BBC0005C667A /* ActionDefeat.hpp */,
 				BF445F701DD1BBC0005C667A /* ActionDisplayText.hpp */,
@@ -1316,7 +1319,7 @@
 				BF445F761DD1BBC0005C667A /* ActionPlaySoundAtLocation.hpp */,
 				BF445F771DD1BBC0005C667A /* ActionPreserveTrigger.hpp */,
 				BF445F781DD1BBC0005C667A /* ActionResumeGame.hpp */,
-				BF445F791DD1BBC0005C667A /* Actions.hpp */,
+				BF08BBF81DD95BA300F113EE /* ActionSetAllianceStatus.hpp */,
 				BF445F7A1DD1BBC0005C667A /* ActionSetCountdownTimer.hpp */,
 				BF445F7B1DD1BBC0005C667A /* ActionSetSwitch.hpp */,
 				BF445F7C1DD1BBC0005C667A /* ActionVictory.hpp */,
@@ -1345,6 +1348,7 @@
 				BF445F891DD1BBC0005C667A /* TriggerComponentProtocol.hpp */,
 				BF445F8A1DD1BBC0005C667A /* TriggerParameterApproximation.hpp */,
 				BF445F8B1DD1BBC0005C667A /* TriggerParameterArithmetical.hpp */,
+				BF08BBF91DD95DE100F113EE /* TriggerParameterAllyStatus.hpp */,
 				BF445F8C1DD1BBC0005C667A /* TriggerParameterBase.hpp */,
 				BF445F8D1DD1BBC0005C667A /* TriggerParameterEntity.hpp */,
 				BF445F8E1DD1BBC0005C667A /* TriggerParameterLocation.hpp */,

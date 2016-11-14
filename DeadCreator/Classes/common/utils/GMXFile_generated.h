@@ -57,6 +57,8 @@ namespace DeadCreator {
     
     struct ResumeGame;
     
+    struct SetAllianceStatus;
+    
     struct SetCountdownTimer;
     
     struct SetSwitch;
@@ -191,14 +193,15 @@ namespace DeadCreator {
         ActionBase_MoveEntity = 10,
         ActionBase_PauseGame = 11,
         ActionBase_ResumeGame = 12,
-        ActionBase_SetCountdownTimer = 13,
-        ActionBase_SetSwitch = 14,
+        ActionBase_SetAllianceStatus = 13,
+        ActionBase_SetCountdownTimer = 14,
+        ActionBase_SetSwitch = 15,
         ActionBase_MIN = ActionBase_NONE,
         ActionBase_MAX = ActionBase_SetSwitch
     };
     
     inline const char **EnumNamesActionBase() {
-        static const char *names[] = { "NONE", "CreateEntity", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", "Victory", "Defeat", "MoveEntity", "PauseGame", "ResumeGame", "SetCountdownTimer", "SetSwitch", nullptr };
+        static const char *names[] = { "NONE", "CreateEntity", "DisplayText", "PreserveTrigger", "KillEntityAtLocation", "MoveLocation", "PlaySoundAtLocation", "PlaySound", "Victory", "Defeat", "MoveEntity", "PauseGame", "ResumeGame", "SetAllianceStatus", "SetCountdownTimer", "SetSwitch", nullptr };
         return names;
     }
     
@@ -1031,6 +1034,43 @@ namespace DeadCreator {
         return builder_.Finish();
     }
     
+    struct SetAllianceStatus FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_PLAYER = 4,
+            VT_IS_ALLY = 6
+        };
+        int32_t player() const { return GetField<int32_t>(VT_PLAYER, 0); }
+        bool is_ally() const { return GetField<uint8_t>(VT_IS_ALLY, 0) != 0; }
+        bool Verify(flatbuffers::Verifier &verifier) const {
+            return VerifyTableStart(verifier) &&
+            VerifyField<int32_t>(verifier, VT_PLAYER) &&
+            VerifyField<uint8_t>(verifier, VT_IS_ALLY) &&
+            verifier.EndTable();
+        }
+    };
+    
+    struct SetAllianceStatusBuilder {
+        flatbuffers::FlatBufferBuilder &fbb_;
+        flatbuffers::uoffset_t start_;
+        void add_player(int32_t player) { fbb_.AddElement<int32_t>(SetAllianceStatus::VT_PLAYER, player, 0); }
+        void add_is_ally(bool is_ally) { fbb_.AddElement<uint8_t>(SetAllianceStatus::VT_IS_ALLY, static_cast<uint8_t>(is_ally), 0); }
+        SetAllianceStatusBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+        SetAllianceStatusBuilder &operator=(const SetAllianceStatusBuilder &);
+        flatbuffers::Offset<SetAllianceStatus> Finish() {
+            auto o = flatbuffers::Offset<SetAllianceStatus>(fbb_.EndTable(start_, 2));
+            return o;
+        }
+    };
+    
+    inline flatbuffers::Offset<SetAllianceStatus> CreateSetAllianceStatus(flatbuffers::FlatBufferBuilder &_fbb,
+                                                                          int32_t player = 0,
+                                                                          bool is_ally = false) {
+        SetAllianceStatusBuilder builder_(_fbb);
+        builder_.add_player(player);
+        builder_.add_is_ally(is_ally);
+        return builder_.Finish();
+    }
+    
     struct SetCountdownTimer FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
         enum {
             VT_ARITHMETICAL = 4,
@@ -1613,6 +1653,7 @@ namespace DeadCreator {
             case ActionBase_MoveEntity: return verifier.VerifyTable(reinterpret_cast<const MoveEntity *>(union_obj));
             case ActionBase_PauseGame: return verifier.VerifyTable(reinterpret_cast<const PauseGame *>(union_obj));
             case ActionBase_ResumeGame: return verifier.VerifyTable(reinterpret_cast<const ResumeGame *>(union_obj));
+            case ActionBase_SetAllianceStatus: return verifier.VerifyTable(reinterpret_cast<const SetAllianceStatus *>(union_obj));
             case ActionBase_SetCountdownTimer: return verifier.VerifyTable(reinterpret_cast<const SetCountdownTimer *>(union_obj));
             case ActionBase_SetSwitch: return verifier.VerifyTable(reinterpret_cast<const SetSwitch *>(union_obj));
             default: return false;

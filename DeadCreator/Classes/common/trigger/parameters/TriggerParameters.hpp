@@ -9,6 +9,7 @@
 #pragma once
 
 #include "TriggerParameterPlayerType.hpp"
+#include "TriggerParameterAllyStatus.hpp"
 #include "TriggerParameterArithmetical.hpp"
 #include "TriggerParameterApproximation.hpp"
 #include "TriggerParameterEntity.hpp"

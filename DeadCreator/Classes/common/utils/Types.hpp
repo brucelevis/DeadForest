@@ -82,6 +82,13 @@ namespace realtrick
         EXACTLY = 2,
     };
         
+    enum class AllyStatusType : int
+    {
+        INVALID = -1,
+        ALLY = 0,
+        ENEMY = 1,
+    };
+        
     enum class ArithmeticalType : int
     {
         INVALID = -1,
@@ -126,6 +133,7 @@ namespace realtrick
         ACTION_MOVE_ENTITY,
         ACTION_PAUSE_GAME,
         ACTION_RESUME_GAME,
+        ACTION_SET_ALLIANCE_STATUS,
         ACTION_SET_COUNTDOWN_TIMER,
         ACTION_SET_SWITCH,
     };

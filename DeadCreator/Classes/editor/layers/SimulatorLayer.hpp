@@ -91,7 +91,6 @@ namespace realtrick
 			}
 
 			void showLayer(bool& opened);
-            void receiveProfileDataAndRender();
 
 			void playGame();
 			void closeLayer();
@@ -138,6 +137,17 @@ namespace realtrick
             std::list<ProfileCPU> _profileCPU;
             
             int _lines = 0;
+            
+            bool _isPlayerInfo = true;
+            bool _isGridOn = false;
+            bool _isLocationViewOn = false;
+            bool _isGraphNodeViewOn = false;
+            
+            bool _isPhysicsShape = false;
+            bool _isPhysicsAABB = false;
+            
+            bool _isNavGraphOn = false;
+            bool _isGoalDescOn = false;
             
 		};
 

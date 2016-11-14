@@ -117,6 +117,11 @@ table KillEntityAtLocation
 }
 table PauseGame{}
 table ResumeGame{}
+table SetAllianceStatus
+{
+   player : int;
+   is_ally : bool;
+}
 table SetCountdownTimer
 {
    arithmetical : Arithmetical;
@@ -152,6 +157,7 @@ union ActionBase
    MoveEntity,
    PauseGame,
    ResumeGame,
+   SetAllianceStatus,
    SetCountdownTimer,
    SetSwitch
 }

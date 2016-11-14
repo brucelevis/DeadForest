@@ -47,17 +47,6 @@ SimulatorLayer::SimulatorLayer(EditScene* layer) : _imguiLayer(layer)
 
 void SimulatorLayer::showLayer(bool& opened)
 {
-    static bool isPlayerInfo = true;
-    static bool isGridOn = false;
-    static bool isLocationViewOn = false;
-    static bool isGraphNodeViewOn = false;
-    
-    static bool isPhysicsShape = false;
-    static bool isPhysicsAABB = false;
-    
-    static bool isNavGraphOn = false;
-    static bool isGoalDescOn = false;
-    
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2 - GAME_SCREEN_WIDTH / 2,
                                    ImGui::GetIO().DisplaySize.y / 2 - GAME_SCREEN_HEIGHT / 2), ImGuiSetCond_Once);
     ImGui::SetNextWindowSize(ImVec2(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT + 25), ImGuiSetCond_Once);
@@ -83,7 +72,7 @@ void SimulatorLayer::showLayer(bool& opened)
             ImGui::SetCursorScreenPos(ImVec2(_debugOrigin.x, _debugOrigin.y));
             auto drawList = ImGui::GetWindowDrawList();
             
-            if (isPlayerInfo)
+            if (_isPlayerInfo)
             {
                 ImVec2 before = ImGui::GetCursorScreenPos();
                 ImGui::SetCursorScreenPos(ImVec2(_debugOrigin.x, _debugOrigin.y + GAME_SCREEN_HEIGHT - 80));
@@ -98,7 +87,7 @@ void SimulatorLayer::showLayer(bool& opened)
                 ImGui::SetCursorScreenPos(before);
             }
             
-            if (isGridOn)
+            if (_isGridOn)
             {
                 auto resource = game->getGameResource();
                 
@@ -138,7 +127,7 @@ void SimulatorLayer::showLayer(bool& opened)
                 }
             }
             
-            if (isLocationViewOn)
+            if (_isLocationViewOn)
             {
                 const auto& locations = game->getGameResource()->getLocations();
                 for (const auto& location : locations)
@@ -160,7 +149,7 @@ void SimulatorLayer::showLayer(bool& opened)
                 }
             }
             
-            if (isGraphNodeViewOn)
+            if (_isGraphNodeViewOn)
             {
                 auto graph = game->getGraph();
                 auto nodes = graph->getNodes();
@@ -190,12 +179,12 @@ void SimulatorLayer::showLayer(bool& opened)
                 }
             }
             
-            if ( isPhysicsShape || isPhysicsAABB )
+            if ( _isPhysicsShape || _isPhysicsAABB )
             {
                 game->getPhysicsManager()->GetPhysicsWorld()->DrawDebugData();
             }
             
-            if ( isNavGraphOn )
+            if ( _isNavGraphOn )
             {
                 auto entities = game->getEntityManager()->getEntities();
                 for( const auto& entity : entities )
@@ -222,7 +211,7 @@ void SimulatorLayer::showLayer(bool& opened)
                 }
             }
             
-            if ( isGoalDescOn )
+            if ( _isGoalDescOn )
             {
                 auto entities = game->getNeighborsEntities(game->getPlayerPtr()->getWorldPosition(), cocos2d::Rect(0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
                 for( const auto& ent : entities )
@@ -256,103 +245,11 @@ void SimulatorLayer::showLayer(bool& opened)
         closeLayer();
     }
     
-    // setting layer
-    if (_isGameStarted)
-    {
-        auto game = _gameLayer->getGame();
-        if (!game->isGameEnded())
-        {
-            ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
-            ImGui::Begin("statistic", NULL, ImGuiWindowFlags_ShowBorders);
-            
-            if (ImGui::TreeNode("debug"))
-            {
-                ImGui::Checkbox("player info", &isPlayerInfo);
-                ImGui::Checkbox("grid", &isGridOn);
-                ImGui::Checkbox("location", &isLocationViewOn);
-                ImGui::Checkbox("graph", &isGraphNodeViewOn);
-                ImGui::TreePop();
-            }
-            
-            if ( ImGui::TreeNode("physics") )
-            {
-                if ( ImGui::Checkbox("shape", &isPhysicsShape) )
-                {
-                    if ( isPhysicsShape ) AppendFlags(b2Draw::e_shapeBit);
-                    else ClearFlags(b2Draw::e_shapeBit);
-                }
-                if ( ImGui::Checkbox("aabb", &isPhysicsAABB) )
-                {
-                    if ( isPhysicsAABB ) AppendFlags(b2Draw::e_aabbBit);
-                    else ClearFlags(b2Draw::e_aabbBit);
-                }
-                
-                ImGui::TreePop();
-            }
-            
-            if ( ImGui::TreeNode("ai") )
-            {
-                ImGui::Checkbox("path", &isNavGraphOn);
-                ImGui::Checkbox("goal", &isGoalDescOn);
-                
-                ImGui::TreePop();
-            }
-            
-            ImGui::End();
-            
-            // logger
-            ImGui::SetNextWindowPos(ImVec2(100,600), ImGuiSetCond_Once);
-            ImGui::SetNextWindowSize(ImVec2(500, 300), ImGuiSetCond_Once);
-            ImGui::Begin("logger", NULL, ImGuiWindowFlags_ShowBorders);
-            ImGui::TextUnformatted(game->getLogString().c_str());
-            if (game->isLogAdded()) ImGui::SetScrollHere(1.0f);
-            game->isLogAdded() = false;
-            ImGui::End();
-        }
-    }
     
-    
-    // profiler
-    receiveProfileDataAndRender();
-}
-
-
-void SimulatorLayer::playGame()
-{
-    _gameLayer = realtrick::client::DummyScene::create(this);
-    addChild(_gameLayer);
-}
-
-
-void SimulatorLayer::closeLayer()
-{
-    _profileStatus.clear();
-    _gameLayer->removeFromParentAndCleanup(true);
-    _imguiLayer->stopGame();
-}
-
-
-cocos2d::Vec2 SimulatorLayer::worldToLocal(const cocos2d::Vec2& p)
-{
-    auto game = _gameLayer->getGame();
-    auto transformedVector =  p - game->getPlayerPtr()->getWorldPosition();
-    auto zoomScale = game->getRenderingSysetm()->getZoomScale();
-    return cocos2d::Vec2(transformedVector.x * zoomScale.x, transformedVector.y * zoomScale.y);
-}
-
-
-cocos2d::Vec2 SimulatorLayer::worldToLocal(const cocos2d::Vec2& origin, const cocos2d::Vec2& p)
-{
-    auto local = worldToLocal(p);
-    return cocos2d::Vec2(origin.x + local.x + GAME_SCREEN_WIDTH / 2, origin.y - local.y + GAME_SCREEN_HEIGHT / 2);
-}
-
-
-void SimulatorLayer::receiveProfileDataAndRender()
-{
-    const char* tabNames[] = {"status", "cpu usage"};
-    const int numTabs = 2;
-    const char* tabTooltips[numTabs] = {"fps, draw calls, vertices...", "cpu usages..."};
+    // statistic
+    const char* tabNames[] = {"status", "profiler", "debug"};
+    const int numTabs = 3;
+    const char* tabTooltips[numTabs] = {"fps, draw calls, vertices...", "cpu usages...", "set draw nodes (on or off)..."};
     static int selectedTab = 0;
     static int optionalHoveredTab = 0;
     
@@ -360,9 +257,10 @@ void SimulatorLayer::receiveProfileDataAndRender()
     {
         ImGui::SetNextWindowPos(ImVec2(100,100), ImGuiSetCond_Once);
         ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiSetCond_Once);
-        ImGui::Begin("profiler", NULL, ImGuiWindowFlags_ShowBorders);
+        ImGui::Begin("statistic", NULL, ImGuiWindowFlags_ShowBorders);
         
         auto drawList = ImGui::GetWindowDrawList();
+        auto game = _gameLayer->getGame();
         
         ImGui::TabLabels(numTabs, tabNames, selectedTab, tabTooltips, false, &optionalHoveredTab);
         
@@ -446,8 +344,57 @@ void SimulatorLayer::receiveProfileDataAndRender()
                 drawProfileCPUs(_profileCPU.back());
             }
         }
+        else if ( selectedTab == 2)
+        {
+            if (!game->isGameEnded())
+            {
+                if (ImGui::TreeNode("normal"))
+                {
+                    ImGui::Checkbox("player info", &_isPlayerInfo);
+                    ImGui::Checkbox("grid", &_isGridOn);
+                    ImGui::Checkbox("location", &_isLocationViewOn);
+                    ImGui::Checkbox("graph", &_isGraphNodeViewOn);
+                    ImGui::TreePop();
+                }
+                
+                if ( ImGui::TreeNode("physics") )
+                {
+                    if ( ImGui::Checkbox("shape", &_isPhysicsShape) )
+                    {
+                        if ( _isPhysicsShape ) AppendFlags(b2Draw::e_shapeBit);
+                        else ClearFlags(b2Draw::e_shapeBit);
+                    }
+                    if ( ImGui::Checkbox("aabb", &_isPhysicsAABB) )
+                    {
+                        if ( _isPhysicsAABB ) AppendFlags(b2Draw::e_aabbBit);
+                        else ClearFlags(b2Draw::e_aabbBit);
+                    }
+                    
+                    ImGui::TreePop();
+                }
+                
+                if ( ImGui::TreeNode("ai") )
+                {
+                    ImGui::Checkbox("path", &_isNavGraphOn);
+                    ImGui::Checkbox("goal", &_isGoalDescOn);
+                    
+                    ImGui::TreePop();
+                }
+            }
+            
+        }
         
         ImGui::End();
+        
+        // logger
+        ImGui::SetNextWindowPos(ImVec2(100,600), ImGuiSetCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(500, 300), ImGuiSetCond_Once);
+        ImGui::Begin("logger", NULL, ImGuiWindowFlags_ShowBorders);
+        ImGui::TextUnformatted(game->getLogString().c_str());
+        if (game->isLogAdded()) ImGui::SetScrollHere(1.0f);
+        game->isLogAdded() = false;
+        ImGui::End();
+
     }
     
     if ( !_tcpSession.isQueueEmpty() )
@@ -494,6 +441,37 @@ void SimulatorLayer::receiveProfileDataAndRender()
         delete packet;
         packet = nullptr;
     }
+}
+
+
+void SimulatorLayer::playGame()
+{
+    _gameLayer = realtrick::client::DummyScene::create(this);
+    addChild(_gameLayer);
+}
+
+
+void SimulatorLayer::closeLayer()
+{
+    _profileStatus.clear();
+    _gameLayer->removeFromParentAndCleanup(true);
+    _imguiLayer->stopGame();
+}
+
+
+cocos2d::Vec2 SimulatorLayer::worldToLocal(const cocos2d::Vec2& p)
+{
+    auto game = _gameLayer->getGame();
+    auto transformedVector =  p - game->getPlayerPtr()->getWorldPosition();
+    auto zoomScale = game->getRenderingSysetm()->getZoomScale();
+    return cocos2d::Vec2(transformedVector.x * zoomScale.x, transformedVector.y * zoomScale.y);
+}
+
+
+cocos2d::Vec2 SimulatorLayer::worldToLocal(const cocos2d::Vec2& origin, const cocos2d::Vec2& p)
+{
+    auto local = worldToLocal(p);
+    return cocos2d::Vec2(origin.x + local.x + GAME_SCREEN_WIDTH / 2, origin.y - local.y + GAME_SCREEN_HEIGHT / 2);
 }
 
 

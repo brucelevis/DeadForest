@@ -84,6 +84,7 @@ bool TriggerEditLayer::init()
     _actionList.push_back(new ActionPlaySoundAtLocation(&_gmxLayer));
     _actionList.push_back(new ActionPreserveTrigger(&_gmxLayer));
     _actionList.push_back(new ActionResumeGame(&_gmxLayer));
+    _actionList.push_back(new ActionSetAllianceStatus(&_gmxLayer));
     _actionList.push_back(new ActionSetCountdownTimer(&_gmxLayer));
     _actionList.push_back(new ActionSetSwitch(&_gmxLayer));
     _actionList.push_back(new ActionVictory(&_gmxLayer));

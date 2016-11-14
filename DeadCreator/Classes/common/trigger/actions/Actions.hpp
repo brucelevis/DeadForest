@@ -22,3 +22,4 @@
 #include "ActionResumeGame.hpp"
 #include "ActionSetCountdownTimer.hpp"
 #include "ActionSetSwitch.hpp"
+#include "ActionSetAllianceStatus.hpp"

@@ -248,6 +248,7 @@
 		BF08BBF91DD95DE100F113EE /* TriggerParameterAllyStatus.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TriggerParameterAllyStatus.hpp; sourceTree = "<group>"; };
 		BF08BBFA1DD9FB6600F113EE /* ActionOrder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ActionOrder.hpp; sourceTree = "<group>"; };
 		BF08BBFB1DD9FD2700F113EE /* TriggerParameterOrderType.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TriggerParameterOrderType.hpp; sourceTree = "<group>"; };
+		BF08BBFC1DDA1C7800F113EE /* ConditionCommand.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ConditionCommand.hpp; sourceTree = "<group>"; };
 		BF10F2791DD0A18900B57AA8 /* boost.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = boost.framework; path = ../boost.framework; sourceTree = "<group>"; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -1333,13 +1334,14 @@
 		BF445F7D1DD1BBC0005C667A /* conditions */ = {
 			isa = PBXGroup;
 			children = (
+				BF445F841DD1BBC0005C667A /* Conditions.hpp */,
 				BF445F7E1DD1BBC0005C667A /* ConditionAlways.hpp */,
 				BF445F7F1DD1BBC0005C667A /* ConditionBase.hpp */,
 				BF445F801DD1BBC0005C667A /* ConditionBring.hpp */,
+				BF08BBFC1DDA1C7800F113EE /* ConditionCommand.hpp */,
 				BF445F811DD1BBC0005C667A /* ConditionCountdownTimer.hpp */,
 				BF445F821DD1BBC0005C667A /* ConditionElapsedTime.hpp */,
 				BF445F831DD1BBC0005C667A /* ConditionNever.hpp */,
-				BF445F841DD1BBC0005C667A /* Conditions.hpp */,
 				BF445F851DD1BBC0005C667A /* ConditionSwitch.hpp */,
 			);
 			path = conditions;

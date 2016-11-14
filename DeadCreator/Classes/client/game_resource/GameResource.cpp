@@ -198,6 +198,19 @@ bool GameResource::initWithBinary(const char* buffer)
                     
                     break;
                 }
+                case DeadCreator::ConditionBase_Command:
+                {
+                    auto conditionObject = static_cast<const DeadCreator::Command*>(cond->condition());
+                    
+                    auto condition = new ConditionCommandData();
+                    condition->player = static_cast<PlayerType>(conditionObject->player());
+                    condition->approximation = static_cast<ApproximationType>(conditionObject->approximation());
+                    condition->number = conditionObject->number();
+                    condition->entity=  static_cast<EntityType>(conditionObject->entity_type());
+                    data.conditions.push_back(condition);
+                    
+                    break;
+                }
                 case DeadCreator::ConditionBase_CountdownTimer:
                 {
                     auto conditionObject = static_cast<const DeadCreator::CountdownTimer*>(cond->condition());

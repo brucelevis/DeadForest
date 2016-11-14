@@ -614,12 +614,14 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         
                         break;
                     }
-                    case DeadCreator::ConditionBase_ElapsedTime:
+                    case DeadCreator::ConditionBase_Command:
                     {
-                        auto conditionObject = static_cast<const DeadCreator::ElapsedTime*>(cond->condition());
-                        auto condition = new ConditionElapsedTime(_layer);
+                        auto conditionObject = static_cast<const DeadCreator::Command*>(cond->condition());
+                        auto condition = new ConditionCommand(_layer);
+                        condition->setPlayerType(static_cast<PlayerType>(conditionObject->player()));
                         condition->setApproximation(static_cast<ApproximationType>(conditionObject->approximation()));
                         condition->setNumber(conditionObject->number());
+                        condition->setEntity(static_cast<EntityType>(conditionObject->entity_type()));
                         
                         newTrigger->addCondition(condition);
                         
@@ -629,6 +631,17 @@ void EditScene::createGMXLayer(const std::string& filePath)
                     {
                         auto conditionObject = static_cast<const DeadCreator::CountdownTimer*>(cond->condition());
                         auto condition = new ConditionCountdownTimer(_layer);
+                        condition->setApproximation(static_cast<ApproximationType>(conditionObject->approximation()));
+                        condition->setNumber(conditionObject->number());
+                        
+                        newTrigger->addCondition(condition);
+                        
+                        break;
+                    }
+                    case DeadCreator::ConditionBase_ElapsedTime:
+                    {
+                        auto conditionObject = static_cast<const DeadCreator::ElapsedTime*>(cond->condition());
+                        auto condition = new ConditionElapsedTime(_layer);
                         condition->setApproximation(static_cast<ApproximationType>(conditionObject->approximation()));
                         condition->setNumber(conditionObject->number());
                         

@@ -49,6 +49,13 @@ bool TriggerSystem::initWithResource(GameResource* res)
                 newTrigger->addCondition(condition);
             }
             
+            else if ( (*cond)->type == TriggerComponentType::CONDITION_COMMAND )
+            {
+                auto data = static_cast<ConditionCommandData*>(*cond);
+                auto condition = ConditionCommand::create(_game, data->player, data->approximation, data->number, data->entity);
+                newTrigger->addCondition(condition);
+            }
+            
             else if ( (*cond)->type == TriggerComponentType::CONDITION_COUNTDOWN_TIMER )
             {
                 auto data = static_cast<ConditionCountdownTimerData*>(*cond);

@@ -10,6 +10,7 @@
 
 #include "ConditionAlways.hpp"
 #include "ConditionBring.hpp"
+#include "ConditionCommand.hpp"
 #include "ConditionCountdownTimer.hpp"
 #include "ConditionElapsedTime.hpp"
 #include "ConditionNever.hpp"

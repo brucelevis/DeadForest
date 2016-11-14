@@ -68,6 +68,7 @@ bool TriggerEditLayer::init()
     
     _conditionList.push_back(new ConditionAlways(&_gmxLayer));
     _conditionList.push_back(new ConditionBring(&_gmxLayer));
+    _conditionList.push_back(new ConditionCommand(&_gmxLayer));
     _conditionList.push_back(new ConditionCountdownTimer(&_gmxLayer));
     _conditionList.push_back(new ConditionElapsedTime(&_gmxLayer));
     _conditionList.push_back(new ConditionNever(&_gmxLayer));

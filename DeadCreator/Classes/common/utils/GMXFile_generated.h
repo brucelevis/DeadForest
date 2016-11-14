@@ -441,8 +441,22 @@ namespace DeadCreator {
     }
     
     struct Command FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+        enum {
+            VT_PLAYER = 4,
+            VT_APPROXIMATION = 6,
+            VT_NUMBER = 8,
+            VT_ENTITY_TYPE = 10
+        };
+        int32_t player() const { return GetField<int32_t>(VT_PLAYER, 0); }
+        Approximation approximation() const { return static_cast<Approximation>(GetField<int32_t>(VT_APPROXIMATION, 0)); }
+        int32_t number() const { return GetField<int32_t>(VT_NUMBER, 0); }
+        int32_t entity_type() const { return GetField<int32_t>(VT_ENTITY_TYPE, 0); }
         bool Verify(flatbuffers::Verifier &verifier) const {
             return VerifyTableStart(verifier) &&
+            VerifyField<int32_t>(verifier, VT_PLAYER) &&
+            VerifyField<int32_t>(verifier, VT_APPROXIMATION) &&
+            VerifyField<int32_t>(verifier, VT_NUMBER) &&
+            VerifyField<int32_t>(verifier, VT_ENTITY_TYPE) &&
             verifier.EndTable();
         }
     };
@@ -450,16 +464,28 @@ namespace DeadCreator {
     struct CommandBuilder {
         flatbuffers::FlatBufferBuilder &fbb_;
         flatbuffers::uoffset_t start_;
+        void add_player(int32_t player) { fbb_.AddElement<int32_t>(Command::VT_PLAYER, player, 0); }
+        void add_approximation(Approximation approximation) { fbb_.AddElement<int32_t>(Command::VT_APPROXIMATION, static_cast<int32_t>(approximation), 0); }
+        void add_number(int32_t number) { fbb_.AddElement<int32_t>(Command::VT_NUMBER, number, 0); }
+        void add_entity_type(int32_t entity_type) { fbb_.AddElement<int32_t>(Command::VT_ENTITY_TYPE, entity_type, 0); }
         CommandBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
         CommandBuilder &operator=(const CommandBuilder &);
         flatbuffers::Offset<Command> Finish() {
-            auto o = flatbuffers::Offset<Command>(fbb_.EndTable(start_, 0));
+            auto o = flatbuffers::Offset<Command>(fbb_.EndTable(start_, 4));
             return o;
         }
     };
     
-    inline flatbuffers::Offset<Command> CreateCommand(flatbuffers::FlatBufferBuilder &_fbb) {
+    inline flatbuffers::Offset<Command> CreateCommand(flatbuffers::FlatBufferBuilder &_fbb,
+                                                      int32_t player = 0,
+                                                      Approximation approximation = Approximation_AtLeast,
+                                                      int32_t number = 0,
+                                                      int32_t entity_type = 0) {
         CommandBuilder builder_(_fbb);
+        builder_.add_entity_type(entity_type);
+        builder_.add_number(number);
+        builder_.add_approximation(approximation);
+        builder_.add_player(player);
         return builder_.Finish();
     }
     

@@ -46,7 +46,13 @@ table Location
 
 table Always{}
 table Never{}
-table Command{}
+table Command
+{
+   player : int;
+   approximation : Approximation;
+   number : int;
+   entity_type : int;
+}
 table Bring
 {
    player : int;

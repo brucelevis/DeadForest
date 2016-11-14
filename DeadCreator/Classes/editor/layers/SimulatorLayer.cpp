@@ -546,7 +546,6 @@ bool SimulatorLayer::isNeighborPoint(const cocos2d::Vec2& p)
 }
 
 
-//
 void SimulatorLayer::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
 {
     auto drawList = ImGui::GetWindowDrawList();
@@ -561,6 +560,7 @@ void SimulatorLayer::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, cons
         }
     }
 }
+
 
 /// Draw a solid closed polygon provided in CCW order.
 void SimulatorLayer::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)

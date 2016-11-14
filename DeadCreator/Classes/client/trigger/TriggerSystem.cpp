@@ -172,6 +172,15 @@ bool TriggerSystem::initWithResource(GameResource* res)
                 newTrigger->addAction(action);
             }
             
+            else if ( (*act)->type == TriggerComponentType::ACTION_SET_ALLIANCE_STATUS )
+            {
+                auto data = static_cast<ActionSetAllianceStatusData*>(*act);
+                auto action = ActionSetAllianceStatus::create(_game,
+                                                              data->player,
+                                                              data->isAlly);
+                newTrigger->addAction(action);
+            }
+            
             else if ( (*act)->type == TriggerComponentType::ACTION_SET_COUNTDOWN_TIMER )
             {
                 auto data = static_cast<ActionSetCountdownTimerData*>(*act);

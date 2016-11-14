@@ -75,7 +75,7 @@ namespace realtrick
                     "Enemy"
                 };
                 ImGui::PushID(0);
-                if (ImGui::Combo("", &_currAllyStatus, items2, 3, 3))
+                if (ImGui::Combo("", &_currAllyStatus, items2, 2, 2))
                 {
                     setAllyStatusType(static_cast<AllyStatusType>(_currAllyStatus));
                 }

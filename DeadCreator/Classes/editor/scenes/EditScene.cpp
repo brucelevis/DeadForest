@@ -781,6 +781,17 @@ void EditScene::createGMXLayer(const std::string& filePath)
                         
                         break;
                     }
+                    case DeadCreator::ActionBase_SetAllianceStatus:
+                    {
+                        auto actionObject = static_cast<const DeadCreator::SetAllianceStatus*>(act->action());
+                        auto action = new ActionSetAllianceStatus(_layer);
+                        action->setPlayerType(static_cast<PlayerType>(actionObject->player()));
+                        action->setAllianceStatus(actionObject->is_ally() ? AllyStatusType::ALLY : AllyStatusType::ENEMY);
+                        
+                        newTrigger->addAction(action);
+                        
+                        break;
+                    }
                     case DeadCreator::ActionBase_SetCountdownTimer:
                     {
                         auto actionObject = static_cast<const DeadCreator::SetCountdownTimer*>(act->action());

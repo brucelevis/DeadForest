@@ -344,6 +344,16 @@ bool GameResource::initWithBinary(const char* buffer)
                     
                     break;
                 }
+                case DeadCreator::ActionBase_SetAllianceStatus:
+                {
+                    auto actionObject = static_cast<const DeadCreator::SetAllianceStatus*>(act->action());
+                    auto action = new ActionSetAllianceStatusData();
+                    action->player = static_cast<PlayerType>(actionObject->player());
+                    action->isAlly = actionObject->is_ally();
+                    data.actions.push_back(action);
+
+                    break;
+                }
                 case DeadCreator::ActionBase_SetCountdownTimer:
                 {
                     auto actionObject = static_cast<const DeadCreator::SetCountdownTimer*>(act->action());

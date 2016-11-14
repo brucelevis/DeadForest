@@ -11,6 +11,7 @@
 #include "ActionBase.hpp"
 #include "TriggerParameters.hpp"
 #include "GameResource.hpp"
+#include "EntityManager.hpp"
 
 
 namespace realtrick
@@ -198,32 +199,39 @@ namespace realtrick
             
             virtual void doAction()
             {
-//                if ( _params.player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
-//                else _maskedPlayer.set(static_cast<int>(_params.player));
-//                
-//                const auto& entities = _game->getEntityManager()->getEntities();
-//                const auto& Entitys = _game->getGameResource()->getEntitys();
-//                for ( const auto& entity : entities )
-//                {
-//                    auto currEntity = entity.second;
-//                    int player = static_cast<int>(currEntity->getPlayerType());
-//                    
-//                    if (_maskedPlayer.test(player) &&
-//                        currEntity->getEntityType() == _params.entity &&
-//                        Entitys.at(_params.sourceEntity).intersectsCircle(currEntity->getWorldPosition(), currEntity->getBoundingRadius()))
-//                    {
-//                        cocos2d::Rect updateRect(currEntity->getWorldPosition().x - Entitys.at(_params.sourceEntity).size.width / 2,
-//                                                 currEntity->getWorldPosition().y - Entitys.at(_params.sourceEntity).size.height / 2,
-//                                                 Entitys.at(_params.sourceEntity).size.width,
-//                                                 Entitys.at(_params.sourceEntity).size.height);
-//                        
-//                        _game->getGameResource()->updateEntity(_params.destEntity, updateRect);
-//                        
-//                        break;
-//                    }
-//                }
-                _game->addLog("move entity");
+                if ( _params.player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
+                else _maskedPlayer.set(static_cast<int>(_params.player));
                 
+                if ( _params.number == -1 ) _params.number = 10000;
+                
+                int numOfMovedEntity = 0;
+                const auto& entities = _game->getEntityManager()->getEntities();
+                
+                auto srcRect = _game->getGameResource()->getLocations().at(_params.sourceLocation);
+                auto destRect = _game->getGameResource()->getLocations().at(_params.destLocation);
+                
+                auto srcRectCenter = cocos2d::Vec2(srcRect.getMidX(), srcRect.getMidY());
+                auto destRectCenter = cocos2d::Vec2(destRect.getMidX() + cocos2d::random(-5.0f, 5.0f),
+                                                    destRect.getMidY() + cocos2d::random(-5.0f, 5.0f));
+                
+                for ( const auto& entity : entities )
+                {
+                    auto currEntity = entity.second;
+                    int player = static_cast<int>(currEntity->getPlayerType());
+                    if ( _params.number > numOfMovedEntity && _maskedPlayer.test(player) &&
+                         srcRect.intersectsCircle(currEntity->getWorldPosition(), currEntity->getBoundingRadius() * 1.1f) &&
+                         currEntity->getEntityType() == _params.entity )
+                    {
+                        if ( isMasked(currEntity->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+                        {
+                            if ( !static_cast<HumanBase*>(currEntity)->isAlive() )
+                                continue;
+                        }
+                        
+                        currEntity->setWorldPosition(destRectCenter);
+                        numOfMovedEntity ++;
+                    }
+                }
             }
             
         private:

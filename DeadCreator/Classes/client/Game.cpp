@@ -300,38 +300,22 @@ void Game::loadGameContents(PlayerType ownPlayer)
 		_gameResource->getTileWidth(),
 		_gameResource->getTileHeight(),
 		DUMMY_TILE_SIZE);
-
-    _entityManager = EntityManager::createWithResouce(this, _gameResource, ownPlayer);
-    _releasePool.addObject(_entityManager);
     
     _renderingSystem = RenderingSystem::create(this, _gameResource);
     _renderingSystem->setZoom(Prm.getValueAsFloat("cameraZoom"));
     addChild(_renderingSystem);
+
+    _entityManager = EntityManager::createWithResouce(this, _gameResource, ownPlayer);
+    _releasePool.addObject(_entityManager);
     
     _triggerSystem = TriggerSystem::createWithResouce(this, _gameResource);
     _releasePool.addObject(_triggerSystem);
-    
     
     initCell(_gameResource);
     const auto& walls = _gameResource->getCollisionData();
     for (const auto& wall : walls )
     {
         addWall(wall);
-    }
-    
-    const auto& entities = _entityManager->getEntities();
-    for ( const auto& entity : entities )
-    {
-        int zOrder = 0;
-        if ( isMasked(entity.second->getFamilyMask(), FamilyMask::ITEM_BASE) )
-        {
-            zOrder = Z_ORDER_ITEMS;
-        }
-        else if ( isMasked(entity.second->getFamilyMask(), FamilyMask::HUMAN_BASE) )
-        {
-            zOrder = Z_ORDER_HUMAN;
-        }
-        _renderingSystem->addEntity(entity.second, zOrder);
     }
     
     _uiLayer = UiLayer::create(this);
@@ -350,7 +334,6 @@ void Game::sendMessage(double delaySeconds, MessageNode* receiver, MessageNode* 
 void Game::addEntity(EntityBase* ent, int zOrder)
 {
     _entityManager->addEntity(ent);
-    _renderingSystem->addEntity(ent, zOrder);
 }
 
 

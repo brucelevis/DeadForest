@@ -10,7 +10,8 @@
 
 #include "ActionBase.hpp"
 #include "TriggerParameters.hpp"
-
+#include "GameResource.hpp"
+#include "EntityManager.hpp"
 
 namespace realtrick
 {
@@ -130,6 +131,83 @@ namespace realtrick
             TriggerParameterLocation _location;
             
         };
+        
+    }
+    
+    namespace client
+    {
+     
+        struct ActionCreateEntityData: public TriggerDataBase
+        {
+            int number;
+            EntityType entity;
+            PlayerType player;
+            std::string location;
+            
+            ActionCreateEntityData() { type = TriggerComponentType::ACTION_CREATE_ENTITY; }
+        };
+        
+        class ActionCreateEntity : public ActionBase
+        {
+            
+        public:
+            
+            explicit ActionCreateEntity(Game* game) : ActionBase(game)
+            {}
+            
+            virtual ~ActionCreateEntity() = default;
+            
+            static ActionCreateEntity* create(Game* game, int number, EntityType entity, PlayerType player, const std::string& location)
+            {
+                auto ret = new (std::nothrow) ActionCreateEntity(game);
+                if ( ret && ret->init(number, entity, player, location) )
+                {
+                    ret->autorelease();
+                    return ret;
+                }
+                CC_SAFE_DELETE(ret);
+                return nullptr;
+            }
+            
+            bool init(int number, EntityType entity, PlayerType player, const std::string& location)
+            {
+                _params.number = number;
+                _params.entity = entity;
+                _params.player = player;
+                _params.location = location;
+                
+                return true;
+            }
+            
+            virtual void doAction()
+            {
+                if ( _params.player == PlayerType::CURRENT_PLAYER ) _maskedPlayer = _owner->getPlayers();
+                else _maskedPlayer.set(static_cast<int>(_params.player));
+                
+                auto location = _game->getGameResource()->getLocations().at(_params.location);
+                auto center = cocos2d::Vec2(location.getMidX() + cocos2d::random(-5.0f, 5.0f),
+                                            location.getMidY() + cocos2d::random(-5.0f, 5.0f));
+                
+                for(int i = 1 ; i <= 8 ; ++ i)
+                {
+                    if ( !_maskedPlayer.test(i) ) continue;
+                    
+                    EntityData data;
+                    data.id = _game->getEntityManager()->getNextValidID();
+                    data.entityType = _params.entity;
+                    data.playerType = static_cast<PlayerType>(i);
+                    data.position = center;
+                    _game->getEntityManager()->addEntityWithData(&data);
+                }
+            }
+            
+        private:
+            
+            ActionCreateEntityData _params;
+            std::bitset<30> _maskedPlayer;
+            
+        };
+
         
     }
 }

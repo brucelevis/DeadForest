@@ -395,7 +395,7 @@ bool HumanBase::handleMessage(const Telegram& msg)
                 _bloodyScale = 1.0f;
                 
                 SoundSource s;
-                s.fileName = "PlayerScreamSound_" + _to_string(random(1, 3)) + ".mp3";
+                s.fileName = "PlayerScreamSound_" + _to_string(random(0, 2)) + ".mp3";
                 s.position = static_cast<HumanBase*>(d->sender)->getWorldPosition();
                 s.soundRange = 1000.0f;
                 s.volume = 1.0f;

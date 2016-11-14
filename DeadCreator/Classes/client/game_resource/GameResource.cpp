@@ -232,6 +232,18 @@ bool GameResource::initWithBinary(const char* buffer)
             auto actType = act->action_type();
             switch (actType)
             {
+                case DeadCreator::ActionBase_CreateEntity:
+                {
+                    auto actionObject = static_cast<const struct DeadCreator::CreateEntity*>(act->action());
+                    auto action = new ActionCreateEntityData();
+                    action->number = actionObject->number();
+                    action->entity = static_cast<EntityType>(actionObject->entity_type());
+                    action->player = static_cast<PlayerType>(actionObject->player());
+                    action->location = actionObject->location_name()->str();
+                    data.actions.push_back(action);
+                    
+                    break;
+                }
                 case DeadCreator::ActionBase_DisplayText:
                 {
                     auto actionObject = static_cast<const DeadCreator::DisplayText*>(act->action());

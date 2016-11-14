@@ -15,6 +15,8 @@
 #include "Items.hpp"
 #include "Brains.hpp"
 #include "Types.hpp"
+#include "Game.hpp"
+#include "RenderingSystem.hpp"
 using namespace realtrick;
 using namespace realtrick::client;
 using namespace cocos2d;
@@ -22,145 +24,165 @@ using namespace cocos2d;
 
 bool EntityManager::initWithResource(GameResource* res, PlayerType ownPlayer)
 {
+    _resurce = res;
+    _ownedPlayer = ownPlayer;
+    
     // load entities
     for (auto entity = res->_entities.begin(); entity != res->_entities.end(); ++ entity)
     {
-        int id = entity->id;
-        EntityType entityType = static_cast<EntityType>(entity->entityType);
-        PlayerType playerType = static_cast<PlayerType>(entity->playerType);
-        Vec2 position(entity->position);
-        
-        if ( entityType == EntityType::ENTITY_PLAYER )
-        {
-            EntityPlayer* human = EntityPlayer::create(_game);
-            human->setWorldPosition(position);
-            human->setPlayerType(playerType);
-            human->setForce(res->_playerInfos[static_cast<int>(playerType)].force);
-            addEntity(human, id);
-            
-			if (res->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER)
-			{
-				human->setBrain(PursuerBrain::createDefault(human));
-				human->getFSM()->setCurrState(&HumanFistIdleLoop::getInstance());
-				human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
-				human->setEquipedWeapon(nullptr);
-			}
-            
-			if (playerType == ownPlayer) {
-				_player = human;
-			}
-        }
-        
-        else if ( entityType == EntityType::ENTITY_ZOMBIE )
-        {
-            EntityZombie* zombie = EntityZombie::create(_game);
-            zombie->setWorldPosition(position);
-            zombie->setPlayerType(playerType);
-            zombie->setForce(res->_playerInfos[static_cast<int>(playerType)].force);
-            addEntity(zombie, id);
-            
-            if ( res->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
-                zombie->setBrain(ZombieBrain::createDefault(zombie));
-        }
-        
-        else if ( entityType == EntityType::ENTITY_ZOMBIE2 )
-        {
-            EntityZombie2* zombie = EntityZombie2::create(_game);
-            zombie->setWorldPosition(position);
-            zombie->setPlayerType(playerType);
-            zombie->setForce(res->_playerInfos[static_cast<int>(playerType)].force);
-            addEntity(zombie, id);
-            
-            if ( res->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
-                zombie->setBrain(ZombieBrain::createDefault(zombie));
-        }
-        
-        else if ( entityType == EntityType::ENTITY_ZOMBIE3 )
-        {
-            EntityZombie3* zombie = EntityZombie3::create(_game);
-            zombie->setWorldPosition(position);
-            zombie->setPlayerType(playerType);
-            zombie->setForce(res->_playerInfos[static_cast<int>(playerType)].force);
-            addEntity(zombie, id);
-            
-            if ( res->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
-                zombie->setBrain(ZombieBrain::createDefault(zombie));
-        }
-        
-        else if ( entityType == EntityType::BULLET_556MM )
-        {
-            Bullet556mm* item = Bullet556mm::create(_game);
-            item->setWorldPosition(position);
-            item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item, id);
-        }
-        
-        else if ( entityType == EntityType::BULLET_9MM )
-        {
-            Bullet9mm* item = Bullet9mm::create(_game);
-            item->setWorldPosition(position);
-            item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item, id);
-        }
-        
-        else if ( entityType == EntityType::BULLET_SHELL )
-        {
-            BulletShell* item = BulletShell::create(_game);
-            item->setWorldPosition(position);
-            item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item, id);
-        }
-        
-        else if ( entityType == EntityType::ITEM_AXE )
-        {
-            ItemAxe* item = ItemAxe::create(_game);
-            item->setWorldPosition(position);
-            item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item, id);
-        }
-        
-        else if ( entityType == EntityType::ITEM_GLOCK17 )
-        {
-            ItemGlock17* item = ItemGlock17::create(_game);
-            item->setWorldPosition(position);
-            item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item, id);
-        }
-        
-        else if ( entityType == EntityType::ITEM_M16A2 )
-        {
-            ItemM16A2* item = ItemM16A2::create(_game);
-            item->setWorldPosition(position);
-            item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item, id);
-        }
-        
-        else if ( entityType == EntityType::ITEM_M1897 )
-        {
-            ItemM1897* item = ItemM1897::create(_game);
-            item->setWorldPosition(position);
-            item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item, id);
-        }
-        
-        else if ( entityType == EntityType::CONSUMABLE_MEATCAN )
-        {
-            ItemMeatcan* item = ItemMeatcan::create(_game);
-            item->setWorldPosition(position);
-            item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item, id);
-        }
-        
-        else if ( entityType == EntityType::CONSUMABLE_BANDAGE )
-        {
-            ItemBandage* item = ItemBandage::create(_game);
-            item->setWorldPosition(position);
-            item->setPlayerType(PlayerType::NEUTRAL);
-            addEntity(item, id);
-        }
+        addEntityWithData(&(*entity));
     }
     
     return true;
+}
+
+
+void EntityManager::addEntityWithData(EntityData* data)
+{
+    int id = data->id;
+    EntityType entityType = static_cast<EntityType>(data->entityType);
+    PlayerType playerType = static_cast<PlayerType>(data->playerType);
+    Vec2 position(data->position);
+    
+    if ( entityType == EntityType::ENTITY_PLAYER )
+    {
+        EntityPlayer* human = EntityPlayer::create(_game);
+        human->setWorldPosition(position);
+        human->setPlayerType(playerType);
+        human->setForce(_resurce->_playerInfos[static_cast<int>(playerType)].force);
+        
+        if ( playerType != _ownedPlayer )
+        {
+            addEntity(human, id);
+        }
+        else if ( playerType == _ownedPlayer && !_player )
+        {
+            _player = human;
+            addEntity(human, id);
+        }
+        
+        if (_resurce->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER)
+        {
+            human->setBrain(PursuerBrain::createDefault(human));
+            human->getFSM()->setCurrState(&HumanFistIdleLoop::getInstance());
+            human->getFSM()->changeState(&HumanFistIdleLoop::getInstance());
+            human->setEquipedWeapon(nullptr);
+        }
+    }
+    
+    else if ( entityType == EntityType::ENTITY_ZOMBIE )
+    {
+        EntityZombie* zombie = EntityZombie::create(_game);
+        zombie->setWorldPosition(position);
+        zombie->setPlayerType(playerType);
+        zombie->setForce(_resurce->_playerInfos[static_cast<int>(playerType)].force);
+        
+        if ( _ownedPlayer != playerType )
+            addEntity(zombie, id);
+        
+        if ( _resurce->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
+            zombie->setBrain(ZombieBrain::createDefault(zombie));
+    }
+    
+    else if ( entityType == EntityType::ENTITY_ZOMBIE2 )
+    {
+        EntityZombie2* zombie = EntityZombie2::create(_game);
+        zombie->setWorldPosition(position);
+        zombie->setPlayerType(playerType);
+        zombie->setForce(_resurce->_playerInfos[static_cast<int>(playerType)].force);
+        
+        if ( _ownedPlayer != playerType )
+            addEntity(zombie, id);
+        
+        if ( _resurce->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
+            zombie->setBrain(ZombieBrain::createDefault(zombie));
+    }
+    
+    else if ( entityType == EntityType::ENTITY_ZOMBIE3 )
+    {
+        EntityZombie3* zombie = EntityZombie3::create(_game);
+        zombie->setWorldPosition(position);
+        zombie->setPlayerType(playerType);
+        zombie->setForce(_resurce->_playerInfos[static_cast<int>(playerType)].force);
+        
+        if ( _ownedPlayer != playerType )
+            addEntity(zombie, id);
+        
+        if ( _resurce->_playerInfos[static_cast<int>(playerType)].owner == Owner::COMPUTER )
+            zombie->setBrain(ZombieBrain::createDefault(zombie));
+    }
+    
+    else if ( entityType == EntityType::BULLET_556MM )
+    {
+        Bullet556mm* item = Bullet556mm::create(_game);
+        item->setWorldPosition(position);
+        item->setPlayerType(PlayerType::NEUTRAL);
+        addEntity(item, id);
+    }
+    
+    else if ( entityType == EntityType::BULLET_9MM )
+    {
+        Bullet9mm* item = Bullet9mm::create(_game);
+        item->setWorldPosition(position);
+        item->setPlayerType(PlayerType::NEUTRAL);
+        addEntity(item, id);
+    }
+    
+    else if ( entityType == EntityType::BULLET_SHELL )
+    {
+        BulletShell* item = BulletShell::create(_game);
+        item->setWorldPosition(position);
+        item->setPlayerType(PlayerType::NEUTRAL);
+        addEntity(item, id);
+    }
+    
+    else if ( entityType == EntityType::ITEM_AXE )
+    {
+        ItemAxe* item = ItemAxe::create(_game);
+        item->setWorldPosition(position);
+        item->setPlayerType(PlayerType::NEUTRAL);
+        addEntity(item, id);
+    }
+    
+    else if ( entityType == EntityType::ITEM_GLOCK17 )
+    {
+        ItemGlock17* item = ItemGlock17::create(_game);
+        item->setWorldPosition(position);
+        item->setPlayerType(PlayerType::NEUTRAL);
+        addEntity(item, id);
+    }
+    
+    else if ( entityType == EntityType::ITEM_M16A2 )
+    {
+        ItemM16A2* item = ItemM16A2::create(_game);
+        item->setWorldPosition(position);
+        item->setPlayerType(PlayerType::NEUTRAL);
+        addEntity(item, id);
+    }
+    
+    else if ( entityType == EntityType::ITEM_M1897 )
+    {
+        ItemM1897* item = ItemM1897::create(_game);
+        item->setWorldPosition(position);
+        item->setPlayerType(PlayerType::NEUTRAL);
+        addEntity(item, id);
+    }
+    
+    else if ( entityType == EntityType::CONSUMABLE_MEATCAN )
+    {
+        ItemMeatcan* item = ItemMeatcan::create(_game);
+        item->setWorldPosition(position);
+        item->setPlayerType(PlayerType::NEUTRAL);
+        addEntity(item, id);
+    }
+    
+    else if ( entityType == EntityType::CONSUMABLE_BANDAGE )
+    {
+        ItemBandage* item = ItemBandage::create(_game);
+        item->setWorldPosition(position);
+        item->setPlayerType(PlayerType::NEUTRAL);
+        addEntity(item, id);
+    }
 }
 
 
@@ -177,6 +199,12 @@ void EntityManager::addEntity(EntityBase* entity, int id)
     
     entity->setTag(id);
     _entities.insert( {id, entity} );
+    
+    int zOrder = 0;
+    if ( isMasked(entity->getFamilyMask(), FamilyMask::ITEM_BASE) ) zOrder = Z_ORDER_ITEMS;
+    else if ( isMasked(entity->getFamilyMask(), FamilyMask::HUMAN_BASE) ) zOrder = Z_ORDER_HUMAN;
+    
+    _game->getRenderingSysetm()->addEntity(entity, zOrder);
 }
 
 

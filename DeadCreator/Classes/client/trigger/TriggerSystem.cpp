@@ -74,7 +74,18 @@ bool TriggerSystem::initWithResource(GameResource* res)
         // set actions
         for(auto act = currTrigger.actions.begin() ; act != currTrigger.actions.end(); ++act)
         {
-            if ( (*act)->type == TriggerComponentType::ACTION_DISPLAY_TEXT)
+            if ( (*act)->type == TriggerComponentType::ACTION_CREATE_ENTITY )
+            {
+                auto data = static_cast<ActionCreateEntityData*>(*act);
+                auto action = ActionCreateEntity::create(_game,
+                                                         data->number,
+                                                         data->entity,
+                                                         data->player,
+                                                         data->location);
+                newTrigger->addAction(action);
+            }
+            
+            else if ( (*act)->type == TriggerComponentType::ACTION_DISPLAY_TEXT)
             {
                 auto data = static_cast<ActionDisplayTextData*>(*act);
                 auto action = ActionDisplayText::create(_game, data->text);

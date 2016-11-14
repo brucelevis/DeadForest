@@ -62,6 +62,7 @@ namespace realtrick
             bool initWithResource(GameResource* res, realtrick::PlayerType ownPlayer);
             bool init() { return true; }
             
+            void addEntityWithData(EntityData* data);
             void addEntity(EntityBase* entity);
             void addEntity(EntityBase* entity, int id);
             bool removeEntity(EntityBase* entity);
@@ -79,7 +80,10 @@ namespace realtrick
             
             Game* _game;
             std::map<int, EntityBase*> _entities;
+            PlayerType _ownedPlayer;
             HumanBase* _player;
+            
+            GameResource* _resurce;
             
         };
         

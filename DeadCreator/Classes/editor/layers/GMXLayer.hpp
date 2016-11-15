@@ -41,6 +41,7 @@ namespace realtrick
         class GameTrigger;
         class HistoryLayer;
         class ForceSettingLayer;
+        class PropertyEditLayer;
         
         class GMXLayer : public cocos2d::Layer
         {
@@ -82,6 +83,7 @@ namespace realtrick
             bool& isShowHistory() { return _isShowHistory; }
             bool& isShowTriggerEdit() { return _isShowTriggerEdit; }
             bool& isShowForceSetting() { return _isShowForceSetting; }
+            bool& isShowPropertyEdit() { return _isShowPropertyEdit; }
             
             bool isRedo() const;
             bool isUndo() const;
@@ -198,6 +200,9 @@ namespace realtrick
             
             ForceSettingLayer* _forceSettingLayer = nullptr;
             bool _isShowForceSetting = false;
+            
+            PropertyEditLayer* _propertyEditLayer = nullptr;
+            bool _isShowPropertyEdit = false;
             
             CommandBase* _currCommand = nullptr;
             TileToolCommand* _tileToolCommand = nullptr;

@@ -249,6 +249,7 @@
 		BF08BBFA1DD9FB6600F113EE /* ActionOrder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ActionOrder.hpp; sourceTree = "<group>"; };
 		BF08BBFB1DD9FD2700F113EE /* TriggerParameterOrderType.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TriggerParameterOrderType.hpp; sourceTree = "<group>"; };
 		BF08BBFC1DDA1C7800F113EE /* ConditionCommand.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ConditionCommand.hpp; sourceTree = "<group>"; };
+		BF08BBFF1DDB990300F113EE /* PropertyEditLayer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PropertyEditLayer.hpp; sourceTree = "<group>"; };
 		BF10F2791DD0A18900B57AA8 /* boost.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = boost.framework; path = ../boost.framework; sourceTree = "<group>"; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -1432,6 +1433,7 @@
 				BF445FBA1DD1BBC0005C667A /* SimulatorLayer.hpp */,
 				BF445FBB1DD1BBC0005C667A /* TriggerEditLayer.cpp */,
 				BF445FBC1DD1BBC0005C667A /* TriggerEditLayer.hpp */,
+				BF08BBFF1DDB990300F113EE /* PropertyEditLayer.hpp */,
 			);
 			path = layers;
 			sourceTree = "<group>";

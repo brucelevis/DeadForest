@@ -23,6 +23,7 @@
 #include "LocationNode.hpp"
 #include "RenameLocationLayer.hpp"
 #include "ForceSettingLayer.hpp"
+#include "PropertyEditLayer.hpp"
 #include "StringHelper.hpp"
 #include "Physics.hpp"
 using namespace cocos2d;
@@ -157,6 +158,9 @@ bool GMXLayer::init()
     
     _forceSettingLayer = ForceSettingLayer::create(*this);
     addChild(_forceSettingLayer);
+    
+    _propertyEditLayer = PropertyEditLayer::create(*this);
+    addChild(_propertyEditLayer);
     
     _tileToolCommand = new TileToolCommand(this);
     _addEntityToolCommand = new AddEntityToolCommand(this);
@@ -395,7 +399,7 @@ void GMXLayer::showLayer(bool& opened)
         }
     }
     
-    if ( !_imguiLayer.isModal() && !_isPopupModal && !_isShowTriggerEdit && !_isShowForceSetting && !_isShowRenameLocationLayer )
+    if ( !_imguiLayer.isModal() && !_isPopupModal && !_isShowTriggerEdit && !_isShowForceSetting && !_isShowRenameLocationLayer && !_isShowPropertyEdit )
     {
         updateCocosLogic();
     }
@@ -410,6 +414,7 @@ void GMXLayer::showLayer(bool& opened)
 	if (_isShowRenameLocationLayer) _renameLocationLayer->showLayer(_isShowRenameLocationLayer);
 	if (_isShowTriggerEdit) _triggerEditLayer->showLayer(_isShowTriggerEdit);
 	if (_isShowForceSetting) _forceSettingLayer->showLayer(_isShowForceSetting);
+    if (_isShowPropertyEdit) _propertyEditLayer->showLayer(_isShowPropertyEdit);
 
     if ( opened == false )
     {

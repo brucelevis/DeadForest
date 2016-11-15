@@ -116,7 +116,7 @@ bool EditScene::init()
                 ImGui::MenuItem("History", "SHIFT+H", &_layer->isShowHistory());
                 ImGui::MenuItem("Trigger", "SHIFT+T", &_layer->isShowTriggerEdit());
                 ImGui::MenuItem("Force", "SHIFT+F", &_layer->isShowForceSetting());
-                ImGui::MenuItem("Property", "SHIFT+R");
+                ImGui::MenuItem("Property", "SHIFT+R", &_layer->isShowPropertyEdit());
                 ImGui::EndMenu();
             }
             
@@ -320,6 +320,17 @@ bool EditScene::init()
             }
         }
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("trigger");
+        
+        ImGui::SameLine();
+        if ( ImGuiLayer::imageButton("editor/alliance.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
+                                     -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
+        {
+            if ( _isEditMode )
+            {
+                _layer->isShowForceSetting() = !_layer->isShowForceSetting();
+            }
+        }
+        if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("force");
         
         ImGui::SameLine();
         if ( ImGuiLayer::imageButton("editor/play_btn.png", 20, 20, ImVec2(0,0), ImVec2(1,1),

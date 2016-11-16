@@ -210,6 +210,10 @@ namespace realtrick
                     if ( !_maskedPlayer.test(static_cast<int>(entity->getPlayerType())) ) continue;
                     if ( entity->getPlayerType() != _params.player ) continue;
                     if ( entity->getEntityType() != _params.entity ) continue;
+                    if ( isMasked(entity->getFamilyMask(), FamilyMask::HUMAN_BASE) )
+                    {
+                        if ( !static_cast<HumanBase*>(entity)->isAlive() ) continue;
+                    }
                     
                     numberOfCommandedEntities++;
                 }

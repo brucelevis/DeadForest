@@ -185,19 +185,23 @@ namespace realtrick
                 else _maskedPlayer.set(static_cast<int>(_params.player));
                 
                 auto location = _game->getGameResource()->getLocations().at(_params.location);
-                auto center = cocos2d::Vec2(location.getMidX() + cocos2d::random(-5.0f, 5.0f),
-                                            location.getMidY() + cocos2d::random(-5.0f, 5.0f));
+                int numberOfCreatedEntities = 0;
                 
-                for(int i = 1 ; i <= 8 ; ++ i)
+                while ( _params.number > numberOfCreatedEntities )
                 {
-                    if ( !_maskedPlayer.test(i) ) continue;
-                    
-                    EntityData data;
-                    data.id = _game->getEntityManager()->getNextValidID();
-                    data.entityType = _params.entity;
-                    data.playerType = static_cast<PlayerType>(i);
-                    data.position = center;
-                    _game->getEntityManager()->addEntityWithData(&data);
+                    for(int i = 1 ; i <= 8 ; ++ i)
+                    {
+                        if ( !_maskedPlayer.test(i) ) continue;
+                        
+                        EntityData data;
+                        data.id = _game->getEntityManager()->getNextValidID();
+                        data.entityType = _params.entity;
+                        data.playerType = static_cast<PlayerType>(i);
+                        data.position = cocos2d::Vec2(location.getMidX() + cocos2d::random(-5.0f, 5.0f),
+                                                      location.getMidY() + cocos2d::random(-5.0f, 5.0f));
+                        _game->getEntityManager()->addEntityWithData(&data);
+                    }
+                    numberOfCreatedEntities++;
                 }
             }
             

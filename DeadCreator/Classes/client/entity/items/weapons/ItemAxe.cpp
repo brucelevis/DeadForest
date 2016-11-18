@@ -19,7 +19,7 @@ ItemAxe::ItemAxe(Game* game) : WeaponBase(game)
     
     _numOfLeftRounds = 999;
     _maxRounds = 999;
-    _damage = 100;
+    _damage = 250;
     setRange(64.0f);
     setDelay(2.0f);
     setBulletType(BULLET_AXE);

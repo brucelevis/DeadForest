@@ -2227,8 +2227,18 @@ int GMXLayer::getNextValidID()
 }
 
 
-
-
+bool GMXLayer::isExistOwner() const
+{
+    for ( const auto& ent : _entities )
+    {
+        auto curr = ent.second;
+        if ( curr->isVisible() && curr->getPlayerType() == PlayerType::PLAYER1 )
+        {
+            return true;
+        }
+    }
+    return false;
+}
 
 
 

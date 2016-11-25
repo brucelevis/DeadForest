@@ -277,8 +277,8 @@ bool EditScene::init()
         }
         
         ImGui::SameLine();
-        if (ImGuiLayer::imageButton("editor/navi.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
-                                    -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
+        if (ImGuiLayer::imageButton("editor/navi.png", 20, 20,
+                                    ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
             if ( _isEditMode )
             {
@@ -289,8 +289,8 @@ bool EditScene::init()
         
         
         ImGui::SameLine();
-        if ( ImGuiLayer::imageButton("editor/palette.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
-                                     -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, windowAlpha)))
+        if ( ImGuiLayer::imageButton("editor/palette.png", 20, 20,
+                                     ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, windowAlpha)))
         {
             if ( _isEditMode )
             {
@@ -300,8 +300,8 @@ bool EditScene::init()
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("palette");
         
         ImGui::SameLine();
-        if (ImGuiLayer::imageButton("editor/history.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
-                                    -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
+        if (ImGuiLayer::imageButton("editor/history.png", 20, 20,
+                                    ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
             if ( _isEditMode )
             {
@@ -311,8 +311,8 @@ bool EditScene::init()
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("history");
         
         ImGui::SameLine();
-        if ( ImGuiLayer::imageButton("editor/trigger.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
-                                     -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
+        if ( ImGuiLayer::imageButton("editor/trigger.png", 20, 20,
+                                     ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
             if ( _isEditMode )
             {
@@ -322,8 +322,8 @@ bool EditScene::init()
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("trigger");
         
         ImGui::SameLine();
-        if ( ImGuiLayer::imageButton("editor/alliance.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
-                                     -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
+        if ( ImGuiLayer::imageButton("editor/alliance.png", 20, 20,
+                                     ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
             if ( _isEditMode )
             {
@@ -333,18 +333,29 @@ bool EditScene::init()
         if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("force");
         
         ImGui::SameLine();
-        if ( ImGuiLayer::imageButton("editor/play_btn.png", 20, 20, ImVec2(0,0), ImVec2(1,1),
-                                     -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
+        if ( ImGuiLayer::imageButton("editor/play_btn.png", 20, 20,
+                                     ImVec2(0,0), ImVec2(1,1), -1, ImVec4(0,0,0,0), ImVec4(1, 1, 1, windowAlpha)))
         {
             if ( _isEditMode )
             {
-                _showSimulatorLayer = !_showSimulatorLayer;
-                
-                if ( _showSimulatorLayer ) playGame();
-                else stopGame();
+                if ( _layer && _layer->isExistOwner() )
+                {
+                    _showSimulatorLayer = true;
+                    playGame();
+                }
             }
         }
-        if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("simulation");
+        if ( _isEditMode && ImGui::IsItemHovered())
+        {
+            if ( _layer && _layer->isExistOwner() )
+            {
+                ImGui::SetTooltip("simulation");
+            }
+            else
+            {
+                ImGui::SetTooltip("Player 1's Human Entity is required.");
+            }
+        }
         
         ImGui::PopStyleColor(2);
         
@@ -416,6 +427,46 @@ bool EditScene::init()
 //        static bool isShowDemo = true;
 //        ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
 //        ImGui::ShowTestWindow(&isShowDemo);
+        
+        static bool isShowTutorial = true;
+        if ( isShowTutorial )
+        {
+            ImGui::SetNextWindowSize(ImVec2(600, 460));
+            ImGui::OpenPopup("Welcome to Dead Creator");
+            if (ImGui::BeginPopupModal("Welcome to Dead Creator", &isShowTutorial, ImGuiWindowFlags_NoResize))
+            {
+                ImGuiLayer::image("editor/title.png", 600, 200);
+                ImGui::TextUnformatted("Cocos2d-x based GUI Game Development Environment");
+                ImGui::TextUnformatted("Please select one.");
+                
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35, 0.35, 0.35, 0.35));
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.35, 0.35, 0.55));
+                ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(219/255.0, 219/255.0, 219/255.0, 1.0));
+            
+                ImGui::Separator();
+                if ( ImGuiLayer::imageButton("editor/new_button.png", 600, 60) )
+                {
+                    isShowTutorial = false;
+                    doNewButton();
+                    ImGui::CloseCurrentPopup();
+                }
+                
+                ImGui::Separator();
+                if (ImGuiLayer::imageButton("editor/open_button.png", 600, 60) )
+                {
+                    isShowTutorial = false;
+                    doOpenButton();
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::PopStyleColor(4);
+                ImGui::Separator();
+                
+                ImGui::TextUnformatted("2.0.0 Release                                  Nam Jun Hyeon");
+                
+                ImGui::EndPopup();
+            }
+        }
         
     }, "##main menu");
     

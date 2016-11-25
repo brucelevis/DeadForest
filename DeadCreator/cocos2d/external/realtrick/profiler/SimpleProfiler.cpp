@@ -198,7 +198,6 @@ void SimpleProfiler::flatbufferWriteHelper(int depth, std::string& out, const El
     std::string minTime(to_string(elem->min_time()));
     for(auto i = minTime.size() ; i < 11; ++ i) minTime.push_back(' ');
     minTime.push_back('|');
-    
     std::string maxTime(to_string(elem->max_time()));
     for(auto i = maxTime.size() ; i < 11; ++ i) maxTime.push_back(' ');
     maxTime.push_back('|');

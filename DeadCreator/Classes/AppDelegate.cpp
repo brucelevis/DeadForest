@@ -36,7 +36,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     auto glview = director->getOpenGLView();
     if(!glview)
     {
-        glview = ImGuiGLViewImpl::createWithRect("Dead Creator v2.0.0 - Cocos2d-x GUI Development Environment", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+        glview = ImGuiGLViewImpl::createWithRect("Dead Creator v2.0.0 - Cocos2d-x based GUI Game Development Environment", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
         director->setOpenGLView(glview);
     }
     

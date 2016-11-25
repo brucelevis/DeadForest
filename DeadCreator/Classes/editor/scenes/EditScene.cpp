@@ -338,13 +338,24 @@ bool EditScene::init()
         {
             if ( _isEditMode )
             {
-                _showSimulatorLayer = !_showSimulatorLayer;
-                
-                if ( _showSimulatorLayer ) playGame();
-                else stopGame();
+                if ( _layer && _layer->isExistOwner() )
+                {
+                    _showSimulatorLayer = true;
+                    playGame();
+                }
             }
         }
-        if ( _isEditMode && ImGui::IsItemHovered()) ImGui::SetTooltip("simulation");
+        if ( _isEditMode && ImGui::IsItemHovered())
+        {
+            if ( _layer && _layer->isExistOwner() )
+            {
+                ImGui::SetTooltip("simulation");
+            }
+            else
+            {
+                ImGui::SetTooltip("Player 1's Human Entity is required.");
+            }
+        }
         
         ImGui::PopStyleColor(2);
         
@@ -420,7 +431,7 @@ bool EditScene::init()
         static bool isShowTutorial = true;
         if ( isShowTutorial )
         {
-            ImGui::SetNextWindowSize(ImVec2(600, 470));
+            ImGui::SetNextWindowSize(ImVec2(600, 460));
             ImGui::OpenPopup("Welcome to Dead Creator");
             if (ImGui::BeginPopupModal("Welcome to Dead Creator", &isShowTutorial, ImGuiWindowFlags_NoResize))
             {

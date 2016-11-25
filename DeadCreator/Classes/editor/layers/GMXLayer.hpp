@@ -136,6 +136,8 @@ namespace realtrick
             void addTrigger(GameTrigger* trigger);
             PlayerInfo* getPlayerInfos() { return _playerInfos; }
             
+            bool isExistOwner() const;
+            
         private:
             
             std::string getInDirection(int x, int y);

@@ -211,6 +211,7 @@ std::vector<realtrick::Polygon> Game::getNeighborWalls(const cocos2d::Vec2& posi
         }
         ret.push_back(poly);
     }
+    
     return ret;
 }
 

@@ -12,10 +12,10 @@
 #include "Mat3.hpp"
 #include "SizeProtocol.h"
 
-#include "realtrick/imgui/imgui.h"
-#include "realtrick/imgui/imgui_internal.h"
-#include "realtrick/network/TCPSession.hpp"
-#include "realtrick/profiler/profiling_schema_generated.h"
+#include "imguix/imgui.h"
+#include "imguix/imgui_internal.h"
+#include "tcp_session/TCPSession.hpp"
+#include "simple_profiler/profiling_schema_generated.h"
 
 #include "Box2D/Box2D.h"
 #include "Box2D/common/b2Draw.h"

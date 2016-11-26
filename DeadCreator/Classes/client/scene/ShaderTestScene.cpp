@@ -7,8 +7,6 @@
 //
 
 #include "ShaderTestScene.hpp"
-#include "DeferredRendering.hpp"
-#include "CircularBezel.hpp"
 using namespace realtrick::client;
 using namespace cocos2d;
 

@@ -460,7 +460,7 @@ struct TouchScriptData
      * @lua NA
      * @js NA
      */
-    Event* event;
+Event* event;
     
     /** 
      * Constructor of TouchScriptData.

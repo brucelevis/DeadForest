@@ -16,8 +16,8 @@
 #include "TriggerComponentProtocol.hpp"
 #include "TriggerParameterBase.hpp"
 
-#include "realtrick/imgui/imgui.h"
-#include "realtrick/imgui/imgui_internal.h"
+#include "imguix/imgui.h"
+#include "imguix/imgui_internal.h"
 
 #include "GMXFile_generated.h"
 

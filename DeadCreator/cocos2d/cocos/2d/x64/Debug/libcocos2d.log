@@ -1,0 +1,18 @@
+﻿  AssetsManager.cpp
+  AssetsManagerEx.cpp
+  CCEventAssetsManagerEx.cpp
+  CCEventListenerAssetsManagerEx.cpp
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\cocos\base/ccUTF8.h : warning C4819: The file contains a character that cannot be represented in the current code page (949). Save the file in Unicode format to prevent data loss (compiling source file ..\..\extensions\assets-manager\CCEventListenerAssetsManagerEx.cpp)
+  Manifest.cpp
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\cocos\physics/CCPhysicsBody.h : warning C4819: The file contains a character that cannot be represented in the current code page (949). Save the file in Unicode format to prevent data loss (compiling source file ..\..\extensions\assets-manager\CCEventListenerAssetsManagerEx.cpp)
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\cocos\physics/CCPhysicsShape.h : warning C4819: The file contains a character that cannot be represented in the current code page (949). Save the file in Unicode format to prevent data loss (compiling source file ..\..\extensions\assets-manager\CCEventListenerAssetsManagerEx.cpp)
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\cocos\platform/CCSAXParser.h : warning C4819: The file contains a character that cannot be represented in the current code page (949). Save the file in Unicode format to prevent data loss (compiling source file ..\..\extensions\assets-manager\CCEventListenerAssetsManagerEx.cpp)
+  CCControl.cpp
+  CCControlButton.cpp
+  CCControlColourPicker.cpp
+  CCControlHuePicker.cpp
+  CCControlPotentiometer.cpp
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\extensions\gui\cccontrolextension\CCControlPotentiometer.h : warning C4819: The file contains a character that cannot be represented in the current code page (949). Save the file in Unicode format to prevent data loss (compiling source file ..\..\extensions\GUI\CCControlExtension\CCControlPotentiometer.cpp)
+  CCControlSaturationBrightnessPicker.cpp
+C:\Users\jun hyeon\Desktop\DeadForest\DeadCreator\cocos2d\extensions\assets-manager\CCEventListenerAssetsManagerEx.cpp : fatal error C1128: number of sections exceeded object file format limit: compile with /bigobj
+cl : Command line error D8040: error creating or communicating with child process

@@ -1,15 +1,12 @@
 #include "AppDelegate.h"
 #include "EditScene.hpp"
-#include "DummyScene.hpp"
-#include "ShaderTestScene.hpp"
 
-#include "realtrick/imgui/ImGuiGLViewImpl.h"
-#include "realtrick/imgui/ImGuiLayer.h"
-#include "SizeProtocol.h"
+#include "imguix/ImGuiGLViewImpl.h"
+#include "simple_profiler/SimpleProfiler.hpp"
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(SCREEN_WIDTH, SCREEN_HEIGHT);
+static cocos2d::Size designResolutionSize = cocos2d::Size(1136, 640);
 
 AppDelegate::AppDelegate() {
     
@@ -34,9 +31,13 @@ bool AppDelegate::applicationDidFinishLaunching()
 {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
-    if(!glview)
+    if( !glview )
     {
-        glview = ImGuiGLViewImpl::createWithRect("Dead Creator v2.0.0 - Cocos2d-x based GUI Game Development Environment", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+		glview = ImGuiGLViewImpl::createWithRect("Dead Creator v2.0.0 - Cocos2d-x based GUI Game Development Environment",
+			cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+
+		//glview = GLViewImpl::create("dead");
+		//cocos2d::log("%d", realtrick::profiler::SimpleProfiler::foo());
         director->setOpenGLView(glview);
     }
     

@@ -62,7 +62,7 @@ THE SOFTWARE.
 #include "base/CCAsyncTaskPool.h"
 #include "platform/CCApplication.h"
 
-#include "SimpleProfiler.hpp"
+#include "simple_profiler/SimpleProfiler.hpp"
 
 #if CC_ENABLE_SCRIPT_BINDING
 #include "CCScriptSupport.h"
@@ -268,7 +268,7 @@ void Director::drawScene()
         _openGLView->pollEvents();
     }
 
-    PROFILE_BEGIN("scheduler");
+    //PROFILE_BEGIN("scheduler");
     //tick before glClear: issue #533
     if (! _paused)
     {
@@ -276,7 +276,7 @@ void Director::drawScene()
         _scheduler->update(_deltaTime);
         _eventDispatcher->dispatchEvent(_eventAfterUpdate);
     }
-    PROFILE_END("scheduler");
+    //PROFILE_END("scheduler");
     
     _renderer->clear();
     experimental::FrameBuffer::clearAllFBOs();
@@ -290,7 +290,7 @@ void Director::drawScene()
     
     pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
     
-    PROFILE_BEGIN("render");
+    //PROFILE_BEGIN("render");
     if (_runningScene)
     {
 #if (CC_USE_PHYSICS || (CC_USE_3D_PHYSICS && CC_ENABLE_BULLET_INTEGRATION) || CC_USE_NAVMESH)
@@ -327,7 +327,7 @@ void Director::drawScene()
     {
         _openGLView->swapBuffers();
     }
-    PROFILE_END("render");
+    //PROFILE_END("render");
     
     if (_displayStats)
     {

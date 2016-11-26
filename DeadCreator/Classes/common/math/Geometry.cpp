@@ -233,7 +233,6 @@ namespace realtrick
             return *this;
         setPolygon(rhs.vertices);
         return *this;
-        
     }
     
     void Polygon::setPolygon(const std::vector<cocos2d::Vec2>& segs)

@@ -10,7 +10,9 @@
 
 
 #include "cocos2d.h"
-#include "realtrick/imgui/ImGuiLayer.h"
+#include "imguix/ImGuiLayer.h"
+#include "imguix/imgui.h"
+#include "imguix/imgui_internal.h"
 
 #include "GMXFile.hpp"
 #include "GMXLayer.hpp"
@@ -18,8 +20,6 @@
 #include "AddEntityToolCommand.hpp"
 #include "EditorType.hpp"
 
-#include "realtrick/imgui/imgui.h"
-#include "realtrick/imgui/imgui_internal.h"
 
 namespace realtrick
 {

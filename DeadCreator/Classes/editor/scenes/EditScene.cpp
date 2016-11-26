@@ -26,7 +26,7 @@ using namespace cocos2d;
 #include "OpenLayer.hpp"
 #include "SaveQueryLayer.hpp"
 #include "PaletteLayer.hpp"
-#include "SimulatorLayer.hpp"
+//#include "SimulatorLayer.hpp"
 #include "LocationNode.hpp"
 #include "GameTrigger.hpp"
 #include "Conditions.hpp"
@@ -67,8 +67,8 @@ bool EditScene::init()
     _saveQueryLayer = SaveQueryLayer::create(this);
     addChild(_saveQueryLayer);
     
-    _simulatorLayer = SimulatorLayer::create(this);
-    addChild(_simulatorLayer);
+   // _simulatorLayer = SimulatorLayer::create(this);
+   // addChild(_simulatorLayer);
     
     addImGUI([this] {
         
@@ -78,7 +78,7 @@ bool EditScene::init()
         if ( _showSaveAs ) _saveAsLayer->showLayer(_showSaveAs);
         if ( _showOpenMap ) _openLayer->showLayer(_showOpenMap);
         if ( _showSaveQueryLayer ) _saveQueryLayer->showLayer(_showSaveQueryLayer);
-        if ( _showSimulatorLayer ) _simulatorLayer->showLayer(_showSimulatorLayer);
+       // if ( _showSimulatorLayer ) _simulatorLayer->showLayer(_showSimulatorLayer);
         if ( _layer && _showGMXLayer && !_showSimulatorLayer ) _layer->showLayer(_showGMXLayer);
         
         if (ImGui::BeginMainMenuBar())
@@ -1055,7 +1055,7 @@ void EditScene::playGame()
 {
     _layer->save("temp_game_map");
     
-    _simulatorLayer->playGame();
+   // _simulatorLayer->playGame();
     _layer->setVisible(false);
     enableModal(true);
 }

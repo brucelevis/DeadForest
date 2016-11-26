@@ -1,0 +1,27 @@
+﻿  DebugDraw.cpp
+  DetourDebugDraw.cpp
+  DetourCrowd.cpp
+  DetourLocalBoundary.cpp
+  DetourObstacleAvoidance.cpp
+  DetourPathCorridor.cpp
+  DetourPathQueue.cpp
+..\DetourCrowd\DetourObstacleAvoidance.cpp(334): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  DetourProximityGrid.cpp
+  DetourTileCache.cpp
+  DetourTileCacheBuilder.cpp
+  DetourAlloc.cpp
+  DetourCommon.cpp
+  DetourNavMesh.cpp
+  DetourNavMeshBuilder.cpp
+  DetourNavMeshQuery.cpp
+  DetourNode.cpp
+  fastlz.c
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\external\recast\fastlz\fastlz.c(234): warning C4244: '=': conversion from '__int64' to 'flzuint32', possible loss of data
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\external\recast\fastlz\fastlz.c(304): warning C4244: '=': conversion from '__int64' to 'flzuint32', possible loss of data
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\external\recast\fastlz\fastlz.c(417): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\external\recast\fastlz\fastlz.c(548): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\external\recast\fastlz\fastlz.c(234): warning C4244: '=': conversion from '__int64' to 'flzuint32', possible loss of data
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\external\recast\fastlz\fastlz.c(304): warning C4244: '=': conversion from '__int64' to 'flzuint32', possible loss of data
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\external\recast\fastlz\fastlz.c(417): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
+c:\users\jun hyeon\desktop\deadforest\deadcreator\cocos2d\external\recast\fastlz\fastlz.c(548): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
+  librecast.vcxproj -> C:\Users\jun hyeon\Desktop\DeadForest\DeadCreator\proj.win32\x64\Debug\librecast.lib

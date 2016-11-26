@@ -15,9 +15,9 @@
 #include "ConditionBase.hpp"
 #include "ActionBase.hpp"
 
+#include "imguix/imgui.h"
+#include "imguix/imgui_internal.h"
 
-#include "realtrick/imgui/imgui.h"
-#include "realtrick/imgui/imgui_internal.h"
 
 namespace realtrick
 {
@@ -190,8 +190,7 @@ namespace realtrick
             std::bitset<30> _players;
             cocos2d::Vector<ConditionBase*> _conditions;
             cocos2d::Vector<ActionBase*> _actions;
-            
-            
+   
         };
         
     }

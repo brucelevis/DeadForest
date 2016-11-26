@@ -7,8 +7,68 @@
     <Filter Include="resource">
       <UniqueIdentifier>{715254bc-d70b-4ec5-bf29-467dd3ace079}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src">
-      <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{2f525427-df75-42df-96dc-4c5ebbb21349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\editor">
+      <UniqueIdentifier>{0989d327-704f-40a0-9cac-036bb968b44b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\editor\commands">
+      <UniqueIdentifier>{0e0a0cc7-b40b-41f5-836e-dd62717150e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\editor\layers">
+      <UniqueIdentifier>{14418b6c-13d1-4356-9e8f-94f65ce530f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\editor\scenes">
+      <UniqueIdentifier>{a7a829a0-45a6-471e-a40f-ce61e3f69b5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\editor\utils">
+      <UniqueIdentifier>{5e18bff5-0664-4d89-bc6e-9efe1da66617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common">
+      <UniqueIdentifier>{938ea528-87b8-4679-8cd4-7be98c7c5cc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\graph">
+      <UniqueIdentifier>{403e89c0-2d46-4aab-8924-a4f365173ada}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\math">
+      <UniqueIdentifier>{addc4803-cb7e-4e63-973d-f611a5297258}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\script_system">
+      <UniqueIdentifier>{4ebdab0b-d18b-41ae-a553-a0eacead218e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\tile">
+      <UniqueIdentifier>{de4a5711-d703-4703-8bdd-3ee583ccd040}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\trigger">
+      <UniqueIdentifier>{75f6691f-cd7d-4741-9d7f-2faf38c08a43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\utils">
+      <UniqueIdentifier>{48f33274-125b-46a2-a8df-bb74b99d49fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\trigger\actions">
+      <UniqueIdentifier>{4c670b54-8084-449f-b696-17fbcd03fd7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\trigger\conditions">
+      <UniqueIdentifier>{6b6d4cdd-8c9c-4380-b4d2-da9d60b5e403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\trigger\parameters">
+      <UniqueIdentifier>{85159146-74bb-4317-81fd-e65e6ac46e5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\imguix">
+      <UniqueIdentifier>{dea1565f-a30c-454b-871d-5cd824ea6538}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\clipper">
+      <UniqueIdentifier>{bc389509-bc41-48ca-b341-ae4e2c9f506b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\tinyxml2">
+      <UniqueIdentifier>{88840f06-bbc7-493b-b6ee-a46e7e07f96b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\common\flatbuffers">
+      <UniqueIdentifier>{0bb81867-19de-42bf-92b6-8f14087a6a0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\client">
+      <UniqueIdentifier>{559c4954-aa1f-4280-82a6-64a14e4c2974}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -16,10 +76,64 @@
       <Filter>win32</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
-      <Filter>src</Filter>
+      <Filter>Classes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\HelloWorldScene.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\Classes\editor\layers\GMXLayer.cpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\editor\layers\TriggerEditLayer.cpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\editor\utils\LocationNode.cpp">
+      <Filter>Classes\editor\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\editor\scenes\EditScene.cpp">
+      <Filter>Classes\editor\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\trigger\GameTrigger.cpp">
+      <Filter>Classes\common\trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\imguix\imgui.cpp">
+      <Filter>Classes\common\imguix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\imguix\imgui_demo.cpp">
+      <Filter>Classes\common\imguix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\imguix\imgui_draw.cpp">
+      <Filter>Classes\common\imguix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\imguix\imgui_impl_glfw_mac.cpp">
+      <Filter>Classes\common\imguix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\imguix\imgui_impl_glfw_win32.cpp">
+      <Filter>Classes\common\imguix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\imguix\ImGuiGLViewImpl.cpp">
+      <Filter>Classes\common\imguix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\imguix\ImGuiLayer.cpp">
+      <Filter>Classes\common\imguix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\math\Geometry.cpp">
+      <Filter>Classes\common\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\math\Mat3.cpp">
+      <Filter>Classes\common\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\utils\Regulator.cpp">
+      <Filter>Classes\common\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\script_system\ParamLoader.cpp">
+      <Filter>Classes\common\script_system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\flatbuffers\util.cpp">
+      <Filter>Classes\common\flatbuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\clipper\clipper.cpp">
+      <Filter>Classes\common\clipper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common\tinyxml2\tinyxml2.cpp">
+      <Filter>Classes\common\tinyxml2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -27,15 +141,356 @@
       <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\AppDelegate.h">
-      <Filter>src</Filter>
+      <Filter>Classes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\HelloWorldScene.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\Classes\editor\commands\AddEntityToolCommand.hpp">
+      <Filter>Classes\editor\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\commands\CommandBase.hpp">
+      <Filter>Classes\editor\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\commands\CommandQueue.hpp">
+      <Filter>Classes\editor\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\commands\ModifyStartingPointCommand.hpp">
+      <Filter>Classes\editor\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\commands\RemoveEntityToolCommand.hpp">
+      <Filter>Classes\editor\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\commands\TileToolCommand.hpp">
+      <Filter>Classes\editor\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\EditorType.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\ForceSettingLayer.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\GMXLayer.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\HistoryLayer.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\NavigatorLayer.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\NewFileLayer.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\OpenLayer.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\PaletteLayer.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\PropertyEditLayer.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\RenameLocationLayer.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\SaveAsLayer.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\SaveQueryLayer.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\layers\TriggerEditLayer.hpp">
+      <Filter>Classes\editor\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\utils\EditorCellSpacePartition.hpp">
+      <Filter>Classes\editor\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\utils\EditorEntity.hpp">
+      <Filter>Classes\editor\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\utils\GMXFile.hpp">
+      <Filter>Classes\editor\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\utils\LocationNode.hpp">
+      <Filter>Classes\editor\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\editor\scenes\EditScene.hpp">
+      <Filter>Classes\editor\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\GameTrigger.hpp">
+      <Filter>Classes\common\trigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionBase.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionCreateEntity.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionDefeat.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionDisplayText.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionKillEntityAtLocation.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionMoveEntity.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionMoveLocation.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionOrder.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionPauseGame.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionPlaySound.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionPlaySoundAtLocation.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionPreserveTrigger.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionResumeGame.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\Actions.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionSetAllianceStatus.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionSetCountdownTimer.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionSetSwitch.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionVictory.hpp">
+      <Filter>Classes\common\trigger\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionAlways.hpp">
+      <Filter>Classes\common\trigger\conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionBase.hpp">
+      <Filter>Classes\common\trigger\conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionBring.hpp">
+      <Filter>Classes\common\trigger\conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionCommand.hpp">
+      <Filter>Classes\common\trigger\conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionCountdownTimer.hpp">
+      <Filter>Classes\common\trigger\conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionElapsedTime.hpp">
+      <Filter>Classes\common\trigger\conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionNever.hpp">
+      <Filter>Classes\common\trigger\conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\conditions\Conditions.hpp">
+      <Filter>Classes\common\trigger\conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionSwitch.hpp">
+      <Filter>Classes\common\trigger\conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerComponentProtocol.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterAllyStatus.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterApproximation.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterArithmetical.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterBase.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterEntity.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterLocation.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterNumber.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterNumberAll.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterOrderType.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterPlayerType.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameters.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterSwitchName.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterSwitchStatus.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterSwitchStatus2.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterText.hpp">
+      <Filter>Classes\common\trigger\parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\imguix\imconfig.h">
+      <Filter>Classes\common\imguix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\imguix\imgui.h">
+      <Filter>Classes\common\imguix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\imguix\imgui_impl_glfw.h">
+      <Filter>Classes\common\imguix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\imguix\imgui_internal.h">
+      <Filter>Classes\common\imguix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\imguix\ImGuiGLViewImpl.h">
+      <Filter>Classes\common\imguix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\imguix\ImGuiLayer.h">
+      <Filter>Classes\common\imguix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\imguix\stb_rect_pack.h">
+      <Filter>Classes\common\imguix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\imguix\stb_textedit.h">
+      <Filter>Classes\common\imguix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\imguix\stb_truetype.h">
+      <Filter>Classes\common\imguix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\graph\AStarHeuristicPolicies.hpp">
+      <Filter>Classes\common\graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\graph\GraphAlgorithms.hpp">
+      <Filter>Classes\common\graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\graph\GraphEdgeTypes.hpp">
+      <Filter>Classes\common\graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\graph\GraphNodeTypes.hpp">
+      <Filter>Classes\common\graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\graph\PathEdge.hpp">
+      <Filter>Classes\common\graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\graph\PriorityQueue.hpp">
+      <Filter>Classes\common\graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\graph\SearchTerminationPolicies.hpp">
+      <Filter>Classes\common\graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\graph\SparseGraph.hpp">
+      <Filter>Classes\common\graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\math\Geometry.hpp">
+      <Filter>Classes\common\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\math\Mat3.hpp">
+      <Filter>Classes\common\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\math\Physics.hpp">
+      <Filter>Classes\common\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\utils\ClipperWrapper.hpp">
+      <Filter>Classes\common\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\utils\GMXFile_generated.h">
+      <Filter>Classes\common\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\utils\Infos.hpp">
+      <Filter>Classes\common\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\utils\Regulator.h">
+      <Filter>Classes\common\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\utils\SimpleReleasePool.hpp">
+      <Filter>Classes\common\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\utils\Singleton.hpp">
+      <Filter>Classes\common\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\utils\SizeProtocol.h">
+      <Filter>Classes\common\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\utils\SoundSource.hpp">
+      <Filter>Classes\common\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\utils\StringHelper.hpp">
+      <Filter>Classes\common\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\utils\TileHelperFunctions.hpp">
+      <Filter>Classes\common\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\utils\Types.hpp">
+      <Filter>Classes\common\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\tile\TileImage.hpp">
+      <Filter>Classes\common\tile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\tile\Tileset.hpp">
+      <Filter>Classes\common\tile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\script_system\ParamLoader.hpp">
+      <Filter>Classes\common\script_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\flatbuffers\code_generators.h">
+      <Filter>Classes\common\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\flatbuffers\flatbuffers.h">
+      <Filter>Classes\common\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\flatbuffers\hash.h">
+      <Filter>Classes\common\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\flatbuffers\idl.h">
+      <Filter>Classes\common\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\flatbuffers\reflection.h">
+      <Filter>Classes\common\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\flatbuffers\reflection_generated.h">
+      <Filter>Classes\common\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\flatbuffers\util.h">
+      <Filter>Classes\common\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\clipper\clipper.hpp">
+      <Filter>Classes\common\clipper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common\tinyxml2\tinyxml2.h">
+      <Filter>Classes\common\tinyxml2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">
       <Filter>resource</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Classes\editor\utils\EditorCellSpacePartition.inl">
+      <Filter>Classes\editor\utils</Filter>
+    </None>
+    <None Include="..\Classes\common\math\Physics.inl">
+      <Filter>Classes\common\math</Filter>
+    </None>
+    <None Include="..\Classes\common\script_system\ParamLoader.inl">
+      <Filter>Classes\common\script_system</Filter>
+    </None>
   </ItemGroup>
 </Project>

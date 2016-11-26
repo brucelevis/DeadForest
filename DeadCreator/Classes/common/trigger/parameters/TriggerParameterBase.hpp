@@ -12,8 +12,8 @@
 
 #include "Types.hpp"
 
-#include "realtrick/imgui/imgui.h"
-#include "realtrick/imgui/imgui_internal.h"
+#include "imguix/imgui.h"
+#include "imguix/imgui_internal.h"
 
 namespace realtrick
 {

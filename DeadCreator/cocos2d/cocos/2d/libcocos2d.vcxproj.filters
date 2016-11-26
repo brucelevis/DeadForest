@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="physics">
@@ -282,6 +282,12 @@
     </Filter>
     <Filter Include="cocostudio\TimelineAction\Skeleton">
       <UniqueIdentifier>{ca5e1475-3bfd-4aae-ad54-2e19d5021b92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\simple_profiler">
+      <UniqueIdentifier>{598786e1-02c1-4224-bbcb-b83f0d6fb581}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\tcp_session">
+      <UniqueIdentifier>{f8ad507d-5174-4f3a-8ee5-d6eaefec789f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1282,27 +1288,6 @@
     <ClCompile Include="CCLight.cpp">
       <Filter>2d</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\external\flatbuffers\flatc.cpp">
-      <Filter>cocostudio\json\flatbuffers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\external\flatbuffers\idl_gen_cpp.cpp">
-      <Filter>cocostudio\json\flatbuffers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\external\flatbuffers\idl_gen_fbs.cpp">
-      <Filter>cocostudio\json\flatbuffers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\external\flatbuffers\idl_gen_general.cpp">
-      <Filter>cocostudio\json\flatbuffers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\external\flatbuffers\idl_gen_go.cpp">
-      <Filter>cocostudio\json\flatbuffers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\external\flatbuffers\idl_gen_text.cpp">
-      <Filter>cocostudio\json\flatbuffers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\external\flatbuffers\idl_parser.cpp">
-      <Filter>cocostudio\json\flatbuffers</Filter>
-    </ClCompile>
     <ClCompile Include="..\editor-support\cocostudio\FlatBuffersSerialize.cpp">
       <Filter>cocostudio\json</Filter>
     </ClCompile>
@@ -1941,6 +1926,18 @@
       <Filter>network</Filter>
     </ClCompile>
     <ClCompile Include="..\editor-support\cocostudio\WidgetReader\Light3DReader\Light3DReader.cpp" />
+    <ClCompile Include="..\..\external\flatbuffers\util.cpp">
+      <Filter>cocostudio\json\flatbuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\tcp_session\TCPSession.cpp">
+      <Filter>external\tcp_session</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\simple_profiler\Block.cpp">
+      <Filter>external\simple_profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\simple_profiler\SimpleProfiler.cpp">
+      <Filter>external\simple_profiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\physics\CCPhysicsBody.h">
@@ -3093,15 +3090,6 @@
     <ClInclude Include="CCLight.h">
       <Filter>2d</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\external\flatbuffers\flatbuffers.h">
-      <Filter>cocostudio\json\flatbuffers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\external\flatbuffers\idl.h">
-      <Filter>cocostudio\json\flatbuffers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\external\flatbuffers\util.h">
-      <Filter>cocostudio\json\flatbuffers</Filter>
-    </ClInclude>
     <ClInclude Include="..\editor-support\cocostudio\CSParseBinary_generated.h">
       <Filter>cocostudio\json</Filter>
     </ClInclude>
@@ -3787,6 +3775,45 @@
     <ClInclude Include="..\editor-support\cocostudio\WidgetReader\Light3DReader\Light3DReader.h" />
     <ClInclude Include="..\ui\UIAbstractCheckButton.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\flatbuffers\code_generators.h">
+      <Filter>cocostudio\json\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\flatbuffers\flatbuffers.h">
+      <Filter>cocostudio\json\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\flatbuffers\hash.h">
+      <Filter>cocostudio\json\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\flatbuffers\idl.h">
+      <Filter>cocostudio\json\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\flatbuffers\reflection.h">
+      <Filter>cocostudio\json\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\flatbuffers\reflection_generated.h">
+      <Filter>cocostudio\json\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\flatbuffers\util.h">
+      <Filter>cocostudio\json\flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\tcp_session\Packet.hpp">
+      <Filter>external\tcp_session</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\tcp_session\TCPSession.hpp">
+      <Filter>external\tcp_session</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\simple_profiler\Block.hpp">
+      <Filter>external\simple_profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\simple_profiler\NetworkWriter.hpp">
+      <Filter>external\simple_profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\simple_profiler\profiling_schema_generated.h">
+      <Filter>external\simple_profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\simple_profiler\SimpleProfiler.hpp">
+      <Filter>external\simple_profiler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

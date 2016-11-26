@@ -80,8 +80,8 @@ namespace realtrick
             const int getNumOfTileX() const { return _numOfTileX; }
             const int getNumOfTileY() const { return _numOfTileY; }
             
-            const std::vector<Polygon>& getCollisionData() const { return _collisionData; }
-            const std::vector<Polygon>& getSimpleCollisionData() const { return _simpleCollisionData; }
+            const std::vector<realtrick::Polygon>& getCollisionData() const { return _collisionData; }
+            const std::vector<realtrick::Polygon>& getSimpleCollisionData() const { return _simpleCollisionData; }
             const std::vector<std::vector<Tileset>>& getTileData() const { return _tileData; }
             const std::map<std::string, cocos2d::Rect>& getLocations() const { return _locations; }
             
@@ -110,8 +110,8 @@ namespace realtrick
             int _cellHeight;
             
             // collision, tile
-            std::vector<Polygon> _collisionData;
-            std::vector<Polygon> _simpleCollisionData;
+            std::vector<realtrick::Polygon> _collisionData;
+            std::vector<realtrick::Polygon> _simpleCollisionData;
             std::vector<std::vector<Tileset>> _tileData;
             
             // entity

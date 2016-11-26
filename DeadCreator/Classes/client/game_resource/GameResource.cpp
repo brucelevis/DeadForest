@@ -78,7 +78,7 @@ bool GameResource::initWithBinary(const char* buffer)
     // 5. collision regions
     for ( auto poly = file->collision_regions()->begin() ; poly != file->collision_regions()->end() ; ++ poly )
     {
-        Polygon p;
+		realtrick::Polygon p;
         for( auto vert = poly->vertices()->begin(); vert != poly->vertices()->end() ; ++ vert )
         {
             p.pushVertex(Vec2(vert->x(), vert->y()));
@@ -90,7 +90,7 @@ bool GameResource::initWithBinary(const char* buffer)
     // 5-1. simple collision regions
     for ( auto poly = file->simple_collision_regions()->begin() ; poly != file->simple_collision_regions()->end() ; ++ poly )
     {
-        Polygon p;
+		realtrick::Polygon p;
         for( auto vert = poly->vertices()->begin(); vert != poly->vertices()->end() ; ++ vert )
         {
             p.pushVertex(Vec2(vert->x(), vert->y()));

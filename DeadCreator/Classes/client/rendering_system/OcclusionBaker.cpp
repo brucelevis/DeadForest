@@ -12,7 +12,7 @@ using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::client;
 
-#include "realtrick/profiler/SimpleProfiler.hpp"
+#include "simple_profiler/SimpleProfiler.hpp"
 
 
 OcclusionBaker::OcclusionBaker() :

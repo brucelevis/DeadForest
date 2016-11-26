@@ -12,8 +12,8 @@ using namespace cocos2d;
 using namespace realtrick;
 using namespace realtrick::editor;
 
-#include "realtrick/imgui/imgui.h"
-#include "realtrick/imgui/imgui_internal.h"
+#include "imguix/imgui.h"
+#include "imguix/imgui_internal.h"
 
 
 LocationNode::LocationNode(GMXLayer& layer) :

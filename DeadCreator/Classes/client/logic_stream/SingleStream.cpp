@@ -24,11 +24,7 @@ bool SingleStream::handleMessage(const Telegram& msg)
     // loading methods
     if ( msg.msg == MessageType::LOAD_GAME_PLAYER)
     {
-#if ( CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC )
         _game->loadGMXFileFromPath("temp_game_map");
-#elif ( CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID )
-        _game->loadGMXFileFromPath(FileUtils::getInstance()->fullPathForFilename("client/final_client2.gmx").c_str());
-#endif
         _game->loadGameContents(PlayerType::PLAYER1);
         _game->pushLogic(0.0, MessageType::LOAD_GAME_COMPLETE, nullptr);
         

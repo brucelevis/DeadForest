@@ -1,13 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -25,7 +33,24 @@
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v140_xp</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v120_xp</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v140_xp</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v120_xp</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v140_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
@@ -41,7 +66,17 @@
     <Import Project="..\cocos2d\cocos\2d\cocos2dx.props" />
     <Import Project="..\cocos2d\cocos\2d\cocos2d_headers.props" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\cocos2d\cocos\2d\cocos2dx.props" />
+    <Import Project="..\cocos2d\cocos\2d\cocos2d_headers.props" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\cocos2d\cocos\2d\cocos2dx.props" />
+    <Import Project="..\cocos2d\cocos\2d\cocos2d_headers.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\cocos2d\cocos\2d\cocos2dx.props" />
     <Import Project="..\cocos2d\cocos\2d\cocos2d_headers.props" />
@@ -52,26 +87,44 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration).win32\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration).win32\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration).win32\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration).win32\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\boost_1_62_0\x86\lib;$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\boost_1_62_0;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LibraryPath>C:\boost_1_62_0\x64\lib;$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\boost_1_62_0;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LibraryPath>$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\boost_1_62_0\x86\lib;$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\boost_1_62_0;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LibraryPath>C:\boost_1_62_0\x64\lib;$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\boost_1_62_0;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(EngineRoot)cocos\audio\include;$(EngineRoot)external;$(EngineRoot)external\chipmunk\include\chipmunk;$(EngineRoot)extensions;..\Classes;..;%(AdditionalIncludeDirectories);$(_COCOS_HEADER_WIN32_BEGIN);$(_COCOS_HEADER_WIN32_END)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\Classes\editor\utils;$(ProjectDir)..\Classes\editor\scenes;$(ProjectDir)..\Classes\editor\layers;$(ProjectDir)..\Classes\editor\commands;$(ProjectDir)..\Classes\editor;$(ProjectDir)..\Classes\common\utils;$(ProjectDir)..\Classes\common\trigger\parameters;$(ProjectDir)..\Classes\common\trigger\conditions;$(ProjectDir)..\Classes\common\trigger\actions;$(ProjectDir)..\Classes\common\trigger;$(ProjectDir)..\Classes\common\tile;$(ProjectDir)..\Classes\common\script_system;$(ProjectDir)..\Classes\common\math;$(ProjectDir)..\Classes\common\graph;$(ProjectDir)..\Classes\common;$(ProjectDir)..\Classes\client\userinterface\ui_layer;$(ProjectDir)..\Classes\client\userinterface\control;$(ProjectDir)..\Classes\client\userinterface;$(ProjectDir)..\Classes\client\trigger;$(ProjectDir)..\Classes\client\state\zombie;$(ProjectDir)..\Classes\client\state\human;$(ProjectDir)..\Classes\client\state;$(ProjectDir)..\Classes\client\scene;$(ProjectDir)..\Classes\client\rendering_system;$(ProjectDir)..\Classes\client\physics;$(ProjectDir)..\Classes\client\message_system;$(ProjectDir)..\Classes\client\logic_stream;$(ProjectDir)..\Classes\client\input_command;$(ProjectDir)..\Classes\client\game_resource;$(ProjectDir)..\Classes\client\entity\items\weapons;$(ProjectDir)..\Classes\client\entity\items\consumables;$(ProjectDir)..\Classes\client\entity\items\bullets;$(ProjectDir)..\Classes\client\entity\items;$(ProjectDir)..\Classes\client\entity\human;$(ProjectDir)..\Classes\client\entity\animated_finite_entity;$(ProjectDir)..\Classes\client\entity;$(ProjectDir)..\Classes\client\animation\zombie;$(ProjectDir)..\Classes\client\animation\human;$(ProjectDir)..\Classes\client\animation;$(ProjectDir)..\Classes\client\ai\path_planner;$(ProjectDir)..\Classes\client\ai\goal\evaluatable_goals;$(ProjectDir)..\Classes\client\ai\goal\composite_goals;$(ProjectDir)..\Classes\client\ai\goal\atomic_goals;$(ProjectDir)..\Classes\client\ai\goal;$(ProjectDir)..\Classes\client\ai;$(ProjectDir)..\Classes\client;$(ProjectDir)..\Classes;$(EngineRoot);$(EngineRoot)cocos\audio\include;$(EngineRoot)external\chipmunk\include\chipmunk;$(EngineRoot)extensions;..\Classes;..;%(AdditionalIncludeDirectories);$(_COCOS_HEADER_WIN32_BEGIN);$(_COCOS_HEADER_WIN32_END)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USE_MATH_DEFINES;GL_GLEXT_PROTOTYPES;CC_ENABLE_CHIPMUNK_INTEGRATION=1;COCOS2D_DEBUG=1;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -84,7 +137,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies);$(_COCOS_LIB_WIN32_BEGIN);$(_COCOS_LIB_WIN32_END)</AdditionalDependencies>
+      <AdditionalDependencies>libcocos2d.lib;%(AdditionalDependencies);$(_COCOS_LIB_WIN32_BEGIN);$(_COCOS_LIB_WIN32_END)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories);$(_COCOS_LIB_PATH_WIN32_BEGIN);$(_COCOS_LIB_PATH_WIN32_END)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -96,7 +149,39 @@
       </Command>
     </PostBuildEvent>
     <PreLinkEvent>
-      <Command></Command>
+      <Command>
+      </Command>
+    </PreLinkEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(EngineRoot)cocos\audio\include;$(EngineRoot)external;$(EngineRoot)external\chipmunk\include\chipmunk;$(EngineRoot)extensions;..\Classes;..;%(AdditionalIncludeDirectories);$(_COCOS_HEADER_WIN32_BEGIN);$(_COCOS_HEADER_WIN32_END)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USE_MATH_DEFINES;GL_GLEXT_PROTOTYPES;CC_ENABLE_CHIPMUNK_INTEGRATION=1;COCOS2D_DEBUG=1;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4267;4251;4244;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(_COCOS_LIB_WIN32_BEGIN);$(_COCOS_LIB_WIN32_END)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories);$(_COCOS_LIB_PATH_WIN32_BEGIN);$(_COCOS_LIB_PATH_WIN32_END)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PreLinkEvent>
+      <Command>
+      </Command>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup>
@@ -108,12 +193,11 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
       <Inputs>$(TargetFileName)</Inputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
-
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(EngineRoot)cocos\audio\include;$(EngineRoot)external;$(EngineRoot)external\chipmunk\include\chipmunk;$(EngineRoot)extensions;..\Classes;..;%(AdditionalIncludeDirectories);$(_COCOS_HEADER_WIN32_BEGIN);$(_COCOS_HEADER_WIN32_END)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\Classes\editor\utils;$(ProjectDir)..\Classes\editor\scenes;$(ProjectDir)..\Classes\editor\layers;$(ProjectDir)..\Classes\editor\commands;$(ProjectDir)..\Classes\editor;$(ProjectDir)..\Classes\common\utils;$(ProjectDir)..\Classes\common\trigger\parameters;$(ProjectDir)..\Classes\common\trigger\conditions;$(ProjectDir)..\Classes\common\trigger\actions;$(ProjectDir)..\Classes\common\trigger;$(ProjectDir)..\Classes\common\tile;$(ProjectDir)..\Classes\common\script_system;$(ProjectDir)..\Classes\common\math;$(ProjectDir)..\Classes\common\graph;$(ProjectDir)..\Classes\common;$(ProjectDir)..\Classes\client\userinterface\ui_layer;$(ProjectDir)..\Classes\client\userinterface\control;$(ProjectDir)..\Classes\client\userinterface;$(ProjectDir)..\Classes\client\trigger;$(ProjectDir)..\Classes\client\state\zombie;$(ProjectDir)..\Classes\client\state\human;$(ProjectDir)..\Classes\client\state;$(ProjectDir)..\Classes\client\scene;$(ProjectDir)..\Classes\client\rendering_system;$(ProjectDir)..\Classes\client\physics;$(ProjectDir)..\Classes\client\message_system;$(ProjectDir)..\Classes\client\logic_stream;$(ProjectDir)..\Classes\client\input_command;$(ProjectDir)..\Classes\client\game_resource;$(ProjectDir)..\Classes\client\entity\items\weapons;$(ProjectDir)..\Classes\client\entity\items\consumables;$(ProjectDir)..\Classes\client\entity\items\bullets;$(ProjectDir)..\Classes\client\entity\items;$(ProjectDir)..\Classes\client\entity\human;$(ProjectDir)..\Classes\client\entity\animated_finite_entity;$(ProjectDir)..\Classes\client\entity;$(ProjectDir)..\Classes\client\animation\zombie;$(ProjectDir)..\Classes\client\animation\human;$(ProjectDir)..\Classes\client\animation;$(ProjectDir)..\Classes\client\ai\path_planner;$(ProjectDir)..\Classes\client\ai\goal\evaluatable_goals;$(ProjectDir)..\Classes\client\ai\goal\composite_goals;$(ProjectDir)..\Classes\client\ai\goal\atomic_goals;$(ProjectDir)..\Classes\client\ai\goal;$(ProjectDir)..\Classes\client\ai;$(ProjectDir)..\Classes\client;$(ProjectDir)..\Classes;$(EngineRoot)cocos\audio\include;$(EngineRoot)external;$(EngineRoot)external\chipmunk\include\chipmunk;$(EngineRoot)extensions;..\Classes;..;%(AdditionalIncludeDirectories);$(_COCOS_HEADER_WIN32_BEGIN);$(_COCOS_HEADER_WIN32_END)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USE_MATH_DEFINES;GL_GLEXT_PROTOTYPES;CC_ENABLE_CHIPMUNK_INTEGRATION=1;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -139,23 +223,184 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
       </Command>
     </PostBuildEvent>
     <PreLinkEvent>
-      <Command></Command>
+      <Command>
+      </Command>
+    </PreLinkEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(EngineRoot)cocos\audio\include;$(EngineRoot)external;$(EngineRoot)external\chipmunk\include\chipmunk;$(EngineRoot)extensions;..\Classes;..;%(AdditionalIncludeDirectories);$(_COCOS_HEADER_WIN32_BEGIN);$(_COCOS_HEADER_WIN32_END)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USE_MATH_DEFINES;GL_GLEXT_PROTOTYPES;CC_ENABLE_CHIPMUNK_INTEGRATION=1;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4267;4251;4244;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>libcurl_imp.lib;websockets.lib;%(AdditionalDependencies);$(_COCOS_LIB_WIN32_BEGIN);$(_COCOS_LIB_WIN32_END)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories);$(_COCOS_LIB_PATH_WIN32_BEGIN);$(_COCOS_LIB_PATH_WIN32_END)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PreLinkEvent>
+      <Command>
+      </Command>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
-    <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
+    <ClCompile Include="..\Classes\common\clipper\clipper.cpp" />
+    <ClCompile Include="..\Classes\common\flatbuffers\util.cpp" />
+    <ClCompile Include="..\Classes\common\imguix\imgui.cpp" />
+    <ClCompile Include="..\Classes\common\imguix\ImGuiGLViewImpl.cpp" />
+    <ClCompile Include="..\Classes\common\imguix\ImGuiLayer.cpp" />
+    <ClCompile Include="..\Classes\common\imguix\imgui_demo.cpp" />
+    <ClCompile Include="..\Classes\common\imguix\imgui_draw.cpp" />
+    <ClCompile Include="..\Classes\common\imguix\imgui_impl_glfw_mac.cpp" />
+    <ClCompile Include="..\Classes\common\imguix\imgui_impl_glfw_win32.cpp" />
+    <ClCompile Include="..\Classes\common\math\Geometry.cpp" />
+    <ClCompile Include="..\Classes\common\math\Mat3.cpp" />
+    <ClCompile Include="..\Classes\common\script_system\ParamLoader.cpp" />
+    <ClCompile Include="..\Classes\common\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="..\Classes\common\trigger\GameTrigger.cpp" />
+    <ClCompile Include="..\Classes\common\utils\Regulator.cpp" />
+    <ClCompile Include="..\Classes\editor\layers\GMXLayer.cpp" />
+    <ClCompile Include="..\Classes\editor\layers\TriggerEditLayer.cpp" />
+    <ClCompile Include="..\Classes\editor\scenes\EditScene.cpp" />
+    <ClCompile Include="..\Classes\editor\utils\LocationNode.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
-    <ClInclude Include="..\Classes\HelloWorldScene.h" />
+    <ClInclude Include="..\Classes\common\clipper\clipper.hpp" />
+    <ClInclude Include="..\Classes\common\flatbuffers\code_generators.h" />
+    <ClInclude Include="..\Classes\common\flatbuffers\flatbuffers.h" />
+    <ClInclude Include="..\Classes\common\flatbuffers\hash.h" />
+    <ClInclude Include="..\Classes\common\flatbuffers\idl.h" />
+    <ClInclude Include="..\Classes\common\flatbuffers\reflection.h" />
+    <ClInclude Include="..\Classes\common\flatbuffers\reflection_generated.h" />
+    <ClInclude Include="..\Classes\common\flatbuffers\util.h" />
+    <ClInclude Include="..\Classes\common\graph\AStarHeuristicPolicies.hpp" />
+    <ClInclude Include="..\Classes\common\graph\GraphAlgorithms.hpp" />
+    <ClInclude Include="..\Classes\common\graph\GraphEdgeTypes.hpp" />
+    <ClInclude Include="..\Classes\common\graph\GraphNodeTypes.hpp" />
+    <ClInclude Include="..\Classes\common\graph\PathEdge.hpp" />
+    <ClInclude Include="..\Classes\common\graph\PriorityQueue.hpp" />
+    <ClInclude Include="..\Classes\common\graph\SearchTerminationPolicies.hpp" />
+    <ClInclude Include="..\Classes\common\graph\SparseGraph.hpp" />
+    <ClInclude Include="..\Classes\common\imguix\imconfig.h" />
+    <ClInclude Include="..\Classes\common\imguix\imgui.h" />
+    <ClInclude Include="..\Classes\common\imguix\ImGuiGLViewImpl.h" />
+    <ClInclude Include="..\Classes\common\imguix\ImGuiLayer.h" />
+    <ClInclude Include="..\Classes\common\imguix\imgui_impl_glfw.h" />
+    <ClInclude Include="..\Classes\common\imguix\imgui_internal.h" />
+    <ClInclude Include="..\Classes\common\imguix\stb_rect_pack.h" />
+    <ClInclude Include="..\Classes\common\imguix\stb_textedit.h" />
+    <ClInclude Include="..\Classes\common\imguix\stb_truetype.h" />
+    <ClInclude Include="..\Classes\common\math\Geometry.hpp" />
+    <ClInclude Include="..\Classes\common\math\Mat3.hpp" />
+    <ClInclude Include="..\Classes\common\math\Physics.hpp" />
+    <ClInclude Include="..\Classes\common\script_system\ParamLoader.hpp" />
+    <ClInclude Include="..\Classes\common\tile\TileImage.hpp" />
+    <ClInclude Include="..\Classes\common\tile\Tileset.hpp" />
+    <ClInclude Include="..\Classes\common\tinyxml2\tinyxml2.h" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionBase.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionCreateEntity.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionDefeat.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionDisplayText.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionKillEntityAtLocation.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionMoveEntity.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionMoveLocation.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionOrder.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionPauseGame.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionPlaySound.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionPlaySoundAtLocation.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionPreserveTrigger.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionResumeGame.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\Actions.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionSetAllianceStatus.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionSetCountdownTimer.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionSetSwitch.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\actions\ActionVictory.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionAlways.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionBase.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionBring.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionCommand.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionCountdownTimer.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionElapsedTime.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionNever.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\conditions\Conditions.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\conditions\ConditionSwitch.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\GameTrigger.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerComponentProtocol.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterAllyStatus.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterApproximation.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterArithmetical.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterBase.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterEntity.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterLocation.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterNumber.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterNumberAll.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterOrderType.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterPlayerType.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameters.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterSwitchName.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterSwitchStatus.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterSwitchStatus2.hpp" />
+    <ClInclude Include="..\Classes\common\trigger\parameters\TriggerParameterText.hpp" />
+    <ClInclude Include="..\Classes\common\utils\ClipperWrapper.hpp" />
+    <ClInclude Include="..\Classes\common\utils\GMXFile_generated.h" />
+    <ClInclude Include="..\Classes\common\utils\Infos.hpp" />
+    <ClInclude Include="..\Classes\common\utils\Regulator.h" />
+    <ClInclude Include="..\Classes\common\utils\SimpleReleasePool.hpp" />
+    <ClInclude Include="..\Classes\common\utils\Singleton.hpp" />
+    <ClInclude Include="..\Classes\common\utils\SizeProtocol.h" />
+    <ClInclude Include="..\Classes\common\utils\SoundSource.hpp" />
+    <ClInclude Include="..\Classes\common\utils\StringHelper.hpp" />
+    <ClInclude Include="..\Classes\common\utils\TileHelperFunctions.hpp" />
+    <ClInclude Include="..\Classes\common\utils\Types.hpp" />
+    <ClInclude Include="..\Classes\editor\commands\AddEntityToolCommand.hpp" />
+    <ClInclude Include="..\Classes\editor\commands\CommandBase.hpp" />
+    <ClInclude Include="..\Classes\editor\commands\CommandQueue.hpp" />
+    <ClInclude Include="..\Classes\editor\commands\ModifyStartingPointCommand.hpp" />
+    <ClInclude Include="..\Classes\editor\commands\RemoveEntityToolCommand.hpp" />
+    <ClInclude Include="..\Classes\editor\commands\TileToolCommand.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\EditorType.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\ForceSettingLayer.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\GMXLayer.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\HistoryLayer.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\NavigatorLayer.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\NewFileLayer.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\OpenLayer.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\PaletteLayer.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\PropertyEditLayer.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\RenameLocationLayer.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\SaveAsLayer.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\SaveQueryLayer.hpp" />
+    <ClInclude Include="..\Classes\editor\layers\TriggerEditLayer.hpp" />
+    <ClInclude Include="..\Classes\editor\scenes\EditScene.hpp" />
+    <ClInclude Include="..\Classes\editor\utils\EditorCellSpacePartition.hpp" />
+    <ClInclude Include="..\Classes\editor\utils\EditorEntity.hpp" />
+    <ClInclude Include="..\Classes\editor\utils\GMXFile.hpp" />
+    <ClInclude Include="..\Classes\editor\utils\LocationNode.hpp" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cocos2d\cocos\2d\libcocos2d.vcxproj">
       <Project>{98a51ba8-fc3a-415b-ac8f-8c7bd464e93e}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\cocos2d\cocos\editor-support\spine\proj.win32\libSpine.vcxproj">
       <Project>{b7c2a162-dec9-4418-972e-240ab3cbfcae}</Project>
@@ -166,6 +411,11 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Classes\common\math\Physics.inl" />
+    <None Include="..\Classes\common\script_system\ParamLoader.inl" />
+    <None Include="..\Classes\editor\utils\EditorCellSpacePartition.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

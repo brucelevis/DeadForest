@@ -16,7 +16,7 @@
 using namespace cocos2d;
 using namespace realtrick::client;
 
-#include "realtrick/profiler/SimpleProfiler.hpp"
+#include "simple_profiler/SimpleProfiler.hpp"
 
 
 DeferredRendering::DeferredRendering(Game* game) : _game(game)

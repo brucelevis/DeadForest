@@ -92,10 +92,10 @@ float32 QueryEntityByRayCast::ReportFixture(
 //
 PhysicsManager::~PhysicsManager()
 {
-    for(auto body = _world->GetBodyList() ; body ; body = body->GetNext() )
-    {
-        _world->DestroyBody(body);
-    }
+//    for(auto body = _world->GetBodyList() ; body ; body = body->GetNext() )
+//    {
+//        _world->DestroyBody(body);
+//    }
 }
 
 
